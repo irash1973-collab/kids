@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>UpGrade Chess Kids</title>
+<title>Шахматная страна — UpGrade Chess Club</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,8 +15,8 @@
   --red-ink: #ffffff;
   --yellow: #ffc21a;
   --line: #e4dfda;
-  --sq-light: #f4f4f2;
-  --sq-dark: #4a4745;
+  --sq-light: #fbf6e6;
+  --sq-dark: #8f9db3;
   --good: #1f8a4c;
   --bad: #c0261c;
   --font-display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
@@ -145,7 +145,7 @@ a.card:hover { border-color: var(--red); }
 .ln { fill: none; stroke: var(--lnc, #1b1a19); stroke-width: 1.2; stroke-linecap: round; }
 .pcs.w { --pf: #ffffff; --ps: #1b1a19; --lnc: #1b1a19; --eye: #1b1a19; }
 .pcs.b { --pf: #3a3735; --ps: #111; --lnc: #d8d3ce; --eye: #ffffff; filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff); }
-.board[data-board="bw"] { --sq-light: #f4f4f2; --sq-dark: #4a4745; }
+.board[data-board="bw"] { --sq-light: #fbf6e6; --sq-dark: #8f9db3; }
 .board[data-board="green"] { --sq-light: #eeeed2; --sq-dark: #6f9a54; }
 .board[data-board="brown"] { --sq-light: #f0d9b5; --sq-dark: #b58863; }
 .promo .pcs { width: 40px; height: 40px; }
@@ -222,9 +222,9 @@ a.card:hover { border-color: var(--red); }
 .sq .mk.fl { color: #d7261e; }
 .sq.wall { background: repeating-linear-gradient(45deg, #7a5a3a 0 6px, #5d4329 6px 12px) !important; }
 .sq.hl::after { content: ''; position: absolute; inset: 0; background: rgba(215, 38, 30, .38); }
-.sq .co { position: absolute; z-index: 5; font-style: normal; font-size: 2.6cqw; font-weight: 800; opacity: .8; pointer-events: none; color: var(--sq-dark); }
+.sq .co { position: absolute; z-index: 5; font-style: normal; font-size: 3.4cqw; font-weight: 900; opacity: 1; pointer-events: none; color: var(--sq-dark); }
 .sq.l .co { color: #4a4745; }
-.sq:not(.l) .co { color: #f4f4f2; }
+.sq:not(.l) .co { color: #ffffff; text-shadow: 0 0 2px #1b1a19; }
 .sq .co.r { top: 2px; left: 3px; } .sq .co.f { bottom: 1px; right: 3px; }
 .course h3 { margin: 16px 0 6px; }
 .lgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
@@ -246,6 +246,153 @@ a.card:hover { border-color: var(--red); }
 .opts button { padding: 14px; border-radius: 16px; border: 2px solid var(--line); background: var(--card); font-size: 20px; font-weight: 800; color: var(--ink); }
 .opts button.good { background: #1f8a4c; color: #fff; } .opts button.bad { background: var(--red); color: #fff; }
 </style>
+<style>/* ===== Яркая тема для детей ===== */
+:root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+  --bg: #cfeeff; --card: #ffffff; --ink: #1b1a19; --muted: #5b5652; --red: #d7261e; --red-ink: #ffffff;
+  --line: #ffd36b; --good: #1f8a4c; --bad: #c0261c; color-scheme: light;
+}
+html { background: #cfeeff; }
+body { background: linear-gradient(180deg, #a9ddff 0%, #d9f1ff 34%, #fff6d6 100%) fixed; padding-bottom: 104px; min-height: 100vh; }
+.wrap { position: relative; z-index: 1; }
+#sky { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+#sky span { position: absolute; color: rgba(255, 255, 255, .75); line-height: 1; animation: drift linear infinite; will-change: transform; }
+@keyframes drift { from { transform: translateY(110vh) rotate(0deg); } to { transform: translateY(-20vh) rotate(360deg); } }
+.top { background: #fff; border-radius: 28px; padding: 10px 16px; box-shadow: 0 6px 0 rgba(215, 38, 30, .25); border: 3px solid #fff; }
+.brand { font-size: 24px; }
+.brand span { color: #1b1a19; }
+.brand b { background: linear-gradient(90deg, #d7261e, #ff7a3d); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.nav a { border: 2px solid transparent; transition: transform .15s; }
+.nav a:hover { transform: translateY(-2px) rotate(-1.5deg); }
+.nav a:nth-child(1) { background: #ffe3e0; color: #a3140d; } .nav a:nth-child(1)[aria-current="page"] { background: #d7261e; color: #fff; }
+.nav a:nth-child(2) { background: #dff1ff; color: #0b559c; } .nav a:nth-child(2)[aria-current="page"] { background: #2b8ff0; color: #fff; }
+.nav a:nth-child(3) { background: #dcf6e6; color: #0d6b3a; } .nav a:nth-child(3)[aria-current="page"] { background: #1f9d58; color: #fff; }
+.nav a:nth-child(4) { background: #ece3ff; color: #4a22c8; } .nav a:nth-child(4)[aria-current="page"] { background: #7c4dff; color: #fff; }
+.nav a:nth-child(5) { background: #ffe9d6; color: #a34100; } .nav a:nth-child(5)[aria-current="page"] { background: #f26b1d; color: #fff; }
+.nav a:nth-child(6) { background: #fff1bd; color: #6b5200; } .nav a:nth-child(6)[aria-current="page"] { background: #f2b300; color: #1b1a19; }
+.ptsbadge { box-shadow: 0 3px 0 #c98f00; }
+.sndbtn { background: #fff; }
+h2 { display: inline-block; background: linear-gradient(transparent 60%, #ffd95a 60%); align-self: flex-start; padding: 0 6px; margin-left: -6px; }
+.site-link { background: rgba(255,255,255,.7); border-radius: 14px; padding: 8px 12px; }
+
+/* Главный баннер */
+.hero { position: relative; overflow: hidden; background: linear-gradient(135deg, #d7261e 0%, #f0452b 55%, #ff8a3d 100%); color: #fff; border-radius: 32px; padding: 24px 22px 20px; box-shadow: 0 8px 0 #9d1710; gap: 12px; }
+.hero > * { position: relative; z-index: 2; }
+.hero h1 { color: #fff; text-shadow: 0 3px 0 rgba(0, 0, 0, .18); max-width: 11em; }
+.hero p { color: #fff; font-weight: 700; }
+.hero .tag { color: #ffe27a; letter-spacing: .5px; }
+.hero .note { background: rgba(255, 255, 255, .22); border-radius: 999px; padding: 6px 14px; align-self: flex-start; color: #fff; font-size: 15px; }
+.hero .stage { position: absolute; right: 8px; bottom: 6px; z-index: 1; display: flex; gap: 0; align-items: flex-end; pointer-events: none; }
+.hero .stage img { width: 118px; height: 118px; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 5px 0 rgba(0, 0, 0, .22); margin-left: -22px; animation: hop 2.4s ease-in-out infinite; background: #fff; }
+.hero .stage img:nth-child(2) { animation-delay: -.8s; width: 100px; height: 100px; }
+.hero .stage img:nth-child(3) { animation-delay: -1.6s; width: 88px; height: 88px; }
+.hero .spark { position: absolute; z-index: 1; font-size: 22px; animation: twinkle 2.2s ease-in-out infinite; }
+@keyframes hop { 0%, 100% { transform: translateY(0) rotate(-3deg); } 45% { transform: translateY(-16px) rotate(4deg); } 60% { transform: translateY(0) rotate(0); } }
+@keyframes twinkle { 0%, 100% { opacity: .25; transform: scale(.7) rotate(0); } 50% { opacity: 1; transform: scale(1.2) rotate(20deg); } }
+@media (max-width: 560px) {
+  .hero { padding-bottom: 150px; }
+  .hero .stage { right: 50%; transform: translateX(50%); bottom: 10px; }
+  .hero .stage img { width: 96px; height: 96px; } .hero .stage img:nth-child(2) { width: 84px; height: 84px; } .hero .stage img:nth-child(3) { width: 74px; height: 74px; }
+}
+
+/* Реплики героев */
+.say { background: #fff6cf; border: 3px solid #ffc21a; box-shadow: 0 5px 0 #e0a400; border-radius: 26px; }
+.say .av { animation: bob 2.6s ease-in-out infinite; border: 3px solid #fff; box-shadow: 0 3px 0 rgba(0,0,0,.15); }
+@keyframes bob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-5px) rotate(3deg); } }
+
+/* Цветные карточки разделов */
+.cards { gap: 16px; }
+.card { position: relative; border-width: 3px; border-radius: 28px; padding: 18px 18px 18px; box-shadow: 0 7px 0 var(--sh, rgba(0, 0, 0, .15)); transition: transform .18s, box-shadow .18s; overflow: hidden; min-height: 150px; }
+a.card:hover { transform: translateY(-5px) rotate(-.6deg); box-shadow: 0 12px 0 var(--sh, rgba(0, 0, 0, .15)); border-color: var(--bd, var(--red)); }
+a.card:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--sh, rgba(0, 0, 0, .15)); }
+.card p { color: #3d3935; }
+.card .big { color: var(--tt, var(--ink)); font-size: 24px; padding-right: 74px; }
+.card .ch { position: absolute; top: 10px; right: 10px; width: 66px; height: 66px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 3px 0 rgba(0, 0, 0, .18); animation: bob 3s ease-in-out infinite; }
+.cards .card:nth-child(1) { background: #f1e9ff; --bd: #7c4dff; --tt: #4a22c8; --sh: #b9a1ff; border-color: #7c4dff; }
+.cards .card:nth-child(2) { background: #ffeadb; --bd: #ff7a3d; --tt: #b8430f; --sh: #ffb78f; border-color: #ff7a3d; }
+.cards .card:nth-child(3) { background: #fff4c2; --bd: #f2b300; --tt: #7a5a00; --sh: #f0d060; border-color: #f2b300; }
+.cards .card:nth-child(4) { background: #dcf6e6; --bd: #1f9d58; --tt: #0d6b3a; --sh: #8fd8b0; border-color: #1f9d58; }
+.cards .card:nth-child(5) { background: #dff1ff; --bd: #2b8ff0; --tt: #0b559c; --sh: #93c8f7; border-color: #2b8ff0; }
+.cards .card:nth-child(2) .ch { animation-delay: -.5s; } .cards .card:nth-child(3) .ch { animation-delay: -1s; } .cards .card:nth-child(4) .ch { animation-delay: -1.5s; } .cards .card:nth-child(5) .ch { animation-delay: -2s; }
+.pill { background: #fff; border: 2px solid var(--bd, var(--yellow)); color: #1b1a19; }
+
+/* Герои */
+.heroes { gap: 12px 10px; }
+.heroes figure { background: #fff; border: 3px solid #fff; border-radius: 22px; padding: 10px 4px 8px; width: 94px; box-shadow: 0 5px 0 rgba(0,0,0,.12); cursor: pointer; transition: transform .15s; font-weight: 800; }
+.heroes figure:hover { transform: translateY(-4px) rotate(-2deg); }
+.heroes figure .av { animation: bob 2.8s ease-in-out infinite; }
+.heroes figure:nth-child(2n) .av { animation-delay: -1s; } .heroes figure:nth-child(3n) .av { animation-delay: -1.8s; }
+section > .note { background: rgba(255,255,255,.7); border-radius: 12px; padding: 6px 10px; }
+
+/* Кнопки и карточки внутри разделов */
+.btn { box-shadow: 0 5px 0 #8f130d; transition: transform .1s, box-shadow .1s; }
+.btn:active:not([disabled]) { transform: translateY(4px); box-shadow: 0 1px 0 #8f130d; }
+.btn.alt { background: #fff; border: 3px solid #ffd36b; box-shadow: 0 5px 0 #e0b23a; }
+.btn.alt:active:not([disabled]) { box-shadow: 0 1px 0 #e0b23a; }
+.seg button { background: #fff; border: 3px solid #ffd36b; box-shadow: 0 3px 0 #e0b23a; }
+.seg button[aria-pressed="true"] { background: #ffc21a; border-color: #e0a400; }
+.msg { background: #fff; border: 3px solid #ffd36b; border-radius: 20px; }
+.msg.good { background: var(--good); border-color: #136b38; } .msg.bad { background: var(--bad); border-color: #8f1b14; }
+.lcard, .wcard, .lvbtn, .mcell, .stats div, .slide, .rvhead, .pal, .promo, .newm { background: #fff; border: 3px solid #ffd36b; box-shadow: 0 5px 0 rgba(224, 178, 58, .45); }
+.lcard, .wcard, .lvbtn { transition: transform .16s, box-shadow .16s; }
+.lcard:hover, .wcard:hover, .lvbtn:not([disabled]):hover { transform: translateY(-4px) rotate(-.5deg); border-color: var(--red); box-shadow: 0 9px 0 rgba(215, 38, 30, .25); }
+.lcard.done { border-color: #1f9d58; background: #eafaf0; }
+.wcard.full { background: linear-gradient(180deg, #fff, #ffe9a8); }
+.stats div { border-radius: 22px; }
+.mgroup h3 { background: #fff; border-radius: 14px; padding: 4px 12px; align-self: flex-start; display: inline-block; }
+.board { border-color: #1b1a19; box-shadow: 0 8px 0 rgba(0,0,0,.2); border-radius: 18px; }
+.modal { background: rgba(20, 30, 80, .55); }
+.mbox { background: #fffdf3; border-color: #ffc21a; }
+
+/* Гуляющие герои */
+#walk { position: fixed; left: 0; right: 0; bottom: 0; height: 84px; z-index: 40; pointer-events: none; overflow: hidden; transition: opacity .3s; }
+#walk::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 22px; background: linear-gradient(180deg, rgba(120, 200, 110, 0), rgba(98, 186, 92, .75)); }
+#walk.dim { opacity: .35; }
+#walk .wk { position: absolute; bottom: 8px; left: 0; width: 62px; height: 62px; pointer-events: auto; cursor: pointer; will-change: transform; -webkit-tap-highlight-color: transparent; }
+#walk .wk .fl { width: 100%; height: 100%; }
+#walk .wk img { width: 100%; height: 100%; display: block; border-radius: 50%; border: 3px solid #fff; background: #fff; box-shadow: 0 4px 0 rgba(0, 0, 0, .2); animation: step .5s ease-in-out infinite; }
+#walk .wk.rest img { animation: none; }
+#walk .wk.jump .fl { animation: jumpy .6s ease-out; }
+#walk .wk::after { content: ''; position: absolute; left: 12%; right: 12%; bottom: -6px; height: 8px; border-radius: 50%; background: rgba(0, 0, 0, .18); z-index: -1; }
+@keyframes step { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-9px) rotate(6deg); } }
+@keyframes jumpy { 0% { transform: translateY(0) scale(1); } 35% { transform: translateY(-46px) scale(1.12) rotate(-8deg); } 70% { transform: translateY(0) scale(.94, 1.06); } 100% { transform: none; } }
+#bubs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 41; pointer-events: none; height: 0; }
+.bub { position: absolute; bottom: 92px; max-width: 190px; background: #fff; border: 3px solid #1b1a19; border-radius: 18px; padding: 8px 12px; font-weight: 800; font-size: 14px; line-height: 1.25; box-shadow: 0 4px 0 rgba(0,0,0,.2); animation: pop .25s both; }
+.bub::after { content: ''; position: absolute; left: var(--tx, 50%); bottom: -11px; width: 16px; height: 16px; background: #fff; border-right: 3px solid #1b1a19; border-bottom: 3px solid #1b1a19; transform: translateX(-50%) rotate(45deg); }
+.bub b { color: #d7261e; }
+@media (max-width: 560px) { #walk .wk { width: 52px; height: 52px; } body { padding-bottom: 96px; } }
+@media (prefers-reduced-motion: reduce) {
+  #sky, .hero .spark { display: none; }
+  .hero .stage img, .say .av, .card .ch, .heroes figure .av, #walk .wk img { animation: none !important; }
+}
+@media (min-width: 561px) { .hero p, .hero h1 { max-width: calc(100% - 330px); } .hero { min-height: 250px; } }
+/* История */
+.hmap { width: 100%; height: auto; display: block; margin-top: 10px; border-radius: 18px; border: 3px solid #fff; box-shadow: 0 5px 0 rgba(0,0,0,.12); }
+.hroute { stroke: #d7261e; stroke-width: 4; stroke-dasharray: 8 8; stroke-linecap: round; animation: dash 1.2s linear infinite; }
+@keyframes dash { to { stroke-dashoffset: -32; } }
+.hdots circle { stroke: #fff; stroke-width: 3; }
+.hgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 12px; }
+.hgrid.four { grid-template-columns: repeat(2, 1fr); } .hgrid.two { grid-template-columns: repeat(2, 1fr); }
+.hgrid.champ, .hgrid.gms { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.hc { position: relative; border-radius: 20px; padding: 12px 10px 10px; text-align: center; border: 3px solid #fff; box-shadow: 0 4px 0 rgba(0,0,0,.14); display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.hc b { font-family: var(--font-display); font-size: 16px; line-height: 1.15; } .hc small { font-size: 13px; color: #3d3935; font-weight: 700; line-height: 1.2; }
+.hbig { font-size: 42px; line-height: 1.1; font-family: var(--font-display); font-weight: 700; }
+.hnum { position: absolute; top: -8px; left: -6px; background: #1b1a19; color: #fff; border-radius: 999px; min-width: 28px; height: 28px; display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+.hc.c0 { background: #f1e9ff; } .hc.c1 { background: #ffeadb; } .hc.c2 { background: #fff4c2; } .hc.c3 { background: #dcf6e6; } .hc.c4 { background: #dff1ff; } .hc.c5 { background: #ffe3ef; }
+.hc.baku { background: #ffc21a; border-color: #d7261e; transform: scale(1.04); }
+.hgrid.wheat .hbig { color: #b8430f; }
+/* Значки оценки ходов */
+.chip.cs { background: #12b886; color: #fff; } .chip.cr { background: #2fa84f; color: #fff; }
+.chip.cb { background: #d6f3e1; color: #0f5a2e; } .chip.cg { background: #e7f3d2; color: #3e5d0c; }
+.chip.ci { background: #ffe066; color: #5c4300; } .chip.cm { background: #ff9f43; color: #4a2000; } .chip.cz { background: #e03131; color: #fff; }
+.sq.bg-blunder::before, .sq.bg-mistake::before { content: ''; position: absolute; inset: 0; background: rgba(224, 49, 49, .55); z-index: 0; }
+.sq.bg-inacc::before { content: ''; position: absolute; inset: 0; background: rgba(255, 196, 0, .5); z-index: 0; }
+.sq.bg-brill::before, .sq.bg-great::before, .sq.bg-best::before { content: ''; position: absolute; inset: 0; background: rgba(47, 168, 79, .5); z-index: 0; }
+.sq svg { position: relative; z-index: 1; }
+.bdg { position: absolute; top: 1px; right: 1px; z-index: 6; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 999px; display: grid; place-items: center; font: 900 12px/1 var(--font-display); color: #fff; border: 2px solid #fff; box-shadow: 0 2px 0 rgba(0,0,0,.3); font-size: 3.6cqw; min-width: 5.6cqw; height: 5.6cqw; }
+.b-brill { background: #12b886; } .b-great { background: #2fa84f; } .b-best { background: #2fa84f; } .b-good { background: #7cb518; }
+.b-inacc { background: #f5b000; color: #3a2a00; } .b-mistake { background: #f76707; } .b-blunder { background: #e03131; }
+#rvsay { margin: 10px 0; }
+</style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 <symbol id="pc1" viewBox="0 0 45 45"><circle class="f" cx="22.5" cy="12.5" r="5.8"/><path class="f" d="M17.5 20.5h10l1.5 4.5-2 2.2c2.4 2.6 4 6 4 9.3H14c0-3.300 1.600-6.700 4-9.300l-2-2.200z"/><rect class="f" x="11.500" y="35.500" width="22" height="4.500" rx="2"/></symbol>
@@ -258,7 +405,7 @@ a.card:hover { border-color: var(--red); }
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="wrap">
   <div class="top">
-    <a class="brand" href="#home"><span>UpGrade</span><b>Chess Kids</b></a>
+    <a class="brand" href="#home"><span>Шахматная</span><b>страна</b></a>
     <nav class="nav" aria-label="Разделы">
       <a href="#home" data-r="home">Главная</a>
       <a href="#lessons" data-r="lessons">Уроки</a>
@@ -1130,6 +1277,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
     good: function () { [523, 659, 784].forEach(function (f, i) { tone(f, i * 0.09, 0.2, 'triangle', 0.17); }); },
     win: function () { [523, 659, 784, 1047].forEach(function (f, i) { tone(f, i * 0.11, 0.25, 'triangle', 0.18); }); tone(1047, 0.5, 0.6, 'sine', 0.14); tone(784, 0.5, 0.6, 'sine', 0.1); tone(659, 0.5, 0.6, 'sine', 0.1); },
     world: function () { [392, 523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, i * 0.13, 0.3, 'triangle', 0.18); }); [523, 659, 784, 1047].forEach(function (f) { tone(f, 0.85, 0.9, 'sine', 0.1); }); },
+    blunder: function () { tone(300, 0, 0.15, 'sawtooth', 0.12); tone(220, 0.14, 0.18, 'sawtooth', 0.12); tone(140, 0.3, 0.45, 'sawtooth', 0.12); },
+    mistake: function () { tone(280, 0, 0.18, 'square', 0.09); tone(210, 0.16, 0.3, 'square', 0.09); },
+    inacc: function () { tone(440, 0, 0.12, 'triangle', 0.12); tone(392, 0.1, 0.22, 'triangle', 0.12); },
+    great: function () { tone(660, 0, 0.12, 'triangle', 0.16); tone(880, 0.1, 0.28, 'triangle', 0.16); },
+    brill: function () { [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, i * 0.07, 0.25, 'triangle', 0.17); }); tone(1568, 0.4, 0.6, 'sine', 0.12); },
     medal: function () { [1319, 1568, 1976, 2349].forEach(function (f, i) { tone(f, i * 0.07, 0.25, 'sine', 0.1); }); }
   };
   function sfx(n) { try { if (!muted && Snd[n]) Snd[n](); } catch (e) {} }
@@ -1225,7 +1377,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   modal.acts = {};
 
   function boardHTML() {
-    return '<div class="seg boardtheme" id="bt" role="group" aria-label="Цвет доски"><button data-t="bw">Чёрно-белая</button><button data-t="green">Зелёная</button><button data-t="brown">Коричневая</button></div>' +
+    return '<div class="seg boardtheme" id="bt" role="group" aria-label="Цвет доски"><button data-t="bw">Классическая</button><button data-t="green">Зелёная</button><button data-t="brown">Коричневая</button></div>' +
       '<div class="boardbox"><div class="board" id="board" role="grid" aria-label="Шахматная доска"></div></div>';
   }
   function applyTheme() {
@@ -1247,18 +1399,19 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (S.hint === i) cls += ' hint';
       if (S.last && (S.last.f === i || S.last.t === i)) cls += ' last';
       if (S.best && (S.best.f === i || S.best.t === i)) cls += ' bestm';
+      var bdg = S.badge && S.badge.sq === i ? S.badge : null; if (bdg) cls += ' bg-' + bdg.cls;
       if (S.targets && S.targets.indexOf(i) >= 0) cls += ' tg' + (v ? ' cap' : '');
       if (checkSq === i) cls += ' chk';
       var mk = S.mark && S.mark[i], co = '';
       if (S.hl && S.hl[i]) cls += ' hl';
       if (mk === 'wall') cls += ' wall';
-      if (S.coords) {
+      if (true) {
         if (x === (S.flip ? 7 : 0)) co += '<i class="co r">' + (8 - y) + '</i>';
         if (y === (S.flip ? 0 : 7)) co += '<i class="co f">' + 'abcdefgh'[x] + '</i>';
       }
       var label = (v ? (v > 0 ? 'белый ' : 'чёрный ') + PNAME[Math.abs(v)] : mk === 'wall' ? 'стена' : mk === 'star' ? 'звезда' : mk === 'flag' ? 'флажок' : 'пустое поле') + ', ' + SQN(i);
       html += '<button class="' + cls + '" data-i="' + i + '" aria-label="' + label + '">' +
-        (v ? pcHTML(v) : '') + (mk === 'star' ? '<span class="mk">★</span>' : mk === 'flag' ? '<span class="mk fl">⚑</span>' : '') + co + '</button>';
+        (v ? pcHTML(v) : '') + (bdg ? '<span class="bdg b-' + bdg.cls + '">' + bdg.s + '</span>' : '') + (mk === 'star' ? '<span class="mk">★</span>' : mk === 'flag' ? '<span class="mk fl">⚑</span>' : '') + co + '</button>';
     }
     el.innerHTML = html;
     el.onclick = function (e) { var b = e.target.closest('.sq'); if (b) onClick(+b.dataset.i); };
@@ -1280,18 +1433,20 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var rk = rankOf(pts), nx = nextRank(pts);
     var title = w >= 100 ? 'Гроссмейстер' : w >= 40 ? 'Мастер' : w >= 10 ? 'Знаток' : w >= 1 ? 'Боец' : 'Новичок';
     var hh = '';
-    Object.keys(HEROES).forEach(function (k) { hh += '<figure>' + av(k) + '<span>' + esc(HEROES[k].n) + '</span></figure>'; });
+    Object.keys(HEROES).forEach(function (k) { hh += '<figure data-h="' + k + '">' + av(k) + '<span>' + esc(HEROES[k].n) + '</span></figure>'; });
     view.innerHTML =
-      '<div class="hero"><span class="tag">UpGrade Chess Kids</span><h1>Добро пожаловать в шахматную страну!</h1>' +
+      '<div class="hero"><span class="tag">Шахматная страна · UpGrade Chess Club</span><h1>Добро пожаловать в шахматную страну!</h1>' +
       '<p>Учись по урокам, решай задачи, играй с роботами и с друзьями, собирай награды. Всё бесплатно, прямо на телефоне или компьютере.</p>' +
-      '<p class="note"><b>⭐ ' + pts + ' баллов · звание «' + rk + '»</b>' + (nx ? ' · до звания «' + nx[1] + '» ещё ' + (nx[0] - pts) : '') + '</p></div>' +
+      '<p class="note"><b>⭐ ' + pts + ' баллов · звание «' + rk + '»</b>' + (nx ? ' · до звания «' + nx[1] + '» ещё ' + (nx[0] - pts) : '') + '</p>' +
+      '<div class="stage"><img src="' + IMG.yasmin + '" alt=""><img src="' + IMG.tima + '" alt=""><img src="' + IMG.simba + '" alt=""></div>' +
+      '<span class="spark" style="top:14px;right:22px">⭐</span><span class="spark" style="top:60px;right:150px;animation-delay:-.7s">✨</span><span class="spark" style="top:110px;right:14px;animation-delay:-1.3s">♟</span></div>' +
       sayHero('king', 'За каждую победу тебя ждут звёзды и медали. Пройди все миры, и ты чемпион!', 'награды') +
       '<div class="cards">' +
-      '<a class="card" href="#play"><span class="big">Игра с роботами</span><p>10 миров, 200 уровней. Начни с пешек и дойди до гроссмейстеров.</p><span class="pill">Побед: ' + w + ' из ' + TOTAL + ' · ' + title + '</span></a>' +
-      '<a class="card" href="#puzzles"><span class="big">Задачи на мат</span><p>Мат ладьёй, ферзём, слоном, конём, пешкой. Задачи не кончаются.</p><span class="pill">Решено: ' + (pt + cnt(solved)) + '</span></a>' +
-      '<a class="card" href="#awards"><span class="big">Награды</span><p>Медали, кубки и звёзды за твои успехи.</p><span class="pill">Медалей: ' + got + ' из ' + mm.length + '</span></a>' +
-      '<a class="card" href="#board"><span class="big">Играть вдвоём</span><p>Играй с другом на одном экране, расставляй позиции и разбирай партии: какие ходы были хорошие, а какие нет.</p><span class="pill">Друг против друга</span></a>' +
-      '<a class="card" href="#lessons"><span class="big">Уроки</span><p>История шахмат, доска, ходы фигур со звёздочками и лабиринтами, шах, мат и ловушки.</p><span class="pill">' + lessonSummary() + '</span></a>' +
+      '<a class="card" href="#play"><img class="ch" src="' + IMG.arni + '" alt=""><span class="big">Игра с роботами</span><p>10 миров, 200 уровней. Начни с пешек и дойди до гроссмейстеров.</p><span class="pill">Побед: ' + w + ' из ' + TOTAL + ' · ' + title + '</span></a>' +
+      '<a class="card" href="#puzzles"><img class="ch" src="' + IMG.fox + '" alt=""><span class="big">Задачи на мат</span><p>Мат ладьёй, ферзём, слоном, конём, пешкой. Задачи не кончаются.</p><span class="pill">Решено: ' + (pt + cnt(solved)) + '</span></a>' +
+      '<a class="card" href="#awards"><img class="ch" src="' + IMG.king + '" alt=""><span class="big">Награды</span><p>Медали, кубки и звёзды за твои успехи.</p><span class="pill">Медалей: ' + got + ' из ' + mm.length + '</span></a>' +
+      '<a class="card" href="#board"><img class="ch" src="' + IMG.tima + '" alt=""><span class="big">Играть вдвоём</span><p>Играй с другом на одном экране, расставляй позиции и разбирай партии: какие ходы были хорошие, а какие нет.</p><span class="pill">Друг против друга</span></a>' +
+      '<a class="card" href="#lessons"><img class="ch" src="' + IMG.prof + '" alt=""><span class="big">Уроки</span><p>История шахмат, доска, ходы фигур со звёздочками и лабиринтами, шах, мат и ловушки.</p><span class="pill">' + lessonSummary() + '</span></a>' +
       '</div>' +
       '<section><h2>Наши герои</h2><div class="heroes" style="margin-top:12px">' + hh + '</div>' +
       '<p class="note" style="margin-top:10px">Герои из книги «Шахматная страна».</p></section>';
@@ -1537,6 +1692,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     document.getElementById('who').innerHTML = say(robotSvg(n, 64), name, intro, 'уровень ' + n + ' из ' + TOTAL);
 
     function newGame() {
+      if (L >= 22) SF.load();
       clearTimers(); E.clear(); hints = 3;
       var p0 = E.fromFEN(world.fen);
       G = { start: p0, pos: p0, keys: {}, hh: [], rec: [], sel: null, targets: [], last: null, hint: null, over: false, busy: false, flip: you === -1 };
@@ -1611,12 +1767,21 @@ if (typeof module !== 'undefined') module.exports = Eng;
       setMsg('Робот думает…');
       later(function () {
         var bk = L >= 8 && Math.random() < 0.9 ? bookPick(G.pos) : null;
-        var r = bk ? bk.m : E.bestMove(G.pos, L, G.hh.slice(0, -1));
-        if (r) apply(r);
-        G.busy = false;
-        draw();
-        if (checkEnd()) { draw(); return; }
-        setMsg(E.inCheck(G.pos) ? 'Тебе шах! Защити короля.' : 'Твой ход.', E.inCheck(G.pos) ? 'bad' : '');
+        var g0 = G;
+        function fin(r) {
+          if (G !== g0 || G.over) return;
+          if (r) apply(r);
+          G.busy = false;
+          draw();
+          if (checkEnd()) { draw(); return; }
+          setMsg(E.inCheck(G.pos) ? 'Тебе шах! Защити короля.' : 'Твой ход.', E.inCheck(G.pos) ? 'bad' : '');
+        }
+        if (bk || L < 22 || SF.failed()) { fin(bk ? bk.m : E.bestMove(G.pos, L, G.hh.slice(0, -1))); return; }
+        var elo = Math.round(1500 + (L - 22) * 1300 / 8), pos0 = G.pos;
+        SF.move(E.toFEN(pos0), 500, elo).then(function (r) {
+          var m = r && r.best ? uciMove(pos0, r.best) : null;
+          fin(m || E.bestMove(pos0, L, g0.hh.slice(0, -1)));
+        });
       }, 120);
     }
     function humanMove(f, t) {
@@ -2105,7 +2270,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   /* --- показ слайдов --- */
   function showSlides(host, L, idx) {
     var s = L.slides[idx], n = L.slides.length, S = { pos: E.fromFEN('8/8/8/8/8/8/8/8 w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: s.mark || {}, hl: null };
-    var body = '<div class="slide"><h3>' + esc(s.h) + '</h3>' + (s.p || []).map(function (x) { return '<p>' + x + '</p>'; }).join('') + '</div>';
+    var body = '<div class="slide"><h3>' + esc(s.h) + '</h3>' + (s.p || []).map(function (x) { return '<p>' + x + '</p>'; }).join('') + (s.v || '') + '</div>';
     var hasBoard = !!(s.fen || s.free || s.demo);
     var step = 0, cap = '';
     host.innerHTML = body + (hasBoard ? boardHTML() + '<div class="msg" id="sm" role="status" aria-live="polite"></div>' : '') +
@@ -2221,12 +2386,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function runNames(host, L, lv, finish) {
     var r = mkRng(hstr(L.id + lv + '_' + Date.now() % 100000)), S = { pos: E.fromFEN('8/8/8/8/8/8/8/8 w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: lv <= 5, mark: {}, hl: null };
     var mistakes = 0, done = false, q = null, mode = L.kind;
-    var sub = mode === 'lines' ? (lv % 2 ? 'file' : 'rank') : mode === 'squares' ? (lv <= 10 ? 'find' : 'name') : 'color';
+    var sub = mode === 'diags' ? 'diag' : mode === 'lines' ? (lv % 2 ? 'file' : 'rank') : mode === 'squares' ? (lv <= 10 ? 'find' : 'name') : 'color';
     if (mode === 'lines') S.coords = lv <= 12;
     var sq = Math.floor(r() * 64), x = sq & 7, y = sq >> 3;
     var text, opts = null, ok;
     if (sub === 'file') { text = 'Нажми на любую клетку вертикали «' + FILES[x] + '».'; ok = function (i) { return (i & 7) === x; }; }
     else if (sub === 'rank') { text = 'Нажми на любую клетку горизонтали ' + (8 - y) + '.'; ok = function (i) { return (i >> 3) === y; }; }
+    else if (sub === 'diag') { S.hl = {}; S.hl[sq] = true; S.mark[sq] = 'star'; S.coords = lv <= 12; text = 'Нажми на любую клетку, которая стоит на одной диагонали со звёздочкой.'; ok = function (i) { return i !== sq && Math.abs((i & 7) - x) === Math.abs((i >> 3) - y); }; }
     else if (sub === 'find') { text = 'Найди и нажми на поле ' + SQN(sq) + '.'; ok = function (i) { return i === sq; }; }
     else if (sub === 'name') {
       S.hl = {}; S.hl[sq] = true; S.mark[sq] = 'star'; S.coords = lv <= 14; text = 'Как называется поле со звёздочкой?';
@@ -2483,12 +2649,256 @@ if (typeof module !== 'undefined') module.exports = Eng;
   ] };
   addG('Правила и приёмы', [CASTLE, EP, PROMO, CHECK, MATE, STALE, BABY, TRAPS]);
 
+  /* ================= История шахмат и доска: яркие уроки ================= */
+  (function () {
+    function card(cls, big, name, sub) { return '<div class="hc ' + cls + '"><span class="hbig">' + big + '</span><b>' + name + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>'; }
+    var MAP = '<svg class="hmap" viewBox="0 0 320 200" role="img" aria-label="Схема пути шахмат из Индии в Европу">' +
+      '<rect width="320" height="200" rx="18" fill="#bfe6ff"/>' +
+      '<g fill="#ffe6a8" stroke="#e0b23a" stroke-width="2" stroke-linejoin="round">' +
+      '<path d="M20 70 L40 40 L90 30 L120 45 L125 75 L100 90 L60 95 L30 90 Z"/>' +
+      '<path d="M120 45 L160 25 L250 30 L300 55 L290 95 L250 110 L215 120 L180 100 L125 95 Z"/>' +
+      '<path d="M185 100 L235 108 L215 150 L200 168 L190 140 Z"/>' +
+      '<path d="M55 100 L125 98 L160 115 L150 140 L110 150 L95 190 L60 185 L40 140 Z"/></g>' +
+      '<path class="hroute" d="M205 128 C190 100 175 98 158 92" fill="none"/>' +
+      '<path class="hroute" d="M158 92 C145 105 135 112 122 118" fill="none"/>' +
+      '<path class="hroute" d="M122 118 C95 105 80 90 68 68" fill="none"/>' +
+      '<g class="hdots"><circle cx="205" cy="128" r="9" fill="#ff7a3d"/><circle cx="158" cy="92" r="8" fill="#7c4dff"/><circle cx="122" cy="118" r="8" fill="#1f9d58"/><circle cx="68" cy="68" r="9" fill="#d7261e"/></g>' +
+      '<g font-family="Nunito,sans-serif" font-weight="800" font-size="13" text-anchor="middle" fill="#1b1a19" stroke="#fff" stroke-width="3" paint-order="stroke">' +
+      '<text x="212" y="152">Индия</text><text x="165" y="76">Персия</text><text x="118" y="138">Арабы</text><text x="68" y="52">Европа</text></g>' +
+      '<text x="140" y="62" font-size="18">⭐</text>' +
+      '<text x="130" y="48" font-family="Nunito,sans-serif" font-weight="800" font-size="11" fill="#7a5a00">Баку</text></svg>';
+    var CHAMP = [['Вильгельм Стейниц', 1886, 'Австрия'], ['Эмануил Ласкер', 1894, 'Германия'], ['Хосе Рауль Капабланка', 1921, 'Куба'], ['Александр Алёхин', 1927, 'Россия и Франция'], ['Макс Эйве', 1935, 'Нидерланды'], ['Михаил Ботвинник', 1948, 'СССР'], ['Василий Смыслов', 1957, 'СССР'], ['Михаил Таль', 1960, 'Латвия'], ['Тигран Петросян', 1963, 'Армения'], ['Борис Спасский', 1969, 'СССР'], ['Роберт Фишер', 1972, 'США'], ['Анатолий Карпов', 1975, 'СССР'], ['Гарри Каспаров', 1985, 'родился в Баку!'], ['Владимир Крамник', 2000, 'Россия'], ['Вишванатан Ананд', 2007, 'Индия'], ['Магнус Карлсен', 2013, 'Норвегия'], ['Дин Лижэнь', 2023, 'Китай'], ['Гукеш Доммараджу', 2024, 'Индия']];
+    var champHTML = '<div class="hgrid champ">' + CHAMP.map(function (c, i) {
+      return '<div class="hc c' + (i % 6) + (c[0] === 'Гарри Каспаров' ? ' baku' : '') + '"><span class="hnum">' + (i + 1) + '</span><b>' + c[0] + '</b><small>' + c[1] + ' · ' + c[2] + '</small></div>';
+    }).join('') + '</div>';
+    var GM = [['Теймур Раджабов', 'в 14 лет стал гроссмейстером'], ['Шахрияр Мамедъяров', 'один из сильнейших в мире'], ['Вугар Гашимов', 'мы помним нашего чемпиона'], ['Эльтадж Сафарли', 'гроссмейстер из Баку'], ['Айдын Сулейманлы', 'юный гроссмейстер'], ['Ниджат Аббасов', 'гроссмейстер'], ['Гадир Гусейнов', 'гроссмейстер'], ['Гарри Каспаров', '13-й чемпион мира, родился в Баку']];
+    var gmHTML = '<div class="hgrid gms">' + GM.map(function (g, i) { return '<div class="hc c' + (i % 6) + '"><span class="hbig">' + g[0].charAt(0) + '</span><b>' + g[0] + '</b><small>' + g[1] + '</small></div>'; }).join('') + '</div>';
+    var wheat = '<div class="hgrid wheat">' + [1, 2, 4, 8, 16, 32].map(function (n, i) { return '<div class="hc c' + i + '"><span class="hbig">' + n + '</span><small>' + (i === 0 ? 'зёрнышко на 1-й клетке' : i === 5 ? 'на 6-й клетке' : 'на ' + (i + 1) + '-й') + '</small></div>'; }).join('') + '</div>';
+
+    var HISTORY2 = [
+      { h: 'Где родились шахматы?', p: ['Шахматы родились в <b>Индии</b>, больше 1500 лет назад, примерно в VI веке. Старинная игра называлась <b>«чатуранга»</b>: это слово означает «четыре рода войск».'], v: MAP },
+      { h: 'Чатуранга: четыре войска', p: ['В индийской армии было четыре части. Каждая стала шахматной фигурой, и они живы до сих пор!'],
+        v: '<div class="hgrid four">' + card('c0', '♙', 'Пехота', 'теперь пешки') + card('c1', '♘', 'Конница', 'теперь кони') + card('c2', '🐘', 'Боевые слоны', 'теперь слоны') + card('c3', '♖', 'Колесницы', 'теперь ладьи') + '</div>' },
+      { h: 'Путь по свету', p: ['Из Индии игра пришла в <b>Персию</b>. Там царя называли «шах», а когда царю некуда уйти, говорили «шах мат»: «царь беспомощен». Отсюда слова «шах» и «мат».', 'Потом играть научились арабы, а от них шахматы добрались до Европы. Азербайджан лежит на этом пути, и шахматы здесь любят много веков.'], v: MAP },
+      { h: 'Откуда имена фигур', p: ['<b>Ладья</b> на старинном языке значит «корабль». <b>Ферзь</b> получил имя от персидского слова «советник», то есть помощник царя. Слон и конь пришли из армии, как ты уже узнал.', 'А в Англии слона зовут «епископ» (bishop), а ладью «башня» (rook).'] },
+      { h: 'Как менялись фигуры', p: ['Раньше ферзь ходил только на одну клетку по диагонали, а слон прыгал через клетку. Примерно 500 лет назад ферзь и слон стали сильными. Шахматы получили почти такие правила, как сегодня, и стали быстрыми и интересными.'],
+        v: '<div class="hgrid two">' + card('c4', '♕', 'Было', 'слабый советник') + card('c1', '♕', 'Стало', 'самая сильная фигура') + '</div>' },
+      { h: 'Легенда о зёрнышках', p: ['Есть древняя легенда. Изобретатель шахмат попросил у царя в награду пшеницу: на первую клетку одно зёрнышко, на вторую два, на третью четыре, и так на каждую клетку вдвое больше. Царь согласился, а потом ужаснулся: во всём мире не хватило бы пшеницы!'], v: wheat },
+      { h: '18 чемпионов мира', p: ['Лучшего шахматиста мира называют <b>чемпионом мира</b>. Первым им стал Вильгельм Стейниц в 1886 году. С тех пор было всего <b>18</b> чемпионов. Последний на сегодня — Гукеш из Индии, он стал чемпионом в 2024 году. А в конце 2026 года он сыграет матч за корону с Синдаровым.', 'Посмотри на жёлтую карточку: <b>Гарри Каспаров родился в Баку!</b>'], v: champHTML },
+      { h: 'Гроссмейстеры Азербайджана', p: ['<b>Гроссмейстер</b> — самое высокое шахматное звание. У нас в Азербайджане много сильнейших гроссмейстеров, и они играют на всех больших турнирах мира. В 2009 году сборная Азербайджана стала чемпионом Европы!', 'Когда-нибудь в этом списке может оказаться и твоё имя.'], v: gmHTML },
+      { h: 'Шахматы сегодня', p: ['В шахматы играют во всём мире: в школах, клубах, в интернете. Миллионы людей, дети и взрослые. 20 июля отмечают <b>Международный день шахмат</b>.', 'Шахматы учат думать, не сдаваться и уважать соперника. Теперь пора познакомиться с доской!'] }
+    ];
+
+    /* ---- доска ---- */
+    var E0 = '8/8/8/8/8/8/8/8 w - - 0 1';
+    function diagLen(x, y) { return [8 - Math.abs(x - y), 8 - Math.abs(x + y - 7)]; }
+    function diagSet(L) { return lineSq(function (x, y) { var d = diagLen(x, y); return d[0] === L || d[1] === L; }); }
+    var DNAME = { 8: 'Две главные диагонали', 7: 'Четыре диагонали по 7 клеток', 6: 'Четыре диагонали по 6 клеток', 5: 'Четыре диагонали по 5 клеток', 4: 'Четыре диагонали по 4 клетки', 3: 'Четыре диагонали по 3 клетки', 2: 'Четыре самые маленькие диагонали' };
+    var BOARD2 = [
+      { h: '64 клетки', p: ['Шахматная доска — квадрат из <b>64 клеток</b>: 8 рядов по 8. Светлых клеток 32 и тёмных 32, они чередуются, как шашечки.'], fen: E0 },
+      { h: 'Как ставить доску', p: ['Доску кладут так, чтобы <b>в правом нижнем углу было светлое поле</b>. Запомни: «светлое справа». Белые фигуры стоят внизу, чёрные вверху.'], fen: START },
+      { h: 'Вертикали', p: ['Линии сверху вниз называются <b>вертикалями</b>. У каждой своя буква: a, b, c, d, e, f, g, h. Всего их <b>8</b>. Красным показаны три вертикали: a, d и h.'], fen: E0, hl: lineSq(function (x) { return x === 0 || x === 3 || x === 7; }) },
+      { h: 'Ещё вертикали', p: ['Теперь вертикали b, e и g. Находи нужную букву внизу доски!'], fen: E0, hl: lineSq(function (x) { return x === 1 || x === 4 || x === 6; }) },
+      { h: 'Горизонтали', p: ['Линии слева направо называются <b>горизонталями</b>. У каждой своя цифра от 1 до 8, считаем снизу вверх. Всего их <b>8</b>. Красным показаны горизонтали 1, 4 и 8.'], fen: E0, hl: lineSq(function (x, y) { return y === 7 || y === 4 || y === 0; }) },
+      { h: 'Ещё горизонтали', p: ['Теперь горизонтали 2, 5 и 7. На второй горизонтали в начале игры стоят белые пешки, а на седьмой чёрные.'], fen: E0, hl: lineSq(function (x, y) { return y === 6 || y === 3 || y === 1; }) },
+      { h: 'Что такое диагональ', p: ['<b>Диагональ</b> — линия из клеток одного цвета, которые касаются углами. По диагоналям ходит слон, а ещё ферзь. Диагонали бывают разной длины.'], fen: E0, hl: lineSq(function (x, y) { return x === y; }) }
+    ];
+    [8, 7, 6, 5, 4, 3, 2].forEach(function (L) {
+      var t = L === 8 ? 'Они идут из угла в угол: a1–h8 и h1–a8. В каждой по 8 клеток. Это самые длинные диагонали, их <b>две</b>.' : L === 2 ? 'Это диагонали из двух клеток в углах доски, например g1–h2. Их <b>четыре</b>: короче уже не бывает.' : 'Таких диагоналей <b>четыре</b>, в каждой по ' + L + ' ' + (L === 4 ? 'клетки' : 'клеток') + '. Посчитай, сколько клеток красных на одной линии.';
+      BOARD2.push({ h: DNAME[L], p: [t], fen: E0, hl: diagSet(L) });
+    });
+    BOARD2.push(
+      { h: 'Сколько всего линий', p: ['<b>Вертикалей — 8, горизонталей — 8, диагоналей — 26.</b>', 'Диагонали: 2 по 8 клеток и по 4 диагонали из 7, 6, 5, 4, 3 и 2 клеток. Получается 2 + 4 + 4 + 4 + 4 + 4 + 4 = 26.'], v: '<div class="hgrid four">' + card('c0', '8', 'вертикалей') + card('c1', '8', 'горизонталей') + card('c2', '26', 'диагоналей') + card('c3', '64', 'клетки') + '</div>' },
+      { h: 'Название клетки', p: ['Каждая клетка имеет имя: <b>буква вертикали и цифра горизонтали</b>. Клетка со звёздочкой называется e4: вертикаль e и четвёртая горизонталь.'], fen: E0, mark: { 36: 'star' } },
+      { h: 'Расстановка фигур', p: ['Ладьи стоят в углах, рядом кони, потом слоны. Ферзь стоит на клетке своего цвета: белый на светлой, чёрный на тёмной. Рядом король. Перед фигурами восемь пешек. Подробнее расскажем в отдельном уроке.'], fen: START }
+    );
+    LESS.history.slides = HISTORY2; LESS.board.slides = BOARD2;
+    LESS.history.d = 'Индия и чатуранга, 18 чемпионов мира, гроссмейстеры Азербайджана.';
+    LESS.board.d = 'Клетки, 8 вертикалей, 8 горизонталей, 26 диагоналей.';
+
+    LESS.diags = { id: 'diags', t: 'Диагонали', d: 'Находи клетки на одной диагонали.', levels: 20, kind: 'diags', run: runNames, slides: [
+      { h: 'Диагонали', p: ['Диагональ — линия из клеток одного цвета, которые касаются углами. Всего их 26: две самые длинные по 8 клеток и ещё 24 короче.', 'В упражнениях на доске будет звёздочка. Нажми на любую другую клетку, которая стоит с ней на одной диагонали.'], fen: E0, hl: diagSet(8) }
+    ] };
+    var ids = GROUPS[0].ids, at = ids.indexOf('lines'); ids.splice(at + 1, 0, 'diags');
+  })();
+
+  /* ---------- Stockfish: сильный движок, грузится при первом использовании ---------- */
+  var SF = (function () {
+    var BASE = 'https://unpkg.com/stockfish@17.1.0/src/', JS = 'stockfish-17.1-lite-single-03e3232.js', WASM = 'stockfish-17.1-lite-single-03e3232.wasm';
+    var w = null, state = 'idle', loadP = null, queue = [], cur = null, uciOk = false;
+    function parse(line, job) {
+      if (line.indexOf('info') === 0 && line.indexOf(' pv ') > 0) {
+        var m = line.match(/multipv (\d+)/), k = m ? +m[1] : 1, sc = line.match(/score (cp|mate) (-?\d+)/), pv = line.match(/ pv (\S+)/), d = line.match(/depth (\d+)/);
+        if (!sc || !pv) return;
+        var v = +sc[2], cp = sc[1] === 'cp' ? v : (v > 0 ? 30000 - v * 10 : -30000 - v * 10);
+        job.lines[k - 1] = { cp: cp, mate: sc[1] === 'mate' ? v : null, move: pv[1], depth: d ? +d[1] : 0 };
+      }
+    }
+    function pump() {
+      if (cur || !queue.length || state !== 'ready') return;
+      cur = queue.shift();
+      var j = cur; j.lines = [];
+      w.postMessage('setoption name MultiPV value ' + (j.multipv || 1));
+      if (j.elo) { w.postMessage('setoption name UCI_LimitStrength value true'); w.postMessage('setoption name UCI_Elo value ' + j.elo); }
+      else w.postMessage('setoption name UCI_LimitStrength value false');
+      w.postMessage('position fen ' + j.fen);
+      w.postMessage('go ' + (j.depth ? 'depth ' + j.depth : '') + (j.ms ? ' movetime ' + j.ms : ''));
+    }
+    function onMsg(e) {
+      var line = String(e.data);
+      if (line === 'uciok') { uciOk = true; w.postMessage('isready'); return; }
+      if (line === 'readyok' && state === 'loading') { state = 'ready'; if (loadP) loadP.res(true); pump(); return; }
+      if (!cur) return;
+      if (line.indexOf('bestmove') === 0) {
+        var j = cur; cur = null;
+        var bm = line.split(' ')[1];
+        j.res({ best: bm, lines: j.lines.filter(Boolean) });
+        pump();
+      } else parse(line, cur);
+    }
+    function load() {
+      if (state === 'ready') return Promise.resolve(true);
+      if (state === 'fail') return Promise.resolve(false);
+      if (loadP) return loadP.p;
+      loadP = {};
+      loadP.p = new Promise(function (res) {
+        loadP.res = res; state = 'loading';
+        var to = setTimeout(function () { if (state !== 'ready') { state = 'fail'; try { w && w.terminate(); } catch (e) {} res(false); } }, 40000);
+        var origRes = res; loadP.res = function (v) { clearTimeout(to); origRes(v); };
+        fetch(BASE + JS).then(function (r) { if (!r.ok) throw new Error('http'); return r.text(); }).then(function (txt) {
+          var url = URL.createObjectURL(new Blob([txt], { type: 'text/javascript' })) + '#' + BASE + WASM;
+          w = new Worker(url);
+          w.onmessage = onMsg;
+          w.onerror = function () { if (state !== 'ready') { state = 'fail'; loadP.res(false); } };
+          w.postMessage('uci');
+        }).catch(function () { state = 'fail'; loadP.res(false); });
+      });
+      return loadP.p;
+    }
+    function run(o) {
+      return load().then(function (ok) {
+        if (!ok) return null;
+        return new Promise(function (res) { o.res = res; queue.push(o); pump(); });
+      });
+    }
+    return {
+      load: load,
+      ok: function () { return state === 'ready'; },
+      failed: function () { return state === 'fail'; },
+      eval: function (fen, depth, multipv) { return run({ fen: fen, depth: depth || 12, multipv: multipv || 1 }); },
+      move: function (fen, ms, elo) { return run({ fen: fen, ms: ms || 600, depth: 0, elo: elo || 0, multipv: 1 }); },
+      clear: function () { queue.length = 0; }
+    };
+  })();
+
+  /* ---------- Живые герои: гуляют по низу экрана ---------- */
+  (function () {
+    var PH = {
+      yasmin: ['Привет! Сыграем партию?', 'Пешки ходят вперёд, а бьют по диагонали!', 'Я люблю шахматы!'],
+      tima: ['Я сегодня победил робота!', 'Хочешь решить задачку на мат?', 'Ура, ещё одна звезда!'],
+      simba: ['Мяу! Не забывай про шах!', 'Конь ходит буквой Г. Мур!', 'Мур-мур, ты умница!'],
+      arni: ['Гав! Ладья ходит по прямой!', 'Береги короля! Гав!', 'Давай играть!'],
+      fox: ['Хи-хи, у меня есть хитрая ловушка!', 'Следи за ферзём!', 'Не зевай, я всё вижу!'],
+      prof: ['Думай перед каждым ходом!', 'Рокировка: ход королём и ладьёй.', 'Шахматы учат думать.'],
+      king: ['Ты молодец! Собирай звёзды!', 'Каждый ход — шаг к победе.', 'Добро пожаловать в мою страну!']
+    };
+    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var sky = document.createElement('div'); sky.id = 'sky';
+    var sh = ['♙', '♘', '♗', '♖', '♕', '♔', '★', '♟'];
+    for (var i = 0; i < 14; i++) {
+      var s = document.createElement('span');
+      s.textContent = sh[i % sh.length];
+      s.style.left = (i * 7.3 + 2) % 100 + '%';
+      s.style.fontSize = (22 + (i * 13) % 34) + 'px';
+      s.style.animationDuration = (26 + (i * 5) % 22) + 's';
+      s.style.animationDelay = -((i * 7) % 30) + 's';
+      sky.appendChild(s);
+    }
+    document.body.insertBefore(sky, document.body.firstChild);
+    var walk = document.createElement('div'); walk.id = 'walk';
+    var bubs = document.createElement('div'); bubs.id = 'bubs';
+    document.body.appendChild(walk); document.body.appendChild(bubs);
+    var W = [], keys = Object.keys(HEROES), vw = window.innerWidth, last = 0, bt = 0;
+    function size() { return vw < 560 ? 52 : 62; }
+    keys.forEach(function (k, i) {
+      var d = document.createElement('div'); d.className = 'wk'; d.setAttribute('role', 'button'); d.setAttribute('aria-label', HEROES[k].n);
+      d.innerHTML = '<div class="fl"><img src="' + IMG[k] + '" alt="" width="62" height="62"></div>';
+      walk.appendChild(d);
+      var o = { k: k, el: d, x: (vw / keys.length) * i + 10, dir: i % 2 ? 1 : -1, sp: 22 + (i * 9) % 20, rest: 0, n: 0 };
+      d.addEventListener('click', function () { talk(o); });
+      W.push(o);
+    });
+    function talk(o) {
+      var l = PH[o.k], t = l[o.n++ % l.length];
+      o.rest = 3.5; o.el.classList.add('rest', 'jump');
+      setTimeout(function () { o.el.classList.remove('jump'); }, 650);
+      bubs.innerHTML = '';
+      var b = document.createElement('div'); b.className = 'bub'; b.innerHTML = '<b>' + esc(HEROES[o.k].n) + ':</b> ' + esc(t);
+      bubs.appendChild(b);
+      var sz = size(), cx = o.x + sz / 2, bw = Math.min(190, vw - 16);
+      var left = Math.max(8, Math.min(vw - bw - 8, cx - bw / 2));
+      b.style.left = left + 'px'; b.style.setProperty('--tx', (cx - left) + 'px');
+      clearTimeout(bt); bt = setTimeout(function () { bubs.innerHTML = ''; }, 3200);
+      try { sfx('good'); } catch (e) {}
+    }
+    function place(o) {
+      o.el.firstChild.style.transform = o.dir > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+      o.el.style.transform = 'translateX(' + o.x + 'px)';
+    }
+    function tick(ts) {
+      var dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts;
+      var sz = size(), max = vw - sz - 4;
+      W.forEach(function (o) {
+        if (o.rest > 0) { o.rest -= dt; if (o.rest <= 0) o.el.classList.remove('rest'); }
+        else {
+          o.x += o.dir * o.sp * dt;
+          if (o.x < 4) { o.x = 4; o.dir = 1; } if (o.x > max) { o.x = max; o.dir = -1; }
+          if (Math.random() < dt * .25) { o.rest = 1 + Math.random() * 2.5; o.el.classList.add('rest'); if (Math.random() < .5) o.dir = -o.dir; }
+        }
+        place(o);
+      });
+      requestAnimationFrame(tick);
+    }
+    window.addEventListener('resize', function () { vw = window.innerWidth; });
+    W.forEach(function (o) { place(o); });
+    if (still) W.forEach(function (o) { o.el.classList.add('rest'); }); else requestAnimationFrame(tick);
+    function sync() { var h = location.hash || '#home'; walk.classList.toggle('dim', h === '#board' || h.indexOf('#play/') === 0 || h.indexOf('#game') === 0); }
+    window.addEventListener('hashchange', sync); sync();
+  })();
+  /* ---------- «Показать решение» только после 3 неверных попыток ---------- */
+  (function () {
+    var cur = null, tries = 0, lim = 3, mo = null;
+    function btn() { return document.getElementById('ansB') || document.getElementById('ansBtn'); }
+    function paint(b) {
+      if (!b) return;
+      var open = tries >= lim, tx = open ? 'Показать решение' : 'Решение откроется после ' + (lim - tries) + ' ' + (lim - tries === 1 ? 'ошибки' : 'ошибок');
+      if (b.disabled !== !open) b.disabled = !open;
+      if (b.textContent !== tx) b.textContent = tx;
+    }
+    function scan() {
+      var b = btn();
+      if (b !== cur) { cur = b; tries = 0; }
+      if (b) paint(b);
+    }
+    var seen = '';
+    new MutationObserver(function (ms) {
+      var b = btn(); if (!b) { cur = null; return; }
+      ms.forEach(function (m) {
+        var t = m.target; var el = t.nodeType === 3 ? t.parentNode : t;
+        if (el && el.classList && el.classList.contains('msg') && el.classList.contains('bad') && m.type === 'childList' && m.addedNodes.length) tries++;
+      });
+      scan();
+    }).observe(view, { childList: true, subtree: true, characterData: true });
+  })();
+
 
   /* ---------- Разбор партии ---------- */
   var CLS = {
+    brill: { n: 'Супер ход', s: '!!', c: 'cs' }, great: { n: 'Отличный ход', s: '!', c: 'cr' },
     best: { n: 'Лучший ход', s: '★', c: 'cb' }, good: { n: 'Хороший ход', s: '✓', c: 'cg' },
-    inacc: { n: 'Неточность', s: '?!', c: 'ci' }, mistake: { n: 'Ошибка', s: '?', c: 'cm' }, blunder: { n: 'Зевок', s: '??', c: 'cz' }
+    inacc: { n: 'Сомнительный ход', s: '?!', c: 'ci' }, mistake: { n: 'Ошибка', s: '?', c: 'cm' }, blunder: { n: 'Грубая ошибка', s: '??', c: 'cz' }
   };
+  var CLS_ORDER = ['brill', 'great', 'best', 'good', 'inacc', 'mistake', 'blunder'];
   function clampS(s) { return s > 900 ? 900 : s < -900 ? -900 : s; }
   function classify(same, loss) {
     if (same || loss <= 10) return 'best';
@@ -2496,6 +2906,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
     if (loss < 120) return 'inacc';
     if (loss < 260) return 'mistake';
     return 'blunder';
+  }
+  function classifySF(same, loss, gap, e0) {
+    if (!same && loss > 10) return loss < 45 ? 'good' : loss < 110 ? 'inacc' : loss < 250 ? 'mistake' : 'blunder';
+    if (e0 < 700 && e0 > -700) { if (gap >= 220) return 'brill'; if (gap >= 90) return 'great'; }
+    return 'best';
   }
   function sameMove(a, b) { return a.f === b.f && a.t === b.t && (a.p || 0) === (b.p || 0); }
   function notation(m, before) {
@@ -2506,7 +2921,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     return t + (st === 'mate' ? '#' : st === 'check' ? '+' : '');
   }
   /* анализирует партию по шагам, не подвешивая страницу */
-  function analyzeAll(recs, progress, done, token) {
+  function analyzeOld(recs, progress, done, token) {
     E.clear();
     var res = [], hh = [], i = 0;
     recs.forEach(function (r) { hh.push(E.hashOf(r.pos)); });
@@ -2524,12 +2939,61 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     next();
   }
+  function analyzeAll(recs, progress, done, token) {
+    progress(0, recs.length);
+    SF.load().then(function (ok) {
+      if (token.cancel) return;
+      if (!ok) { analyzeOld(recs, progress, done, token); return; }
+      var n = recs.length, ev = [], i = 0, poss = recs.map(function (r) { return r.pos; });
+      poss.push(E.make(recs[n - 1].pos, recs[n - 1].m));
+      function term(pos) { var st = E.status(pos); return st === 'mate' ? -30000 : (st === 'stalemate' ? 0 : null); }
+      function step() {
+        if (token.cancel) return;
+        if (i > n) { finish(); return; }
+        var pos = poss[i], t = term(pos);
+        if (t !== null || E.insufficient(pos)) { ev[i] = { cp: t === null ? 0 : t, best: null, lines: [] }; i++; progress(Math.min(i, n), n); step(); return; }
+        SF.eval(E.toFEN(pos), 11, 2).then(function (r) {
+          if (token.cancel) return;
+          if (!r || !r.lines.length) { analyzeOld(recs, progress, done, token); return; }
+          ev[i] = { cp: r.lines[0].cp, mate: r.lines[0].mate, best: r.lines[0].move, lines: r.lines };
+          i++; progress(Math.min(i, n), n); setTimeout(step, 0);
+        });
+      }
+      function finish() {
+        var res = [];
+        recs.forEach(function (r, k) {
+          var pos = r.pos, e0 = ev[k], e1 = ev[k + 1], bm = e0.best ? uciMove(pos, e0.best) : null;
+          var same = bm ? sameMove(bm, r.m) : false, s0 = e0.cp, s1 = same ? s0 : -e1.cp;
+          if (s0 > 600 && s1 > 600) s1 = Math.max(s1, s0 - 40);
+          var loss = Math.max(0, clampS(s0) - clampS(s1));
+          var gap = e0.lines.length > 1 ? clampS(e0.lines[0].cp) - clampS(e0.lines[1].cp) : 0;
+          var best = bm || r.m;
+          res.push({ cls: classifySF(same, loss, gap, s0), loss: loss, best: best, bestScore: s0, mate: e0.mate, ev: s1 * pos.turn, text: notation(r.m, pos), turn: pos.turn, same: same, sf: true });
+        });
+        done(res);
+      }
+      step();
+    });
+  }
+  function profWords(a, r) {
+    var bn = a.best && !a.same ? notation(a.best, r.pos) : '', mt = a.mate && a.mate > 0 && a.cls !== 'best' && a.cls !== 'brill' && a.cls !== 'great' ? ' Здесь можно было поставить мат!' : '';
+    var P = {
+      brill: ['Браво! Супер ход! Другие ходы были намного хуже, а ты нашёл единственный сильный.', 'Ура, супер ход! Так играют настоящие мастера.'],
+      great: ['Отличный ход! Многие ходы здесь слабее, а ты выбрал самый сильный.', 'Молодец, отличный ход!'],
+      best: ['Лучший ход! Компьютер выбрал бы такой же.', 'Верно, так и надо играть.'],
+      good: ['Хороший ход. Есть ход чуть сильнее, но этот тоже годится.'],
+      inacc: ['Сомнительный ход. Лучше было ' + bn + '.' + mt, 'Не самый удачный выбор: сильнее было ' + bn + '.' + mt],
+      mistake: ['Ошибка. Перед ходом спроси себя: что теперь может сделать соперник? Лучше было ' + bn + '.' + mt],
+      blunder: ['Грубая ошибка! Проверь, не осталась ли фигура без защиты. Лучше было ' + bn + '.' + mt, 'Ой, это зевок! Всегда смотри, куда может пойти фигура соперника. Нужно было ' + bn + '.' + mt]
+    };
+    var l = P[a.cls]; return l[(r.pos.turn + a.loss) % l.length < l.length ? Math.abs((a.loss | 0)) % l.length : 0];
+  }
   function reviewHTML(res) {
     var cnt2 = { 1: {}, '-1': {} }, loss = { 1: 0, '-1': 0 }, num = { 1: 0, '-1': 0 };
     res.forEach(function (r) { cnt2[r.turn][r.cls] = (cnt2[r.turn][r.cls] || 0) + 1; loss[r.turn] += Math.min(r.loss, 400); num[r.turn]++; });
     function side(t, nm) {
       var acc = num[t] ? Math.round(100 * Math.exp(-(loss[t] / num[t]) / 120)) : 0, h = '<div class="rside"><b>' + nm + '</b><span class="acc">Точность ' + acc + '%</span><div class="chips">';
-      ['best', 'good', 'inacc', 'mistake', 'blunder'].forEach(function (k) { h += '<span class="chip ' + CLS[k].c + '"><i>' + CLS[k].s + '</i> ' + CLS[k].n + ': ' + (cnt2[t][k] || 0) + '</span>'; });
+      CLS_ORDER.forEach(function (k) { if (!cnt2[t][k] && (k === 'brill' || k === 'great')) return; h += '<span class="chip ' + CLS[k].c + '"><i>' + CLS[k].s + '</i> ' + CLS[k].n + ': ' + (cnt2[t][k] || 0) + '</span>'; });
       return h + '</div></div>';
     }
     /* график оценки */
@@ -2675,7 +3139,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       }, function (res) {
         if (tk.cancel) return;
         rv.res = res; rv.idx = res.length - 1; sfx('good');
-        bx.innerHTML = '<div class="rvhead"><h3>Разбор партии</h3><div class="rvsum">' + reviewHTML(res) + '</div>' +
+        bx.innerHTML = '<div class="rvhead"><h3>Разбор партии</h3><div class="rvsum">' + reviewHTML(res) + '</div><div id="rvsay"></div>' +
           '<div class="row"><button class="btn alt" id="rvPrev">◀ Ход назад</button><button class="btn alt" id="rvNext">Ход вперёд ▶</button><button class="btn" id="rvClose">Закрыть разбор</button></div></div>';
         bx.querySelector('#rvPrev').onclick = function () { go(rv.idx - 1); };
         bx.querySelector('#rvNext').onclick = function () { go(rv.idx + 1); };
@@ -2687,12 +3151,15 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (!rv || !rv.res) return;
       if (k < -1) k = -1; if (k > recs.length - 1) k = recs.length - 1;
       rv.idx = k;
-      if (k < 0) { S.pos = startPos; S.last = null; S.best = null; setMsg('Начало партии.'); draw(); return; }
-      var r = recs[k], a = rv.res[k], c = CLS[a.cls];
+      if (k < 0) { S.pos = startPos; S.last = null; S.best = null; S.badge = null; var sy0 = document.getElementById('rvsay'); if (sy0) sy0.innerHTML = ''; setMsg('Начало партии.'); draw(); return; }
+      var r = recs[k], a = rv.res[k], c = CLS[a.cls], good = a.cls === 'best' || a.cls === 'good' || a.cls === 'brill' || a.cls === 'great';
       S.pos = k + 1 < recs.length ? recs[k + 1].pos : finalPos(); S.last = { f: r.m.f, t: r.m.t };
-      S.best = a.cls === 'best' || a.cls === 'good' ? null : { f: a.best.f, t: a.best.t };
-      var side = r.pos.turn === 1 ? 'Белые' : 'Чёрные';
-      setMsg(side + ': ' + a.text + ' — ' + c.n + '.' + (S.best ? ' Лучше было: ' + notation(a.best, r.pos) + ' (отмечено на доске).' : ''), a.cls === 'blunder' || a.cls === 'mistake' ? 'bad' : a.cls === 'best' ? 'good' : '');
+      S.best = good ? null : { f: a.best.f, t: a.best.t };
+      S.badge = { sq: r.m.t, cls: a.cls, s: c.s };
+      var side = r.pos.turn === 1 ? 'Белые' : 'Чёрные', bad = a.cls === 'blunder' || a.cls === 'mistake' || a.cls === 'inacc';
+      setMsg(side + ': ' + a.text + c.s + ' — ' + c.n + '.', a.cls === 'blunder' || a.cls === 'mistake' ? 'bad' : (a.cls === 'inacc' ? '' : 'good'));
+      var sy = document.getElementById('rvsay'); if (sy) sy.innerHTML = say(av('prof'), 'Профессор', profWords(a, r), c.s + ' ' + c.n);
+      if (!rv.mute) sfx(a.cls === 'blunder' ? 'blunder' : a.cls === 'mistake' ? 'mistake' : a.cls === 'inacc' ? 'inacc' : a.cls === 'brill' ? 'brill' : a.cls === 'great' ? 'great' : 'move');
       draw();
     }
     document.getElementById('bAn').onclick = startReview;
