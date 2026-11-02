@@ -144,7 +144,7 @@ a.card:hover { border-color: var(--red); }
 .f { fill: var(--pf); stroke: var(--ps); stroke-width: 1.5; stroke-linejoin: round; }
 .ln { fill: none; stroke: var(--lnc, #1b1a19); stroke-width: 1.2; stroke-linecap: round; }
 .pcs.w { --pf: #ffffff; --ps: #1b1a19; --lnc: #1b1a19; --eye: #1b1a19; }
-.pcs.b { --pf: #3a3735; --ps: #111; --lnc: #d8d3ce; --eye: #ffffff; filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff); }
+.pcs.b { }
 .board[data-board="bw"] { --sq-light: #fbf6e6; --sq-dark: #8f9db3; }
 .board[data-board="green"] { --sq-light: #eeeed2; --sq-dark: #6f9a54; }
 .board[data-board="brown"] { --sq-light: #f0d9b5; --sq-dark: #b58863; }
@@ -392,15 +392,85 @@ section > .note { background: rgba(255,255,255,.7); border-radius: 12px; padding
 .b-brill { background: #12b886; } .b-great { background: #2fa84f; } .b-best { background: #2fa84f; } .b-good { background: #7cb518; }
 .b-inacc { background: #f5b000; color: #3a2a00; } .b-mistake { background: #f76707; } .b-blunder { background: #e03131; }
 #rvsay { margin: 10px 0; }
+/* Герои без бегающих по низу: спутник рядом с упражнениями */
+#walk, #bubs { display: none !important; }
+body { padding-bottom: 96px; }
+#comp { position: fixed; left: 10px; bottom: 10px; z-index: 40; display: flex; align-items: flex-end; gap: 8px; pointer-events: none; max-width: calc(100vw - 20px); }
+#comp[hidden] { display: none; }
+#comp .cbtn { pointer-events: auto; border: 0; background: none; padding: 0; cursor: pointer; flex: none; }
+#comp img { width: 64px; height: 64px; border-radius: 50%; border: 3px solid #fff; background: #fff; box-shadow: 0 4px 0 rgba(0,0,0,.2); display: block; animation: bob 3s ease-in-out infinite; }
+#comp .cbtn.jump img { animation: jumpy .6s ease-out; }
+#comp .cx { pointer-events: auto; position: absolute; top: -8px; left: -4px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; background: rgba(27,26,25,.7); color: #fff; font-size: 14px; line-height: 1; padding: 0; cursor: pointer; }
+#comp .cb { opacity: 0; transform: translateY(6px) scale(.95); transition: .25s; background: #fff; border: 3px solid #1b1a19; border-radius: 18px; padding: 8px 12px; font-weight: 800; font-size: 14px; line-height: 1.25; box-shadow: 0 4px 0 rgba(0,0,0,.2); max-width: 220px; margin-bottom: 14px; order: 2; pointer-events: none; }
+#comp .cb.on { opacity: 1; transform: none; }
+.heroes figure { position: relative; }
+.heroes figure.jump .av { animation: jumpy .6s ease-out; }
+.fb { position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); z-index: 20; width: 160px; background: #fff; border: 3px solid #1b1a19; border-radius: 16px; padding: 6px 10px; font-size: 13px; font-weight: 800; line-height: 1.25; box-shadow: 0 4px 0 rgba(0,0,0,.2); animation: pop .25s both; pointer-events: none; }
+@keyframes pop { from { transform: translateX(-50%) scale(.7); opacity: 0; } to { transform: translateX(-50%) scale(1); opacity: 1; } }
+.hbig.pcbig .pcs { width: 56px; height: 56px; }
+/* Движок */
+.vsrow { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 8px 0; font-weight: 800; }
+.vsrow select { font: 700 15px var(--font-body); padding: 8px 10px; border-radius: 12px; border: 3px solid #ffd36b; background: #fff; }
+.eng { background: #fff; border: 3px solid #ffd36b; border-radius: 22px; padding: 12px 14px; margin: 10px 0; box-shadow: 0 5px 0 rgba(224,178,58,.45); }
+.eng[hidden] { display: none; }
+.engh { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-family: var(--font-display); }
+.engh span { font-size: 22px; font-weight: 700; color: #d7261e; }
+.evb { height: 24px; border-radius: 12px; background: #1b1a19; position: relative; overflow: hidden; border: 3px solid #1b1a19; }
+.evb i.w { position: absolute; left: 0; top: 0; bottom: 0; width: 50%; background: #fff; transition: width .7s cubic-bezier(.4, 1.4, .5, 1); }
+.evm { position: relative; height: 20px; }
+.evm span { position: absolute; left: 50%; top: 0; transform: translateX(-50%); font-size: 20px; line-height: 1; color: #d7261e; transition: left .7s cubic-bezier(.4, 1.4, .5, 1); }
+.engl { display: grid; gap: 6px; margin-top: 4px; }
+.engln { display: flex; gap: 8px; border-radius: 12px; padding: 6px 10px; font-size: 14px; background: #f3f3f1; border-left: 6px solid #ccc; }
+.engln b { min-width: 60px; font-family: var(--font-display); }
+.engln.e0 { border-left-color: #2fa84f; background: #e7f7ec; } .engln.e1 { border-left-color: #2b8ff0; background: #e4f1fe; } .engln.e2 { border-left-color: #f2b300; background: #fff6d6; }
+.board { position: relative; } .arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 8; }
+/* анимация ходов */
+.pcs.mvpc { animation: slidepc .6s cubic-bezier(.3, .7, .3, 1); z-index: 9; }
+@keyframes slidepc { from { transform: translate(calc(var(--dx) * 113.6%), calc(var(--dy) * 113.6%)); } to { transform: none; } }
+.pcs.ghost { position: absolute; left: 6%; top: 6%; z-index: 8; animation: ghostfade .7s ease-out forwards; }
+@keyframes ghostfade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.4) rotate(25deg); } }
+@media (prefers-reduced-motion: reduce) { .pcs.mvpc, .pcs.ghost { animation: none; } .pcs.ghost { display: none; } }
+
+.pcs.mvpc.prom { animation: slidepc .6s cubic-bezier(.3, .7, .3, 1), promopop 1.1s .6s ease-out; }
+@keyframes promopop { 0% { transform: scale(.4) rotate(-25deg); filter: drop-shadow(0 0 0 gold); } 40% { transform: scale(1.6) rotate(8deg); filter: drop-shadow(0 0 10px gold); } 100% { transform: none; filter: none; } }
+.spk { position: absolute; z-index: 12; font-size: 4.5cqw; pointer-events: none; opacity: 0; animation: spark 1.2s .6s ease-out; }
+.spk.s1 { left: 5%; top: 10%; } .spk.s2 { right: 5%; top: 5%; animation-delay: .75s; } .spk.s3 { left: 40%; bottom: 5%; animation-delay: .9s; }
+@keyframes spark { 0% { opacity: 0; transform: translateY(8px) scale(.4); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(-26px) scale(1.4) rotate(40deg); } }
+
+.engln.e3 { border-left-color: #a35bd6; background: #f1e7fa; } .engln.e4 { border-left-color: #ee7a2b; background: #fdebdc; } .engln.e5 { border-left-color: #888; background: #eee; }
+.evg { margin-top: 8px; } .evg small { color: #666; } .evg svg { width: 100%; height: 90px; background: #fff; border: 2px solid #ffd36b; border-radius: 12px; display: block; margin-top: 4px; }
+.livebd .sq { position: relative; }
+.fc { position: absolute; left: 50%; width: 44%; height: 14%; transform: translateX(-50%); display: flex; gap: 22%; justify-content: center; align-items: center; pointer-events: none; flex-wrap: wrap; animation: blink 3.4s infinite; z-index: 5; }
+.fc i { width: 32%; aspect-ratio: 1; background: #fff; border: 1.5px solid #222; border-radius: 50%; display: block; position: relative; }
+.fc i::after { content: ''; position: absolute; width: 45%; height: 45%; background: #111; border-radius: 50%; left: 35%; top: 35%; }
+.fc b { width: 40%; height: 6px; border-bottom: 2.5px solid #e0343b; border-radius: 0 0 20px 20px; flex-basis: 100%; margin: 1px auto 0; max-width: 40%; }
+@keyframes blink { 0%, 92%, 100% { transform: translateX(-50%) scaleY(1); } 95% { transform: translateX(-50%) scaleY(.1); } }
+.pcs.bob { animation: bobpc 2.4s ease-in-out infinite; transform-origin: 50% 90%; }
+@keyframes bobpc { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-3%) rotate(1.5deg); } }
+.pcs.mvpc.bob { animation: slidepc .6s cubic-bezier(.3, .7, .3, 1); }
+@media (prefers-reduced-motion: reduce) { .pcs.bob, .fc { animation: none; } }
+.nav a:nth-child(7) { background: #d9f3f5; color: #0a5c66; } .nav a:nth-child(7)[aria-current="page"] { background: #12a3b4; color: #fff; }
+.btn.go { background: linear-gradient(#2fd36b, #12a84a); color: #fff; font-size: 1.15em; border: 3px solid #0d7f37; box-shadow: 0 5px 0 #0d7f37; animation: gopulse 1.4s ease-in-out infinite; }
+@keyframes gopulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .btn.go { animation: none; } }
+.coin { display: inline-grid; place-items: center; width: 110px; height: 110px; border-radius: 50%; font-size: 54px; background: #fff; border: 4px solid #ffd36b; margin: 6px; cursor: pointer; }
+.coin:active { transform: scale(.94); }
+.tbl { width: 100%; border-collapse: collapse; } .tbl td, .tbl th { border: 2px solid #ffd36b; padding: 6px 8px; text-align: left; background: #fff; vertical-align: top; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
-<symbol id="pc1" viewBox="0 0 45 45"><circle class="f" cx="22.5" cy="12.5" r="5.8"/><path class="f" d="M17.5 20.5h10l1.5 4.5-2 2.2c2.4 2.6 4 6 4 9.3H14c0-3.300 1.600-6.700 4-9.300l-2-2.200z"/><rect class="f" x="11.500" y="35.500" width="22" height="4.500" rx="2"/></symbol>
-<symbol id="pc2" viewBox="0 0 45 45"><path class="f" d="M12.500 36c0-8 3-12.500 8-16.500l-6.500-3 -1.500-5 8-8.500 2-3.500 3.500 3.500c8 2.500 11.500 10.500 10 21.500L33.500 36z"/><circle cx="21" cy="13" r="1.500" fill="var(--eye,#1b1a19)"/><path class="ln" d="M27 11c3 2 5 6 5 11"/><rect class="f" x="10.500" y="35.500" width="24" height="4.500" rx="2"/></symbol>
-<symbol id="pc3" viewBox="0 0 45 45"><circle class="f" cx="22.500" cy="7.500" r="3"/><path class="f" d="M22.500 10c-3.500 3-7 8-7 14 0 3 1.300 5.500 3.500 7.500L16.500 35h12l-2.500-3.500c2.200-2 3.500-4.500 3.500-7.500 0-6-3.500-11-7-14z"/><path class="ln" d="M20 17l5 5"/><rect class="f" x="11.500" y="35.500" width="22" height="4.500" rx="2"/></symbol>
-<symbol id="pc4" viewBox="0 0 45 45"><path class="f" d="M11.500 40h22v-4h-3V21.500l3-3.500V9.500h-5v3.500h-4V9.500h-5.500V13h-4V9.500h-5V18l3 3.500V36h-3z"/><path class="ln" d="M14.500 21.500h16"/></symbol>
-<symbol id="pc5" viewBox="0 0 45 45"><path class="f" d="M12 36L9 15.500l7 8 2-11 4.500 9.500 4.500-9.500 2 11 7-8L33 36z"/><circle class="f" cx="9" cy="13.500" r="2.500"/><circle class="f" cx="16" cy="9.500" r="2.500"/><circle class="f" cx="22.500" cy="8" r="2.500"/><circle class="f" cx="29" cy="9.500" r="2.500"/><circle class="f" cx="36" cy="13.500" r="2.500"/><rect class="f" x="10.500" y="35.500" width="24" height="4.500" rx="2"/></symbol>
-<symbol id="pc6" viewBox="0 0 45 45"><path class="f" d="M22.500 13c-5.500 0-9.500 3.500-9.500 8.500 0 3.500 2 6.500 5 8.500-2.500 2-4 4-4.500 6h18c-.5-2-2-4-4.500-6 3-2 5-5 5-8.500 0-5-4-8.500-9.500-8.500z"/><rect class="f" x="21" y="2.500" width="3" height="11"/><rect class="f" x="17.500" y="5.500" width="10" height="3"/><rect class="f" x="10.500" y="35.500" width="24" height="4.500" rx="2"/></symbol>
+<symbol id="pb3" viewBox="0 0 45 45"><g class="black bishop" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2zm6-4c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0-.5.5 0 2zM25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z" fill="#000" stroke-linecap="butt"/><path d="M17.5 26h10M15 30h15m-7.5-14.5v5M20 18h5" stroke="#fff" stroke-linejoin="miter"/></g></symbol>
+<symbol id="pb6" viewBox="0 0 45 45"><g class="black king" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 11.63V6" stroke-linejoin="miter"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1-2.5-3-2.5s-3 2.5-3 2.5c-1.5 3 3 10.5 3 10.5" fill="#000" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M11.5 37c5.5 3.5 15.5 3.5 21 0v-7s9-4.5 6-10.5c-4-6.5-13.5-3.5-16 4V27v-3.5c-3.5-7.5-13-10.5-16-4-3 6 5 10 5 10V37z" fill="#000"/><path d="M20 8h5" stroke-linejoin="miter"/><path d="M32 29.5s8.5-4 6.03-9.65C34.15 14 25 18 22.5 24.5l.01 2.1-.01-2.1C20 18 9.906 14 6.997 19.85c-2.497 5.65 4.853 9 4.853 9M11.5 30c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0" stroke="#fff"/></g></symbol>
+<symbol id="pb2" viewBox="0 0 45 45"><g class="black knight" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18" style="fill:#000000; stroke:#000000;"/><path d="M 24,18 C 24.38,20.91 18.45,25.37 16,27 C 13,29 13.18,31.34 11,31 C 9.958,30.06 12.41,27.96 11,28 C 10,28 11.19,29.23 10,30 C 9,30 5.997,31 6,26 C 6,24 12,14 12,14 C 12,14 13.89,12.1 14,10.5 C 13.27,9.506 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.28,8.008 21,7 C 22,7 22,10 22,10" style="fill:#000000; stroke:#000000;"/><path d="M 9.5 25.5 A 0.5 0.5 0 1 1 8.5,25.5 A 0.5 0.5 0 1 1 9.5 25.5 z" style="fill:#ececec; stroke:#ececec;"/><path d="M 15 15.5 A 0.5 1.5 0 1 1 14,15.5 A 0.5 1.5 0 1 1 15 15.5 z" transform="matrix(0.866,0.5,-0.5,0.866,9.693,-5.173)" style="fill:#ececec; stroke:#ececec;"/><path d="M 24.55,10.4 L 24.1,11.85 L 24.6,12 C 27.75,13 30.25,14.49 32.5,18.75 C 34.75,23.01 35.75,29.06 35.25,39 L 35.2,39.5 L 37.45,39.5 L 37.5,39 C 38,28.94 36.62,22.15 34.25,17.66 C 31.88,13.17 28.46,11.02 25.06,10.5 L 24.55,10.4 z " style="fill:#ececec; stroke:none;"/></g></symbol>
+<symbol id="pb1" viewBox="0 0 45 45"><g class="black pawn"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="#000" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></g></symbol>
+<symbol id="pb5" viewBox="0 0 45 45"><g class="black queen" fill="#000" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g fill="#000" stroke="none"><circle cx="6" cy="12" r="2.75"/><circle cx="14" cy="9" r="2.75"/><circle cx="22.5" cy="8" r="2.75"/><circle cx="31" cy="9" r="2.75"/><circle cx="39" cy="12" r="2.75"/></g><path d="M9 26c8.5-1.5 21-1.5 27 0l2.5-12.5L31 25l-.3-14.1-5.2 13.6-3-14.5-3 14.5-5.2-13.6L14 25 6.5 13.5 9 26zM9 26c0 2 1.5 2 2.5 4 1 1.5 1 1 .5 3.5-1.5 1-1.5 2.5-1.5 2.5-1.5 1.5.5 2.5.5 2.5 6.5 1 16.5 1 23 0 0 0 1.5-1 0-2.5 0 0 .5-1.5-1-2.5-.5-2.5-.5-2 .5-3.5 1-2 2.5-2 2.5-4-8.5-1.5-18.5-1.5-27 0z" stroke-linecap="butt"/><path d="M11 38.5a35 35 1 0 0 23 0" fill="none" stroke-linecap="butt"/><path d="M11 29a35 35 1 0 1 23 0M12.5 31.5h20M11.5 34.5a35 35 1 0 0 22 0M10.5 37.5a35 35 1 0 0 24 0" fill="none" stroke="#fff"/></g></symbol>
+<symbol id="pb4" viewBox="0 0 45 45"><g class="black rook" fill="#000" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12.5 32l1.5-2.5h17l1.5 2.5h-20zM12 36v-4h21v4H12z" stroke-linecap="butt"/><path d="M14 29.5v-13h17v13H14z" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M14 16.5L11 14h23l-3 2.5H14zM11 14V9h4v2h5V9h5v2h5V9h4v5H11z" stroke-linecap="butt"/><path d="M12 35.5h21M13 31.5h19M14 29.5h17M14 16.5h17M11 14h23" fill="none" stroke="#fff" stroke-width="1" stroke-linejoin="miter"/></g></symbol>
+<symbol id="pw3" viewBox="0 0 45 45"><g class="white bishop" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g fill="#fff" stroke-linecap="butt"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2zM15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0-.5.5 0 2zM25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z"/></g><path d="M17.5 26h10M15 30h15m-7.5-14.5v5M20 18h5" stroke-linejoin="miter"/></g></symbol>
+<symbol id="pw6" viewBox="0 0 45 45"><g class="white king" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 11.63V6M20 8h5" stroke-linejoin="miter"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1-2.5-3-2.5s-3 2.5-3 2.5c-1.5 3 3 10.5 3 10.5" fill="#fff" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M11.5 37c5.5 3.5 15.5 3.5 21 0v-7s9-4.5 6-10.5c-4-6.5-13.5-3.5-16 4V27v-3.5c-3.5-7.5-13-10.5-16-4-3 6 5 10 5 10V37z" fill="#fff"/><path d="M11.5 30c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0"/></g></symbol>
+<symbol id="pw2" viewBox="0 0 45 45"><g class="white knight" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18" style="fill:#ffffff; stroke:#000000;"/><path d="M 24,18 C 24.38,20.91 18.45,25.37 16,27 C 13,29 13.18,31.34 11,31 C 9.958,30.06 12.41,27.96 11,28 C 10,28 11.19,29.23 10,30 C 9,30 5.997,31 6,26 C 6,24 12,14 12,14 C 12,14 13.89,12.1 14,10.5 C 13.27,9.506 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.28,8.008 21,7 C 22,7 22,10 22,10" style="fill:#ffffff; stroke:#000000;"/><path d="M 9.5 25.5 A 0.5 0.5 0 1 1 8.5,25.5 A 0.5 0.5 0 1 1 9.5 25.5 z" style="fill:#000000; stroke:#000000;"/><path d="M 15 15.5 A 0.5 1.5 0 1 1 14,15.5 A 0.5 1.5 0 1 1 15 15.5 z" transform="matrix(0.866,0.5,-0.5,0.866,9.693,-5.173)" style="fill:#000000; stroke:#000000;"/></g></symbol>
+<symbol id="pw1" viewBox="0 0 45 45"><g class="white pawn"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="#fff" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></g></symbol>
+<symbol id="pw5" viewBox="0 0 45 45"><g class="white queen" fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12a2 2 0 1 1-4 0 2 2 0 1 1 4 0zM24.5 7.5a2 2 0 1 1-4 0 2 2 0 1 1 4 0zM41 12a2 2 0 1 1-4 0 2 2 0 1 1 4 0zM16 8.5a2 2 0 1 1-4 0 2 2 0 1 1 4 0zM33 9a2 2 0 1 1-4 0 2 2 0 1 1 4 0z"/><path d="M9 26c8.5-1.5 21-1.5 27 0l2-12-7 11V11l-5.5 13.5-3-15-3 15-5.5-14V25L7 14l2 12zM9 26c0 2 1.5 2 2.5 4 1 1.5 1 1 .5 3.5-1.5 1-1.5 2.5-1.5 2.5-1.5 1.5.5 2.5.5 2.5 6.5 1 16.5 1 23 0 0 0 1.5-1 0-2.5 0 0 .5-1.5-1-2.5-.5-2.5-.5-2 .5-3.5 1-2 2.5-2 2.5-4-8.5-1.5-18.5-1.5-27 0z" stroke-linecap="butt"/><path d="M11.5 30c3.5-1 18.5-1 22 0M12 33.5c6-1 15-1 21 0" fill="none"/></g></symbol>
+<symbol id="pw4" viewBox="0 0 45 45"><g class="white rook" fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12 36v-4h21v4H12zM11 14V9h4v2h5V9h5v2h5V9h4v5" stroke-linecap="butt"/><path d="M34 14l-3 3H14l-3-3"/><path d="M31 17v12.5H14V17" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M31 29.5l1.5 2.5h-20l1.5-2.5"/><path d="M11 14h23" fill="none" stroke-linejoin="miter"/></g></symbol>
 </defs></svg>
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="wrap">
@@ -411,14 +481,15 @@ section > .note { background: rgba(255,255,255,.7); border-radius: 12px; padding
       <a href="#lessons" data-r="lessons">Уроки</a>
       <a href="#puzzles" data-r="puzzles">Задачи</a>
       <a href="#play" data-r="play">С роботом</a>
-      <a href="#board" data-r="board">Вдвоём</a>
+      <a href="#live" data-r="live">Живые</a>
+      <a href="#board" data-r="board">Доска</a>
       <a href="#awards" data-r="awards">Награды</a>
     </nav>
     <a class="ptsbadge" id="pts" href="#awards" aria-label="Твои баллы">⭐ 0</a>
     <button class="sndbtn" id="snd" aria-pressed="true">Звук вкл</button>
   </div>
   <main id="view"></main>
-  <p class="site-link">Это детский раздел <a href="https://www.upgradechessclub.com">UpGrade Chess Club</a>. Бесплатно.</p>
+  <p class="site-link">Фигуры: Colin M. L. Burnett, CC BY-SA 3.0. Это детский раздел <a href="https://www.upgradechessclub.com">UpGrade Chess Club</a>. Бесплатно.</p>
 </div>
 
 <script>
@@ -1148,7 +1219,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     yasmin: { n: 'Ясмин' }, tima: { n: 'Тима' }, simba: { n: 'Кот Симба' }, arni: { n: 'Арни' },
     fox: { n: 'Хитринка' }, prof: { n: 'Профессор' }, king: { n: 'Король Добромир' }
   };
-  function pcHTML(v) { var t = Math.abs(v); return '<svg class="pcs ' + (v > 0 ? 'w' : 'b') + '" viewBox="0 0 45 45" aria-hidden="true"><use href="#pc' + t + '"/></svg>'; }
+  function pcHTML(v) { var t = Math.abs(v); return '<svg class="pcs ' + (v > 0 ? 'w' : 'b') + '" viewBox="0 0 45 45" aria-hidden="true"><use href="#p' + (v > 0 ? 'w' : 'b') + t + '"/></svg>'; }
   var boardTheme = 'bw';
   var PNAME = { 1: 'пешка', 2: 'конь', 3: 'слон', 4: 'ладья', 5: 'ферзь', 6: 'король' };
   var PGEN = { R: 'ладьёй', Q: 'ферзём', B: 'слоном', N: 'конём', P: 'пешкой', X: 'разными фигурами' };
@@ -1287,6 +1358,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function sfx(n) { try { if (!muted && Snd[n]) Snd[n](); } catch (e) {} }
   function moveSound(before, m, after) {
     var cap = before.b[m.t] || m.fl === 1, st = E.status(after);
+    if (m.p) { sfx('brill'); return; }
     sfx(st === 'mate' ? 'check' : st === 'check' ? 'check' : cap ? 'cap' : 'move');
   }
 
@@ -1343,7 +1415,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     return '<svg class="medal' + (m.ok ? '' : ' off') + '" width="' + s + '" height="' + s + '" viewBox="0 0 56 56" aria-hidden="true">' +
       '<path d="M16 2h9l5 14h-9z" fill="#d7261e"/><path d="M40 2h-9l-5 14h9z" fill="#ffc21a"/>' +
       '<circle cx="28" cy="34" r="19" fill="' + c + '" stroke="#1b1a19" stroke-width="2"/><circle cx="28" cy="34" r="14" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="2"/>' +
-      '<g transform="translate(14 20) scale(.62)"><use href="#pc' + m.pc + '" class="mpc"/></g></svg>';
+      '<g transform="translate(14 20) scale(.62)"><use href="#pw' + m.pc + '" class="mpc"/></g></svg>';
   }
   /* показывает новые награды; вызывать с набором «до» */
   function newMedals(before) {
@@ -1384,6 +1456,24 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var el = document.getElementById('board'); if (el) el.dataset.board = boardTheme;
     document.querySelectorAll('#bt button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.t === boardTheme)); });
   }
+  function animOf(before, m) {
+    var a = { moves: [{ f: m.f, t: m.t }], ghost: [], promo: !!m.p };
+    if (m.fl === 2) a.moves.push(m.t > m.f ? { f: m.f + 3, t: m.f + 1 } : { f: m.f - 4, t: m.f - 1 });
+    if (m.fl === 1) { var sq = (m.f >> 3) * 8 + (m.t & 7); a.ghost.push({ sq: sq, v: before.b[sq] }); }
+    else if (before.b[m.t]) a.ghost.push({ sq: m.t, v: before.b[m.t] });
+    return a;
+  }
+  function applyAnim(el, S) {
+    var a = S.anim; S.anim = null; if (!a) return;
+    var d = function (i) { return S.flip ? 63 - i : i; };
+    a.moves.forEach(function (m) {
+      var sq = el.querySelector('.sq[data-i="' + m.t + '"] .pcs'); if (!sq) return;
+      sq.style.setProperty('--dx', (d(m.f) & 7) - (d(m.t) & 7)); sq.style.setProperty('--dy', (d(m.f) >> 3) - (d(m.t) >> 3)); sq.classList.add('mvpc'); if (a.promo) { sq.classList.add('prom'); sq.parentNode.insertAdjacentHTML('beforeend', '<span class="spk s1">✨</span><span class="spk s2">⭐</span><span class="spk s3">✨</span>'); }
+    });
+    a.ghost.forEach(function (g) {
+      var q = el.querySelector('.sq[data-i="' + g.sq + '"]'); if (q && g.v) q.insertAdjacentHTML('beforeend', pcHTML(g.v).replace('class="pcs ', 'class="pcs ghost '));
+    });
+  }
   function drawBoard(S, onClick) {
     var el = document.getElementById('board');
     if (!el) return;
@@ -1413,7 +1503,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       html += '<button class="' + cls + '" data-i="' + i + '" aria-label="' + label + '">' +
         (v ? pcHTML(v) : '') + (bdg ? '<span class="bdg b-' + bdg.cls + '">' + bdg.s + '</span>' : '') + (mk === 'star' ? '<span class="mk">★</span>' : mk === 'flag' ? '<span class="mk fl">⚑</span>' : '') + co + '</button>';
     }
-    el.innerHTML = html;
+    el.innerHTML = html; applyAnim(el, S);
     el.onclick = function (e) { var b = e.target.closest('.sq'); if (b) onClick(+b.dataset.i); };
   }
   function movesFrom(pos, i) { return E.legal(pos).filter(function (m) { return m.f === i; }); }
@@ -1445,7 +1535,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<a class="card" href="#play"><img class="ch" src="' + IMG.arni + '" alt=""><span class="big">Игра с роботами</span><p>10 миров, 200 уровней. Начни с пешек и дойди до гроссмейстеров.</p><span class="pill">Побед: ' + w + ' из ' + TOTAL + ' · ' + title + '</span></a>' +
       '<a class="card" href="#puzzles"><img class="ch" src="' + IMG.fox + '" alt=""><span class="big">Задачи на мат</span><p>Мат ладьёй, ферзём, слоном, конём, пешкой. Задачи не кончаются.</p><span class="pill">Решено: ' + (pt + cnt(solved)) + '</span></a>' +
       '<a class="card" href="#awards"><img class="ch" src="' + IMG.king + '" alt=""><span class="big">Награды</span><p>Медали, кубки и звёзды за твои успехи.</p><span class="pill">Медалей: ' + got + ' из ' + mm.length + '</span></a>' +
-      '<a class="card" href="#board"><img class="ch" src="' + IMG.tima + '" alt=""><span class="big">Играть вдвоём</span><p>Играй с другом на одном экране, расставляй позиции и разбирай партии: какие ходы были хорошие, а какие нет.</p><span class="pill">Друг против друга</span></a>' +
+      '<a class="card" href="#board"><img class="ch" src="' + IMG.tima + '" alt=""><span class="big">Доска и компьютер</span><p>Играй с другом на одном экране, расставляй позиции и разбирай партии: какие ходы были хорошие, а какие нет.</p><span class="pill">Друг против друга</span></a>' +
       '<a class="card" href="#lessons"><img class="ch" src="' + IMG.prof + '" alt=""><span class="big">Уроки</span><p>История шахмат, доска, ходы фигур со звёздочками и лабиринтами, шах, мат и ловушки.</p><span class="pill">' + lessonSummary() + '</span></a>' +
       '</div>' +
       '<section><h2>Наши герои</h2><div class="heroes" style="margin-top:12px">' + hh + '</div>' +
@@ -1758,7 +1848,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function apply(m) {
       var before = G.pos;
       G.rec.push({ pos: before, m: m });
-      G.pos = E.make(G.pos, m); G.last = { f: m.f, t: m.t }; G.sel = null; G.targets = []; G.hint = null;
+      G.pos = E.make(G.pos, m); G.last = { f: m.f, t: m.t }; G.anim = animOf(before, m); G.sel = null; G.targets = []; G.hint = null;
       var k = E.key(G.pos); G.keys[k] = (G.keys[k] || 0) + 1; G.hh.push(E.hashOf(G.pos));
       moveSound(before, m, G.pos);
     }
@@ -1915,7 +2005,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   /* --- создание уровней для фигур (всегда одинаковые для одного номера) --- */
   function genPiece(code, lv, seedx) {
     for (var attempt = 0; attempt < 300; attempt++) {
-      var r = mkRng(hstr('pc' + code + lv + '_' + (seedx || 0)) + attempt * 977), maze = lv > 10, k = maze ? lv - 10 : lv, ex;
+      var r = mkRng(hstr('pc' + code + lv + '_' + (seedx || 0)) + attempt * 977), maze = lv > 15, k = maze ? Math.ceil((lv - 15) * 2 / 3) : Math.ceil(lv * 2 / 3), ex;
       if (code === 'P') ex = genPawn(r, maze, k); else ex = genLone(code, r, maze, k);
       if (ex && solveEx(ex)) { ex.code = code; ex.lv = lv; ex.opt = solveEx(ex).len; return ex; }
     }
@@ -2271,10 +2361,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function showSlides(host, L, idx) {
     var s = L.slides[idx], n = L.slides.length, S = { pos: E.fromFEN('8/8/8/8/8/8/8/8 w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: s.mark || {}, hl: null };
     var body = '<div class="slide"><h3>' + esc(s.h) + '</h3>' + (s.p || []).map(function (x) { return '<p>' + x + '</p>'; }).join('') + (s.v || '') + '</div>';
-    var hasBoard = !!(s.fen || s.free || s.demo);
+    var hasBoard = !!(s.fen || s.free || s.demo || s.show);
     var step = 0, cap = '';
     host.innerHTML = body + (hasBoard ? boardHTML() + '<div class="msg" id="sm" role="status" aria-live="polite"></div>' : '') +
-      (s.demo ? '<div class="row"><button class="btn" id="dNext">Следующий ход ▶</button><button class="btn alt" id="dReset">Сначала</button></div>' : '') +
+      ((s.demo || s.show) ? '<div class="row"><button class="btn go" id="dPlay">▶ Показать</button><button class="btn" id="dNext">Следующий ход ▶</button><button class="btn alt" id="dReset">Сначала</button></div>' : '') +
       '<div class="row"><button class="btn alt" id="sPrev"' + (idx === 0 ? ' disabled' : '') + '>◀ Назад</button><span class="count">' + (idx + 1) + ' из ' + n + '</span><button class="btn" id="sNext">' + (idx === n - 1 ? (L.levels ? 'К упражнениям' : 'Готово') : 'Дальше ▶') + '</button></div>';
     var sm = document.getElementById('sm');
     function say(t, k) { if (sm) { sm.className = 'msg' + (k ? ' ' + k : ''); sm.textContent = t; } }
@@ -2292,18 +2382,41 @@ if (typeof module !== 'undefined') module.exports = Eng;
     if (s.demo) {
       var fen0 = s.demo.fen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', steps = s.demo.steps.map(function (x) { var a = x.split('|'); return { u: a[0], c: a[1] || '' }; });
       var render = function (silent) {
-        var pos = E.fromFEN(fen0), last = null, c = s.demo.start || 'Нажимай «Следующий ход».';
-        for (var i = 0; i < step; i++) { var m = uciMove(pos, steps[i].u); if (!m) break; var before = pos; pos = E.make(pos, m); last = { f: m.f, t: m.t }; if (i === step - 1) { c = (steps[i].c ? steps[i].c + ' ' : '') + '(' + notation(m, before) + ')'; if (!silent) moveSound(before, m, pos); } }
-        S.pos = pos; S.last = last; S.sel = null; S.targets = []; drawBoard(S, function () {});
+        var lastAnim = null, pos = E.fromFEN(fen0), last = null, c = s.demo.start || 'Нажимай «Следующий ход».';
+        for (var i = 0; i < step; i++) { var m = uciMove(pos, steps[i].u); if (!m) break; var before = pos; pos = E.make(pos, m); last = { f: m.f, t: m.t }; if (i === step - 1) lastAnim = animOf(before, m); if (i === step - 1) { c = (steps[i].c ? steps[i].c + ' ' : '') + '(' + notation(m, before) + ')'; if (!silent) moveSound(before, m, pos); } }
+        S.pos = pos; S.last = last; S.sel = null; S.targets = []; if (!silent) S.anim = lastAnim; drawBoard(S, function () {});
         var kind = ''; var st = E.status(pos); if (st === 'mate') { c += ' Это мат!'; kind = 'good'; } else if (st === 'check') { c += ' Шах!'; kind = 'bad'; } else if (st === 'stalemate') { c += ' Это пат: ничья.'; }
         say(c, kind);
         document.getElementById('dNext').disabled = step >= steps.length;
       };
       document.getElementById('dNext').onclick = function () { if (step < steps.length) { step++; render(false); } };
-      document.getElementById('dReset').onclick = function () { step = 0; render(true); };
+      document.getElementById('dReset').onclick = function () { clearTimers(); step = 0; render(true); };
+      document.getElementById('dPlay').onclick = function () { clearTimers(); if (step >= steps.length) { step = 0; render(true); } var k = 0; (function nx() { if (step < steps.length) { step++; render(false); later(nx, 1500); } })(); };
       render(true);
     }
-    document.getElementById('sPrev').onclick = function () { if (idx > 0) showSlides(host, L, idx - 1); };
+
+    if (s.show) {
+      var sh = s.show, code2 = sh.code, pv2 = PN[code2], cur2 = sqIdx(sh.at), idx2 = 0, en2 = {}, got = {};
+      (sh.enemies || []).forEach(function (e) { en2[sqIdx(e)] = -1 * (sh.ev || 1); });
+      var seq = sh.seq.map(function (x) { var a = x.split('|'); return { sq: sqIdx(a[0]), c: a[1] || '' }; });
+      var rdr = function (silent, from) {
+        var b = new Int8Array(64), q; for (q in en2) if (!got[q]) b[q] = en2[q]; b[cur2] = pv2;
+        S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; S.sel = cur2; S.targets = lone(code2, cur2, { enemies: (function () { var o = {}; for (var k in en2) if (!got[k]) o[k] = 1; return o; })() });
+        if (!silent && from != null) S.anim = { moves: [{ f: from, t: cur2 }], ghost: [] }; else S.anim = null;
+        drawBoard(S, function () {});
+        document.getElementById('dNext').disabled = idx2 >= seq.length;
+      };
+      var nextShow = function () {
+        if (idx2 >= seq.length) return; var m = seq[idx2++], from = cur2, cap = en2[m.sq] && !got[m.sq];
+        if (cap) got[m.sq] = true; cur2 = m.sq; sfx(cap ? 'cap' : 'move'); rdr(false, from); say((m.c || (cap ? 'Взяла фигуру!' : 'Ход')) + '', cap ? 'good' : '');
+      };
+      document.getElementById('dNext').onclick = nextShow;
+      document.getElementById('dReset').onclick = function () { clearTimers(); idx2 = 0; got = {}; cur2 = sqIdx(sh.at); rdr(true); say(sh.start || 'Нажми «Показать» и смотри.'); };
+      document.getElementById('dPlay').onclick = function () { clearTimers(); idx2 = 0; got = {}; cur2 = sqIdx(sh.at); rdr(true); (function nx() { if (idx2 < seq.length) { nextShow(); later(nx, 1400); } })(); };
+      rdr(true); say(sh.start || 'Нажми яркую кнопку «Показать» и смотри. Жёлтые точки — куда фигура может пойти.');
+    }
+    if (s.on) s.on(host);
+    document.getElementById('sPrev').onclick = function () { clearTimers(); if (idx > 0) showSlides(host, L, idx - 1); };
     document.getElementById('sNext').onclick = function () {
       if (idx < n - 1) { showSlides(host, L, idx + 1); return; }
       var r = L.levels ? null : saveLv(L, 1, 3);
@@ -2386,7 +2499,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function runNames(host, L, lv, finish) {
     var r = mkRng(hstr(L.id + lv + '_' + Date.now() % 100000)), S = { pos: E.fromFEN('8/8/8/8/8/8/8/8 w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: lv <= 5, mark: {}, hl: null };
     var mistakes = 0, done = false, q = null, mode = L.kind;
-    var sub = mode === 'diags' ? 'diag' : mode === 'lines' ? (lv % 2 ? 'file' : 'rank') : mode === 'squares' ? (lv <= 10 ? 'find' : 'name') : 'color';
+    var sub = mode === 'board' ? (lv <= 4 ? 'find' : lv <= 8 ? (lv % 2 ? 'file' : 'rank') : lv <= 12 ? 'diag' : lv <= 16 ? 'name' : 'color') : mode === 'diags' ? 'diag' : mode === 'lines' ? (lv % 2 ? 'file' : 'rank') : mode === 'squares' ? (lv <= 10 ? 'find' : 'name') : 'color';
     if (mode === 'lines') S.coords = lv <= 12;
     var sq = Math.floor(r() * 64), x = sq & 7, y = sq >> 3;
     var text, opts = null, ok;
@@ -2415,8 +2528,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var ob = document.getElementById('opts');
     if (ob) ob.onclick = function (e) {
       var b = e.target.closest('button'); if (!b || done) return;
-      var right = mode === 'colors' ? ((b.dataset.o === 'Тёмное') === dark) : b.dataset.o === SQN(sq);
-      if (right) { b.className = 'good'; win(); } else { b.className = 'bad'; bad(mode === 'colors' ? 'Подумай: поле a1 тёмное, потом цвета чередуются.' : 'Нет, попробуй ещё. Буква — вертикаль, цифра — горизонталь.'); }
+      var right = sub === 'color' ? ((b.dataset.o === 'Тёмное') === dark) : b.dataset.o === SQN(sq);
+      if (right) { b.className = 'good'; win(); } else { b.className = 'bad'; bad(sub === 'color' ? 'Подумай: поле a1 тёмное, потом цвета чередуются.' : 'Нет, попробуй ещё. Буква — вертикаль, цифра — горизонталь.'); }
     };
   }
 
@@ -2660,18 +2773,17 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<path d="M185 100 L235 108 L215 150 L200 168 L190 140 Z"/>' +
       '<path d="M55 100 L125 98 L160 115 L150 140 L110 150 L95 190 L60 185 L40 140 Z"/></g>' +
       '<path class="hroute" d="M205 128 C190 100 175 98 158 92" fill="none"/>' +
-      '<path class="hroute" d="M158 92 C145 105 135 112 122 118" fill="none"/>' +
-      '<path class="hroute" d="M122 118 C95 105 80 90 68 68" fill="none"/>' +
-      '<g class="hdots"><circle cx="205" cy="128" r="9" fill="#ff7a3d"/><circle cx="158" cy="92" r="8" fill="#7c4dff"/><circle cx="122" cy="118" r="8" fill="#1f9d58"/><circle cx="68" cy="68" r="9" fill="#d7261e"/></g>' +
+      '<path class="hroute" d="M158 92 C145 82 128 78 112 76" fill="none"/>' +
+      '<path class="hroute" d="M112 76 C95 74 80 70 68 64" fill="none"/>' +
+      '<g class="hdots"><circle cx="205" cy="128" r="9" fill="#ff7a3d"/><circle cx="158" cy="92" r="8" fill="#7c4dff"/><circle cx="112" cy="76" r="8" fill="#1f9d58"/><circle cx="68" cy="64" r="9" fill="#d7261e"/></g>' +
       '<g font-family="Nunito,sans-serif" font-weight="800" font-size="13" text-anchor="middle" fill="#1b1a19" stroke="#fff" stroke-width="3" paint-order="stroke">' +
-      '<text x="212" y="152">Индия</text><text x="165" y="76">Персия</text><text x="118" y="138">Арабы</text><text x="68" y="52">Европа</text></g>' +
-      '<text x="140" y="62" font-size="18">⭐</text>' +
-      '<text x="130" y="48" font-family="Nunito,sans-serif" font-weight="800" font-size="11" fill="#7a5a00">Баку</text></svg>';
+      '<text x="212" y="152">Индия</text><text x="168" y="76">Персия</text><text x="112" y="96">Византия</text><text x="64" y="48">Европа</text></g>' +
+      '</svg>';
     var CHAMP = [['Вильгельм Стейниц', 1886, 'Австрия'], ['Эмануил Ласкер', 1894, 'Германия'], ['Хосе Рауль Капабланка', 1921, 'Куба'], ['Александр Алёхин', 1927, 'Россия и Франция'], ['Макс Эйве', 1935, 'Нидерланды'], ['Михаил Ботвинник', 1948, 'СССР'], ['Василий Смыслов', 1957, 'СССР'], ['Михаил Таль', 1960, 'Латвия'], ['Тигран Петросян', 1963, 'Армения'], ['Борис Спасский', 1969, 'СССР'], ['Роберт Фишер', 1972, 'США'], ['Анатолий Карпов', 1975, 'СССР'], ['Гарри Каспаров', 1985, 'родился в Баку!'], ['Владимир Крамник', 2000, 'Россия'], ['Вишванатан Ананд', 2007, 'Индия'], ['Магнус Карлсен', 2013, 'Норвегия'], ['Дин Лижэнь', 2023, 'Китай'], ['Гукеш Доммараджу', 2024, 'Индия']];
     var champHTML = '<div class="hgrid champ">' + CHAMP.map(function (c, i) {
       return '<div class="hc c' + (i % 6) + (c[0] === 'Гарри Каспаров' ? ' baku' : '') + '"><span class="hnum">' + (i + 1) + '</span><b>' + c[0] + '</b><small>' + c[1] + ' · ' + c[2] + '</small></div>';
     }).join('') + '</div>';
-    var GM = [['Теймур Раджабов', 'в 14 лет стал гроссмейстером'], ['Шахрияр Мамедъяров', 'один из сильнейших в мире'], ['Вугар Гашимов', 'мы помним нашего чемпиона'], ['Эльтадж Сафарли', 'гроссмейстер из Баку'], ['Айдын Сулейманлы', 'юный гроссмейстер'], ['Ниджат Аббасов', 'гроссмейстер'], ['Гадир Гусейнов', 'гроссмейстер'], ['Гарри Каспаров', '13-й чемпион мира, родился в Баку']];
+    var GM = [['Теймур Раджабов', 'в 14 лет стал гроссмейстером'], ['Шахрияр Мамедъяров', 'один из сильнейших в мире'], ['Вугар Гашимов', 'мы помним нашего чемпиона'], ['Эльтадж Сафарли', 'гроссмейстер из Баку'], ['Айдын Сулейманлы', 'юный гроссмейстер'], ['Ниджат Аббасов', 'гроссмейстер'], ['Гадыр Гусейнов', 'гроссмейстер'], ['Гарри Каспаров', '13-й чемпион мира, родился в Баку']];
     var gmHTML = '<div class="hgrid gms">' + GM.map(function (g, i) { return '<div class="hc c' + (i % 6) + '"><span class="hbig">' + g[0].charAt(0) + '</span><b>' + g[0] + '</b><small>' + g[1] + '</small></div>'; }).join('') + '</div>';
     var wheat = '<div class="hgrid wheat">' + [1, 2, 4, 8, 16, 32].map(function (n, i) { return '<div class="hc c' + i + '"><span class="hbig">' + n + '</span><small>' + (i === 0 ? 'зёрнышко на 1-й клетке' : i === 5 ? 'на 6-й клетке' : 'на ' + (i + 1) + '-й') + '</small></div>'; }).join('') + '</div>';
 
@@ -2679,7 +2791,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       { h: 'Где родились шахматы?', p: ['Шахматы родились в <b>Индии</b>, больше 1500 лет назад, примерно в VI веке. Старинная игра называлась <b>«чатуранга»</b>: это слово означает «четыре рода войск».'], v: MAP },
       { h: 'Чатуранга: четыре войска', p: ['В индийской армии было четыре части. Каждая стала шахматной фигурой, и они живы до сих пор!'],
         v: '<div class="hgrid four">' + card('c0', '♙', 'Пехота', 'теперь пешки') + card('c1', '♘', 'Конница', 'теперь кони') + card('c2', '🐘', 'Боевые слоны', 'теперь слоны') + card('c3', '♖', 'Колесницы', 'теперь ладьи') + '</div>' },
-      { h: 'Путь по свету', p: ['Из Индии игра пришла в <b>Персию</b>. Там царя называли «шах», а когда царю некуда уйти, говорили «шах мат»: «царь беспомощен». Отсюда слова «шах» и «мат».', 'Потом играть научились арабы, а от них шахматы добрались до Европы. Азербайджан лежит на этом пути, и шахматы здесь любят много веков.'], v: MAP },
+      { h: 'Путешествие шахмат', p: ['Из Индии игра пришла в <b>Персию</b>. Там царя называли «шах», а когда царю некуда уйти, говорили «шах мат»: «царь беспомощен». Отсюда слова «шах» и «мат».', 'Дальше игра отправилась на запад, через Византию, и наконец добралась до Европы. Так шахматы совершили большое путешествие длиной в тысячи километров.'], v: MAP },
       { h: 'Откуда имена фигур', p: ['<b>Ладья</b> на старинном языке значит «корабль». <b>Ферзь</b> получил имя от персидского слова «советник», то есть помощник царя. Слон и конь пришли из армии, как ты уже узнал.', 'А в Англии слона зовут «епископ» (bishop), а ладью «башня» (rook).'] },
       { h: 'Как менялись фигуры', p: ['Раньше ферзь ходил только на одну клетку по диагонали, а слон прыгал через клетку. Примерно 500 лет назад ферзь и слон стали сильными. Шахматы получили почти такие правила, как сегодня, и стали быстрыми и интересными.'],
         v: '<div class="hgrid two">' + card('c4', '♕', 'Было', 'слабый советник') + card('c1', '♕', 'Стало', 'самая сильная фигура') + '</div>' },
@@ -2722,16 +2834,946 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var ids = GROUPS[0].ids, at = ids.indexOf('lines'); ids.splice(at + 1, 0, 'diags');
   })();
 
+  /* ===== Рокировка, взятие на проходе, превращение: с диаграммами ===== */
+  (function () {
+    function pcard(cls, v, name, sub) { return '<div class="hc ' + cls + '"><span class="hbig pcbig">' + pcHTML(v) + '</span><b>' + name + '</b><small>' + sub + '</small></div>'; }
+    function file(x) { return lineSq(function (a) { return a === x; }); }
+    var CAS = [
+      { h: 'Что такое рокировка', p: ['<b>Рокировка</b> — особый ход, в котором ходят сразу две фигуры: король и ладья. Король прячется за пешки, а ладья выходит из угла в центр. Это самый важный ход для безопасности короля.', 'Нажимай «Следующий ход» и смотри.'],
+        demo: { fen: 'rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 1', start: 'Белый король стоит посередине, а справа его ладья.', steps: ['e1g1|Король прыгнул на две клетки к ладье, а ладья перепрыгнула через него и встала на f1.'] } },
+      { h: 'Короткая рокировка', p: ['Короткая рокировка идёт в сторону ближней ладьи (h1). Король идёт с e1 на g1, а ладья с h1 на f1. Рокировку делают, двигая <b>короля</b> на две клетки.', 'Записывают её так: <b>О-О</b>.'],
+        demo: { fen: '4k3/8/8/8/8/8/8/4K2R w K - 0 1', start: 'Король на e1, ладья на h1. Между ними пусто.', steps: ['e1g1|Король на g1, ладья на f1. Запись: О-О.'] } },
+      { h: 'Длинная рокировка', p: ['Длинная рокировка идёт в сторону дальней ладьи (a1). Король идёт с e1 на c1, а ладья с a1 на d1.', 'Записывают её так: <b>О-О-О</b>. Запомни: короткая — две буквы «О», длинная — три.'],
+        demo: { fen: 'r3k2r/pppqbppp/2npbn2/4p3/4P3/2NPBN2/PPPQBPPP/R3K2R w KQkq - 0 1', start: 'Между королём и ладьёй a1 стоят свободные поля.', steps: ['e1c1|Король на c1, ладья на d1. Запись: О-О-О.'] } },
+      { h: 'Чёрные тоже рокируются', p: ['Чёрные делают рокировку точно так же, только на восьмой горизонтали. Король идёт на g8 (короткая) или на c8 (длинная).'],
+        demo: { fen: 'r3k2r/ppp2ppp/2n2n2/2bpp3/4P3/2NP1N2/PPP2PPP/R1B1KB1R b KQkq - 0 1', start: 'Ход чёрных.', steps: ['e8g8|Чёрный король на g8, ладья на f8.'] } },
+      { h: 'Нельзя: между ними фигура', p: ['<b>Правило 1.</b> Между королём и ладьёй должно быть пусто. Здесь на f1 стоит слон, поэтому короткой рокировки нет. Сначала надо убрать слона.'], fen: '4k3/8/8/8/8/8/8/R3KB1R w KQ - 0 1', hl: [61], hint: 'Красное поле f1: там стоит слон, он мешает рокировке.' },
+      { h: 'Нельзя: королю шах', p: ['<b>Правило 2.</b> Если королю шах, рокировка запрещена. Чёрная ладья бьёт короля по вертикали e. Сначала надо убрать шах.'], fen: '4r1k1/8/8/8/8/8/8/R3K2R w KQ - 0 1', hl: file(4), hint: 'Красная линия: ладья e8 даёт шах королю на e1.' },
+      { h: 'Нельзя: через битое поле', p: ['<b>Правило 3.</b> Король не может пройти через поле, которое бьёт фигура соперника. Ладья f8 бьёт поле f1, а король по пути проходит f1. Поэтому короткой рокировки нет.'], fen: '5rk1/8/8/8/8/8/8/R3K2R w KQ - 0 1', hl: file(5), hint: 'Красная линия: ладья f8 бьёт поле f1.' },
+      { h: 'Нельзя: на битое поле', p: ['<b>Правило 4.</b> Король не может встать на поле, которое находится под боем. Ладья g8 бьёт поле g1, куда должен встать король.'], fen: '6rk/8/8/8/8/8/8/R3K2R w KQ - 0 1', hl: file(6), hint: 'Красная линия: ладья g8 бьёт поле g1.' },
+      { h: 'Нельзя: король или ладья уже ходили', p: ['<b>Правило 5.</b> Если король уже ходил, рокировки больше нет, даже если он вернулся на место. Если ходила ладья, нельзя рокироваться именно с ней. Здесь ладья h1 ходила: остаётся только длинная рокировка.'], fen: '4k3/8/8/8/8/8/8/R3K2R w Q - 0 1', hl: [63], hint: 'Ладья h1 уже ходила, короткая рокировка запрещена. Длинная возможна.' },
+      { h: 'А вот это можно!', p: ['Ладье можно быть под боем, а ладья b1 и вовсе не нужна для прохода короля. Здесь чёрная ладья бьёт поле b1, но король через него не идёт (он идёт e1–d1–c1). Длинная рокировка разрешена!'], fen: '1r2k3/8/8/8/8/8/8/R3K2R w KQ - 0 1', hl: [57], hint: 'Поле b1 под боем, но король его не проходит. Рокировка возможна.' },
+      { h: 'Запомни пять правил', p: ['1. Между королём и ладьёй пусто. 2. Королю нет шаха. 3. Поля, через которые идёт король, не под боем. 4. Король не встаёт под шах. 5. Ни король, ни эта ладья раньше не ходили.', 'Дальше тебя ждут упражнения: рокируйся и отвечай «Да» или «Нет».'] }
+    ];
+    var EPS = [
+      { h: 'Пешка прыгает через клетку', p: ['С начальной позиции пешка может пойти на две клетки. Это быстро. Но тогда она проходит мимо клетки, которую бьёт пешка соперника. Чтобы это не было нечестно, придумали правило <b>«взятие на проходе»</b>.'] },
+      { h: 'Откуда имя', p: ['Название пришло из французского языка: «en passant» значит «мимоходом, на проходе». Правило появилось, когда разрешили ходить пешкой на две клетки. Соперник может взять пешку так, как будто она прошла только одну клетку, то есть как будто она «проходит мимо».'] },
+      { h: 'Смотри: белая берёт', p: ['Белая пешка стоит на e5. Чёрная пешка с d7 прыгает на d5 и встаёт рядом. Белая пешка берёт её <b>как будто она стоит на d6</b> и встаёт на d6. Чёрная пешка d5 исчезает с доски. Нажимай «Следующий ход».'],
+        demo: { fen: '4k3/3p4/8/4P3/8/8/8/4K3 b - - 0 1', start: 'Ход чёрных.', steps: ['d7d5|Чёрная пешка прыгнула на две клетки и встала рядом с белой.', 'e5d6|Белая пешка взяла на проходе: она встала на d6, а пешка d5 исчезла.'] } },
+      { h: 'Смотри: чёрная берёт', p: ['Чёрные берут на проходе так же. Белая пешка e2 прыгает на e4 и встаёт рядом с чёрной на d4. Чёрная пешка берёт её на e3.'],
+        demo: { fen: '4k3/8/8/8/3p4/8/4P3/4K3 w - - 0 1', start: 'Ход белых.', steps: ['e2e4|Белая пешка прыгнула на две клетки и оказалась рядом с чёрной пешкой.', 'd4e3|Чёрная пешка взяла на проходе и встала на e3.'] } },
+      { h: 'Можно взять с любой стороны', p: ['Если рядом с пешкой, которая прыгает, стоят две пешки соперника, любая из них может взять на проходе. Здесь прыгнет пешка на f5, и белая берёт её на f6.'],
+        demo: { fen: '4k3/3p1p2/8/4P3/8/8/8/4K3 b - - 0 1', start: 'Ход чёрных.', steps: ['f7f5|Чёрная пешка встала рядом с белой.', 'e5f6|Белая взяла на проходе и встала на f6.'] } },
+      { h: 'Правило 1: только сразу', p: ['Брать на проходе можно <b>только на следующем ходу</b>. Если ты сходил чем-то другим, право пропадает навсегда. Смотри: белые сделали ход королём, и взять уже нельзя.'],
+        demo: { fen: '4k3/3p4/8/4P3/8/8/8/4K3 b - - 0 1', start: 'Ход чёрных.', steps: ['d7d5|Чёрная пешка прыгнула. Сейчас белые могли взять на проходе.', 'e1e2|Но белые сходили королём.', 'e8e7|Теперь пешку на d5 на проходе уже не взять. Это правило надо помнить!'] } },
+      { h: 'Правило 2: прыжок на две клетки', p: ['Берут на проходе только пешку, которая прыгнула на две клетки. Если она пошла на одну клетку, обычного взятия нет: пешки бьют только по диагонали, а эта стоит прямо перед тобой.'],
+        demo: { fen: '4k3/8/3p4/4P3/8/8/8/4K3 b - - 0 1', start: 'Чёрная пешка на d6.', steps: ['d6d5|Пешка пошла на одну клетку. Брать на проходе нельзя: она не прыгала.'] } },
+      { h: 'Правило 3: пешкой на пятой горизонтали', p: ['Брать на проходе может только пешка, которая стоит на 5-й горизонтали (за белых) или на 4-й горизонтали (за чёрных), и только пешкой. Конь, слон и другие фигуры брать на проходе не умеют.'] },
+      { h: 'Дальше упражнения', p: ['1–10: возьми на проходе. 11–20: ответь «Да» или «Нет»: можно ли здесь взять на проходе? Подумай про три правила!'] }
+    ];
+    var PRO = [
+      { h: 'Пешка стала ферзём', p: ['Когда пешка доходит до последней горизонтали, она <b>превращается</b>. Чаще всего в ферзя, самую сильную фигуру. Из простой пешки получается королева! Включи звук, будет музыка. Нажми «Следующий ход».'],
+        demo: { fen: '8/4P3/8/8/8/8/k7/4K3 w - - 0 1', start: 'Белая пешка на e7, ей остался один шаг.', steps: ['e7e8q|Пешка дошла до края и стала ферзём. Ура!'] } },
+      { h: 'Во что можно превратиться', p: ['Можно выбрать ферзя, ладью, слона или коня. Нельзя оставаться пешкой и нельзя стать королём. Цена фигур рядом.'],
+        v: '<div class="hgrid four">' + pcard('c0', 5, 'Ферзь', 'цена 9') + pcard('c1', 4, 'Ладья', 'цена 5') + pcard('c2', 3, 'Слон', 'цена 3') + pcard('c3', 2, 'Конь', 'цена 3') + '</div>' },
+      { h: 'Превращение со взятием', p: ['Пешка может превратиться и со взятием: бьёт фигуру по диагонали на последней горизонтали и сразу становится новой фигурой. Здесь пешка берёт ладью и становится ферзём.'],
+        demo: { fen: 'r3k3/1P6/8/8/8/8/8/K7 w - - 0 1', start: 'Белая пешка на b7, а на a8 стоит чёрная ладья.', steps: ['b7a8q|Пешка взяла ладью и стала ферзём.'] } },
+      { h: 'Иногда лучше конь', p: ['Бывает, что конь лучше ферзя. Если пешка станет ферзём на e8, шаха не будет. А если превратиться в коня, получится шах и ещё удар по ладье!'],
+        demo: { fen: '8/2r1P1k1/8/8/8/8/8/K7 w - - 0 1', start: 'Белая пешка на e7. Чёрная ладья на c7.', steps: ['e7e8n|Конь даёт шах королю g7 и бьёт ладью c7. Ферзь так не умеет!'] } },
+      { h: 'Когда ферзь — плохой выбор: пат!', p: ['Ферзь самая сильная фигура, но иногда он портит выигрыш. Здесь белые должны выиграть. Смотри, что будет, если превратиться в ферзя: чёрному королю некуда ходить, но шаха нет. Это <b>пат</b>, ничья!'],
+        demo: { fen: '8/k1P5/8/2K5/8/8/8/8 w - - 0 1', start: 'Чёрный король на a7. Белая пешка на c7.', steps: ['c7c8q|Белые превратили пешку в ферзя...'] } },
+      { h: 'А теперь превратим в ладью', p: ['Те же фигуры, но превращаем пешку в <b>ладью</b>. Ладья не закрывает чёрному королю все поля, и игра продолжается. Белые выигрывают! Запомни: иногда ладья лучше ферзя.'],
+        demo: { fen: '8/k1P5/8/2K5/8/8/8/8 w - - 0 1', start: 'Та же позиция.', steps: ['c7c8r|Ладья даёт королю ходить, значит, пата нет. Белые продолжают и побеждают.'] } },
+      { h: 'Какую фигуру выбрать?', p: ['<b>Ферзь</b> — почти всегда, он самый сильный. <b>Конь</b> — если нужен шах с вилкой (удар сразу по двум фигурам). <b>Ладья</b> — если ферзь даёт пат. <b>Слон</b> нужен очень редко.', 'Перед тем как превращать пешку, всегда спроси: «Не будет ли пата? Нет ли шаха конём?»'],
+        v: '<div class="hgrid four">' + pcard('c0', 5, 'Ферзь', 'почти всегда') + pcard('c1', 2, 'Конь', 'шах и вилка') + pcard('c2', 4, 'Ладья', 'если пат') + pcard('c3', 3, 'Слон', 'очень редко') + '</div>' },
+      { h: 'Пешечный бой', p: ['Хочешь потренироваться? В уроке «Пешечные бои» ты сразишься с пешками: доведи свою пешку до края доски раньше, чем это сделает соперник.'] },
+      { h: 'Сколько может быть ферзей?', p: ['Интересный факт: если все восемь пешек дойдут до края и станут ферзями, у тебя будет <b>девять ферзей</b>: восемь новых и один старый. В настоящих партиях так бывает очень редко.'] },
+      { h: 'Упражнения', p: ['1–5: просто превращай пешку. 6–12: найди превращение с шахом. 13–16: превращение с матом. 17–20: превращение в коня с шахом.'] }
+    ];
+    LESS.castle.slides = CAS; LESS.ep.slides = EPS; LESS.promo.slides = PRO;
+  })();
+
+  /* ===== Один урок «Шахматная доска» и история с вопросами ===== */
+  (function () {
+    var E0 = '8/8/8/8/8/8/8/8 w - - 0 1';
+    function card(cls, big, name, sub) { return '<div class="hc ' + cls + '"><span class="hbig">' + big + '</span><b>' + name + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>'; }
+    var old = LESS.board.slides;           /* слайды вертикалей, горизонталей, диагоналей из c3_hist */
+    var mid = old.slice(2, old.length - 2); /* от «Вертикали» до «Сколько всего линий» */
+    var cnt = old[old.length - 3];          /* «Сколько всего линий» */
+    var BS = [
+      { h: 'Шахматная доска: 64 клетки', p: ['Доска — квадрат из <b>64 клеток</b>: 8 рядов по 8. Клетки двух цветов чередуются, как в шашках.'], fen: E0 },
+      { h: '32 светлых клетки', p: ['Все светлые клетки отмечены красным. Посчитай: их <b>32</b>.'], fen: E0, hl: lineSq(function (x, y) { return (x + y) % 2 === 0; }) },
+      { h: '32 тёмных клетки', p: ['А теперь отмечены тёмные клетки. Их тоже <b>32</b>. Вместе: 32 + 32 = 64.'], fen: E0, hl: lineSq(function (x, y) { return (x + y) % 2 === 1; }),
+        v: '<div class="hgrid two">' + card('c2', '32', 'светлых клетки') + card('c4', '32', 'тёмных клетки') + '</div>' },
+      { h: 'Как ставить доску', p: ['Доску кладут так, чтобы <b>в правом нижнем углу было светлое поле</b>. Запомни: «светлое справа». Белые фигуры стоят внизу, чёрные вверху.'], fen: START },
+      { h: 'Четыре угла', p: ['У доски четыре угла: a1, h1, a8 и h8. В углах стоят ладьи, потому что они крепкие, как башни.'], fen: START, hl: [0, 7, 56, 63] },
+      { h: 'Центр', p: ['Четыре клетки посередине: d4, e4, d5, e5. Это <b>центр</b>. Из центра фигуры видят всю доску, поэтому за центр идёт борьба.'], fen: E0, hl: [27, 28, 35, 36] },
+      { h: 'Большой центр', p: ['Центр вместе с клетками вокруг называют большим центром. Это 16 клеток от c3 до f6. Хорошо, когда твои пешки и фигуры стоят в центре.'], fen: E0, hl: lineSq(function (x, y) { return x >= 2 && x <= 5 && y >= 2 && y <= 5; }) },
+      { h: 'Конь в центре и в углу', p: ['Поставь коня в центр, а потом в угол: на жёлтые точки видно, куда он может пойти. В центре у коня до 8 ходов, а в углу всего 2. Нажимай на разные клетки.'], free: 'N', at: 'd4' },
+      { h: 'Края доски', p: ['Клетки по краям доски называют краем. Фигуры на краю видят меньше клеток и слабее, чем в центре. Запомни: «конь на краю — всегда в плохом».'], fen: E0, hl: lineSq(function (x, y) { return x === 0 || x === 7 || y === 0 || y === 7; }) }
+    ].concat(mid, [cnt]).concat([
+      { h: 'Название клетки', p: ['Каждая клетка имеет имя: <b>буква вертикали и цифра горизонтали</b>. Сначала буква, потом цифра. Клетка со звёздочкой называется e4.', 'Это называется <b>нотация</b>: так записывают места на доске и ходы фигур.'], fen: E0, mark: { 36: 'star' } },
+      { h: 'Ещё названия клеток', p: ['Вот ещё три клетки: a1 (левый нижний угол), h8 (правый верхний угол) и d5 (центр). Находи любую на доске по имени.'], fen: E0, mark: { 56: 'star', 7: 'star', 27: 'star' } },
+      { h: 'Расстановка фигур', p: ['Ладьи в углах, рядом кони, потом слоны. <b>Ферзь стоит на клетке своего цвета</b>: белый ферзь на светлой (d1), чёрный на тёмной (d8). Рядом король. Перед фигурами восемь пешек.', 'Запомни: «ферзь любит свой цвет».'], fen: START },
+      { h: 'Расставь сам', p: ['Хорошо запомни: белые внизу, ладья в углу, ферзь на своём цвете. Теперь тебя ждут упражнения: найди клетку, найди линию, найди диагональ, назови клетку и угадай цвет.'] }
+    ]);
+    LESS.board.slides = BS; LESS.board.levels = 20; LESS.board.kind = 'board'; LESS.board.run = runNames;
+    LESS.board.t = 'Шахматная доска'; LESS.board.d = 'Клетки, 32 светлых и 32 тёмных, центр, углы, вертикали, горизонтали, диагонали, названия клеток, расстановка.';
+
+    /* история: рассказ про пользу шахмат и вопросы */
+    var H = LESS.history.slides;
+    H.splice(H.length - 1, 0,
+      { h: 'Зачем играть в шахматы?', p: ['Шахматы — это не только игра. Когда ты играешь, ты тренируешься:', '<b>думать</b> и считать ходы вперёд, <b>быть внимательным</b> и не зевать, <b>запоминать</b>, <b>терпеть</b> и не торопиться, <b>планировать</b> и доводить дело до конца, <b>не сдаваться</b>, если трудно.',
+        'А ещё шахматы учат спокойно проигрывать и делать выводы. Проиграл партию? Значит, узнал что-то новое!'],
+        v: '<div class="hgrid">' + card('c0', '🧠', 'Думать') + card('c1', '👀', 'Быть внимательным') + card('c2', '🗺️', 'Планировать') + card('c3', '💪', 'Не сдаваться') + card('c4', '🤝', 'Дружить') + card('c5', '⭐', 'Расти') + '</div>' },
+      { h: 'Шахматы для всех', p: ['В шахматы играют дети и взрослые, мальчики и девочки, в школе и дома, в Баку и в любом городе мира. Шахматисты есть в каждой стране, и они понимают друг друга без слов: язык шахмат одинаков для всех.'] });
+    var QS = [
+      ['Шахматы родились в Индии?', true, 'Да, больше 1500 лет назад, в Индии.'],
+      ['Старая игра называлась «чатуранга»?', true, 'Да, «чатуранга» значит «четыре рода войск».'],
+      ['Слово «мат» значит «царь беспомощен»?', true, 'Да, «шах мат» пришло из Персии и значит «царь беспомощен».'],
+      ['Раньше ферзь был самой сильной фигурой?', false, 'Нет. Раньше он был слабым помощником, а сильным стал примерно 500 лет назад.'],
+      ['Первым чемпионом мира стал Гарри Каспаров?', false, 'Нет. Первым был Вильгельм Стейниц в 1886 году. Каспаров стал 13-м.'],
+      ['Всего было 18 чемпионов мира?', true, 'Да, последний на сегодня — Гукеш из Индии.'],
+      ['Гарри Каспаров родился в Баку?', true, 'Да! Он один из самых великих шахматистов, и родом из нашего города.'],
+      ['Шахматы помогают думать и не сдаваться?', true, 'Да, они тренируют внимание, память и терпение.']
+    ];
+    function runQuiz(host, L, lv, finish) {
+      var q = QS[(lv - 1) % QS.length], mistakes = 0, done = false;
+      host.innerHTML = say(av('prof'), 'Вопрос ' + lv, q[0], 'ответь «Да» или «Нет»') + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts"><button data-o="1">Да</button><button data-o="0">Нет</button></div>';
+      var msg = document.getElementById('msg');
+      document.getElementById('opts').onclick = function (e) {
+        var b = e.target.closest('button'); if (!b || done) return;
+        if ((b.dataset.o === '1') === q[1]) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + q[2]; sfx('good'); finish(mistakes === 0 ? 3 : 2); }
+        else { b.className = 'bad'; mistakes++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Подумай ещё раз. Вспомни рассказ про историю шахмат.'; }
+      };
+    }
+    LESS.history.levels = QS.length; LESS.history.run = runQuiz; LESS.history.d = 'Индия и чатуранга, чемпионы мира, гроссмейстеры Азербайджана, зачем играть в шахматы.';
+    var ids = GROUPS[0].ids;
+    ['lines', 'diags', 'squares', 'colors'].forEach(function (k) { var i = ids.indexOf(k); if (i >= 0) ids.splice(i, 1); });
+  })();
+
+  /* ===== Пешечные бои ===== */
+  (function () {
+    var LV = [
+      ['e2', 'd7'], ['c2 e2', 'd7 f7'], ['b2 c2 d2', 'e7 f7 g7'], ['a2 b2 c2 d2', 'e7 f7 g7 h7'], ['a3 c3 e3 g3', 'b6 d6 f6 h6'],
+      ['a2 b2 c2 d2 e2 f2', 'c7 d7 e7 f7 g7 h7'], ['a2 b2 c2 d2 e2 f2 g2', 'a7 b7 c7 d7 e7 f7 g7'], ['a2 b2 c2 d2 e2 f2 g2 h2', 'a7 b7 c7 d7 e7 f7 g7 h7'],
+      ['a2 b2 c2 d2 e2 f2 g2 h2', 'a7 b7 c7 d7 e7 f7 g7 h7'], ['a2 b2 c2 d2 e2 f2 g2 h2', 'a7 b7 c7 d7 e7 f7 g7 h7']
+    ], DEPTH = [1, 2, 2, 3, 3, 4, 4, 4, 5, 6];
+    function sq(n) { return (8 - +n[1]) * 8 + (n.charCodeAt(0) - 97); }
+    function moves(b, s) {
+      var out = [], dir = s === 1 ? -8 : 8, home = s === 1 ? 6 : 1;
+      for (var i = 0; i < 64; i++) {
+        if (b[i] !== s) continue;
+        var y = i >> 3, x = i & 7, f = i + dir;
+        if (f < 0 || f > 63) continue;
+        if (!b[f]) { out.push({ f: i, t: f }); if (y === home && !b[f + dir]) out.push({ f: i, t: f + dir }); }
+        [-1, 1].forEach(function (dx) { if (x + dx >= 0 && x + dx < 8 && b[f + dx] === -s) out.push({ f: i, t: f + dx }); });
+      }
+      return out;
+    }
+    function reached(b, s) { var row = s === 1 ? 0 : 7; for (var x = 0; x < 8; x++) if (b[row * 8 + x] === s) return true; return false; }
+    function score(b) {
+      var v = 0; for (var i = 0; i < 64; i++) { if (b[i] === 1) { var a = 7 - (i >> 3); v += a * a + 20; } else if (b[i] === -1) { var c = i >> 3; v -= c * c + 20; } }
+      return v;
+    }
+    function search(b, s, d, al, be) {  /* оценка для белых */
+      if (reached(b, 1)) return 100000 + d; if (reached(b, -1)) return -100000 - d;
+      var ms = moves(b, s); if (!ms.length) return s === 1 ? -90000 - d : 90000 + d;
+      if (d === 0) return score(b);
+      var best = s === 1 ? -1e9 : 1e9;
+      for (var k = 0; k < ms.length; k++) {
+        var m = ms[k], c = b[m.t]; b[m.t] = s; b[m.f] = 0;
+        var v = search(b, -s, d - 1, al, be);
+        b[m.f] = s; b[m.t] = c;
+        if (s === 1) { if (v > best) best = v; if (best > al) al = best; } else { if (v < best) best = v; if (best < be) be = best; }
+        if (al >= be) break;
+      }
+      return best;
+    }
+    function compMove(b, depth) {
+      var ms = moves(b, -1), best = null, bv = 1e9;
+      ms.sort(function () { return Math.random() - .5; });
+      ms.forEach(function (m) {
+        var c = b[m.t]; b[m.t] = -1; b[m.f] = 0;
+        var v = search(b, 1, depth - 1, -1e9, 1e9);
+        b[m.f] = -1; b[m.t] = c;
+        if (v < bv) { bv = v; best = m; }
+      });
+      return best;
+    }
+    function runPawns(host, L, lv, finish) {
+      var cfg = LV[Math.min(lv, LV.length) - 1], b = new Int8Array(64);
+      cfg[0].split(' ').forEach(function (n) { b[sq(n)] = 1; }); cfg[1].split(' ').forEach(function (n) { b[sq(n)] = -1; });
+      var S = { pos: { b: b, turn: 1, castle: 0, ep: -1, half: 0 }, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
+      var done = false, busy = false, lost = 0, n0 = cfg[0].split(' ').length;
+      host.innerHTML = say(av('arni'), 'Пешечный бой ' + lv, 'Доведи свою белую пешку до последней горизонтали (8-й). Пешки ходят вперёд и бьют по диагонали. Кто не может ходить, тот проигрывает!', 'без королей') + boardHTML() +
+        '<div class="msg" id="msg" role="status" aria-live="polite">Твой ход.</div><div class="row"><button class="btn alt" id="again">Начать заново</button></div>';
+      var msg = document.getElementById('msg');
+      function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function draw() { drawBoard(S, click); }
+      function count(s) { var c = 0; for (var i = 0; i < 64; i++) if (b[i] === s) c++; return c; }
+      function mv(m, s) { var before = { b: b }; S.anim = { moves: [{ f: m.f, t: m.t }], ghost: b[m.t] ? [{ sq: m.t, v: b[m.t] }] : [] }; sfx(b[m.t] ? 'cap' : 'move'); b[m.t] = s; b[m.f] = 0; S.last = { f: m.f, t: m.t }; S.sel = null; S.targets = []; }
+      function end() {
+        if (reached(b, 1)) { win(); return true; }
+        if (reached(b, -1)) { lose('Пешка соперника дошла до края.'); return true; }
+        if (!moves(b, 1).length) { lose('У тебя не осталось ходов.'); return true; }
+        if (!moves(b, -1).length) { win(); return true; }
+        return false;
+      }
+      function win() { done = true; draw(); setMsg('Победа!', 'good'); var st = n0 - count(1) === 0 ? 3 : n0 - count(1) <= 1 ? 2 : 1; finish(st); }
+      function lose(t) { done = true; draw(); sfx('bad'); setMsg(t + ' Попробуй ещё раз: нажми «Начать заново».', 'bad'); }
+      function click(i) {
+        if (busy || done) return;
+        var v = b[i];
+        if (S.sel != null && S.targets.indexOf(i) >= 0) {
+          mv({ f: S.sel, t: i }, 1); draw();
+          if (end()) return;
+          busy = true; setMsg('Соперник думает…');
+          setTimeout(function () {
+            var m = compMove(b, DEPTH[Math.min(lv, 10) - 1]);
+            if (m) { mv(m, -1); }
+            busy = false; draw();
+            if (end()) return;
+            setMsg('Твой ход.');
+          }, 500);
+          return;
+        }
+        if (v === 1) { S.sel = i; S.targets = moves(b, 1).filter(function (m) { return m.f === i; }).map(function (m) { return m.t; }); }
+        else { S.sel = null; S.targets = []; }
+        draw();
+      }
+      document.getElementById('again').onclick = function () { lessonPage(L.id, lv); };
+      draw();
+    }
+    LESS.pawns = { id: 'pawns', t: 'Пешечные бои', d: 'Сразись с пешками: доведи свою пешку до края раньше соперника.', levels: 10, run: runPawns, slides: [
+      { h: 'Пешечный бой', p: ['В этой игре нет королей и фигур, только пешки. Белые ходят снизу вверх, чёрные сверху вниз. <b>Выигрывает тот, чья пешка первой дойдёт до последней горизонтали.</b> Если у игрока нет ходов, он проигрывает.', 'Пешки ходят вперёд, с начальной позиции могут пройти две клетки, а бьют по диагонали. Береги свои пешки и ищи удобный момент!'], fen: '8/pppppppp/8/8/8/8/PPPPPPPP/8 w - - 0 1' }
+    ] };
+    var ids = GROUPS[2].ids, at = ids.indexOf('promo'); ids.splice(at + 1, 0, 'pawns');
+  })();
+
+  /* ===== Логические упражнения (блоки после тем) ===== */
+  (function () {
+    var RU = { R: 'ладья', B: 'слон', N: 'конь', Q: 'ферзь', K: 'король', P: 'пешка' };
+    var RUG = { R: 'ладью', B: 'слона', N: 'коня', Q: 'ферзя', K: 'короля', P: 'пешку' };
+    var VAL = { P: 1, N: 3, B: 3, R: 5, Q: 9 };
+    function xy(i) { return { x: i & 7, y: i >> 3 }; }
+    function sqs(n) { return SQN ? SQN(n) : n; }
+    function rnd(r, a, b) { return a + Math.floor(r() * (b - a + 1)); }
+    function pickOne(r, a) { return a[Math.floor(r() * a.length)]; }
+    function fenOf(pcs) {  /* pcs: {sq: 'N'|'n'...} */
+      var s = '';
+      for (var y = 0; y < 8; y++) {
+        var e = 0;
+        for (var x = 0; x < 8; x++) { var c = pcs[y * 8 + x]; if (c) { if (e) { s += e; e = 0; } s += c; } else e++; }
+        if (e) s += e; if (y < 7) s += '/';
+      }
+      return s + ' w - - 0 1';
+    }
+    /* клетки, которые бьёт фигура (с учётом занятых клеток occ; занятая клетка тоже «под боем») */
+    function attacks(code, from, occ, white) {
+      var x = from & 7, y = from >> 3, out = [];
+      function inb(a, b) { return a >= 0 && a < 8 && b >= 0 && b < 8; }
+      if (code === 'N') { KN.forEach(function (d) { if (inb(x + d[0], y + d[1])) out.push((y + d[1]) * 8 + x + d[0]); }); }
+      else if (code === 'K') { D8.forEach(function (d) { if (inb(x + d[0], y + d[1])) out.push((y + d[1]) * 8 + x + d[0]); }); }
+      else if (code === 'P') { var dy = white ? -1 : 1;[-1, 1].forEach(function (dx) { if (inb(x + dx, y + dy)) out.push((y + dy) * 8 + x + dx); }); }
+      else {
+        (code === 'R' ? D8.slice(0, 4) : code === 'B' ? D8.slice(4) : D8).forEach(function (d) {
+          var nx = x + d[0], ny = y + d[1];
+          while (inb(nx, ny)) { out.push(ny * 8 + nx); if (occ[ny * 8 + nx]) break; nx += d[0]; ny += d[1]; }
+        });
+      }
+      return out;
+    }
+    function numOpts(r, ans, lo, hi) {
+      var s = {}, a = [ans]; s[ans] = 1; var guard = 0;
+      while (a.length < 4 && guard++ < 60) { var v = ans + rnd(r, -3, 3); if (v < lo || v > hi || s[v]) continue; s[v] = 1; a.push(v); }
+      a = a.sort(function (p, q) { return p - q; }); return a.map(String);
+    }
+    function freeSq(r, used) { for (var k = 0; k < 80; k++) { var s = Math.floor(r() * 64); if (!used[s]) { used[s] = 1; return s; } } return 0; }
+
+    var T = {};
+    T.count = function (r, d) {
+      var code = pickOne(r, d === 1 ? ['R', 'K', 'N'] : d === 2 ? ['R', 'B', 'N', 'K'] : ['R', 'B', 'N', 'Q', 'K']), sq = Math.floor(r() * 64), p = {};
+      p[sq] = code; var ans = lone(code, sq, {}).length, hl = {};
+      return { pcs: p, text: 'На пустой доске стоит ' + RU[code] + '. На сколько клеток эта фигура может сходить одним ходом?', opts: numOpts(r, ans, 0, 30), ans: String(ans), why: 'Посчитай клетки, куда фигура может попасть за один ход.' };
+    };
+    T.minmoves = function (r, d) {
+      var codes = d === 1 ? ['K', 'R', 'Q'] : d === 2 ? ['K', 'R', 'N', 'Q'] : ['N', 'B', 'K', 'R'], code = pickOne(r, codes), a, b, g = 0;
+      do {
+        a = Math.floor(r() * 64); b = Math.floor(r() * 64); g++;
+        if (code === 'B' && (((a & 7) + (a >> 3)) % 2) !== (((b & 7) + (b >> 3)) % 2)) continue;
+        if (a !== b && bfs(code, a, {}).d[b] !== undefined && (code !== 'N' || bfs('N', a, {}).d[b] >= 2 || d === 1)) break;
+      } while (g < 200);
+      var ans = bfs(code, a, {}).d[b], p = {}; p[a] = code;
+      return { pcs: p, star: b, text: 'За какое наименьшее число ходов ' + RU[code] + ' дойдёт до звёздочки?', opts: numOpts(r, ans, 1, 8), ans: String(ans), why: 'Попробуй пройти путь по клеткам: сначала самый короткий.' };
+    };
+    T.clickreach = function (r, d) {
+      var code = pickOne(r, d === 1 ? ['R', 'K'] : ['B', 'N', 'Q', 'R', 'K']), sq = Math.floor(r() * 64), p = {}; p[sq] = code;
+      var reach = {}; lone(code, sq, {}).forEach(function (i) { reach[i] = 1; });
+      return { pcs: p, text: 'Нажми на клетку, куда ' + RU[code] + ' может сходить за один ход.', ok: function (i) { return !!reach[i]; }, why: 'Вспомни, как ходит ' + RU[code] + '.' };
+    };
+    T.which = function (r, d) {
+      for (var k = 0; k < 300; k++) {
+        var used = {}, star = freeSq(r, used), pcs = {}, list = [], codes = ['N', 'B', 'R', 'Q'];
+        for (var i = 0; i < (d >= 3 ? 4 : 3); i++) { var c = pickOne(r, codes), s = freeSq(r, used); pcs[s] = c; list.push({ c: c, s: s }); }
+        var occ = {}; list.forEach(function (o) { occ[o.s] = 1; }); occ[star] = 0;
+        var att = list.filter(function (o) { return attacks(o.c, o.s, occ).indexOf(star) >= 0; });
+        if (att.length !== 1) continue;
+        var good = att[0].s;
+        return { pcs: pcs, star: star, text: 'Какая белая фигура атакует клетку со звёздочкой? Нажми на неё.', ok: function (i) { return i === good; }, why: 'Мысленно проведи ход каждой фигуры. Помни: другие фигуры мешают ладье, слону и ферзю.' };
+      }
+      return T.count(r, d);
+    };
+    T.danger = function (r, d) {
+      for (var k = 0; k < 300; k++) {
+        var used = {}, ks = freeSq(r, used), es = freeSq(r, used), ec = pickOne(r, d === 1 ? ['R', 'N'] : ['R', 'B', 'N', 'Q']), pcs = {};
+        pcs[ks] = 'K'; pcs[es] = ec.toLowerCase();
+        var occ = {}; occ[ks] = 1; occ[es] = 1;
+        var att = attacks(ec, es, occ, false);
+        if (att.indexOf(ks) >= 0) continue;
+        var near = attacks('K', ks, {}, true).filter(function (i) { return i !== es; });
+        var bad = near.filter(function (i) { return att.indexOf(i) >= 0; }), safe = near.length - bad.length;
+        if (!bad.length || !safe) continue;
+        var set = {}; bad.forEach(function (i) { set[i] = 1; });
+        return { pcs: pcs, text: 'Белый король хочет сделать шаг. Нажми на соседнюю клетку, куда ему ходить нельзя: её атакует чёрная фигура.', ok: function (i) { return !!set[i]; }, why: 'Король не может встать под удар. Найди клетку, которую бьёт чёрная фигура.' };
+      }
+      return T.clickreach(r, d);
+    };
+    T.pawnsteps = function (r, d) {
+      var rank = rnd(r, 2, 7), x = rnd(r, 0, 7), p = {}; p[(8 - rank) * 8 + x] = 'P';
+      var ans = rank === 2 ? 5 : 8 - rank;
+      return { pcs: p, text: 'Белая пешка идёт к последней горизонтали. Какое наименьшее число ходов ей нужно, чтобы дойти до 8-й горизонтали? (Пешка может первым ходом пройти две клетки, если стоит на 2-й горизонтали.)', opts: numOpts(r, ans, 1, 8), ans: String(ans), why: 'Посчитай горизонтали до восьмой. Из начальной позиции первый ход может быть на две клетки.' };
+    };
+    T.value = function (r, d) {
+      var pool = d === 1 ? ['P', 'P', 'N', 'B', 'R'] : ['P', 'P', 'N', 'B', 'R', 'Q'], used = {}, pcs = {}, w = 0, b = 0, nw = rnd(r, 2, 4), nb = rnd(r, 2, 4), i, c;
+      for (i = 0; i < nw; i++) { c = pickOne(r, pool); var s1 = freeSq(r, used); while ((s1 >> 3) < 4) s1 = freeSq(r, used); pcs[s1] = c; w += VAL[c]; }
+      for (i = 0; i < nb; i++) { c = pickOne(r, pool); var s2 = freeSq(r, used); while ((s2 >> 3) > 3) s2 = freeSq(r, used); pcs[s2] = c.toLowerCase(); b += VAL[c]; }
+      var ans = w > b ? 'Белые' : w < b ? 'Чёрные' : 'Поровну';
+      return { pcs: pcs, text: 'У кого фигур больше по ценности? Пешка 1, конь 3, слон 3, ладья 5, ферзь 9.', opts: ['Белые', 'Чёрные', 'Поровну'], ans: ans, why: 'Сложи ценность белых фигур и ценность чёрных, потом сравни. Белые: ' + w + ', чёрные: ' + b + '.' };
+    };
+    T.countp = function (r, d) {
+      var used = {}, pcs = {}, n = rnd(r, 7, 12), codes = ['P', 'N', 'B', 'R', 'Q'], tg = pickOne(r, codes), white = r() < .5, cnt = 0, i;
+      for (i = 0; i < n; i++) { var c = pickOne(r, codes), wh = r() < .5, s = freeSq(r, used); if ((c === 'P') && (s >> 3 === 0 || s >> 3 === 7)) { s = 27; if (pcs[s]) continue; } pcs[s] = wh ? c : c.toLowerCase(); }
+      for (var k in pcs) if (pcs[k] === (white ? tg : tg.toLowerCase())) cnt++;
+      var nm = { P: 'пешек', N: 'коней', B: 'слонов', R: 'ладей', Q: 'ферзей' }[tg];
+      return { pcs: pcs, text: 'Сколько ' + (white ? 'белых ' : 'чёрных ') + nm + ' на доске?', opts: numOpts(r, cnt, 0, 10), ans: String(cnt), why: 'Пересчитай фигуры по одной, чтобы не пропустить.' };
+    };
+    T.line = function (r, d) {
+      var x = rnd(r, 0, 7), y = rnd(r, 0, 7), dir = r() < .5 ? 1 : -1, hl = {}, n = 0;
+      for (var yy = 0; yy < 8; yy++) { var xx = dir === 1 ? yy + (x - y) : (x + y) - yy; if (xx >= 0 && xx < 8) { hl[yy * 8 + xx] = true; n++; } }
+      return { pcs: {}, hl: hl, star: y * 8 + x, text: 'Сколько клеток на выделенной диагонали?', opts: numOpts(r, n, 1, 8), ans: String(n), why: 'Посчитай выделенные клетки. Чем дальше от угла, тем диагональ короче.' };
+    };
+    T.samecolor = function (r) {
+      var sq = Math.floor(r() * 64), x = sq & 7, y = sq >> 3, c = (x + y) % 2;
+      return { pcs: {}, star: sq, text: 'Нажми на любую другую клетку того же цвета, что и клетка со звёздочкой.', ok: function (i) { return i !== sq && (((i & 7) + (i >> 3)) % 2) === c; }, why: 'Цвета клеток чередуются как в шахматной раскраске. Клетка рядом по прямой — другого цвета.' };
+    };
+    T.cross = function (r) {
+      var x = rnd(r, 0, 7), y = rnd(r, 0, 7);
+      return { pcs: {}, coords: true, text: 'Найди клетку на пересечении вертикали «' + 'abcdefgh'[x] + '» и горизонтали ' + (8 - y) + '.', ok: function (i) { return i === y * 8 + x; }, why: 'Буква показывает вертикаль, цифра показывает горизонталь.' };
+    };
+    T.race = function (r) {
+      for (var k = 0; k < 100; k++) {
+        var wr = rnd(r, 2, 6), br = rnd(r, 3, 7), wx = rnd(r, 0, 7), bx = rnd(r, 0, 7); if (wx === bx) continue;
+        var sw = wr === 2 ? 5 : 8 - wr, sb = br === 7 ? 5 : br - 1, p = {};
+        p[(8 - wr) * 8 + wx] = 'P'; p[(8 - br) * 8 + bx] = 'p';
+        var ans = sw <= sb ? 'Белые' : 'Чёрные';
+        return { pcs: p, text: 'Белые начинают. Каждая пешка идёт вперёд по своей вертикали и никому не мешает. Чья пешка первой станет ферзём?', opts: ['Белые', 'Чёрные'], ans: ans, why: 'Посчитай ходы до превращения у каждой пешки. Белые ходят первыми: если ходов поровну, они успеют раньше. Белым нужно ' + sw + ', чёрным ' + sb + '.' };
+      }
+      return T.pawnsteps(r, 1);
+    };
+    T.knightcolor = function (r) {
+      var sq = Math.floor(r() * 64), p = {}; p[sq] = 'N';
+      var c = (((sq & 7) + (sq >> 3)) % 2), ans = c ? 'Тёмное' : 'Светлое';
+      return { pcs: p, text: 'Конь стоит на этой клетке. Какого цвета будет клетка после его хода?', opts: ['Светлое', 'Тёмное'], ans: c ? 'Светлое' : 'Тёмное', why: 'Конь всегда меняет цвет клетки: с светлой он прыгает на тёмную, с тёмной на светлую.' };
+    };
+
+    function runLogic(host, L, lv, finish) {
+      var r = mkRng(hstr(L.id + lv + '_' + Date.now() % 100000)), types = L.types, key = types[(lv - 1) % types.length], d = Math.min(4, Math.ceil(lv / types.length));
+      var q = T[key](r, d), S = { pos: E.fromFEN(fenOf(q.pcs)), sel: null, targets: [], last: null, hint: null, flip: false, coords: q.coords !== false && (lv <= 12 || q.coords), mark: {}, hl: q.hl || null };
+      if (q.star != null) { S.hl = S.hl || {}; S.hl[q.star] = true; S.mark[q.star] = 'star'; }
+      var mistakes = 0, done = false;
+      host.innerHTML = say(av('prof'), 'Профессор', q.text, 'логика ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
+        (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
+      var msg = document.getElementById('msg');
+      function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function win() { done = true; sfx('good'); setMsg('Верно!', 'good'); finish(mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1); }
+      function bad(t) { mistakes++; sfx('bad'); setMsg(t, 'bad'); }
+      drawBoard(S, function (i) {
+        if (done || q.opts) return;
+        if (q.ok(i)) { S.mark = {}; S.mark[i] = 'star'; drawBoard(S, function () {}); win(); } else bad('Не совсем. ' + q.why);
+      });
+      var ob = document.getElementById('opts');
+      if (ob) ob.onclick = function (e) {
+        var b = e.target.closest('button'); if (!b || done) return;
+        if (b.dataset.o === q.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; bad('Нет. ' + q.why); }
+      };
+    }
+    var N = 24;
+    var DEF = [
+      { id: 'lg_board', t: 'Логика: доска', d: 'Клетки, цвета, диагонали и путь короля: 24 задачи на внимание.', types: ['cross', 'samecolor', 'line', 'minmoves'], g: 0 },
+      { id: 'lg_pieces', t: 'Логика: ходы фигур', d: 'Сколько клеток бьёт фигура, как быстро она дойдёт, кто атакует.', types: ['count', 'clickreach', 'minmoves', 'which', 'danger', 'knightcolor'], g: 1 },
+      { id: 'lg_pawn', t: 'Логика: пешки и ценность', d: 'Путь пешки, гонка пешек, ценность фигур, подсчёт.', types: ['pawnsteps', 'value', 'race', 'countp', 'which', 'danger'], g: 2 }
+    ];
+    DEF.forEach(function (o) {
+      LESS[o.id] = { id: o.id, t: o.t, d: o.d, levels: N, types: o.types, run: runLogic };
+      GROUPS[o.g].ids.push(o.id);
+    });
+  })();
+
+  /* ===== Правила игры, уроки фигур с показом, ничья ===== */
+  (function () {
+    function fen1(code, at, side) { var b = new Array(64).fill(''); b[sqIdx(at)] = side === 'b' ? code.toLowerCase() : code; var s = ''; for (var y = 0; y < 8; y++) { var e = 0; for (var x = 0; x < 8; x++) { var c = b[y * 8 + x]; if (c) { if (e) { s += e; e = 0; } s += c; } else e++; } if (e) s += e; if (y < 7) s += '/'; } return s + ' w - - 0 1'; }
+    function stencil(code, at, h, p) { var i = sqIdx(at); return { h: h, p: p, fen: fen1(code, at), hl: lone(code, i, {}) }; }
+    function bank(intro, QS, hintTxt) {
+      return function (host, L, lv, finish) {
+        var q = QS[(lv - 1) % QS.length], mistakes = 0, done = false, S = null;
+        host.innerHTML = say(av('prof'), 'Вопрос ' + lv, q[0], 'ответь «Да» или «Нет»') + (q[3] ? boardHTML() : '') + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts"><button data-o="1">Да</button><button data-o="0">Нет</button></div>';
+        if (q[3]) { S = { pos: E.fromFEN(q[3]), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }; drawBoard(S, function () {}); }
+        var msg = document.getElementById('msg');
+        document.getElementById('opts').onclick = function (e) {
+          var b = e.target.closest('button'); if (!b || done) return;
+          if ((b.dataset.o === '1') === q[1]) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + q[2]; sfx('good'); finish(mistakes === 0 ? 3 : 2); }
+          else { b.className = 'bad'; mistakes++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Подумай ещё раз. ' + (hintTxt || 'Вспомни урок.'); }
+        };
+      };
+    }
+    var START0 = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+    /* ---------- ПРАВИЛА ИГРЫ ---------- */
+    var RUL = [
+      { h: 'Вежливость: до партии', p: ['Шахматы — игра уважения. Перед партией игроки <b>здороваются</b>, пожимают друг другу руки и говорят: «Желаю хорошей игры!». Садиться за доску надо спокойно, телефон выключить.'], fen: START0 },
+      { h: 'Во время партии', p: ['Не мешай сопернику думать: не разговаривай, не шуми, не подсказывай. Фигуры ставь на клетки аккуратно, по центру. Свою партию не обсуждай с другими, пока она не закончилась.'], fen: START0 },
+      { h: 'После партии', p: ['Победил или проиграл, в конце снова пожми руку и скажи: «Спасибо за игру». Проигрывать тоже надо уметь: после каждой партии ты становишься сильнее, если разберёшь свои ошибки. Не злись и не обижайся.'], fen: START0 },
+      { h: 'Жеребьёвка: кто какими играет', p: ['Перед партией надо решить, кто играет белыми, а кто чёрными. Это делают по <b>жеребьёвке</b>: один игрок прячет в кулаках белую и чёрную пешки, а второй выбирает кулак. Какая пешка там была, таким цветом он и играет. Попробуй сам: выбери кулак!'],
+        v: '<div id="draw" style="text-align:center"><button class="coin" data-k="0" aria-label="левый кулак">✊</button><button class="coin" data-k="1" aria-label="правый кулак">✊</button><p id="drawR" class="note">Нажми на кулак.</p></div>',
+        on: function (host) {
+          var r = Math.random() < 0.5; var box = host.querySelector('#draw'); if (!box) return;
+          box.onclick = function (e) { var b = e.target.closest('.coin'); if (!b) return; var white = (b.dataset.k === '0') === r; sfx('good'); box.querySelector('#drawR').innerHTML = (white ? '♙ Белая пешка!' : '♟ Чёрная пешка!') + '<br><b>Ты играешь ' + (white ? 'белыми и ходишь первым.' : 'чёрными: белые ходят первыми.') + '</b>'; box.querySelectorAll('.coin').forEach(function (c) { c.textContent = ((c.dataset.k === '0') === r) ? '♙' : '♟'; c.style.color = '#222'; }); };
+        } },
+      { h: 'Цвета и первый ход', p: ['Игрок белыми ходит <b>первым</b>. Потом ходы идут по очереди: один ход белых, один ход чёрных. Пропускать ход нельзя. Доска стоит так, что у каждого игрока справа внизу светлое поле, а белые фигуры стоят ближе к тому, кто играет белыми.'], fen: START0 },
+      { h: 'Ход фигуры', p: ['Нажми «Показать»: белые сходили пешкой e2–e4. Чёрные ответили e7–e5. Каждый ходит по одному разу.'], demo: { steps: ['e2e4|Белые ходят первыми.', 'e7e5|Теперь очередь чёрных.', 'g1f3|И снова ход белых.'] } },
+      { h: 'Взятие фигур', p: ['Если фигура может прийти на клетку, где стоит фигура соперника, она её <b>берёт</b>: чужая фигура снимается с доски, а твоя встаёт на её место. Свои фигуры брать нельзя. Нажми «Показать»: белая пешка берёт чёрную.'], demo: { steps: ['e2e4', 'd7d5|Пешка d5 встала напротив.', 'e4d5|Пешка берёт по диагонали и убирает чёрную пешку.', 'd8d5|А теперь чёрный ферзь берёт пешку.'] } },
+      { h: 'Тронул — ходи', p: ['Если ты <b>дотронулся</b> до своей фигуры, ходить надо именно ею. Если дотронулся до фигуры соперника, надо её взять (если можно). Поэтому сначала думай, а потом бери фигуру в руку. Если хочешь поправить фигуру на доске, сначала скажи: «Поправляю».'] },
+      { h: 'Цель игры: поставить мат', p: ['Цель партии — <b>поставить мат</b> королю соперника. Король нападён (это шах), и спастись он не может: уйти некуда, закрыться нечем, атакующую фигуру не съесть. Нажми «Показать»: ладья ставит мат.'], demo: { fen: '6k1/5ppp/8/8/8/8/8/R3K3 w - - 0 1', steps: ['a1a8|Ладья даёт шах на последней горизонтали. Король закрыт своими пешками: это мат!'] } },
+      { h: 'Шах — ещё не мат', p: ['Если королю шах, надо сразу его убрать: уйти, закрыться или съесть атакующую фигуру. Нажми «Показать»: король получает шах и просто уходит.'], demo: { fen: '4k3/8/8/8/8/8/8/R3K3 w - - 0 1', steps: ['a1a8|Шах! Ладья нападает на короля.', 'e8d7|Король ушёл. Это не мат.'] } },
+      { h: 'Пат — это ничья', p: ['Бывает, что у игрока нет ни одного хода, а королю шаха нет. Это <b>пат</b>. Партия заканчивается <b>ничьёй</b>. Нажми «Показать»: белый ферзь не должен был так ходить!'], demo: { fen: 'k7/8/1K6/8/8/8/8/2Q5 w - - 0 1', steps: ['c1c7|Король a8 не может ходить, а шаха нет. Это пат: ничья!'] } },
+      { h: 'Результат партии', p: ['Победа даёт <b>1 очко</b>, ничья — <b>пол-очка</b>, поражение — 0. Партия заканчивается матом, ничьей, либо игрок сдаётся (признаёт поражение) или у него закончилось время на часах.'] },
+      { h: 'Шахматные часы', p: ['В турнирах у каждого игрока есть время на всю партию. Часы стоят рядом с доской: сделал ход — нажал на свою кнопку, время пошло у соперника. Если время закончилось, игрок проигрывает. Есть быстрые партии (блиц), где времени очень мало.'] },
+      { h: 'Звания и разряды', p: ['Чтобы расти, шахматисты получают <b>разряды</b> и <b>звания</b> за успехи в турнирах. Это лесенка, по которой ты поднимаешься:'],
+        v: '<table class="tbl"><tr><th>Ступень</th><th>Что это</th></tr><tr><td>Юношеские разряды</td><td>3-й, 2-й и 1-й юношеский: первые разряды для школьников</td></tr><tr><td>Спортивные разряды</td><td>3-й, 2-й, 1-й разряд</td></tr><tr><td>Кандидат в мастера спорта (КМС)</td><td>сильный шахматист</td></tr><tr><td>Мастер спорта</td><td>очень сильный игрок</td></tr><tr><td>Звания ФИДЕ</td><td>кандидат в мастера ФИДЕ (CM), мастер ФИДЕ (FM), международный мастер (IM)</td></tr><tr><td>Международный гроссмейстер (GM)</td><td>высшее звание, их в мире около двух тысяч</td></tr></table><p class="note">В разных странах разряды называются немного по-разному, но идея везде одна: чем лучше играешь, тем выше ступенька.</p>' },
+      { h: 'Рейтинг', p: ['У каждого шахматиста есть <b>рейтинг</b> — число, которое показывает силу игры. Он называется <b>рейтинг Эло</b>. Выиграл у сильного соперника — рейтинг растёт сильно, проиграл слабому — падает. У начинающих он около 1000 и ниже, у гроссмейстеров больше 2500.'] },
+      { h: 'Какие бывают турниры', p: ['<b>Круговой</b>: каждый играет с каждым. <b>Швейцарская система</b>: игроки с одинаковыми очками играют друг с другом, партий мало. <b>На выбывание</b>: проиграл — вылетел. <b>Командные</b>: играют команды, например Шахматная олимпиада. Быстрые партии: <b>рапид</b> и <b>блиц</b>, классические партии идут долго.'] },
+      { h: 'Зачем это ребёнку', p: ['Каждый турнир — это возможность проверить себя, подружиться и получить разряд. Главное — не только победа. Важно думать, не сдаваться, уважать соперника и каждый раз становиться чуть сильнее. Теперь проверь себя вопросами!'] }
+    ];
+    var RQ = [
+      ['Партию начинают белые?', true, 'Да, первый ход всегда делают белые.'],
+      ['Можно пропустить ход, если не хочется ходить?', false, 'Нет, пропускать ход нельзя. Ходы идут по очереди.'],
+      ['Перед партией надо поздороваться с соперником?', true, 'Да, так шахматисты проявляют уважение.'],
+      ['Если ты дотронулся до своей фигуры, ходить надо ею?', true, 'Да. «Тронул — ходи».'],
+      ['Цвет, которым играешь, часто выбирают по жеребьёвке?', true, 'Да: прячут в кулаках пешки, и соперник выбирает кулак.'],
+      ['Короля можно съесть?', false, 'Нет, королю ставят шах и мат, но его не съедают.'],
+      ['Ничья даёт каждому игроку по пол-очка?', true, 'Да: победа 1 очко, ничья по 0,5, поражение 0.'],
+      ['Это мат? Чёрному королю некуда уйти, ладья даёт шах.', true, 'Король закрыт своими пешками, ладья даёт шах, значит мат.', '6k1/5ppp/8/8/8/8/8/R3K3 w - - 0 1'],
+      ['Рейтинг показывает силу шахматиста?', true, 'Да, у гроссмейстеров он выше 2500.'],
+      ['Свои фигуры можно брать?', false, 'Нет, брать можно только фигуры соперника.'],
+      ['Пат — победа того, кто его поставил?', false, 'Нет, пат — это ничья.'],
+      ['Если закончилось время на часах, партию проигрывают?', true, 'Да, если у игрока закончилось время, он проигрывает.'],
+      ['Гроссмейстер — высшее шахматное звание?', true, 'Да, международный гроссмейстер (GM).'],
+      ['Круговой турнир — когда каждый играет с каждым?', true, 'Да, поэтому такой турнир самый честный.'],
+      ['Можно подсказывать сопернику, как ходить?', false, 'Нет, во время партии мешать и подсказывать нельзя.']
+    ];
+    LESS.rules.slides = RUL; LESS.rules.levels = RQ.length; LESS.rules.run = bank('', RQ, 'Вспомни урок про правила и вежливость.');
+    LESS.rules.d = 'Вежливость, жеребьёвка, цель игры, мат, пат, разряды и турниры.';
+
+    /* ---------- ФИГУРЫ ---------- */
+    var PS = {
+      R: { n: 'Ладья', show: { code: 'R', at: 'd4', seq: ['d8|Ладья ходит вверх по вертикали.', 'h8|Вправо по горизонтали.', 'h1|Вниз.', 'a1|Влево.'] }, cap: { code: 'R', at: 'a1', enemies: ['a5', 'e5', 'e1'], seq: ['a5|Ладья берёт пешку.', 'e5|И ещё одну.', 'e1|И ещё!'] }, st: ['d4', 'a1'], extra: 'Ладья не может прыгать через фигуры: если на пути стоит своя фигура, дальше ей не пройти.' },
+      B: { n: 'Слон', show: { code: 'B', at: 'c1', seq: ['h6|Слон ходит по диагонали.', 'f8|Теперь в другую диагональ.', 'a3|Длинный ход!', 'c1|И назад.'] }, cap: { code: 'B', at: 'd4', enemies: ['f6', 'b2'], seq: ['f6|Слон берёт пешку.', 'b2|И ещё одну.'] }, st: ['d4', 'a1'], extra: 'Слон всю партию ходит по клеткам одного цвета: тот, который был в начале. Поэтому слонов два: светлопольный и тёмнопольный.' },
+      Q: { n: 'Ферзь', show: { code: 'Q', at: 'd4', seq: ['d8|Вверх, как ладья.', 'h4|По диагонали вниз, как слон.', 'h1|Вниз, как ладья.', 'a8|Длинная диагональ, как слон.'] }, cap: { code: 'Q', at: 'd1', enemies: ['d6', 'h6'], seq: ['d6|Ферзь берёт пешку.', 'h6|И ещё одну.'] }, st: ['d4', 'a1'], extra: 'Ферзь — самая сильная фигура: он ходит и как ладья, и как слон.' },
+      N: { n: 'Конь', show: { code: 'N', at: 'g1', seq: ['f3|Конь ходит буквой «Г».', 'e5|Две клетки вперёд, одна вбок.', 'c6|Ещё прыжок.', 'd4|И ещё!'] }, cap: { code: 'N', at: 'b1', enemies: ['c3', 'd5', 'f6'], seq: ['c3|Конь берёт пешку.', 'd5|И ещё.', 'f6|И ещё!'] }, st: ['d4', 'a1'], extra: '' },
+      K: { n: 'Король', show: { code: 'K', at: 'e4', seq: ['e5|Король ходит на одну клетку.', 'f6|В любую сторону.', 'f5', 'e4', 'd3', 'c4'] }, cap: { code: 'K', at: 'd4', enemies: ['d5', 'e6'], seq: ['d5|Король берёт фигуру рядом.', 'e6|И ещё.'] }, st: ['d4', 'a1'], extra: 'Король ходит на одну клетку, но не может идти на клетку, которую атакует соперник.' },
+      P: { n: 'Пешка', show: { code: 'P', at: 'e2', seq: ['e4|С начального места пешка может пройти две клетки.', 'e5|Дальше только на одну.', 'e6'] }, cap: { code: 'P', at: 'e4', enemies: ['d5', 'c6'], seq: ['d5|Пешка ходит прямо, а берёт по диагонали вперёд.', 'c6|И ещё.'] }, st: ['e2', 'e4'], extra: 'Пешка не может ходить назад, и прямо она не берёт.' }
+    };
+    Object.keys(PS).forEach(function (code) {
+      var P = PS[code], L = LESS['p' + code], how = L.slides[0].p;
+      var sl = [
+        { h: P.n + ': как ходит', p: how.concat(P.extra ? [P.extra] : []), show: P.show },
+        { h: P.n + ' берёт фигуры', p: ['Смотри, как ' + P.n.toLowerCase() + ' берёт фигуры соперника. Нажми яркую кнопку.'], show: P.cap },
+        stencil(code, P.st[0], 'Трафарет: все ходы', ['Это «трафарет» хода. Жёлтыми точками отмечены все клетки, куда ' + P.n.toLowerCase() + ' может пойти с этой клетки. Запомни рисунок!']),
+        stencil(code, P.st[1], 'Трафарет у края', ['А здесь ' + P.n.toLowerCase() + ' стоит у края доски. Видишь, как меняется рисунок?'])
+      ];
+      if (code === 'N') {
+        sl.push(
+          { h: 'Конь: буква «Г»', p: ['Конь прыгает буквой «Г»: <b>две клетки по прямой и одна в сторону</b>. На рисунке: с d4 вперёд через d5 и d6, и потом вбок на e6. Путь отмечен, звёздочка — куда прыгнул конь.'], fen: fen1('N', 'd4'), hl: [sqIdx('d5'), sqIdx('d6')], mark: (function () { var o = {}; o[sqIdx('e6')] = 'star'; return o; })() },
+          { h: 'Конь: «Г» в другую сторону', p: ['Можно и так: <b>одна клетка вперёд, две вбок</b>. С d4 через e4 и f4, потом вверх на f5. Тоже буква «Г», просто лёжа.'], fen: fen1('N', 'd4'), hl: [sqIdx('e4'), sqIdx('f4')], mark: (function () { var o = {}; o[sqIdx('f5')] = 'star'; return o; })() },
+          { h: 'Конь меняет цвет клетки', p: ['Конь всегда прыгает на клетку <b>другого цвета</b>: с тёмной на светлую, со светлой на тёмную. Это помогает проверять себя.'], show: { code: 'N', at: 'd4', seq: ['e6|Тёмное поле → светлое.', 'f4|Светлое → тёмное.', 'd5', 'b4'], start: 'Смотри, как конь меняет цвет клетки.' } },
+          { h: 'Конь прыгает через фигуры', p: ['Только конь умеет <b>прыгать через другие фигуры</b>. Даже когда он окружён, он выйдет.'], show: { code: 'N', at: 'd4', enemies: ['c3', 'd3', 'e3', 'c4', 'e4', 'c5', 'd5', 'e5'], seq: ['f5|Конь перепрыгнул через пешки.', 'd6', 'b5'] } },
+          stencil('N', 'a1', 'Конь в углу', ['В углу у коня всего <b>2</b> хода. В центре у него 8 ходов.']),
+          stencil('N', 'a4', 'Конь у края', ['У края доски у коня <b>4</b> хода.'])
+        );
+      }
+      sl.push({ h: 'Попробуй сам', p: ['Нажимай на любые клетки: фигура встанет туда, и жёлтые точки покажут все её ходы.'], free: code, at: code === 'P' ? 'e2' : 'd4' });
+      sl.push({ h: 'Что дальше', p: ['Тебя ждут <b>30 упражнений</b>. В первых пятнадцати надо собирать звёздочки ★ за как можно меньше ходов. В остальных пятнадцати ты проходишь лабиринты со стенами. Чем меньше ходов, тем больше звёзд и баллов! Если непонятно, вернись к урокам и ещё раз нажми «Показать».'] });
+      L.slides = sl; L.levels = 30;
+    });
+
+    /* ---------- НИЧЬЯ ---------- */
+    var eternal = (LESS.check.slides.filter(function (s) { return s.h === 'Вечный шах'; })[0] || {}).demo;
+    var DRW = [
+      { h: 'Ничья: когда никто не победил', p: ['Партия может закончиться <b>ничьёй</b>: обоим игрокам по пол-очка. Способов получить ничью шесть. Давай их разберём по порядку.'], fen: START0 },
+      { h: '1. Пат', p: ['У игрока нет ни одного хода, а королю шаха нет. Нажми «Показать»: король a8 в углу, ему некуда идти, а шаха нет.'], demo: { fen: 'k7/8/1K6/8/8/8/8/2Q5 w - - 0 1', steps: ['c1c7|Пат! Король a8 не может ходить, шаха нет. Ничья.'] } },
+      { h: '2. Вечный шах', p: ['Если один игрок может ставить шах за шахом и позицию не удаётся изменить, это <b>вечный шах</b>. Часто так спасаются, когда проигрывают. Нажми «Показать».'], demo: eternal || { fen: 'k7/8/8/8/8/8/8/K6Q w - - 0 1', steps: ['h1h8'] } },
+      { h: '3. Троекратное повторение', p: ['Если <b>одна и та же позиция</b> повторилась на доске <b>три раза</b>, игрок, чей ход, может потребовать ничью. Нажми «Показать»: игроки ходят туда-сюда.'], demo: { fen: '6k1/8/8/8/8/8/8/R5K1 w - - 0 1', steps: ['a1a2|Ладья пошла.', 'g8f8|Король пошёл.', 'a2a1|Ладья вернулась.', 'f8g8|И король. Это та же позиция, что в начале: второй раз!', 'a1a2', 'g8f8', 'a2a1', 'f8g8|Третий раз! Можно требовать ничью.'] } },
+      { h: '4. Правило 50 ходов', p: ['Если <b>50 ходов подряд</b> никто не брал фигуры и никто не ходил пешкой, можно потребовать ничью. Это защита от бесконечной партии. Одна пешка или одно взятие обнуляют счёт.'], fen: '8/8/8/3k4/8/3K4/8/6R1 w - - 0 1' },
+      { h: '5. Мало фигур для мата', p: ['Если ни у кого не хватает фигур, чтобы поставить мат, партия заканчивается ничьёй. Это «голые» короли, король и слон против короля, король и конь против короля. Нажми кнопки ниже: смотри на позиции.'], fen: '8/8/8/3k4/8/3K4/8/8 w - - 0 1' },
+      { h: 'Король и слон — ничья', p: ['Один слон не может поставить мат одному королю. Позиция: король и слон против короля. Это ничья.'], fen: '8/8/8/3k4/8/3K1B2/8/8 w - - 0 1' },
+      { h: 'Король и конь — ничья', p: ['Один конь тоже не может поставить мат. Король и конь против короля — ничья. А вот король и ладья, король и ферзь, или король и пешка (которая может стать ферзём) — выигрывают.'], fen: '8/8/8/3k4/8/3K1N2/8/8 w - - 0 1' },
+      { h: '6. По соглашению', p: ['Любой игрок в свой ход может <b>предложить ничью</b>: сказать «Предлагаю ничью» и сделать ход. Если соперник согласен, партия окончена. Предлагать надо после своего хода, а не во время хода соперника. Соперник может отказаться и продолжить игру.'], fen: START0 },
+      { h: 'Что запомнить', p: ['<b>Шесть видов ничьи:</b> пат, вечный шах, троекратное повторение, правило 50 ходов, недостаточно фигур для мата, ничья по соглашению. Теперь потренируемся определять, что на доске!'] }
+    ];
+    var DQ = ['k7/8/1K6/8/8/8/8/R7 b - - 0 1'];
+    LESS.draws = { id: 'draws', t: 'Ничья: шесть видов', d: 'Пат, вечный шах, повторение ходов, 50 ходов, мало фигур, согласие.', slides: DRW, levels: 12, run: bank('', [
+      ['Пат — это ничья?', true, 'Да, пат всегда ничья.'],
+      ['Вечный шах заканчивается ничьёй?', true, 'Да, если шахи не прекращаются, фиксируют ничью.'],
+      ['Если позиция повторилась 3 раза, можно требовать ничью?', true, 'Да, это троекратное повторение.'],
+      ['Нужно ли 50 ходов подряд без взятий и ходов пешками, чтобы потребовать ничью?', true, 'Да, это правило 50 ходов.'],
+      ['Король и слон против короля: можно ли поставить мат?', false, 'Нет, слон один не ставит мат: это ничья.', '8/8/8/3k4/8/3K1B2/8/8 w - - 0 1'],
+      ['Король и конь против короля: можно ли поставить мат?', false, 'Нет, один конь не ставит мат.', '8/8/8/3k4/8/3K1N2/8/8 w - - 0 1'],
+      ['Король и ладья против короля: можно ли поставить мат?', true, 'Да, ладья с королём ставит мат. Это не ничья.', '8/8/8/3k4/8/3K4/8/6R1 w - - 0 1'],
+      ['Можно ли предложить ничью сопернику?', true, 'Да, в свой ход. Соперник может согласиться или отказаться.'],
+      ['Голые короли: ничья?', true, 'Да, у обоих мало фигур для мата.', '8/8/8/3k4/8/3K4/8/8 w - - 0 1'],
+      ['Правило 50 ходов обнуляется после взятия?', true, 'Да, после взятия или хода пешкой счёт начинается заново.'],
+      ['Игрок, который поставил пат, выиграл партию?', false, 'Нет, пат — это ничья. Он только упустил победу.'],
+      ['При ничьей каждый получает по 1 очку?', false, 'Нет, по пол-очка.']
+    ], 'Вспомни урок про шесть видов ничьи.') };
+
+    /* упражнение: мат, пат или игра продолжается */
+    var CL = [
+      '3R2k1/5ppp/8/8/8/8/8/4K3 b - - 0 1', '7k/6Q1/6K1/8/8/8/8/8 b - - 0 1', 'k6R/8/1K6/8/8/8/8/8 b - - 0 1', '6rk/5Npp/8/8/8/8/8/4K3 b - - 0 1',
+      'k7/1Q6/1K6/8/8/8/8/8 b - - 0 1', 'rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3', 'r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4',
+      '7k/5Q2/6K1/8/8/8/8/8 b - - 0 1', 'k7/2Q5/1K6/8/8/8/8/8 b - - 0 1', '8/8/8/8/8/5k2/5p2/5K2 w - - 0 1', 'k7/8/1Q6/8/8/8/8/K7 b - - 0 1', 'K7/8/kq6/8/8/8/8/8 w - - 0 1', 'k7/1R6/1K6/8/8/8/8/8 b - - 0 1',
+      'k7/8/8/8/8/8/8/K7 w - - 0 1', 'k7/8/8/8/8/8/8/KB6 w - - 0 1', 'k7/8/8/8/8/8/8/KN6 w - - 0 1', 'k7/8/8/8/8/8/8/R3K3 b - - 0 1', '7k/8/8/8/8/8/8/Q3K3 w - - 0 1', '7k/8/5QK1/8/8/8/8/8 b - - 0 1',
+      'k7/8/1Q6/8/8/8/8/K7 w - - 0 1', START0, 'r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1', '8/8/8/3k4/8/3K1B2/8/8 w - - 0 1', '6k1/5ppp/8/8/8/8/8/R3K3 w - - 0 1'
+    ];
+    function classify(f) { var p = E.fromFEN(f), st = E.status(p); if (st === 'mate') return 'Мат'; if (st === 'stalemate') return 'Пат'; if (E.insufficient(p)) return 'Ничья: мало фигур'; return 'Игра продолжается'; }
+    window.__cl = function () { return CL.map(classify); };
+    function runClass(host, L, lv, finish) {
+      var f = CL[(lv - 1) % CL.length], ans = classify(f), mistakes = 0, done = false;
+      var S = { pos: E.fromFEN(f), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, p = S.pos;
+      var who = p.turn === 1 ? 'Ход белых.' : 'Ход чёрных.';
+      host.innerHTML = say(av('prof'), 'Позиция ' + lv, 'Что здесь произошло? ' + who + ' Выбери ответ.', 'мат, пат или игра продолжается') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + ['Мат', 'Пат', 'Ничья: мало фигур', 'Игра продолжается'].map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>';
+      drawBoard(S, function () {});
+      var msg = document.getElementById('msg');
+      var why = { 'Мат': 'Королю шах, и спастись нельзя: это мат.', 'Пат': 'Шаха нет, но у игрока, чей ход, нет ни одного хода: это пат, ничья.', 'Ничья: мало фигур': 'Фигур слишком мало, мат поставить нельзя: ничья.', 'Игра продолжается': E.inCheck(p) ? 'Шах есть, но король может спастись. Игра продолжается.' : 'У игрока есть ходы. Игра продолжается.' };
+      document.getElementById('opts').onclick = function (e) {
+        var b = e.target.closest('button'); if (!b || done) return;
+        if (b.dataset.o === ans) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + why[ans]; sfx('good'); finish(mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1); }
+        else { b.className = 'bad'; mistakes++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Не совсем. Проверь: есть ли шах? Есть ли у игрока хотя бы один ход?'; }
+      };
+    }
+    LESS.drawq = { id: 'drawq', t: 'Мат, пат или игра идёт', d: '24 позиции: определи, что на доске.', levels: CL.length, run: runClass, slides: [{ h: 'Как определить', p: ['Задай себе три вопроса: <b>1.</b> Есть ли королю шах? <b>2.</b> Есть ли у игрока хотя бы один ход? <b>3.</b> Хватает ли фигур для мата? Если шах есть и ходов нет — <b>мат</b>. Если шаха нет и ходов нет — <b>пат</b>. Если ходы есть — <b>игра продолжается</b>. А если фигур мало — <b>ничья</b>.'], fen: 'k7/1R6/1K6/8/8/8/8/8 b - - 0 1', hint: 'Подумай: есть ли шах? Есть ли ходы у чёрного короля?' }] };
+    LESS.stalemate.t = 'Пат: ставим мат и не даём пат';
+    /* группа «Ничья» */
+    var rg = GROUPS[2].ids, si = rg.indexOf('stalemate'); if (si >= 0) rg.splice(si, 1);
+    GROUPS.splice(3, 0, { n: 'Ничья', ids: ['draws', 'drawq', 'stalemate'] });
+  })();
+
+  /* ===== Ценность фигур, размены, нападение и защита ===== */
+  (function () {
+    var VAL = { 1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 99 }, NM = { 1: 'пешка', 2: 'конь', 3: 'слон', 4: 'ладья', 5: 'ферзь' };
+    var CH = { P: 1, N: 2, B: 3, R: 4, Q: 5, K: 6 };
+    function fenOfB(b) { var s = ''; for (var y = 0; y < 8; y++) { var e = 0; for (var x = 0; x < 8; x++) { var c = b[y * 8 + x]; if (c) { if (e) { s += e; e = 0; } s += c; } else e++; } if (e) s += e; if (y < 7) s += '/'; } return s; }
+    function inb(x, y) { return x >= 0 && x < 8 && y >= 0 && y < 8; }
+    function att(code, from, occ, white) {
+      var x = from & 7, y = from >> 3, out = [];
+      if (code === 'N') KN.forEach(function (d) { if (inb(x + d[0], y + d[1])) out.push((y + d[1]) * 8 + x + d[0]); });
+      else if (code === 'K') D8.forEach(function (d) { if (inb(x + d[0], y + d[1])) out.push((y + d[1]) * 8 + x + d[0]); });
+      else if (code === 'P') { var dy = white ? -1 : 1;[-1, 1].forEach(function (dx) { if (inb(x + dx, y + dy)) out.push((y + dy) * 8 + x + dx); }); }
+      else (code === 'R' ? D8.slice(0, 4) : code === 'B' ? D8.slice(4) : D8).forEach(function (d) { var nx = x + d[0], ny = y + d[1]; while (inb(nx, ny)) { out.push(ny * 8 + nx); if (occ[ny * 8 + nx]) break; nx += d[0]; ny += d[1]; } });
+      return out;
+    }
+    function attackers(b, sq, byWhite) {  /* b: массив символов */
+      var occ = {}, res = []; for (var i = 0; i < 64; i++) if (b[i]) occ[i] = 1;
+      for (var j = 0; j < 64; j++) { var c = b[j]; if (!c) continue; var w = c === c.toUpperCase(); if (w !== byWhite) continue; if (att(c.toUpperCase(), j, occ, w).indexOf(sq) >= 0) res.push(j); }
+      return res;
+    }
+    function rr(r, a, z) { return a + Math.floor(r() * (z - a + 1)); }
+    function pk(r, a) { return a[Math.floor(r() * a.length)]; }
+    function opts(r, ans, lo, hi) { var s = {}, a = [ans]; s[ans] = 1; var g = 0; while (a.length < 4 && g++ < 50) { var v = ans + rr(r, -2, 2); if (v < lo || v > hi || s[v]) continue; s[v] = 1; a.push(v); } return a.sort(function (p, q) { return p - q; }).map(String); }
+    function place(r, b, ch, ok) { for (var k = 0; k < 100; k++) { var s = Math.floor(r() * 64); if (b[s]) continue; if (ok && !ok(s)) continue; b[s] = ch; return s; } return -1; }
+
+    /* --- общий исполнитель: вопросы с доской, варианты или клик --- */
+    function runQ(host, L, lv, finish) {
+      var r = mkRng(hstr(L.id + lv + '_' + Date.now() % 100000)), q = null, tries = 0;
+      while (!q && tries++ < 60) q = L.gen(r, lv);
+      var S = { pos: E.fromFEN(fenOfB(q.b) + ' w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: q.hl || null }, mist = 0, done = false;
+      if (q.star != null) { S.mark[q.star] = 'star'; S.hl = S.hl || {}; S.hl[q.star] = true; }
+      host.innerHTML = say(av('prof'), 'Профессор', q.text, L.t + ' · ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' + (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
+      var msg = document.getElementById('msg');
+      function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function win() { done = true; sfx('good'); sm('Верно! ' + (q.expl || ''), 'good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); }
+      function bad() { mist++; sfx('bad'); sm('Подумай ещё. ' + (q.why || ''), 'bad'); }
+      drawBoard(S, function (i) { if (done || q.opts) return; if (q.ok(i)) { S.mark = {}; S.mark[i] = 'star'; drawBoard(S, function () {}); win(); } else bad(); });
+      var ob = document.getElementById('opts');
+      if (ob) ob.onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; if (b.dataset.o === q.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; bad(); } };
+    }
+    function boardArr() { return new Array(64).fill(''); }
+
+    /* --- генераторы: ценность --- */
+    function genCompare(r, lv) {
+      var b = boardArr(), pool = lv < 4 ? ['P', 'N', 'R'] : ['P', 'N', 'B', 'R', 'Q'], w = 0, bl = 0, n1 = rr(r, 1, 3), n2 = rr(r, 1, 3), i, c;
+      for (i = 0; i < n1; i++) { c = pk(r, pool); if (place(r, b, c, function (s) { return (s >> 3) >= 4; }) >= 0) w += VAL[CH[c]]; }
+      for (i = 0; i < n2; i++) { c = pk(r, pool); if (place(r, b, c.toLowerCase(), function (s) { return (s >> 3) <= 3; }) >= 0) bl += VAL[CH[c]]; }
+      var ans = w > bl ? 'Белые сильнее' : w < bl ? 'Чёрные сильнее' : 'Поровну';
+      return { b: b, text: 'Посчитай ценность фигур (пешка 1, конь 3, слон 3, ладья 5, ферзь 9). У кого больше? Короли не считаются.', opts: ['Белые сильнее', 'Чёрные сильнее', 'Поровну'], ans: ans, why: 'Сложи фигуры каждого цвета. Белые: ' + w + ', чёрные: ' + bl + '.', expl: 'Белые ' + w + ', чёрные ' + bl + '.' };
+    }
+    function genPoints(r) {
+      var b = boardArr(), pool = ['P', 'N', 'B', 'R', 'Q'], tot = 0, n = rr(r, 2, 4), white = r() < .5;
+      for (var i = 0; i < n; i++) { var c = pk(r, pool); var ch = white ? c : c.toLowerCase(); if (place(r, b, ch) >= 0) tot += VAL[CH[c]]; }
+      return { b: b, text: 'Сколько очков стоят ' + (white ? 'белые' : 'чёрные') + ' фигуры вместе? (пешка 1, конь 3, слон 3, ладья 5, ферзь 9)', opts: opts(r, tot, 1, 40), ans: String(tot), why: 'Сложи ценность каждой фигуры.', expl: 'Всего ' + tot + '.' };
+    }
+    function genBest(r) {
+      var T = ['Ладья', 'Конь и слон', 'Ферзь', 'Три пешки', 'Слон и пешка', 'Ладья и пешка'], V = [5, 6, 9, 3, 4, 6], i = rr(r, 0, 5), j = rr(r, 0, 5);
+      if (i === j) j = (j + 1) % 6; var b = boardArr();
+      return { b: b, text: 'Что ценнее? «' + T[i] + '» или «' + T[j] + '»?', opts: [T[i], T[j]].concat(V[i] === V[j] ? ['Одинаково'] : []), ans: V[i] === V[j] ? 'Одинаково' : (V[i] > V[j] ? T[i] : T[j]), why: 'Посчитай очки: пешка 1, конь 3, слон 3, ладья 5, ферзь 9.', expl: T[i] + ' = ' + V[i] + ', ' + T[j] + ' = ' + V[j] + '.' };
+    }
+    /* --- генераторы: размен (по реальным позициям) --- */
+    function genTrade(r) {
+      for (var k = 0; k < 400; k++) {
+        var b = boardArr(), xc = pk(r, ['N', 'B', 'R', 'Q', 'P']), yc = pk(r, ['P', 'N', 'B', 'R']), xs = place(r, b, xc), ys = place(r, b, yc.toLowerCase());
+        if (xs < 0 || ys < 0) continue;
+        var dfn = r() < .55, ds = -1; if (dfn) { ds = place(r, b, pk(r, ['p', 'n', 'b', 'r'])); if (ds < 0) continue; }
+        place(r, b, 'K', function (s) { return Math.abs((s & 7) - (xs & 7)) > 1 || Math.abs((s >> 3) - (xs >> 3)) > 1; }); place(r, b, 'k', function (s) { return Math.abs((s & 7) - (ys & 7)) > 1 || Math.abs((s >> 3) - (ys >> 3)) > 1; });
+        if (xc === 'P' ? true : false) { if ((xs >> 3) === 0 || (xs >> 3) === 7) continue; }
+        if (yc === 'P' && ((ys >> 3) === 0 || (ys >> 3) === 7)) continue;
+        var occ = {}; b.forEach(function (c, i) { if (c) occ[i] = 1; });
+        if (att(xc, xs, occ, true).indexOf(ys) < 0) continue;
+        var b2 = b.slice(); b2[ys] = xc; b2[xs] = '';
+        var defenders = attackers(b2, ys, false).length > 0, gain = VAL[CH[yc]] - (defenders ? VAL[CH[xc]] : 0);
+        var ans = gain > 0 ? 'Выгодно' : gain === 0 ? 'Равный размен' : 'Невыгодно';
+        return { b: b, star: ys, text: 'Белые могут взять чёрную фигуру со звёздочкой фигурой «' + (NM[CH[xc]]) + '». Выгодно ли это?', opts: ['Выгодно', 'Равный размен', 'Невыгодно'], ans: ans, why: 'Посмотри: защищена ли чёрная фигура? Если да, чёрные заберут твою. Сравни цены: ' + NM[CH[yc]] + ' ' + VAL[CH[yc]] + ', ' + NM[CH[xc]] + ' ' + VAL[CH[xc]] + '.', expl: defenders ? 'Чёрные отыгрывают фигуру: ты получаешь ' + VAL[CH[yc]] + ', отдаёшь ' + VAL[CH[xc]] + '.' : 'Фигура не защищена: ты забираешь её бесплатно.' };
+      }
+      return null;
+    }
+    /* --- нападение и защита --- */
+    function genAD(r, lv, mode) {
+      for (var k = 0; k < 500; k++) {
+        var b = boardArr(), n = rr(r, 3, 4 + Math.min(3, lv >> 2)), i, white = [], black = [];
+        for (i = 0; i < n; i++) { var c = pk(r, ['P', 'N', 'B', 'R', 'Q']); var s = place(r, b, c, function (s) { return c !== 'P' || ((s >> 3) > 0 && (s >> 3) < 7); }); if (s >= 0) white.push(s); }
+        for (i = 0; i < n; i++) { var c2 = pk(r, ['p', 'n', 'b', 'r', 'q']); var s2 = place(r, b, c2, function (s) { return c2 !== 'p' || ((s >> 3) > 0 && (s >> 3) < 7); }); if (s2 >= 0) black.push(s2); }
+        if (!white.length) continue;
+        if (mode === 'att' || mode === 'def') {
+          var t = pk(r, white), a = attackers(b, t, false).length, d = attackers(b, t, true).length, n2 = mode === 'att' ? a : d;
+          if (mode === 'def' && d === 0 && r() < .5) continue;
+          return { b: b, star: t, text: mode === 'att' ? 'Сколько чёрных фигур атакуют белую фигуру со звёздочкой?' : 'Сколько белых фигур защищают белую фигуру со звёздочкой?', opts: opts(r, n2, 0, 6), ans: String(n2), why: 'Фигура «атакует» клетку, если может на неё сходить (взять). Помни: ладья, слон и ферзь не прыгают через фигуры.', expl: 'Верный ответ: ' + n2 + '.' };
+        }
+        /* hang: найти беззащитную атакованную фигуру */
+        var hang = white.filter(function (s) { return attackers(b, s, false).length > 0 && attackers(b, s, true).length === 0; });
+        if (hang.length !== 1) continue;
+        return { b: b, text: 'Какая белая фигура атакована и не защищена? Нажми на неё.', ok: function (i) { return i === hang[0]; }, why: 'Ищи белую фигуру, которую могут взять, и которой никто не поможет (её не защищает ни одна белая фигура).', expl: 'Её нужно защитить или увести.' };
+      }
+      return null;
+    }
+    var VT = [
+      { h: 'Ценность фигур', p: ['Фигуры отличаются по силе, и у каждой есть <b>цена в очках</b>. Это помогает понять, выгоден ли размен.'],
+        v: '<table class="tbl"><tr><th></th><th>Фигура</th><th>Очки</th></tr>' + [[1, 'Пешка', 1], [2, 'Конь', 3], [3, 'Слон', 3], [4, 'Ладья', 5], [5, 'Ферзь', 9]].map(function (x) { return '<tr><td style="width:60px">' + pcHTML(x[0]) + '</td><td>' + x[1] + '</td><td><b>' + x[2] + '</b></td></tr>'; }).join('') + '<tr><td style="width:60px">' + pcHTML(6) + '</td><td>Король</td><td>бесценен</td></tr></table>' },
+      { h: 'Считаем вместе', p: ['У белых ладья (5) и пешка (1) — всего 6 очков. У чёрных конь (3) и слон (3) — тоже 6. Значит, силы равны. Считай всегда обе стороны!'], fen: '4k3/2n2b2/8/8/8/8/4P3/4K2R w - - 0 1' },
+      { h: 'Ладья или две лёгкие фигуры?', p: ['Конь и слон вместе (6) чуть сильнее ладьи (5). Ладья против слона — выигрыш «качества» (2 очка). Ладья против коня и пешки — почти равенство.'], fen: '4k3/8/8/8/8/3n1b2/8/R3K3 w - - 0 1' },
+      { h: 'Выгодный размен', p: ['Белая ладья берёт чёрную ладью — размен равный (5 за 5). А если взять <b>незащищённого</b> коня, это бесплатный выигрыш. Нажми «Показать».'], demo: { fen: '4k3/8/8/3n4/8/8/8/3RK3 w - - 0 1', steps: ['d1d5|Ладья берёт коня. Никто не защищал коня, мы выиграли 3 очка!'] } },
+      { h: 'Невыгодный размен', p: ['Здесь ладья берёт пешку, но пешка защищена. Нажми «Показать» и посмотри, чем всё кончится.'], demo: { fen: '4k3/8/2p5/3p4/8/8/8/3RK3 w - - 0 1', steps: ['d1d5|Ладья взяла пешку.', 'c6d5|Но пешка защищена и берёт ладью! Мы отдали 5 очков за 1. Это невыгодно.'] } },
+      { h: 'Простое правило размена', p: ['<b>1.</b> Перед взятием проверь: чужая фигура защищена? <b>2.</b> Если защищена, сравни цены: ты берёшь одну фигуру, а соперник берёт твою. <b>3.</b> Берёшь дорогую фигуру дешёвой — отлично! Берёшь дешёвую дорогой — опасно. <b>4.</b> Когда ты впереди по очкам, меняй фигуры: преимущество растёт.'], fen: START_FEN() },
+      { h: 'Размен ферзей и «качество»', p: ['Ферзь стоит 9, и его не меняют на что-то дешёвое. А вот когда ферзь меняется на ферзя, остаются ладьи и лёгкие фигуры. Если ты отдал слона (3), а взял ладью (5), ты выиграл <b>качество</b>. Если наоборот, потерял.'], fen: START_FEN() },
+      { h: 'Дальше упражнения', p: ['Упражнения 1–6: сравни силы. 7–12: посчитай очки. 13–18: что ценнее. 19–30: выгодный размен или нет?'] }
+    ];
+    function START_FEN() { return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'; }
+    LESS.values = { id: 'values', t: 'Ценность фигур', d: 'Сколько стоит каждая фигура и как сравнивать силы.', levels: 18, slides: VT.slice(0, 3).concat(VT.slice(-1)), run: runQ, gen: function (r, lv) { return lv <= 6 ? genCompare(r, lv) : lv <= 12 ? genPoints(r) : genBest(r); } };
+    LESS.values.slides[3] = { h: 'Дальше упражнения', p: ['Упражнения 1–6: сравни силы. 7–12: посчитай очки. 13–18: что ценнее?'] };
+    LESS.trades = { id: 'trades', t: 'Размены: выгодно или нет', d: 'Правильные и неправильные размены, защищена ли фигура.', levels: 24, slides: VT.slice(3, 7).concat([{ h: 'Дальше упражнения', p: ['В каждой позиции белые могут взять чёрную фигуру со звёздочкой. Реши: это выгодно, равный размен или невыгодно?'] }]), run: runQ, gen: function (r) { return genTrade(r); } };
+    var ADS = [
+      { h: 'Что такое атака', p: ['Фигура <b>атакует</b> клетку, если может на неё сходить или взять там фигуру. Если твоя фигура атакует фигуру соперника, она ей угрожает: на следующем ходу её можно взять. Нажми «Показать».'], demo: { fen: '4k3/8/8/3p4/8/2N5/8/4K3 w - - 0 1', steps: ['c3d5|Конь атаковал пешку d5 и взял её.'] } },
+      { h: 'Что такое защита', p: ['Фигура <b>защищена</b>, если другая твоя фигура может забрать обратно, если её возьмут. Нажми «Показать»: пешку e4 защищает ладья.'], demo: { fen: '4k3/8/8/3p4/4P3/8/8/4RK2 b - - 0 1', steps: ['d5e4|Чёрная пешка взяла пешку e4.', 'e1e4|Но пешка e4 была защищена ладьёй: ладья берёт обратно!'] } },
+      { h: 'Атакована, но не защищена', p: ['Это беда: соперник возьмёт её бесплатно. На рисунке чёрный ферзь атакует белого коня, а коня никто не защищает. Что делать? Увести, защитить или поставить шах. Нажми «Показать».'], demo: { fen: '4k3/8/8/8/3q4/2N5/8/4K3 b - - 0 1', steps: ['d4c3|Ферзь взял коня, никто не защищал!'] } },
+      { h: 'Как защитить фигуру', p: ['Фигуру можно защитить так: <b>1.</b> Увести её. <b>2.</b> Закрыть линию атаки. <b>3.</b> Защитить другой фигурой. <b>4.</b> Взять атакующую фигуру. <b>5.</b> Контратаковать сильнее.'], fen: '4k3/8/8/8/3q4/2N5/4B3/4K3 w - - 0 1' },
+      { h: 'Дальше упражнения', p: ['1–8: сколько фигур атакуют. 9–16: сколько защищают. 17–24: найди незащищённую фигуру под боем.'] }
+    ];
+    LESS.attdef = { id: 'attdef', t: 'Нападение и защита', d: 'Кто кого атакует, кто защищён, как не терять фигуры.', levels: 24, slides: ADS, run: runQ, gen: function (r, lv) { return genAD(r, lv, lv <= 8 ? 'att' : lv <= 16 ? 'def' : 'hang'); } };
+    window.__E = E;
+    GROUPS.splice(2, 0, { n: 'Ценность и защита', ids: ['values', 'trades', 'attdef'] });
+  })();
+
+  /* ===== Мат: техника, лесенка, мат в 2 хода ===== */
+  (function () {
+    var BANK = ["6Q1/1k6/4R3/1K1r4/8/2N5/8/8 w - - 0 1", "8/8/1Q6/6R1/5p2/r7/K6k/8 w - - 0 1", "8/8/8/k7/3p3n/2K5/8/3Q1B2 w - - 0 1", "7k/1R6/8/2R5/5p2/rK6/8/8 w - - 0 1", "5k2/4R1p1/Q4K2/8/5p2/8/8/8 w - - 0 1", "8/8/4n3/8/1N2Q3/3p4/4KR2/2k5 w - - 0 1", "8/k7/8/1Q3b2/6K1/2R5/8/8 w - - 0 1", "2k5/5b2/8/5R2/2K5/2p4Q/8/8 w - - 0 1", "8/8/8/1R6/5R2/5p2/1p2K2k/8 w - - 0 1", "5k2/NR6/8/8/4K3/2n5/3Q4/8 w - - 0 1", "2rN2k1/Q7/5Kr1/8/5pR1/8/8/8 w - - 0 1", "8/8/k7/8/pR6/Q7/1rK5/8 w - - 0 1", "8/8/8/8/4N3/3b4/2Q1K2p/7k w - - 0 1", "K3k3/1b6/1R6/p7/8/8/7R/8 w - - 0 1", "8/7k/8/8/6R1/p5p1/7K/2Q5 w - - 0 1", "1k6/5R2/8/N3K3/8/6b1/8/7Q w - - 0 1", "2R5/6K1/8/1k6/7b/8/Rb3p2/8 w - - 0 1", "1k6/8/1b1R4/K5p1/8/8/4p3/2R5 w - - 0 1", "3Q4/8/8/8/2p5/3K4/1N1B4/k7 w - - 0 1", "8/2kp4/8/1Qb5/6b1/2N5/8/1R4K1 w - - 0 1", "4B2k/Q4r2/5K2/8/6p1/5b2/8/8 w - - 0 1", "k7/8/1Q2N3/8/8/5K2/3p4/6nR w - - 0 1", "8/5p2/8/6b1/8/4K3/p3Q3/4N2k w - - 0 1", "4n3/2K5/2N5/8/7k/3pQ3/8/6R1 w - - 0 1", "8/6b1/6k1/4K3/7R/8/3Q4/8 w - - 0 1", "8/2Q5/7k/8/1N6/8/2r1K3/6R1 w - - 0 1", "7k/5R2/8/8/4Q3/8/8/6Kr w - - 0 1", "1Q6/4N3/8/3b4/4K3/k7/7R/8 w - - 0 1", "8/B7/8/5p2/6K1/8/Q7/5k2 w - - 0 1", "5k2/Q7/8/8/8/3pK3/8/2b4R w - - 0 1", "1k6/8/2K5/8/8/1N6/1Q6/2r5 w - - 0 1", "7B/8/8/5n2/6Q1/6K1/8/7k w - - 0 1", "8/8/5N2/8/2KR4/3b2k1/3Q4/8 w - - 0 1", "k7/8/8/5n2/7K/1R6/7R/8 w - - 0 1", "k1K5/8/8/3N4/2r5/8/2p3Q1/8 w - - 0 1", "3Q4/1k1KB3/8/2n5/N7/8/8/8 w - - 0 1", "K3Q3/1b1p4/8/k3p3/8/8/8/1R6 w - - 0 1", "7k/8/6Kr/p1Q5/8/7R/5p2/8 w - - 0 1", "8/1b6/8/7k/6R1/5K2/1Q6/8 w - - 0 1", "6B1/8/5pp1/2p5/1KR5/8/4N3/1k6 w - - 0 1", "7k/2b1R3/2R5/8/5K2/8/8/8 w - - 0 1", "2k5/Qn5p/1p4K1/7R/8/8/8/8 w - - 0 1", "1k6/6R1/1K6/8/8/1r3Qp1/8/8 w - - 0 1", "1k6/3Q4/5RN1/8/1p6/8/1p6/b1K5 w - - 0 1", "1K6/4Q3/k7/8/1r6/8/7p/3RN3 w - - 0 1", "6K1/8/8/8/8/2Q5/b6R/5k2 w - - 0 1", "5K1Q/8/6R1/8/1p6/5r1N/8/7k w - - 0 1", "8/3Q4/2r5/k3p3/p1K5/8/8/8 w - - 0 1", "4k3/R7/4p3/5K2/8/8/p5R1/8 w - - 0 1", "8/8/8/6K1/5b2/7k/1Q6/8 w - - 0 1", "6k1/2N5/8/1K4r1/8/8/8/2QR4 w - - 0 1", "k7/5n2/3K4/2Q5/8/8/5B2/1b1N4 w - - 0 1", "8/8/8/5Q2/5p2/2Kr4/8/2k1N3 w - - 0 1", "8/1N3R2/8/4k1p1/8/1Q2rK2/7r/8 w - - 0 1", "8/QB6/8/8/5K1k/8/6n1/8 w - - 0 1", "k7/3Q4/3N4/2K5/n7/8/p5pR/8 w - - 0 1", "1R6/4Q3/4K3/k2bp3/8/4N3/8/8 w - - 0 1", "3B2N1/8/8/1R6/8/1b6/k1K5/8 w - - 0 1", "6k1/2R4R/8/8/3r4/3K4/8/8 w - - 0 1", "1rK1kN2/8/8/3Q4/1p3R2/8/8/8 w - - 0 1"];
+    function m1(pos) { var ms = E.legal(pos); for (var i = 0; i < ms.length; i++) { if (E.status(E.make(pos, ms[i])) === 'mate') return ms[i]; } return null; }
+    function m2(pos) {
+      var sols = [], ms = E.legal(pos);
+      ms.forEach(function (m) {
+        var p2 = E.make(pos, m), st = E.status(p2); if (st === 'mate' || st === 'stalemate') return;
+        var bs = E.legal(p2); if (!bs.length) return;
+        for (var k = 0; k < bs.length; k++) { if (!m1(E.make(p2, bs[k]))) return; }
+        sols.push(m);
+      });
+      return sols;
+    }
+    function same(a, b) { return a.f === b.f && a.t === b.t && (a.p || 0) === (b.p || 0); }
+    var EASY = [], HARD = [];
+    BANK.forEach(function (f) { var n = m2(E.fromFEN(f)).length; (n >= 2 ? EASY : HARD).push(f); });
+    if (EASY.length < 20) { EASY = BANK.slice(0, 30); } if (HARD.length < 15) { HARD = BANK.slice(30); }
+
+    /* --- мат в 2 хода --- */
+    function runMate2(host, L, lv, finish) {
+      var list = L.bank, f = list[(lv - 1) % list.length], pos = E.fromFEN(f), sols = m2(pos), mist = 0, step = 1, busy = false, done = false;
+      var S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
+      host.innerHTML = say(av('prof'), 'Мат в два хода ' + lv, 'Белые начинают и ставят мат во втором ходу. Найди первый ход!', 'ход 1 из 2') + boardHTML() + '<div id="promo" class="promo" hidden></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div class="row"><button class="btn alt" id="hintB">Подсказка</button><button class="btn alt" id="resB">Заново</button></div>';
+      var msg = document.getElementById('msg'), cur = pos;
+      function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function draw() { drawBoard(S, click); }
+      function play(m) {
+        var before = cur, np = E.make(before, m); moveSound(before, m, np); S.last = { f: m.f, t: m.t }; S.anim = animOf(before, m);
+        if (step === 1) {
+          if (!sols.some(function (s) { return same(s, m); })) { mist++; sfx('bad'); S.pos = np; S.sel = null; S.targets = []; draw(); sm('Не получается: у соперника есть защита. Попробуй другой первый ход.', 'bad'); busy = true; later(function () { S.pos = cur; S.last = null; busy = false; draw(); }, 1600); return; }
+          cur = np; S.pos = np; S.sel = null; S.targets = []; draw(); busy = true; sm('Хороший ход! Соперник отвечает…');
+          later(function () { var bs = E.legal(cur), bm = bs[Math.floor(Math.random() * bs.length)], b0 = cur; cur = E.make(cur, bm); S.last = { f: bm.f, t: bm.t }; S.anim = animOf(b0, bm); S.pos = cur; step = 2; busy = false; sfx('move'); draw(); sm('Теперь поставь мат!'); }, 900);
+        } else {
+          if (E.status(np) === 'mate') { cur = np; S.pos = np; S.sel = null; S.targets = []; done = true; draw(); sm('Мат! Ты нашёл мат в два хода.', 'good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); }
+          else { mist++; sfx('bad'); S.pos = np; S.sel = null; S.targets = []; draw(); sm('Это не мат. Поищи другой ход.', 'bad'); busy = true; later(function () { S.pos = cur; busy = false; draw(); }, 1400); }
+        }
+      }
+      function click(i) {
+        if (busy || done) return; var v = S.pos.b[i];
+        if (S.sel != null && S.targets.indexOf(i) >= 0) { var c = movesFrom(S.pos, S.sel).filter(function (x) { return x.t === i; }); if (c.length > 1) c = [c.filter(function (x) { return x.p === 5; })[0] || c[0]]; play(c[0]); return; }
+        if (v && v > 0) { S.sel = i; S.targets = movesFrom(S.pos, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
+        draw();
+      }
+      document.getElementById('hintB').onclick = function () { if (busy || done) return; var s = step === 1 ? sols[0] : m1(cur); if (!s) return; S.sel = null; S.hint = s.f; draw(); sm('Подсказка: ходить надо мигающей фигурой.'); };
+      document.getElementById('resB').onclick = function () { lessonPage(L.id, lv); };
+      draw();
+    }
+    /* --- сыграть мат против компьютера --- */
+    var CFG = { Q: { n: 'ферзём', pcs: ['Q'], lim: 20, tip: 'Не торопись с шахами! Поставь ферзя на расстоянии коня от короля, чтобы он не мог выйти. Потом подведи своего короля. И следи, чтобы не было пата!' }, R: { n: 'ладьёй', pcs: ['R'], lim: 35, tip: 'Отрезай короля ладьёй линия за линией, подводи своего короля напротив чужого (оппозиция), потом ставь шах ладьёй на краю.' }, RR: { n: 'двумя ладьями', pcs: ['R', 'R'], lim: 20, tip: 'Лесенка: одна ладья отрезает короля шахом, вторая отрезает следующую линию. Так они идут по очереди к краю. Ладьи не должны стоять рядом, где король может их съесть.' }, QR: { n: 'ферзём и ладьёй', pcs: ['Q', 'R'], lim: 15, tip: 'Ферзь и ладья работают как лесенка: ставь шахи по очереди, прижимая короля к краю. Следи, чтобы король не съел фигуру!' } };
+    function runPlay(host, L, lv, finish) {
+      var c = CFG[L.mk], r = mkRng(hstr(L.id + lv) + Date.now() % 100000), pos = null, G = null, tries = 0;
+      while (!pos && tries++ < 200) {
+        var b = new Array(64).fill(''), put = function (ch, f) { for (var k = 0; k < 60; k++) { var s = Math.floor(r() * 64); if (b[s]) continue; if (f && !f(s)) continue; b[s] = ch; return s; } return -1; };
+        var bk = put('k', function (s) { return lv <= 3 ? ((s & 7) === 0 || (s & 7) === 7 || (s >> 3) === 0 || (s >> 3) === 7) : true; });
+        var d = function (a, q) { return Math.max(Math.abs((a & 7) - (q & 7)), Math.abs((a >> 3) - (q >> 3))); };
+        var wk = put('K', function (s) { return d(s, bk) >= 3; }), ok = bk >= 0 && wk >= 0;
+        c.pcs.forEach(function (p) { var s = put(p, function (s) { return d(s, bk) >= 2; }); if (s < 0) ok = false; });
+        if (!ok) continue;
+        var fen = ''; for (var y = 0; y < 8; y++) { var e = 0; for (var x = 0; x < 8; x++) { var ch = b[y * 8 + x]; if (ch) { if (e) { fen += e; e = 0; } fen += ch; } else e++; } if (e) fen += e; if (y < 7) fen += '/'; }
+        if (E.inCheck(E.fromFEN(fen + ' b - - 0 1'))) continue;
+        var p = E.fromFEN(fen + ' w - - 0 1'); if (E.status(p) === 'stalemate' || E.status(p) === 'mate') continue; pos = p;
+      }
+      var S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, cur = pos, moves = 0, busy = false, done = false, hh = [];
+      host.innerHTML = say(av('prof'), 'Мат ' + c.n + ' · ' + lv, 'Ты играешь белыми. Поставь мат чёрному королю за ' + c.lim + ' ходов. Компьютер защищается!', 'мат ' + c.n) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="row"><button class="btn alt" id="hintB">Подсказка</button><button class="btn alt" id="resB">Заново</button><span class="count" id="cnt"></span></div>';
+      var msg = document.getElementById('msg');
+      function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function draw() { document.getElementById('cnt').textContent = 'Ходов: ' + moves; drawBoard(S, click); }
+      function check(who) {
+        var st = E.status(cur);
+        if (st === 'mate') { done = true; draw(); var stars = moves <= c.lim * 0.6 ? 3 : moves <= c.lim * 0.85 ? 2 : 1; sm('Мат! Ты поставил мат за ' + moves + ' ходов.', 'good'); finish(stars); return true; }
+        if (st === 'stalemate') { done = true; draw(); sfx('bad'); sm('Пат! Это ничья. Нажми «Заново» и будь внимательнее.', 'bad'); return true; }
+        if (E.insufficient(cur)) { done = true; draw(); sfx('bad'); sm('Ты потерял фигуру, мат уже не поставить. Нажми «Заново».', 'bad'); return true; }
+        if (moves >= c.lim && who === 'b') { done = true; draw(); sfx('bad'); sm('Слишком много ходов. Нажми «Заново» и попробуй короче.', 'bad'); return true; }
+        return false;
+      }
+      function click(i) {
+        if (busy || done) return; var v = cur.b[i];
+        if (S.sel != null && S.targets.indexOf(i) >= 0) {
+          var cs = movesFrom(cur, S.sel).filter(function (x) { return x.t === i; }), m = cs[0], b0 = cur;
+          cur = E.make(cur, m); moves++; S.pos = cur; S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); S.sel = null; S.targets = []; hh.push(E.hashOf(cur)); moveSound(b0, m, cur); draw();
+          if (check('w')) return;
+          busy = true; sm('Компьютер думает…');
+          later(function () {
+            var bm = E.bestMove(cur, 6, hh), b1 = cur; if (!bm) { busy = false; return; }
+            cur = E.make(cur, bm); S.pos = cur; S.last = { f: bm.f, t: bm.t }; S.anim = animOf(b1, bm); hh.push(E.hashOf(cur)); moveSound(b1, bm, cur); busy = false; draw();
+            if (check('b')) return; sm(E.inCheck(cur) ? 'Тебе шах!' : 'Твой ход.', E.inCheck(cur) ? 'bad' : '');
+          }, 500); return;
+        }
+        if (v && v > 0) { S.sel = i; S.targets = movesFrom(cur, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
+        draw();
+      }
+      document.getElementById('hintB').onclick = function () { sm('Подсказка: ' + c.tip); };
+      document.getElementById('resB').onclick = function () { lessonPage(L.id, lv); };
+      sm('Твой ход. ' + c.tip); draw();
+    }
+    function mk(id, t, d, mkk, slides) { return { id: id, t: t, d: d, mk: mkk, levels: 10, slides: slides, run: runPlay }; }
+    var ST = function (fen, steps) { return { fen: fen, steps: steps }; };
+    var MQ = mk('mq', 'Мат ферзём и королём', 'Как загнать короля в угол ферзём и поставить мат.', 'Q', [
+      { h: 'Ферзь и король против короля', p: ['Ферзь с королём всегда выигрывают у одного короля. Нужно загнать чужого короля на край и там поставить мат. Главная опасность — <b>пат</b>, не оставляй королю соперника без ходов, если нет шаха!'], fen: '4k3/8/8/4K3/8/8/8/Q7 w - - 0 1' },
+      { h: 'Король помогает ферзю', p: ['Одному ферзю мат на краю не поставить: рядом должен стоять твой король и закрывать поля. Нажми «Показать».'], demo: ST('7k/8/5K2/8/8/8/8/Q7 w - - 0 1', ['f6g6|Король подходит ближе.', 'h8g8|Чёрному королю остаётся только g8.', 'a1a8|Мат! Ферзь на 8-й горизонтали, а король g6 закрывает все поля впереди.']) },
+      { h: 'Оппозиция', p: ['Когда короли стоят напротив с одной клеткой между ними, это <b>оппозиция</b>. Тот, кто должен ходить, отступает. Нажми «Показать»: белый король встаёт напротив.'], demo: ST('4k3/8/8/4K3/8/8/8/Q7 w - - 0 1', ['e5e6|Белый король напротив чёрного.', 'e8f8|Чёрный король идёт вбок.', 'a1g1|Ферзь делает тихий ход и отрезает вертикаль g.', 'f8e8|Король возвращается.', 'g1g8|Мат!']) },
+      { h: 'Мат на краю', p: ['Ещё один пример: чёрный король в углу, белый король стоит рядом через клетку. Ферзь ставит мат, защищённый королём.'], demo: ST('k7/8/8/2K5/8/8/8/1Q6 w - - 0 1', ['c5c6|Король подошёл.', 'a8a7|Король чёрных пошёл на a7.', 'b1b7|Ферзь b7 защищён королём: мат!']) },
+      { h: 'Как играть дальше', p: ['<b>1.</b> Ферзём загоняй короля к краю (на расстоянии хода коня). <b>2.</b> Подводи свой король. <b>3.</b> Перед каждым ходом проверь: у чёрного короля есть ход? Если нет, а шаха нет, это пат. <b>4.</b> Ставь мат ферзём рядом с королём или на краю доски. В упражнениях ты играешь против компьютера: 10 позиций.'] }
+    ]);
+    var MR = mk('mr', 'Мат ладьёй и королём', 'Ладья отрезает короля, король подходит, ладья ставит мат.', 'R', [
+      { h: 'Ладья и король против короля', p: ['Ладья с королём тоже выигрывают, но надо больше ходов. Ладья отрезает короля линией, а твой король подходит. Нажми «Показать»: простой мат.'], demo: ST('4k3/8/4K3/8/8/8/8/R7 w - - 0 1', ['a1a8|Мат! Белый король стоит напротив и закрывает все поля на 7-й горизонтали.']) },
+      { h: 'Два шага к мату', p: ['Белый король подходит к чёрному, а ладья ставит мат на краю. Нажми «Показать».'], demo: ST('k7/8/2K5/8/8/8/8/7R w - - 0 1', ['c6b6|Король встаёт на b6. Теперь у чёрного только b8.', 'a8b8|Король пошёл на b8.', 'h1h8|Мат ладьёй!']) },
+      { h: 'Метод коробки', p: ['Ладьёй отрезай короля линиями: пусть он живёт в «коробке» (в части доски), потом коробку сужай. Свой король подводи напротив. Когда чёрный король на краю, а твой стоит напротив, ставь шах ладьёй.'], fen: '8/8/8/3k4/8/8/8/R3K3 w - - 0 1' },
+      { h: 'Осторожно', p: ['Ладью нельзя ставить рядом с чужим королём, если она не защищена: король её съест. И опять следи за патом!'], fen: '8/8/8/3k4/8/8/8/R3K3 w - - 0 1' }
+    ]);
+    var MRR = mk('mrr', 'Линейный мат двумя ладьями', 'Лесенка: две ладьи ставят мат по очереди.', 'RR', [
+      { h: 'Линейный мат', p: ['Две ладьи могут поставить мат без помощи короля. Они двигаются по очереди и отрезают короля линия за линией, как <b>лесенка</b>. Нажми «Показать».'], demo: ST('3k4/8/8/8/R7/8/1R6/4K3 w - - 0 1', ['a4a7|Первая ладья закрывает 7-ю горизонталь: чёрный король остаётся на 8-й.', 'd8e8|Король ходит по 8-й.', 'a7h7|Ладья отходит далеко, чтобы король не съел её.', 'e8f8', 'b2b8|Вторая ладья ставит мат на 8-й горизонтали!']) },
+      { h: 'Ещё одна лесенка', p: ['Лесенка работает на любой линии: на последней горизонтали, на a-вертикали, на любом краю доски.'], demo: ST('7k/8/8/8/R7/8/1R6/4K3 w - - 0 1', ['a4g4|Ладья отрезает вертикаль g: король не может выйти.', 'h8h7|Король ходит по h-вертикали.', 'b2h2|Мат!']) },
+      { h: 'Правила лесенки', p: ['<b>1.</b> Ладьи стоят далеко друг от друга и не мешают. <b>2.</b> Каждый ход ладья шахом отрезает короля. <b>3.</b> Держи ладьи на расстоянии от чужого короля. В упражнениях — 10 позиций с двумя ладьями.'], fen: '3k4/8/8/8/R7/8/1R6/4K3 w - - 0 1' }
+    ]);
+    var MQR = mk('mqr', 'Мат ферзём и ладьёй', 'Ферзь и ладья ставят мат быстро.', 'QR', [
+      { h: 'Ферзь и ладья', p: ['Ферзь и ладья — сильная пара. Они ставят мат так же, как две ладьи: по очереди шахуют и прижимают короля к краю. Нажми «Показать».'], demo: ST('8/8/4k3/8/8/8/8/R2QK3 w - - 0 1', ['a1a5|Ладья отрезает вертикаль a.', 'e6f6', 'd1d6|Ферзь отрезает горизонталь 6 и идёт дальше.', 'f6f7', 'a5a7|Ладья шахует на 7-й.', 'f7g8', 'd6d8|Мат!']) },
+      { h: 'Как играть', p: ['Шахуй ладьёй, потом ферзём: король не успевает уходить. Король загнан на край, и мат на следующий ход. Не теряй время на ненужные ходы!'], fen: '8/8/4k3/8/8/8/8/R2QK3 w - - 0 1' }
+    ]);
+    var M2 = { id: 'm2', t: 'Мат в два хода', d: 'Найди первый ход: после него мат неизбежен. 30 позиций.', levels: 30, bank: EASY, run: runMate2, slides: [
+      { h: 'Мат в 2 хода', p: ['Белые делают ход, чёрные отвечают как угодно, а потом белые ставят мат. Надо найти такой <b>первый ход</b>, после которого мат неизбежен, что бы ни ответили чёрные. Нажми «Показать»: пример.'], demo: ST('k7/8/8/2K5/8/8/8/1Q6 w - - 0 1', ['c5c6|Первый ход: король подходит. Теперь у чёрных единственный ход.', 'a8a7|Чёрный король идёт на a7.', 'b1b7|Мат!']) },
+      { h: 'Как искать', p: ['Выбери ход и спроси: «Что ответит соперник? У него несколько вариантов, у меня на каждый есть мат?» Сначала смотри шахи, потом ходы, которые отрезают короля. В упражнениях сначала сыграй первый ход, потом ответит компьютер, а ты поставишь мат.'], fen: 'k7/8/8/2K5/8/8/8/1Q6 w - - 0 1' }
+    ] };
+    var M3 = { id: 'mh', t: 'Сложные маты', d: 'Позиции, где первый ход один-единственный. Думай внимательно!', levels: 30, bank: HARD, run: runMate2, slides: [
+      { h: 'Сложные матовые позиции', p: ['Здесь первый ход мата только один. Остальные ходы дают сопернику защититься. Подумай про шахи, жертвы фигур и ходы, которые закрывают королю путь. Если трудно, нажми «Подсказка»: мигнёт нужная фигура.'], fen: HARD[0] }
+    ] };
+    GROUPS.splice(4, 0, { n: 'Мат: техника', ids: ['mq', 'mr', 'mrr', 'mqr', 'm2', 'mh'] });
+    [MQ, MR, MRR, MQR, M2, M3].forEach(function (L) { LESS[L.id] = L; });
+  })();
+
+  /* ===== Нотация, двойной удар, повторение ===== */
+  (function () {
+    var START0 = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+    /* --- нотация --- */
+    function randPos(r, plies) { var p = E.fromFEN(START0); for (var i = 0; i < plies; i++) { var ms = E.legal(p); if (!ms.length) break; p = E.make(p, ms[Math.floor(r() * ms.length)]); } return p; }
+    function runNote(host, L, lv, finish) {
+      var r = mkRng(hstr('nt' + lv) + Date.now() % 100000), pos = null, ms;
+      for (var t = 0; t < 50; t++) { pos = randPos(r, 2 * Math.floor(r() * 6) + (lv > 20 ? 6 : 0)); ms = E.legal(pos); if (ms.length > 4 && E.status(pos) !== 'mate') break; }
+      var S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, mist = 0, done = false, choose = lv % 2 === 1, m0 = ms[Math.floor(r() * ms.length)], txt = notation(m0, pos);
+      if (choose) {
+        var all = [txt], seen = {}; seen[txt] = 1; var g = 0; while (all.length < 4 && g++ < 60) { var o = notation(ms[Math.floor(r() * ms.length)], pos); if (!seen[o]) { seen[o] = 1; all.push(o); } }
+        all.sort(function () { return r() - .5; });
+        S.last = null; S.mark = {}; S.mark[m0.f] = 'star'; S.hl = {}; S.hl[m0.f] = true; S.hl[m0.t] = true;
+        host.innerHTML = say(av('prof'), 'Запись хода ' + lv, 'Фигура ходит с одной подсвеченной клетки на другую. Какая запись правильная?', 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + all.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>';
+        drawBoard(S, function () {});
+        document.getElementById('opts').onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; var msg = document.getElementById('msg'); if (b.dataset.o === txt) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + txt; sfx('good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); } else { b.className = 'bad'; mist++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Нет. Буква фигуры, откуда, куда: вспомни урок.'; } };
+      } else {
+        host.innerHTML = say(av('prof'), 'Сделай ход ' + lv, 'Сделай на доске ход: ' + txt, 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>';
+        var msg2 = document.getElementById('msg'), busy = false;
+        var click = function (i) {
+          if (done || busy) return; var v = S.pos.b[i];
+          if (S.sel != null && S.targets.indexOf(i) >= 0) {
+            var c = movesFrom(pos, S.sel).filter(function (x) { return x.t === i; })[0];
+            if (notation(c, pos) === txt) { S.pos = E.make(pos, c); S.anim = animOf(pos, c); S.sel = null; S.targets = []; done = true; moveSound(pos, c, S.pos); drawBoard(S, click); msg2.className = 'msg good'; msg2.textContent = 'Верно!'; finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); }
+            else { mist++; sfx('bad'); msg2.className = 'msg bad'; msg2.textContent = 'Это ход ' + notation(c, pos) + ', а нужен ' + txt + '.'; S.sel = null; S.targets = []; drawBoard(S, click); }
+            return;
+          }
+          if (v && (v > 0) === (pos.turn > 0)) { S.sel = i; S.targets = movesFrom(pos, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
+          drawBoard(S, click);
+        };
+        drawBoard(S, click);
+      }
+    }
+    LESS.notation = { id: 'notation', t: 'Запись ходов', d: 'Как записывать и читать ходы: буквы фигур, шах, мат, взятие, рокировка.', levels: 30, run: runNote, slides: [
+      { h: 'Зачем записывать ходы', p: ['Шахматисты записывают партии, чтобы потом разбирать ошибки и учиться у чемпионов. Запись ходов — это язык шахмат. Выучи его, и ты сможешь читать книги!'], fen: START0 },
+      { h: 'Буквы фигур', p: ['Фигуры обозначаются первой буквой: <b>Кр</b> — король, <b>Ф</b> — ферзь, <b>Л</b> — ладья, <b>С</b> — слон, <b>К</b> — конь. Пешка буквы не имеет: пишут только клетку.'], fen: START0 },
+      { h: 'Как записать ход', p: ['Пишем букву фигуры, клетку откуда и клетку куда. Например, <b>Кg1–f3</b>: конь с g1 на f3. Пешка: <b>e2–e4</b>. Нажми «Показать».'], demo: { steps: ['e2e4|Пешка e2 идёт на e4: e2–e4.', 'e7e5|Пешка e7–e5.', 'g1f3|Конь с g1 на f3: Кg1–f3.', 'b8c6|Конь b8–c6.'] } },
+      { h: 'Взятие, шах, мат', p: ['Взятие записывают значком <b>×</b>: Кf3×e5. Шах отмечают <b>+</b>, мат — <b>#</b>. Нажми «Показать».'], demo: { steps: ['e2e4', 'e7e5', 'f1c4', 'b8c6', 'd1h5', 'g8f6|Конь защищает.', 'h5f7|Ферзь берёт на f7 с шахом, и это мат: Ф×f7#.'] } },
+      { h: 'Рокировка', p: ['Короткую рокировку записывают <b>O-O</b>, длинную — <b>O-O-O</b>. Нажми «Показать».'], demo: { fen: 'r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1', steps: ['e1g1|Короткая рокировка O-O.', 'e8c8|Длинная рокировка O-O-O.'] } },
+      { h: 'Дальше упражнения', p: ['В нечётных упражнениях выбери правильную запись хода. В чётных сделай на доске ход, который записан.'] }
+    ] };
+
+    /* --- двойной удар (вилка) --- */
+    var VAL = { 1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 99 }, CH = { 1: 'P', 2: 'N', 3: 'B', 4: 'R', 5: 'Q', 6: 'K' };
+    function inb(x, y) { return x >= 0 && x < 8 && y >= 0 && y < 8; }
+    function att(code, from, occ, white) {
+      var x = from & 7, y = from >> 3, out = [];
+      if (code === 'N') KN.forEach(function (d) { if (inb(x + d[0], y + d[1])) out.push((y + d[1]) * 8 + x + d[0]); });
+      else if (code === 'K') D8.forEach(function (d) { if (inb(x + d[0], y + d[1])) out.push((y + d[1]) * 8 + x + d[0]); });
+      else if (code === 'P') { var dy = white ? -1 : 1;[-1, 1].forEach(function (dx) { if (inb(x + dx, y + dy)) out.push((y + dy) * 8 + x + dx); }); }
+      else (code === 'R' ? D8.slice(0, 4) : code === 'B' ? D8.slice(4) : D8).forEach(function (d) { var nx = x + d[0], ny = y + d[1]; while (inb(nx, ny)) { out.push(ny * 8 + nx); if (occ[ny * 8 + nx]) break; nx += d[0]; ny += d[1]; } });
+      return out;
+    }
+    function attackedBy(p, sq, white) {
+      var occ = {}; for (var i = 0; i < 64; i++) if (p.b[i]) occ[i] = 1;
+      for (var j = 0; j < 64; j++) { var v = p.b[j]; if (!v || (v > 0) !== white) continue; if (att(CH[Math.abs(v)], j, occ, white).indexOf(sq) >= 0) return true; }
+      return false;
+    }
+    function isFork(before, m, np) {
+      var v = before.b[m.f]; if (v <= 0) return false; var t = Math.abs(v), occ = {}; for (var i = 0; i < 64; i++) if (np.b[i]) occ[i] = 1;
+      var tg = att(CH[(m.p ? m.p : t)], m.t, occ, true), win = 0, king = false;
+      tg.forEach(function (s) { var q = np.b[s]; if (q >= 0) return; var qt = -q; if (qt === 6) { king = true; return; } if (!attackedBy(np, s, false) || VAL[qt] > VAL[t]) win++; });
+      if (attackedBy(np, m.t, false) && !(attackedBy(np, m.t, true))) return false;
+      return win >= 2 || (king && win >= 1);
+    }
+    function genFork(code, r) {
+      for (var k = 0; k < 800; k++) {
+        var b = new Array(64).fill(''), put = function (ch, f) { for (var q = 0; q < 60; q++) { var s = Math.floor(r() * 64); if (b[s]) continue; if (f && !f(s)) continue; b[s] = ch; return s; } return -1; };
+        var ps = put(code, code === 'P' ? function (s) { return (s >> 3) >= 3 && (s >> 3) <= 6 && (s & 7) >= 1 && (s & 7) <= 6; } : null);
+        if (code === 'P') { var tt = ps - 17, t2 = ps - 15; ['n', 'b', 'r', 'q'].sort(function () { return r() - .5; }).slice(0, 2).forEach(function (ch, ii) { b[ii ? t2 : tt - 0] = ch; }); b[ps - 8] = ''; }
+        var wk = put('K'), bk = put('k');
+        var n = (code === 'P' ? 0 : 2) + Math.floor(r() * 2); for (var i = 0; i < n; i++) put(['r', 'b', 'n', 'q', 'p'][Math.floor(r() * 4.4)], function (s) { return true; });
+        var fen = '', bad = false; for (var y = 0; y < 8; y++) { var e = 0; for (var x = 0; x < 8; x++) { var c = b[y * 8 + x]; if ((c === 'p' || c === 'P') && (y === 0 || y === 7)) bad = true; if (c) { if (e) { fen += e; e = 0; } fen += c; } else e++; } if (e) fen += e; if (y < 7) fen += '/'; }
+        if (bad || wk < 0 || bk < 0) continue;
+        if (E.inCheck(E.fromFEN(fen + ' b - - 0 1'))) continue;
+        var pos = E.fromFEN(fen + ' w - - 0 1'); if (E.status(pos) === 'check' || E.status(pos) === 'mate' || E.status(pos) === 'stalemate') continue;
+        var sols = E.legal(pos).filter(function (m) { return Math.abs(pos.b[m.f]) === ({ P: 1, N: 2, B: 3, R: 4, Q: 5 })[code] && isFork(pos, m, E.make(pos, m)); });
+        if (sols.length >= 1 && sols.length <= 3) return { pos: pos, ok: function (m, p, np) { return Math.abs(p.b[m.f]) === ({ P: 1, N: 2, B: 3, R: 4, Q: 5 })[code] && isFork(p, m, np); } };
+      }
+      return null;
+    }
+    var FN = { N: 'конём', Q: 'ферзём', R: 'ладьёй', B: 'слоном', P: 'пешкой' };
+    function forkLesson(code, name, intro, demo) {
+      return { id: 'fork' + code, t: 'Двойной удар: ' + name.toLowerCase(), d: 'Одна фигура нападает сразу на две. 20 заданий.', levels: 20, run: runTask, slides: [
+        { h: 'Что такое двойной удар', p: ['<b>Двойной удар</b> (вилка) — когда одна твоя фигура нападает сразу на две фигуры соперника. Соперник спасает одну, а другую ты берёшь. ' + intro + ' Нажми «Показать».'], demo: demo },
+        { h: 'Как искать', p: ['Найди клетку, откуда ' + name.toLowerCase() + ' нападает на две фигуры, и проверь: <b>эту клетку не бьёт чужая фигура</b>. Лучше всего, когда одна из целей — король (тогда это шах и он должен уйти). В упражнениях сделай ход ' + FN[code] + ', который даёт двойной удар.'], fen: demo.fen }
+      ], gen: function (lv, r) {
+        var g = genFork(code, r); if (!g) return null;
+        return { pos: g.pos, ok: g.ok, say: 'Сделай ход ' + FN[code] + ', чтобы напасть сразу на две фигуры.', good: function () { return 'Двойной удар! Соперник не может спасти обе фигуры.'; }, bad: function () { return 'Это не двойной удар. Ищи клетку, откуда ты нападаешь на две фигуры сразу.'; } };
+      } };
+    }
+    var FK = [
+      forkLesson('N', 'Конь', 'Конь вилкой нападает на ладью и короля.', { fen: 'r3k3/8/8/3N4/8/8/8/4K3 w - - 0 1', steps: ['d5c7|Вилка! Конь даёт шах королю и нападает на ладью a8.', 'e8d8|Король ушёл, ладью не защитить.', 'c7a8|Конь берёт ладью!'] }),
+      forkLesson('Q', 'Ферзь', 'Ферзь нападает по линиям на две фигуры.', { fen: '7k/8/8/8/8/8/6K1/r2Q4 w - - 0 1', steps: ['d1d4|Шах! Ферзь бьёт короля h8 и ладью a1 по диагонали.', 'h8g8|Король ушёл.', 'd4a1|Ферзь берёт ладью с шахом.'] }),
+      forkLesson('R', 'Ладья', 'Ладья нападает по линии.', { fen: 'b7/8/8/6k1/8/8/8/R3K3 w - - 0 1', steps: ['a1a5|Шах по горизонтали и нападение на слона a8 по вертикали.', 'g5g6|Король ушёл.', 'a5a8|Ладья берёт слона.'] }),
+      forkLesson('B', 'Слон', 'Слон нападает по диагоналям.', { fen: '6k1/8/r7/8/8/8/4B3/4K3 w - - 0 1', steps: ['e2c4|Шах слоном и нападение на ладью a6.', 'g8h7|Король ушёл.', 'c4a6|Слон берёт ладью.'] }),
+      forkLesson('P', 'Пешка', 'Пешка бьёт по диагонали и может напасть сразу на две фигуры.', { fen: '4k3/8/n1r5/8/1P6/8/8/4K3 w - - 0 1', steps: ['b4b5|Пешка нападает сразу на коня a6 и ладью c6.', 'c6c7|Ладья спаслась.', 'b5a6|Пешка берёт коня.'] })
+    ];
+    GROUPS.splice(5, 0, { n: 'Двойной удар', ids: FK.map(function (L) { LESS[L.id] = L; return L.id; }) });
+
+    /* --- итоговое повторение --- */
+    var RV = [
+      ['Конь ходит буквой «Г»?', true, 'Да, две клетки по прямой и одна в сторону.'],
+      ['Слон может ходить по клеткам разных цветов?', false, 'Нет, слон всегда остаётся на клетках своего цвета.'],
+      ['Ферзь стоит 9 очков?', true, 'Да: пешка 1, конь и слон 3, ладья 5, ферзь 9.'],
+      ['Первыми ходят чёрные?', false, 'Первыми ходят белые.'],
+      ['Пешка берёт вперёд?', false, 'Нет, пешка ходит вперёд, а берёт по диагонали.'],
+      ['Это пат? Чёрный король a8, белая ферзь c7, чёрные ходят.', true, 'Шаха нет, ходов нет: пат, ничья.', 'k7/2Q5/1K6/8/8/8/8/8 b - - 0 1'],
+      ['Мат ладьёй: король в углу, ладья на 8-й горизонтали, белый король на b6.', true, 'Король не может уйти: мат.', 'k6R/8/1K6/8/8/8/8/8 b - - 0 1'],
+      ['Рокировку можно делать, если король ходил раньше?', false, 'Нет, король не должен ходить до рокировки.'],
+      ['Пешка, дошедшая до последней горизонтали, может стать ферзём?', true, 'Да, и ещё ладьёй, слоном или конём.'],
+      ['Если позиция повторилась три раза, можно требовать ничью?', true, 'Да, это троекратное повторение.'],
+      ['Ладью можно менять на пешку выгодно?', false, 'Нет: ладья 5 очков, пешка 1.'],
+      ['Король и слон против короля: это ничья?', true, 'Да, мат поставить нельзя.', '8/8/8/3k4/8/3K1B2/8/8 w - - 0 1'],
+      ['Двойной удар — это когда одна фигура нападает на две?', true, 'Да, соперник не успевает спасти обе.'],
+      ['Взятие на проходе делают только сразу?', true, 'Да, только на следующем ходу.'],
+      ['Конь может перепрыгивать через фигуры?', true, 'Да, только конь.'],
+      ['Вечный шах — это ничья?', true, 'Да, если шахи не прекращаются.'],
+      ['Слон стоит 5 очков?', false, 'Слон стоит 3 очка.'],
+      ['Мат — это шах, от которого нельзя защититься?', true, 'Да, поэтому партия заканчивается.']
+    ];
+    function runRev(host, L, lv, finish) {
+      var q = RV[(lv - 1) % RV.length], mist = 0, done = false;
+      host.innerHTML = say(av('prof'), 'Повторение ' + lv, q[0], 'ответь «Да» или «Нет»') + (q[3] ? boardHTML() : '') + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts"><button data-o="1">Да</button><button data-o="0">Нет</button></div>';
+      if (q[3]) drawBoard({ pos: E.fromFEN(q[3]), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, function () {});
+      document.getElementById('opts').onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; var msg = document.getElementById('msg'); if ((b.dataset.o === '1') === q[1]) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + q[2]; sfx('good'); finish(mist === 0 ? 3 : 2); } else { b.className = 'bad'; mist++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Подумай ещё раз. Вернись к уроку по этой теме.'; } };
+    }
+    LESS.review = { id: 'review', t: 'Итоговое повторение', d: 'Вопросы по всему первому году: фигуры, правила, мат, ничья, размены.', levels: RV.length, run: runRev, slides: [{ h: 'Проверь себя', p: ['Здесь вопросы по всему, что ты выучил: ходы фигур, правила, мат, пат, ничья, размены. Если ошибся, вернись к уроку и повтори. Удачи!'], fen: START0 }] };
+    GROUPS.push({ n: 'Повторение', ids: ['review'] });
+    var g1 = GROUPS[0].ids; g1.push('notation');
+  })();
+
   /* ---------- Stockfish: сильный движок, грузится при первом использовании ---------- */
   var SF = (function () {
     var BASE = 'https://unpkg.com/stockfish@17.1.0/src/', JS = 'stockfish-17.1-lite-single-03e3232.js', WASM = 'stockfish-17.1-lite-single-03e3232.wasm';
     var w = null, state = 'idle', loadP = null, queue = [], cur = null, uciOk = false;
     function parse(line, job) {
       if (line.indexOf('info') === 0 && line.indexOf(' pv ') > 0) {
-        var m = line.match(/multipv (\d+)/), k = m ? +m[1] : 1, sc = line.match(/score (cp|mate) (-?\d+)/), pv = line.match(/ pv (\S+)/), d = line.match(/depth (\d+)/);
+        var m = line.match(/multipv (\d+)/), k = m ? +m[1] : 1, sc = line.match(/score (cp|mate) (-?\d+)/), pv = line.match(/ pv (.+)$/), d = line.match(/depth (\d+)/);
         if (!sc || !pv) return;
         var v = +sc[2], cp = sc[1] === 'cp' ? v : (v > 0 ? 30000 - v * 10 : -30000 - v * 10);
-        job.lines[k - 1] = { cp: cp, mate: sc[1] === 'mate' ? v : null, move: pv[1], depth: d ? +d[1] : 0 };
+        job.lines[k - 1] = { cp: cp, mate: sc[1] === 'mate' ? v : null, move: pv[1].split(' ')[0], pv: pv[1].split(' '), depth: d ? +d[1] : 0 };
       }
     }
     function pump() {
@@ -2739,6 +3781,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       cur = queue.shift();
       var j = cur; j.lines = [];
       w.postMessage('setoption name MultiPV value ' + (j.multipv || 1));
+      w.postMessage('setoption name Skill Level value ' + (j.skill != null ? j.skill : 20));
       if (j.elo) { w.postMessage('setoption name UCI_LimitStrength value true'); w.postMessage('setoption name UCI_Elo value ' + j.elo); }
       else w.postMessage('setoption name UCI_LimitStrength value false');
       w.postMessage('position fen ' + j.fen);
@@ -2786,12 +3829,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
       ok: function () { return state === 'ready'; },
       failed: function () { return state === 'fail'; },
       eval: function (fen, depth, multipv) { return run({ fen: fen, depth: depth || 12, multipv: multipv || 1 }); },
-      move: function (fen, ms, elo) { return run({ fen: fen, ms: ms || 600, depth: 0, elo: elo || 0, multipv: 1 }); },
+      move: function (fen, ms, elo, skill) { return run({ fen: fen, ms: ms || 600, depth: 0, elo: elo || 0, skill: skill, multipv: 1 }); },
+      stop: function () { if (cur && w) w.postMessage('stop'); },
       clear: function () { queue.length = 0; }
     };
   })();
 
-  /* ---------- Живые герои: гуляют по низу экрана ---------- */
+  /* ---------- Герои: знакомство на главной и спутник рядом с упражнениями ---------- */
   (function () {
     var PH = {
       yasmin: ['Привет! Сыграем партию?', 'Пешки ходят вперёд, а бьют по диагонали!', 'Я люблю шахматы!'],
@@ -2802,7 +3846,16 @@ if (typeof module !== 'undefined') module.exports = Eng;
       prof: ['Думай перед каждым ходом!', 'Рокировка: ход королём и ладьёй.', 'Шахматы учат думать.'],
       king: ['Ты молодец! Собирай звёзды!', 'Каждый ход — шаг к победе.', 'Добро пожаловать в мою страну!']
     };
-    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var NUDGE = {
+      arni: ['Гав! Ты не уснул? Ходи, мы ждём!', 'Подумай ещё чуть-чуть, у тебя получится!', 'Не торопись, но и не засыпай. Гав!', 'Посмотри, какие фигуры остались без защиты.'],
+      fox: ['Хи-хи, ты ещё думаешь? Подсказка поможет!', 'Найди шах: он часто ведёт к мату.', 'Мы ждём твой ход!', 'Проверь, куда может уйти король.'],
+      prof: ['Не спеши. Сначала подумай, потом ходи.', 'Нажми «Подсказку», если трудно. Это не стыдно.', 'Ты ещё здесь? Мы ждём твой ход!', 'Посмотри внимательно на всю доску.'],
+      yasmin: ['Давай ещё одно упражнение!', 'Ты уже много узнал. Продолжай!', 'Играй, мы ждём тебя!', 'Если трудно, прочитай урок ещё раз.'],
+      king: ['Твои награды ждут тебя!', 'Продолжай, и все медали будут твои!'],
+      simba: ['Мяу, не засыпай!', 'Мур, подумай ещё немного.'],
+      tima: ['Давай, у тебя получится!', 'Ещё одно упражнение? Я с тобой!']
+    };
+    var COMP = { play: 'arni', puzzles: 'fox', board: 'prof', lessons: 'yasmin', lesson: 'prof', awards: 'king' };
     var sky = document.createElement('div'); sky.id = 'sky';
     var sh = ['♙', '♘', '♗', '♖', '♕', '♔', '★', '♟'];
     for (var i = 0; i < 14; i++) {
@@ -2815,55 +3868,50 @@ if (typeof module !== 'undefined') module.exports = Eng;
       sky.appendChild(s);
     }
     document.body.insertBefore(sky, document.body.firstChild);
-    var walk = document.createElement('div'); walk.id = 'walk';
-    var bubs = document.createElement('div'); bubs.id = 'bubs';
-    document.body.appendChild(walk); document.body.appendChild(bubs);
-    var W = [], keys = Object.keys(HEROES), vw = window.innerWidth, last = 0, bt = 0;
-    function size() { return vw < 560 ? 52 : 62; }
-    keys.forEach(function (k, i) {
-      var d = document.createElement('div'); d.className = 'wk'; d.setAttribute('role', 'button'); d.setAttribute('aria-label', HEROES[k].n);
-      d.innerHTML = '<div class="fl"><img src="' + IMG[k] + '" alt="" width="62" height="62"></div>';
-      walk.appendChild(d);
-      var o = { k: k, el: d, x: (vw / keys.length) * i + 10, dir: i % 2 ? 1 : -1, sp: 22 + (i * 9) % 20, rest: 0, n: 0 };
-      d.addEventListener('click', function () { talk(o); });
-      W.push(o);
+
+    /* спутник рядом с упражнениями */
+    var comp = document.createElement('div'); comp.id = 'comp'; comp.hidden = true;
+    comp.innerHTML = '<div class="cb" role="status" aria-live="polite"></div><button class="cbtn" aria-label="Герой"><img alt="" width="64" height="64"></button><button class="cx" aria-label="Спрятать героя" title="Спрятать">×</button>';
+    document.body.appendChild(comp);
+    var cb = comp.querySelector('.cb'), cimg = comp.querySelector('img'), cbtn = comp.querySelector('.cbtn'), hero = null, idle = 0, hide = 0, n = {}, off = false;
+    try { off = sessionStorage.getItem('ukc_comp_off') === '1'; } catch (e) {}
+    function say(t) {
+      cb.textContent = t; cb.classList.add('on');
+      clearTimeout(hide); hide = setTimeout(function () { cb.classList.remove('on'); }, 6500);
+    }
+    function next(list) { n[hero] = (n[hero] || 0) + 1; return list[n[hero] % list.length]; }
+    function arm() {
+      clearTimeout(idle);
+      if (!hero || off) return;
+      idle = setTimeout(function () { say(next(NUDGE[hero] || PH[hero])); cbtn.classList.add('jump'); setTimeout(function () { cbtn.classList.remove('jump'); }, 700); arm(); }, 35000);
+    }
+    function sync() {
+      var h = (location.hash || '#home').slice(1).split('/')[0];
+      hero = COMP[h] || null;
+      cb.classList.remove('on');
+      if (!hero || off) { comp.hidden = true; clearTimeout(idle); return; }
+      cimg.src = IMG[hero]; comp.hidden = false; arm();
+      if (!comp.dataset.seen || comp.dataset.seen !== hero) { comp.dataset.seen = hero; setTimeout(function () { if (hero) say(PH[hero][0]); }, 1200); }
+    }
+    cbtn.addEventListener('click', function () {
+      if (!hero) return;
+      var l = PH[hero].concat(NUDGE[hero] || []); say(next(l));
+      cbtn.classList.add('jump'); setTimeout(function () { cbtn.classList.remove('jump'); }, 700); arm();
     });
-    function talk(o) {
-      var l = PH[o.k], t = l[o.n++ % l.length];
-      o.rest = 3.5; o.el.classList.add('rest', 'jump');
-      setTimeout(function () { o.el.classList.remove('jump'); }, 650);
-      bubs.innerHTML = '';
-      var b = document.createElement('div'); b.className = 'bub'; b.innerHTML = '<b>' + esc(HEROES[o.k].n) + ':</b> ' + esc(t);
-      bubs.appendChild(b);
-      var sz = size(), cx = o.x + sz / 2, bw = Math.min(190, vw - 16);
-      var left = Math.max(8, Math.min(vw - bw - 8, cx - bw / 2));
-      b.style.left = left + 'px'; b.style.setProperty('--tx', (cx - left) + 'px');
-      clearTimeout(bt); bt = setTimeout(function () { bubs.innerHTML = ''; }, 3200);
-      try { sfx('good'); } catch (e) {}
-    }
-    function place(o) {
-      o.el.firstChild.style.transform = o.dir > 0 ? 'scaleX(1)' : 'scaleX(-1)';
-      o.el.style.transform = 'translateX(' + o.x + 'px)';
-    }
-    function tick(ts) {
-      var dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts;
-      var sz = size(), max = vw - sz - 4;
-      W.forEach(function (o) {
-        if (o.rest > 0) { o.rest -= dt; if (o.rest <= 0) o.el.classList.remove('rest'); }
-        else {
-          o.x += o.dir * o.sp * dt;
-          if (o.x < 4) { o.x = 4; o.dir = 1; } if (o.x > max) { o.x = max; o.dir = -1; }
-          if (Math.random() < dt * .25) { o.rest = 1 + Math.random() * 2.5; o.el.classList.add('rest'); if (Math.random() < .5) o.dir = -o.dir; }
-        }
-        place(o);
-      });
-      requestAnimationFrame(tick);
-    }
-    window.addEventListener('resize', function () { vw = window.innerWidth; });
-    W.forEach(function (o) { place(o); });
-    if (still) W.forEach(function (o) { o.el.classList.add('rest'); }); else requestAnimationFrame(tick);
-    function sync() { var h = location.hash || '#home'; walk.classList.toggle('dim', h === '#board' || h.indexOf('#play/') === 0 || h.indexOf('#game') === 0); }
+    comp.querySelector('.cx').addEventListener('click', function () { off = true; try { sessionStorage.setItem('ukc_comp_off', '1'); } catch (e) {} sync(); });
+    ['pointerdown', 'keydown'].forEach(function (ev) { document.addEventListener(ev, arm, true); });
     window.addEventListener('hashchange', sync); sync();
+
+    /* знакомство с героями на главной: нажми на героя, и он ответит */
+    document.addEventListener('click', function (e) {
+      var f = e.target.closest && e.target.closest('.heroes figure[data-h]'); if (!f) return;
+      var k = f.dataset.h, old = f.querySelector('.fb'); if (old) old.remove();
+      n['h' + k] = (n['h' + k] || 0) + 1;
+      var b = document.createElement('span'); b.className = 'fb'; b.textContent = PH[k][n['h' + k] % PH[k].length];
+      f.appendChild(b); f.classList.add('jump'); setTimeout(function () { f.classList.remove('jump'); }, 650);
+      setTimeout(function () { b.remove(); }, 4000);
+      try { sfx('good'); } catch (x) {}
+    });
   })();
   /* ---------- «Показать решение» только после 3 неверных попыток ---------- */
   (function () {
@@ -2889,6 +3937,117 @@ if (typeof module !== 'undefined') module.exports = Eng;
       });
       scan();
     }).observe(view, { childList: true, subtree: true, characterData: true });
+  })();
+
+  /* ===== Живые шахматы: 20 уровней, фигуры с лицами, голосами и движением ===== */
+  (function () {
+    var NAMES = ['Пешка Пашка', 'Конь Огонь', 'Слон Слоник', 'Ладья Лада', 'Ферзь Фёдор', 'Король Кирилл', 'Пеший Пётр', 'Гарцующий Гоша', 'Слон Сеня', 'Ладья Люба', 'Ферзь Фрида', 'Король Карл', 'Конь Кеша', 'Слон Саша', 'Ладья Рада', 'Ферзь Фаина', 'Король Константин', 'Мудрый Конь', 'Великий Слон', 'Шахматный Король'];
+    var liveWins = lsGet('ukc_live', {});
+    function voice(p, kind) {
+      var t = Math.abs(p);
+      if (kind === 'ouch') { tone(900, 0, 0.07, 'square', 0.08); tone(600, 0.06, 0.1, 'square', 0.08); return; }
+      if (t === 1) { tone(880, 0, 0.06, 'triangle', 0.14); tone(1100, 0.07, 0.06, 'triangle', 0.12); }
+      else if (t === 2) { var c = ac(); if (!c) return; var o = c.createOscillator(), g = c.createGain(), t0 = c.currentTime; o.type = 'sawtooth'; o.frequency.setValueAtTime(300, t0); o.frequency.linearRampToValueAtTime(700, t0 + 0.12); o.frequency.linearRampToValueAtTime(380, t0 + 0.3); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.09, t0 + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.34); o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0 + 0.4); }
+      else if (t === 3) { tone(1319, 0, 0.18, 'sine', 0.13); tone(1760, 0.1, 0.25, 'sine', 0.1); }
+      else if (t === 4) { tone(110, 0, 0.18, 'square', 0.1); tone(82, 0.12, 0.25, 'square', 0.1); }
+      else if (t === 5) { [784, 988, 1175, 1568].forEach(function (f, i) { tone(f, i * 0.06, 0.16, 'triangle', 0.12); }); }
+      else { tone(262, 0, 0.2, 'sawtooth', 0.08); tone(330, 0.15, 0.2, 'sawtooth', 0.08); tone(392, 0.3, 0.35, 'sawtooth', 0.09); }
+    }
+    var TOPS = { 1: 27, 2: 30, 3: 24, 4: 36, 5: 22, 6: 24 };
+    function decorate() {
+      var b = document.getElementById('board'); if (!b) return;
+      b.classList.add('livebd');
+      b.querySelectorAll('.sq').forEach(function (s, i) {
+        var pc = s.querySelector('.pcs'); if (!pc || s.querySelector('.fc')) return;
+        var t = +(/#p[wb](\d)/.exec(pc.innerHTML.toString() || '') || [0, 1])[1] || 1, use = pc.querySelector('use'), m = use && /#p[wb](\d)/.exec(use.getAttribute('href') || '');
+        t = m ? +m[1] : 1;
+        var f = document.createElement('span'); f.className = 'fc'; f.style.top = TOPS[t] + '%'; f.style.animationDelay = (i * 0.37 % 3) + 's';
+        f.innerHTML = '<i></i><i></i><b></b>'; s.appendChild(f);
+        pc.style.animationDelay = (i * 0.29 % 2.4) + 's'; pc.classList.add('bob');
+      });
+    }
+    function handicap(lv) {
+      var rem = { 1: 'qrrbbnn', 2: 'qrrbb', 3: 'qrr', 4: 'qr', 5: 'q', 6: 'r', 7: 'n' }[lv] || '';
+      var row = 'rnbqkbnr'.split('');
+      rem.split('').forEach(function (c) { var k = row.lastIndexOf(c); if (c === 'q' || c === 'r' && false) k = row.indexOf(c); if (k >= 0 && !(c === 'r' && row.indexOf('r') === k && row.lastIndexOf('r') !== k && false)) row[k] = '1'; });
+      var s = '', e = 0; row.forEach(function (c) { if (c === '1') e++; else { if (e) { s += e; e = 0; } s += c; } }); if (e) s += e;
+      return s + '/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w ' + (rem ? 'KQ' : 'KQkq') + ' - 0 1';
+    }
+    function robotL(lv) { return Math.max(1, Math.round(1 + (lv - 1) * 0.68)); }
+    function unl(n) { return n === 1 || !!liveWins[n - 1] || !!liveWins[n] || openAll; }
+
+    function liveList() {
+      var h = '<h2>Живые шахматы</h2>' + sayHero('arni', 'Здесь фигуры живые! Они моргают, разговаривают и издают звуки. Выбери уровень и сыграй партию: сначала соперник слабый и без части фигур, потом всё сильнее.', '20 уровней') + '<div class="lvgrid">', c = 0;
+      for (var n = 1; n <= 20; n++) {
+        var ok = unl(n), s = liveWins[n] || 0; if (s) c++;
+        h += '<button class="lvbtn' + (s ? ' won' : '') + '" data-l="' + n + '"' + (ok ? '' : ' disabled') + '><span class="wpc">' + pcHTML(((n - 1) % 6) + 1) + '</span><span class="ln">' + n + '</span><span class="rn">' + esc(NAMES[n - 1]) + '</span>' + (s ? starsRow(s) : (ok ? '' : '<span class="lock">закрыт</span>')) + '</button>';
+      }
+      view.innerHTML = h + '</div><p class="note">Побед: ' + c + ' из 20</p>';
+      view.onclick = function (e) { var b = e.target.closest('.lvbtn'); if (b && !b.disabled) liveGame(+b.dataset.l); };
+    }
+
+    function liveGame(n) {
+      view.onclick = null; clearTimers();
+      var you = 1, L = robotL(n), G, name = NAMES[n - 1];
+      view.innerHTML = '<div class="row"><button class="btn alt" id="back">К уровням</button></div><h2>Живые шахматы · уровень ' + n + '</h2>' +
+        say(pcHTML(((n - 1) % 6) + 1), name, n <= 7 ? 'Я играю без части фигур, так что у тебя большое преимущество. Поиграем?' : 'Привет! Я ' + name + '. Сыграем партию?', 'уровень ' + n + ' из 20') + boardHTML() +
+        '<div id="promo" class="promo" hidden></div><div class="msg" id="msg" role="status" aria-live="polite"></div>' +
+        '<div class="row"><button class="btn" id="newBtn">Новая игра</button><button class="btn" id="nextLv" hidden>Следующий уровень</button></div>';
+      var msg = document.getElementById('msg');
+      function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function draw() { drawBoard(G, click); decorate(); }
+      function newGame() {
+        clearTimers(); E.clear(); var p0 = E.fromFEN(handicap(n));
+        G = { start: p0, pos: p0, keys: {}, hh: [], rec: [], sel: null, targets: [], last: null, hint: null, over: false, busy: false, flip: false };
+        setMsg('Твой ход. Ты играешь белыми.'); document.getElementById('nextLv').hidden = true; draw();
+      }
+      function apply(m, byYou) {
+        var before = G.pos, cap = before.b[m.t], mover = before.b[m.f];
+        G.rec.push({ pos: before, m: m }); G.pos = E.make(before, m); G.last = { f: m.f, t: m.t }; G.anim = animOf(before, m); G.sel = null; G.targets = [];
+        var k = E.key(G.pos); G.keys[k] = (G.keys[k] || 0) + 1; G.hh.push(E.hashOf(G.pos));
+        moveSound(before, m, G.pos); voice(mover);
+        if (cap) { later(function () { voice(cap, 'ouch'); }, 220); setMsg((byYou ? 'Ты взял' : name + ' взяла') + ': «' + (PNAME[Math.abs(cap)]) + '» вскрикнула: «Ай!»'); }
+      }
+      function end(text, kind, won) {
+        G.over = true; setMsg(text, kind);
+        if (!won) { sfx(kind === 'bad' ? 'bad' : 'move'); return; }
+        var first = !liveWins[n], stars = Math.max(1, Math.min(3, matDiff(G.pos, you) >= 2 ? 3 : matDiff(G.pos, you) >= 0 ? 2 : 1));
+        liveWins[n] = Math.max(liveWins[n] || 0, stars); lsSet('ukc_live', liveWins);
+        addPts(first ? 20 + stars * 10 : stars * 3, first ? 'за победу' : 'за повтор'); sfx('win'); confetti(130);
+        if (n < 20) document.getElementById('nextLv').hidden = false;
+      }
+      function checkEnd() {
+        var st = E.status(G.pos);
+        if (st === 'mate') { if ((-G.pos.turn) === you) end('Мат! Ты победил: ' + name + ' машет флажком.', 'good', true); else end('Мат. Сыграй ещё раз, у тебя получится!', 'bad', false); return true; }
+        if (st === 'stalemate') { end('Пат: это ничья. Сыграй ещё!', '', false); return true; }
+        if (E.insufficient(G.pos)) { end('Ничья: фигур слишком мало для мата.', '', false); return true; }
+        if (G.pos.half >= 100 || G.keys[E.key(G.pos)] >= 3) { end('Ничья.', '', false); return true; }
+        return false;
+      }
+      function robot() {
+        G.busy = true; draw(); setMsg(name + ' думает…');
+        later(function () {
+          var m = E.bestMove(G.pos, L, G.hh.slice(0, -1)); if (m) apply(m, false); G.busy = false; draw();
+          if (checkEnd()) { draw(); return; }
+          if (!document.getElementById('msg').textContent.match(/Ай/)) setMsg(E.inCheck(G.pos) ? 'Тебе шах! Защити короля.' : 'Твой ход.', E.inCheck(G.pos) ? 'bad' : '');
+        }, 450);
+      }
+      function click(i) {
+        if (G.busy || G.over) return;
+        var v = G.pos.b[i];
+        if (G.sel != null && G.targets.indexOf(i) >= 0) {
+          var c = movesFrom(G.pos, G.sel).filter(function (x) { return x.t === i; }), m = c.filter(function (x) { return x.p === 5; })[0] || c[0];
+          apply(m, true); draw(); if (checkEnd()) { draw(); return; } robot(); return;
+        }
+        if (v && v > 0) { G.sel = i; G.targets = movesFrom(G.pos, i).map(function (m) { return m.t; }); voice(v); } else { G.sel = null; G.targets = []; }
+        draw();
+      }
+      document.getElementById('back').onclick = function () { clearTimers(); location.hash = '#live'; };
+      document.getElementById('newBtn').onclick = newGame;
+      document.getElementById('nextLv').onclick = function () { liveGame(n + 1); };
+      newGame();
+    }
+    window.liveList = liveList;
   })();
 
 
@@ -3011,20 +4170,124 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var past = [], future = [], recs = [], startPos = S.pos, mode = 'move', brush = null, keys = {}, over = false, busy = false, rv = null, token = { cancel: false };
     keys[E.key(S.pos)] = 1;
     view.innerHTML =
-      '<h2>Играть вдвоём</h2>' + sayHero('prof', 'Здесь можно играть вдвоём с другом: белые и чёрные ходят по очереди на одном экране. Ещё можно расставлять позиции и разбирать партии. Я скажу, какие ходы хорошие, а какие нет.', 'друг против друга · анализ') +
+      '<h2>Доска: играть и разбирать</h2>' + sayHero('prof', 'Здесь можно играть вдвоём с другом или с компьютером на 8 уровнях, расставлять позиции и разбирать партии вместе с движком. Я скажу, какие ходы хорошие, а какие нет.', 'друг против друга · анализ') +
       boardHTML() +
       '<div id="pal" class="pal" hidden></div>' +
       '<div id="promo" class="promo" hidden></div>' +
       '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
+      '<div class="vsrow"><label>Играть: <select id="vsLv"><option value="0">вдвоём с другом</option><option value="1">с компьютером, уровень 1 (Малыш)</option><option value="2">уровень 2 (Новичок)</option><option value="3">уровень 3 (Ученик)</option><option value="4">уровень 4 (Любитель)</option><option value="5">уровень 5 (Разрядник)</option><option value="6">уровень 6 (Кандидат)</option><option value="7">уровень 7 (Мастер)</option><option value="8">уровень 8 (Гроссмейстер)</option></select></label> <label id="vsColL" hidden>Я играю: <select id="vsCol"><option value="1">белыми</option><option value="-1">чёрными</option></select></label></div>' +
+      '<div class="eng" id="eng" hidden><div class="engh"><b>Движок Stockfish</b><span id="engsc">…</span></div><div class="evb" id="evb"><i class="w" id="evw"></i></div><div class="evm" id="evm"><span id="evmk">▲</span></div><div id="engl" class="engl"></div><div class="evg"><b>Как менялась оценка</b> <small>(вверх — лучше у белых, вниз — у чёрных)</small><svg id="evg" viewBox="0 0 300 80" preserveAspectRatio="none" role="img" aria-label="График оценки позиции"></svg></div></div>' +
       '<div class="row" id="ctl">' +
       '<button class="btn alt" id="bNew">Новая партия</button><button class="btn alt" id="bUndo">Назад</button><button class="btn alt" id="bRedo">Вперёд</button>' +
-      '<button class="btn alt" id="bFlip">Перевернуть</button><button class="btn alt" id="bHint">Лучший ход</button><button class="btn alt" id="bSetup">Расставить фигуры</button><button class="btn" id="bAn">Разобрать партию</button></div>' +
+      '<button class="btn alt" id="bFlip">Перевернуть</button><button class="btn alt" id="bHint">Лучший ход</button><button class="btn alt" id="bSetup">Расставить фигуры</button><button class="btn alt" id="bEng" aria-pressed="false">Движок</button><button class="btn" id="bAn">Разобрать партию</button></div>' +
       '<div id="rvbox" hidden></div>' +
       '<div><h3>Ходы</h3><p class="mvlist" id="mv">Партия ещё не началась.</p></div>';
     var msg = document.getElementById('msg');
     function setMsg(t, kind) { msg.className = 'msg' + (kind ? ' ' + kind : ''); msg.textContent = t; }
+    /* ---------- игра с компьютером (уровни 1-8) ---------- */
+    var gen = 0, engOn = false, engGen = 0, engFen = '', arrows = [];
+    var VS_SKILL = [0, 0, 0, 0, 1, 5, 9, 13, 16], VS_MS = [0, 0, 0, 0, 300, 400, 500, 700, 1000], VS_OLD = [0, 3, 8, 13];
+    function vs() { return +document.getElementById('vsLv').value; }
+    function myCol() { return +document.getElementById('vsCol').value; }
+    function autoComp() {
+      var lv = vs();
+      if (!lv || over || busy || rv || mode === 'setup' || S.pos.turn === myCol()) return;
+      busy = true; var g = ++gen; setMsg('Компьютер думает…');
+      var pos0 = S.pos;
+      function done(m) { if (g !== gen) return; busy = false; if (m) doMove(m); else draw(); }
+      if (lv <= 3) { later(function () { done(E.bestMove(pos0, VS_OLD[lv], [])); }, 400); return; }
+      SF.move(E.toFEN(pos0), VS_MS[lv], 0, VS_SKILL[lv]).then(function (r) {
+        var m = r && r.best ? uciMove(pos0, r.best) : null;
+        done(m || E.bestMove(pos0, 20, []));
+      });
+    }
+    document.getElementById('vsLv').onchange = function () {
+      gen++; busy = false; var lv = vs();
+      document.getElementById('vsColL').hidden = !lv;
+      if (lv) { SF.load(); S.flip = myCol() === -1; setMsg('Ты играешь ' + (myCol() === 1 ? 'белыми' : 'чёрными') + '. Ход ' + who() + '.'); }
+      draw(); autoComp();
+    };
+    document.getElementById('vsCol').onchange = function () { gen++; busy = false; S.flip = myCol() === -1; draw(); autoComp(); };
+
+    /* ---------- движок: оценка, варианты, стрелки ---------- */
+    function arrowSvg() {
+      var h = '<svg class="arrows" viewBox="0 0 8 8" aria-hidden="true"><defs>' +
+        ['a0:#2fa84f', 'a1:#2b8ff0', 'a2:#f2b300'].map(function (c) { var q = c.split(':'); return '<marker id="' + q[0] + '" markerWidth="4" markerHeight="4" refX="2.2" refY="2" orient="auto"><path d="M0 0L4 2L0 4z" fill="' + q[1] + '"/></marker>'; }).join('') + '</defs>';
+      arrows.forEach(function (a, k) {
+        var f = S.flip ? 63 - a.f : a.f, t = S.flip ? 63 - a.t : a.t;
+        var x1 = (f & 7) + .5, y1 = (f >> 3) + .5, x2 = (t & 7) + .5, y2 = (t >> 3) + .5, dx = x2 - x1, dy = y2 - y1, L = Math.sqrt(dx * dx + dy * dy) || 1;
+        x2 -= dx / L * .28; y2 -= dy / L * .28; x1 += dx / L * .2; y1 += dy / L * .2;
+        h += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + ['#2fa84f', '#2b8ff0', '#f2b300'][k] + '" stroke-width="' + (k ? .13 : .2) + '" stroke-linecap="round" opacity="' + (k ? .7 : .9) + '" marker-end="url(#a' + k + ')"/>';
+      });
+      return h + '</svg>';
+    }
+    function drawArrows() {
+      var b = document.getElementById('board'); if (!b) return;
+      var old = b.querySelector('.arrows'); if (old) old.remove();
+      if (engOn && arrows.length && mode !== 'setup') b.insertAdjacentHTML('beforeend', arrowSvg());
+    }
+    function fmtScore(l, turn) {
+      if (l.mate != null) { var m = l.mate * turn; return (m > 0 ? 'Мат белым в ' : 'Мат чёрным в ') + Math.abs(l.mate); }
+      var v = l.cp * turn / 100; return (v > 0 ? '+' : '') + v.toFixed(1);
+    }
+    function pvText(pos, pv) {
+      var out = [], p = pos, n = Math.floor(0);
+      for (var i = 0; i < pv.length && i < 7; i++) {
+        var m = uciMove(p, pv[i]); if (!m) break;
+        var white = p.turn === 1;
+        out.push((white ? '' : (i === 0 ? '… ' : '')) + notation(m, p));
+        p = E.make(p, m);
+      }
+      return out.join('  ');
+    }
+    function engUpdate() {
+      var box = document.getElementById('eng'); if (!box) return;
+      box.hidden = !engOn;
+      document.getElementById('bEng').setAttribute('aria-pressed', String(engOn));
+      if (!engOn) { engFen = ''; return; }
+      if (mode === 'setup') return;
+      var fen = E.toFEN(S.pos); if (fen === engFen) return; engFen = fen;
+      var my = ++engGen, pos = S.pos, st = E.status(pos);
+      if (st === 'mate' || st === 'stalemate') { arrows = []; document.getElementById('engsc').textContent = st === 'mate' ? 'Мат' : 'Пат'; document.getElementById('engl').innerHTML = ''; setBar(st === 'mate' ? (pos.turn === 1 ? -3000 : 3000) : 0); drawArrows(); return; }
+      document.getElementById('engsc').textContent = 'думаю…';
+      SF.stop();
+      SF.eval(fen, 14, 6).then(function (r) {
+        if (my !== engGen) return;
+        if (!r || !r.lines.length) { document.getElementById('engsc').textContent = SF.failed() ? 'нет связи с движком' : 'нет данных'; return; }
+        var l0 = r.lines[0];
+        document.getElementById('engsc').textContent = fmtScore(l0, pos.turn);
+        var wcp = l0.mate != null ? (l0.mate * pos.turn > 0 ? 1000 : -1000) : Math.max(-1000, Math.min(1000, l0.cp * pos.turn));
+        setBar(l0.mate != null ? (l0.mate * pos.turn > 0 ? 3000 : -3000) : l0.cp * pos.turn); evHist[recs.length] = wcp; evHist.length = recs.length + 1; drawGraph();
+        var h = '';
+        r.lines.forEach(function (l, k) { h += '<div class="engln e' + k + '"><b>' + fmtScore(l, pos.turn) + '</b> <span>' + esc(pvText(pos, l.pv || [l.move])) + '</span></div>'; });
+        document.getElementById('engl').innerHTML = h;
+        arrows = r.lines.slice(0, 3).map(function (l) { var m = uciMove(pos, l.move); return m ? { f: m.f, t: m.t } : null; }).filter(Boolean);
+        drawArrows();
+      });
+    }
+    var evHist = [];
+    function drawGraph() {
+      var g = document.getElementById('evg'); if (!g) return;
+      var n = Math.max(evHist.length, 2), h = '<line x1="0" y1="40" x2="300" y2="40" stroke="#bbb" stroke-dasharray="3 3"/>', pts = [], cur = '';
+      for (var i = 0; i < evHist.length; i++) {
+        if (evHist[i] == null) continue;
+        var x = evHist.length < 2 ? 150 : i * 300 / (evHist.length - 1), y = 40 - evHist[i] * 36 / 1000; pts.push([x, y]);
+      }
+      if (pts.length) {
+        h += '<polygon fill="rgba(47,168,79,.18)" points="' + pts[0][0] + ',40 ' + pts.map(function (q) { return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ') + ' ' + pts[pts.length - 1][0] + ',40"/>';
+        h += '<polyline fill="none" stroke="#2b8ff0" stroke-width="2.5" vector-effect="non-scaling-stroke" points="' + pts.map(function (q) { return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ') + '"/>';
+        var q = pts[pts.length - 1]; h += '<circle cx="' + q[0].toFixed(1) + '" cy="' + q[1].toFixed(1) + '" r="3.5" fill="#f2563b"/>';
+      }
+      g.innerHTML = h;
+    }
+    function setBar(cp) {
+      var pct = Math.round(100 / (1 + Math.exp(-cp / 330)));
+      document.getElementById('evw').style.width = pct + '%'; document.getElementById('evmk').style.left = pct + '%';
+    }
+    document.getElementById('bEng').onclick = function () { engOn = !engOn; engFen = ''; if (engOn) SF.load(); if (!engOn) arrows = []; draw(); };
+
     function who() { return S.pos.turn === 1 ? 'белых' : 'чёрных'; }
-    function draw() { drawBoard(S, click); renderMoves(); document.getElementById('bUndo').disabled = !past.length || !!rv; document.getElementById('bRedo').disabled = !future.length || !!rv; document.getElementById('bAn').disabled = !recs.length; }
+    function draw() { drawBoard(S, click); drawArrows(); engUpdate(); renderMoves(); document.getElementById('bUndo').disabled = !past.length || !!rv; document.getElementById('bRedo').disabled = !future.length || !!rv || vs() > 0; document.getElementById('bAn').disabled = !recs.length; }
     function renderMoves() {
       var el = document.getElementById('mv');
       if (!recs.length) { el.textContent = 'Ходов пока нет.'; return; }
@@ -3057,17 +4320,19 @@ if (typeof module !== 'undefined') module.exports = Eng;
       past.push({ snap: snapshot() }); future = [];
       var before = S.pos;
       recs.push({ pos: before, m: m });
-      S.pos = E.make(S.pos, m); S.last = { f: m.f, t: m.t }; S.sel = null; S.targets = []; S.hint = null; S.best = null;
+      S.pos = E.make(S.pos, m); S.last = { f: m.f, t: m.t }; S.sel = null; S.targets = []; S.hint = null; S.best = null; S.anim = animOf(before, m);
       moveSound(before, m, S.pos);
       var k = E.key(S.pos); keys[k] = (keys[k] || 0) + 1;
       document.getElementById('promo').hidden = true; busy = false;
       if (!checkEnd()) turnMsg();
       draw();
+      autoComp();
     }
     function click(i) {
       if (busy || rv) return;
       if (mode === 'setup') { setupClick(i); return; }
       if (over) return;
+      if (vs() && S.pos.turn !== myCol()) return;
       var v = S.pos.b[i];
       if (S.sel != null && S.targets.indexOf(i) >= 0) {
         var c = movesFrom(S.pos, S.sel).filter(function (x) { return x.t === i; });
@@ -3086,14 +4351,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     function reset(pos, tn) {
       closeReview();
-      S.pos = pos; S.sel = null; S.targets = []; S.last = null; S.hint = null; S.best = null; past = []; future = []; recs = []; startPos = pos; keys = {}; keys[E.key(pos)] = 1; over = false;
+      S.pos = pos; S.sel = null; S.targets = []; S.last = null; S.hint = null; S.best = null; past = []; future = []; recs = []; evHist = []; startPos = pos; keys = {}; keys[E.key(pos)] = 1; over = false;
       document.getElementById('promo').hidden = true;
     }
-    document.getElementById('bNew').onclick = function () { if (mode === 'setup') leaveSetup(true); reset(E.start(), 1); turnMsg(); draw(); };
+    document.getElementById('bNew').onclick = function () { if (mode === 'setup') leaveSetup(true); gen++; busy = false; reset(E.start(), 1); S.flip = vs() > 0 && myCol() === -1; turnMsg(); draw(); autoComp(); };
     document.getElementById('bUndo').onclick = function () {
       if (!past.length || busy || rv) return;
       var p = past.pop(); future.push({ snap: snapshot(), rec: recs.pop() });
-      restore(p.snap); if (!checkEnd()) turnMsg(); draw();
+      restore(p.snap); gen++; if (vs() && S.pos.turn !== myCol() && past.length) { var p2 = past.pop(); future.push({ snap: snapshot(), rec: recs.pop() }); restore(p2.snap); } if (!checkEnd()) turnMsg(); draw();
     };
     document.getElementById('bRedo').onclick = function () {
       if (!future.length || busy || rv) return;
@@ -3125,6 +4390,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function finalPos() { var r = recs[recs.length - 1]; return E.make(r.pos, r.m); }
     function startReview() {
       if (!recs.length || mode === 'setup') return;
+      engOn = true; engFen = '';
       var bx = document.getElementById('rvbox'); bx.hidden = false;
       rv = { res: null, idx: -1 };
       var live = S.pos, liveLast = S.last;
@@ -3230,11 +4496,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function route() {
     clearTimers(); view.onclick = null;
     var parts = (location.hash || '#home').slice(1).split('/'), r = parts[0];
-    if (['home', 'puzzles', 'play', 'lessons', 'lesson', 'board', 'awards'].indexOf(r) < 0) r = 'home';
+    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'board', 'awards'].indexOf(r) < 0) r = 'home';
     var m = document.getElementById('modal'); if (m) m.remove();
     setActive(r === 'lesson' ? 'lessons' : r);
     if (r === 'puzzles') puzzles();
     else if (r === 'play') { var w = +parts[1]; if (w >= 1 && w <= WORLDS.length && unlocked((w - 1) * SUB + 1)) playWorld(w - 1); else playWorlds(); }
+    else if (r === 'live') liveList();
     else if (r === 'lessons') lessons();
     else if (r === 'lesson') lessonPage(parts[1], +parts[2] || 0);
     else if (r === 'board') boardPage();
