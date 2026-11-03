@@ -496,6 +496,7 @@ body { padding-bottom: 96px; }
   .wrap:has(.cols) { max-width: min(1360px, 98vw); }
   .colT .snav { position: static; background: none; justify-content: flex-start; padding: 10px 0; }
 }
+.msg:empty { display: none; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -4023,6 +4024,77 @@ if (typeof module !== 'undefined') module.exports = Eng;
       T('Две клетки с начальной можно', ['А эта пешка стоит на начальном месте d2. Нажми на неё: есть точки d3 и d4.'], '4k3/8/8/8/8/8/3P4/4K3 w - - 0 1', { sel: 'd2', tgt: 'd4', yes: 'Да! С начального места пешка может пойти на две клетки.', no: 'Нет.', what: 'пешку d2' }),
       T('Нельзя прыгать через фигуру', ['Даже на начальном месте пешка не прыгает <b>через другие фигуры</b>. Перед пешкой d2 на d3 стоит чёрный конь.'], '4k3/8/8/8/8/3n4/3P4/4K3 w - - 0 1', { sel: 'd2', tgt: 'd4', yes: 'Можно.', no: 'Нельзя! Конь на d3 мешает: через фигуры пешка не прыгает.', what: 'пешку d2' }, hs('d3'))
     ]);
+  })();
+
+/* данные задач: спёртый мат */
+  var SMOTHER_BANK = [["5rk1/1Q3ppp/2p5/3pP3/8/NB5n/1PP3PP/6RK b - - 0 1", "h3f2", 734], ["r1b2rk1/1p3ppp/8/pP1p4/P2Np3/2P3Pn/1B1NP1BP/1Q4RK b - - 0 1", "h3f2", 766], ["6k1/4ppBp/2bp2p1/8/1pP1PP2/1P3BNn/r5PP/1Q4RK b - - 0 1", "h3f2", 766], ["2rnkb1r/p2qnp2/1p2pp2/2p1P2p/3pNP2/3P1Q1P/PPPB2P1/R4RK1 w k - 0 1", "e4f6", 822], ["3r1rk1/1b3ppp/p3p3/1p4Q1/8/1B3P1n/PPP3PP/R3R1NK b - - 0 1", "h3f2", 890], ["r5rk/pp2b1pp/1q5N/4Pp2/7P/Pn3N2/1P3PP1/R4RK1 w - - 0 1", "h6f7", 899], ["r2qkb1r/1b1pnppp/p5n1/1p3N2/2p1PP2/1B6/PPP3PP/RNBQR1K1 w kq - 0 1", "f5d6", 1001], ["r2qkb1r/pp1npppp/2p5/8/3nN1P1/3P4/PPP1QP1P/RNB2RK1 w kq - 1 1", "e4d6", 1005], ["r2qkbnr/pp1bpppp/n1p5/8/4N3/5N2/PPPPQPPP/R1B1KB1R w KQkq - 1 1", "e4d6", 1047], ["4n1k1/Q4ppp/4pn2/3pN3/p2P4/1q2P3/5PPP/1r3RK1 w - - 1 1", "a7f7 g8h8 f7f8 f6g8 e5f7", 1197], ["5q1k/5r1p/1p6/p2p2p1/3Pn1Q1/4B3/PP4PP/4R2K b - - 1 1", "f7f1 e1f1 f8f1 e3g1 e4f2", 1271], ["5rk1/pp1b1ppp/1q2p1n1/8/1PP5/2P3N1/P1QB1nBP/R4RK1 b - - 1 1", "f2h3 g1h1 b6g1 f1g1 h3f2", 1278], ["3qkb1r/pprnnppp/4p1b1/1N1p4/3P4/5N2/PPP2PPP/R2QKB1R w KQk - 0 1", "b5d6", 1310], ["r2qkb1r/pp1nnp1p/6p1/2p5/3pN3/5N2/PPPPQPPP/R1B1K2R w KQkq - 0 1", "e4d6", 1395], ["r4rk1/pbpn1Npp/1p6/1P2p3/2Qq4/7P/P4RP1/2B3K1 w - - 1 1", "f7h6 g8h8 c4g8 f8g8 h6f7", 1427], ["5b2/7p/6pk/8/1PQPp3/2P1q3/1B1N1nPP/5RK1 b - - 1 1", "f2h3 g1h1 e3g1 f1g1 h3f2", 1451], ["r1b1k2r/bpp2ppp/p2p4/8/P1B1P1nq/5N2/1P3PPP/RNBQR1K1 b kq - 1 1", "h4f2 g1h1 f2g1 f3g1 g4f2", 1485], ["r4rk1/pR3Nbp/3p2p1/2pQ4/1nP5/7P/P2BKPP1/7q w - - 1 1", "f7h6 g8h8 d5g8 f8g8 h6f7", 1499], ["r2qkb1r/pp1bnppp/4p3/1N2n2P/3P1B2/8/PP4P1/R2QKB1R w KQkq - 0 1", "b5d6", 1527], ["r3k3/3p1pQ1/2p3p1/p1qpPP1p/8/8/PP3nPP/4RRK1 b q - 1 1", "f2h3 g1h1 c5g1 f1g1 h3f2", 1533], ["r5k1/pp3r2/1q6/3Q1p1p/5P2/PP6/5nPP/1BR2RK1 b - - 1 1", "f2h3 g1h1 b6g1 f1g1 h3f2", 1539], ["1q3r1k/5Qnp/6pN/R7/3P4/6PP/4rP1K/8 w - - 1 1", "f7g8 f8g8 h6f7", 1631], ["r1b1kb1r/5ppp/pqpp4/4p3/N1B1PP2/8/PPP2nPP/R1BQ1RK1 b kq - 1 1", "f2h3 g1h1 b6g1 f1g1 h3f2", 1667], ["4Q3/p5pk/7p/8/6n1/5N2/PPq2PPP/6K1 b - - 0 1", "c2f2 g1h1 f2f1 f3g1 g4f2", 1681], ["r1bnkb1r/pp1ppppp/8/qNBP4/8/2n2N2/P3QPPP/R3KB1R w KQkq - 0 1", "b5d6", 1745], ["Q7/p6p/5r2/7k/5P2/3nq3/P5PP/2R2R1K b - - 1 1", "d3f2 h1g1 f2h3 g1h1 e3g1 f1g1 h3f2", 1748], ["r1bqnr1k/p3p1bp/2ppQ1p1/1pn3N1/3P4/PBN5/1PP2PPP/R1B1K2R w KQ - 1 1", "e6g8 f8g8 g5f7", 1782], ["r1b2rk1/pp5p/2pbp3/3pNp2/2PP2P1/1P2q1Pn/PBQ1P1BP/R4R1K b - - 0 1", "e3g1 f1g1 h3f2", 1865], ["r1b2k1r/ppp2Bpp/3p4/2b5/4P1nq/5N2/PP3PPP/RNBQR1K1 b - - 1 1", "h4f2 g1h1 f2g1 f3g1 g4f2", 1868], ["r4rk1/pp4pp/2n1N3/2bQ1p2/4nB1q/2P2B2/PP3PPP/R3R1K1 b - - 0 1", "h4f2 g1h1 f2g1 e1g1 e4f2", 1889]];
+
+  /* ===== Второй год: тактика. Общий движок задач (позиция + решение) и уроки ===== */
+  (function () {
+    function sqi(s) { return (8 - (+s[1])) * 8 + (s.charCodeAt(0) - 97); }
+    var PRM = { n: 2, b: 3, r: 4, q: 5 };
+    function toMove(pos, u) { var f = sqi(u.slice(0, 2)), t = sqi(u.slice(2, 4)); return E.legal(pos).filter(function (m) { return m.f === f && m.t === t && (u.length < 5 || m.p === PRM[u[4]]); })[0] || null; }
+    function nm(n) { return n === 1 ? 'в один ход' : n === 2 ? 'в два хода' : n === 3 ? 'в три хода' : 'в ' + n + ' хода'; }
+    function ST(fen, steps) { return { fen: fen, steps: steps }; }
+
+    function runTactic(host, L, lv, finish) {
+      var it = L.bank[(lv - 1) % L.bank.length], pos = E.fromFEN(it[0]), sol = it[1].split(' '), step = 0, mist = 0, busy = false, done = false, cur = pos;
+      var black = pos.turn === -1, n = Math.ceil(sol.length / 2);
+      var S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: black, coords: true, mark: {}, hl: null };
+      host.innerHTML = say(av('prof'), (L.mate ? 'Мат ' + nm(n) : 'Найди лучший ход') + ' · ' + lv, (black ? 'Ход чёрных. ' : 'Ход белых. ') + (L.ask || (L.mate ? 'Найди мат ' + nm(n) + '.' : 'Найди выигрывающий ход.')), 'задача ' + lv + ' из ' + L.levels) + boardHTML() +
+        '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="row"><button class="btn alt" id="hintB">Подсказка</button><button class="btn alt" id="resB">Заново</button></div>';
+      var msg = document.getElementById('msg');
+      function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function draw() { drawBoard(S, click); }
+      function reply() {
+        var u = sol[step]; if (!u) return;
+        busy = true; later(function () {
+          var m = toMove(cur, u), b0 = cur; cur = E.make(cur, m); S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); S.pos = cur; moveSound(b0, m, cur); step++; busy = false; draw(); sm('Соперник ответил. Твой ход.');
+        }, 800);
+      }
+      function play(m) {
+        var before = cur, np = E.make(before, m), want = toMove(before, sol[step]), good = want && want.f === m.f && want.t === m.t && (want.p || 0) === (m.p || 0);
+        var mates = E.status(np) === 'mate';
+        moveSound(before, m, np); S.last = { f: m.f, t: m.t }; S.anim = animOf(before, m);
+        if (good || (L.mate && mates)) {
+          cur = np; S.pos = np; S.sel = null; S.targets = []; S.hint = null; step++; draw();
+          if (mates || step >= sol.length) { done = true; sm(L.mate ? 'Мат! Задача решена.' : 'Верно! Задача решена.', 'good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); return; }
+          sm('Верно! Соперник отвечает…', 'good'); reply(); step = step; return;
+        }
+        mist++; sfx('bad'); S.pos = np; S.sel = null; S.targets = []; draw(); busy = true;
+        if (mist >= 3) {
+          var w = toMove(cur, sol[step]); sm('Решение: ходит ' + PNAME[Math.abs(cur.b[w.f])] + ' с ' + sqName(w.f) + ' на ' + sqName(w.t) + '. Попробуй ещё раз.', 'bad'); S.hint = w.f;
+        } else sm('Не то. Подумай ещё: ' + (mist === 1 ? 'смотри шахи и жертвы.' : 'нажми «Подсказка».'), 'bad');
+        later(function () { S.pos = cur; busy = false; draw(); }, 1400);
+      }
+      function click(i) {
+        if (busy || done) return; var v = S.pos.b[i];
+        if (S.sel != null && S.targets.indexOf(i) >= 0) { var c = movesFrom(S.pos, S.sel).filter(function (x) { return x.t === i; }); if (c.length > 1) c = [c.filter(function (x) { return x.p === 5; })[0] || c[0]]; play(c[0]); return; }
+        if (v && (black ? v < 0 : v > 0)) { S.sel = i; S.targets = movesFrom(S.pos, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
+        draw();
+      }
+      document.getElementById('hintB').onclick = function () { if (busy || done) return; var w = toMove(cur, sol[step]); if (!w) return; S.sel = null; S.hint = w.f; draw(); sm('Подсказка: ходить надо мигающей фигурой.'); };
+      document.getElementById('resB').onclick = function () { lessonPage(L.id, lv); };
+      draw(); sm('Твой ход.');
+    }
+    window.__runTactic = runTactic;
+    function sqName(i) { return 'abcdefgh'[i & 7] + (8 - (i >> 3)); }
+
+    /* ---------- Урок: Спёртый мат ---------- */
+    var SM = [];
+    try { SM = SMOTHER_BANK; } catch (e) { SM = []; }
+    var LSM = {
+      id: 'smother', t: 'Спёртый мат', d: 'Мат конём: король закрыт своими же фигурами. Уроки с партиями и 30 задач.', levels: 30, bank: SM, mate: true, run: runTactic, slides: [
+        { h: 'Что такое спёртый мат', p: ['Король стоит в углу, а вокруг него <b>свои же фигуры</b>: ладья и пешки. Ему некуда идти. Тут приходит конь и ставит шах, а мат получается. Это <b>спёртый мат</b>. Нажми «Показать».'], demo: ST('5rk1/1Q3ppp/2p5/3pP3/8/NB5n/1PP3PP/6RK b - - 0 1', ['h3f2|Мат! Король h1 закрыт своими: ладья g1, пешки g2 и h2. Бить коня нечем, уйти некуда.']) },
+        { h: 'Почему именно конь', p: ['Любой другой шах можно <b>закрыть</b> или <b>отодвинуть</b>. А конь прыгает и бьёт «поверху», закрыться от него нельзя. Если рядом с королём нет свободных клеток, остаётся мат. Поэтому спёртый мат ставит почти всегда только конь.'], fen: '6rk/6pp/8/6N1/8/8/8/K7 w - - 0 1' },
+        { h: 'Классика: жертва ферзя', p: ['Часто спёртый мат приходится <b>подготовить</b>. Ферзь шахует и жертвует собой, король вынужден взять его ладьёй или конём, и после этого путь для коня свободен. Нажми «Показать» и смотри на жертву.'], demo: ST('r1b1k2r/bpp2ppp/p2p4/8/P1B1P1nq/5N2/1P3PPP/RNBQR1K1 b kq - 1 1', ['h4f2|Шах ферзём! Король может только на h1.', 'g1h1', 'f2g1|Жертва ферзя на g1: взять её можно только конём.', 'f3g1|Король закрыт своим же конём и ладьёй.', 'g4f2|Мат! Это «наследие Филидора».']) },
+        { h: 'Ещё одна жертва ферзя', p: ['Здесь жертвует ферзём белый. Он ставит шах с h8, а король и ладья вынуждены взять ферзя. Остаётся конь.'], demo: ST('r4rk1/pR3Nbp/3p2p1/2pQ4/1nP5/7P/P2BKPP1/7q w - - 1 1', ['f7h6|Шах конём! Король может только на h8.', 'g8h8', 'd5g8|Ферзь жертвует собой на g8.', 'f8g8|Ладья берёт ферзя и закрывает королю последнюю клетку.', 'h6f7|Мат конём!']) },
+        { h: 'Ловушка в дебюте', p: ['Спёртый мат бывает и в дебюте. Это ловушка «Блэкбёрна — Шиллинга»: чёрные жертвуют фигуры, а потом ставят мат. Белые ошибаются, взяв пешку на e5. Нажми «Показать».'], demo: ST('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1c4|Белые развивают слона.', 'c6d4|Чёрные ставят ловушку: на d4 стоит конь.', 'f3e5|Ошибка! Белые берут пешку e5.', 'd8g5|Ферзь нападает на g2 и e5.', 'e5f7|Белые берут ещё пешку f7 и нападают на ферзя.', 'g5g2|Ферзь берёт пешку g2 и нападает на ладью h1.', 'h1f1', 'g2e4|Шах! Ферзь берёт пешку e4.', 'c4e2|Слон закрывает шах.', 'd4f3|Спёртый мат! Король окружён своими фигурами.']) },
+        { h: 'Как заметить', p: ['Три признака: <b>1.</b> король в углу или у края; <b>2.</b> вокруг короля свои фигуры и пешки, свободных клеток нет; <b>3.</b> конь может прыгнуть на поле, с которого он бьёт короля. Если нужной клетки конь достичь не может, ищи жертву, которая «выманит» мешающую фигуру. Теперь решай задачи!'], fen: '6rk/5Npp/8/8/8/8/8/K7 b - - 0 1' }
+      ]
+    };
+    var GY2 = { n: 'Второй год: тактика', ids: ['smother'] };
+    GROUPS.push(GY2); LESS.smother = LSM;
   })();
 
   /* ---------- Stockfish: сильный движок, грузится при первом использовании ---------- */
