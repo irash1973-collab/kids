@@ -486,6 +486,16 @@ body { padding-bottom: 96px; }
 #sm:empty { display: none; }
 .snav { position: sticky; bottom: 0; z-index: 30; background: linear-gradient(rgba(255,255,255,0), #eaf6ff 35%); padding: 10px 0 8px; justify-content: center; }
 @media (max-height: 760px) { .bsize small { display: none; } }
+/* две колонки: текст слева, доска справа */
+.cols { display: block; }
+.colB .bsize { margin-top: 0; }
+@media (min-width: 900px) and (min-aspect-ratio: 1/1) {
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 22px; align-items: start; }
+  .colB { position: sticky; top: 6px; }
+  .cols .boardbox { width: var(--bwu, clamp(340px, calc(100vh - 255px), 680px)); }
+  .wrap:has(.cols) { max-width: min(1360px, 98vw); }
+  .colT .snav { position: static; background: none; justify-content: flex-start; padding: 10px 0; }
+}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -4320,16 +4330,16 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function maxW() { var m = document.getElementById('view') || document.body; return Math.max(MIN, Math.min(900, m.clientWidth || window.innerWidth)); }
     function setW(w, save) {
       w = Math.round(Math.max(MIN, Math.min(maxW(), w)));
-      root.style.setProperty('--bw', w + 'px');
+      root.style.setProperty('--bw', w + 'px'); root.style.setProperty('--bwu', w + 'px');
       if (save) lsSet('ukc_bw', w);
     }
-    var saved = lsGet('ukc_bw', 0); if (saved) root.style.setProperty('--bw', Math.min(saved, 900) + 'px');
+    var saved = lsGet('ukc_bw', 0); if (saved) { root.style.setProperty('--bw', Math.min(saved, 900) + 'px'); root.style.setProperty('--bwu', Math.min(saved, 900) + 'px'); }
     function curW() { var b = document.querySelector('.boardbox'); return b ? b.getBoundingClientRect().width : 400; }
     /* кнопки + и − */
     document.addEventListener('click', function (e) {
       var b = e.target.closest && e.target.closest('[data-bsz]'); if (!b) return;
       var d = b.getAttribute('data-bsz'); var w = curW();
-      if (d === 'auto') { root.style.removeProperty('--bw'); lsSet('ukc_bw', 0); return; }
+      if (d === 'auto') { root.style.removeProperty('--bw'); root.style.removeProperty('--bwu'); lsSet('ukc_bw', 0); return; }
       setW(w * (d === '+' ? 1.12 : 0.89), true);
     });
     /* тянуть за уголок доски */
@@ -4349,6 +4359,29 @@ if (typeof module !== 'undefined') module.exports = Eng;
     });
     function end() { if (drag) { drag = null; var w = curW(); setW(w, true); } }
     document.addEventListener('pointerup', end); document.addEventListener('pointercancel', end);
+  })();
+
+  /* ===== Две колонки: текст слева, доска справа (на широком экране) ===== */
+  (function () {
+    var busy = false;
+    function arrange() {
+      if (busy || !view) return;
+      var list = view.querySelectorAll('.boardbox');
+      for (var i = 0; i < list.length; i++) {
+        var bb = list[i], P = bb.parentElement; if (!P || P.classList.contains('colB')) continue;
+        if (P.querySelector(':scope > .cols')) continue;
+        busy = true;
+        var bs = P.querySelector(':scope > .bsize'), wrap = document.createElement('div'), T = document.createElement('div'), B = document.createElement('div');
+        wrap.className = 'cols'; T.className = 'colT'; B.className = 'colB';
+        Array.prototype.slice.call(P.children).forEach(function (k) { (k === bs || k === bb ? B : T).appendChild(k); });
+        var pv = [], q = P.previousElementSibling; while (q && (q.tagName === 'H2' || q.classList.contains('lvrow') || q.classList.contains('seg'))) { pv.unshift(q); q = q.previousElementSibling; }
+        pv.slice().reverse().forEach(function (k) { T.insertBefore(k, T.firstChild); });
+        wrap.appendChild(T); wrap.appendChild(B); P.appendChild(wrap);
+        busy = false;
+      }
+    }
+    new MutationObserver(arrange).observe(view, { childList: true, subtree: true });
+    arrange();
   })();
 
 
