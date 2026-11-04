@@ -497,6 +497,110 @@ body { padding-bottom: 96px; }
   .colT .snav { position: static; background: none; justify-content: flex-start; padding: 10px 0; }
 }
 .msg:empty { display: none; }
+
+/* ===== Второй год: строгий вид ===== */
+body.y2 { --bg: #edf1f5; --card: #ffffff; --line: #cfd8e3; --red: #a9792b; --yellow: #d9d9dc; }
+body.y2 #sky, body.y2 #comp, body.y2 .sky, body.y2 .say .av { display: none !important; }
+body.y2 .wrap:has(.y2task), body.y2 .wrap:has(.cols) { max-width: min(1360px, 98vw); }
+body.y2 h2 { font-size: 26px; font-weight: 700; letter-spacing: .01em; }
+body.y2 .slide { border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+body.y2 .btn, body.y2 .nav a, body.y2 .lcard { border-radius: 6px; }
+body.y2 .btn.go { animation: none; }
+body.y2 .btn { background: #1e3a5f; color: #fff; box-shadow: none; }
+body.y2 .btn.alt { background: #fff; color: #1e3a5f; border: 1px solid var(--line); }
+body.y2 .nav a[aria-current="page"] { background: #1e3a5f; color: #fff; }
+body.y2 .msg { border-radius: 6px; }
+body.y2 .boardbox { border-radius: 6px; }
+.y2lead { max-width: 62ch; color: var(--muted); margin: 6px 0 14px; }
+.y2list { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; }
+.y2row { display: grid; grid-template-columns: 38px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; text-decoration: none; color: inherit; border-bottom: 1px solid var(--line); }
+.y2row:last-child { border-bottom: 0; } .y2row:hover { background: #edf1f5; }
+.y2no { font: 700 15px/1 var(--font-display); color: var(--muted); } .y2tt { display: flex; flex-direction: column; } .y2tt small { color: var(--muted); font-size: 14px; } .y2st { font-size: 14px; color: var(--muted); white-space: nowrap; }
+.y2note { color: var(--muted); font-size: 14px; margin-top: 10px; }
+.y2head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; } .y2head h2 { flex: 1 1 auto; }
+.y2tabs { display: flex; gap: 4px; } .y2tabs a { padding: 6px 14px; border: 1px solid var(--line); border-radius: 6px; text-decoration: none; color: inherit; background: #fff; font-weight: 600; } .y2tabs a.cur { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
+.y2bar { height: 4px; background: var(--line); border-radius: 2px; margin: 10px 0; } .y2bar i { display: block; height: 100%; background: #1e3a5f; border-radius: 2px; }
+.y2cap { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; } .y2cap span { color: var(--muted); }
+.y2res { padding: 10px 14px; border-radius: 6px; margin: 8px 0; border: 1px solid var(--line); background: #fff; } .y2res.ok { border-color: #1b7f6b; } .y2res.bad { border-color: #b3382c; color: #b3382c; }
+#y2ov { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; display: grid; place-items: center; padding: 16px; }
+.y2pop { background: #fff; color: #1e3a5f; border-radius: 8px; padding: 18px; max-width: 520px; width: 100%; max-height: 90vh; overflow: auto; }
+.y2grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); gap: 6px; margin: 12px 0; }
+.y2n { display: grid; place-items: center; height: 38px; border: 1px solid var(--line); border-radius: 6px; text-decoration: none; color: #1e3a5f; font-weight: 600; background: #fff; }
+.y2n.ok { background: #1b7f6b; color: #fff; border-color: #1b7f6b; } .y2n.bad { background: #b3382c; color: #fff; border-color: #b3382c; } .y2n.cur { outline: 2px solid #1e3a5f; outline-offset: 1px; }
+.y2key { font-size: 13px; color: var(--muted); } .y2key i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #fff; border: 1px solid var(--line); vertical-align: -2px; margin: 0 4px 0 10px; } .y2key i.ok { background: #1b7f6b; border-color: #1b7f6b; } .y2key i.bad { background: #b3382c; border-color: #b3382c; }
+.y2sum { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 18px; } .y2big { font: 700 56px/1 var(--font-display); margin: 8px 0; }
+body.y2 { background: #edf1f5; padding-bottom: 40px; }
+body.y2 .top { background: #fff; border-radius: 8px; border: 1px solid var(--line); box-shadow: none; }
+body.y2 .brand b { background: none; color: #a9792b; -webkit-text-fill-color: #a9792b; }
+body.y2 .nav a, body.y2 .nav a:nth-child(n) { background: #fff; color: #1e3a5f; border: 1px solid var(--line); border-radius: 6px; transform: none; }
+body.y2 .nav a[aria-current="page"], body.y2 .nav a:nth-child(n)[aria-current="page"] { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
+body.y2 h2 { background: none; padding: 0; margin: 0; }
+body.y2 .ptsbadge { box-shadow: none; background: #fff; border: 1px solid var(--line); }
+body.y2 .ptsbadge, body.y2 .sndbtn { border-radius: 6px; }
+body.y2 .msg { background: #fff; border: 1px solid var(--line); }
+body.y2 .msg.good { background: #e6f4ec; color: #14532d; border-color: #1b7f6b; } body.y2 .msg.bad { background: #fdeceb; color: #8f1b14; border-color: #b3382c; }
+body.y2 .boardbox { background: transparent; box-shadow: none; }
+body.y2 .site-link { background: none; }
+body.y2 .snav { background: linear-gradient(rgba(244,244,245,0), #edf1f5 35%); }
+body.y2 .chip { border-radius: 6px; }
+body.y2 .btn, body.y2 .btn.alt { border-width: 1px; }
+
+body.y2 { --ink: #1d2733; --muted: #5b6b7c; }
+body.y2 .brand, body.y2 .y2no { color: #1e3a5f; }
+body.y2 .top { border-top: 3px solid #1e3a5f; }
+body.y2 .y2row:hover { background: #f1f5fa; }
+body.y2 .chip, body.y2 .chip.on, body.y2 #bt button { background: #fff; color: #1e3a5f; border: 1px solid var(--line); box-shadow: none; }
+body.y2 #bt button[aria-pressed="true"], body.y2 .chip[aria-pressed="true"] { background: #1e3a5f; color: #fff; }
+body.y2 .slide h3 { color: #1e3a5f; }
+body.y2 .slide { box-shadow: none; }
+body.y2 .sq.sel { box-shadow: inset 0 0 0 3px #a9792b; }
+.y2an { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; margin-top: 10px; }
+.y2an h4 { margin: 0 0 8px; font: 700 17px var(--font-display); color: #1e3a5f; }
+.anl { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; font-size: 15px; }
+.anl .ln { display: grid; grid-template-columns: 64px 1fr; gap: 10px; padding: 6px 8px; border-radius: 6px; cursor: pointer; background: #f6f8fb; text-align: left; border: 0; font: inherit; color: inherit; }
+.anl .ln:hover { background: #e8eef6; } .anl .ev { font-weight: 700; font-variant-numeric: tabular-nums; } .anl .pv { color: #34465a; overflow-wrap: anywhere; }
+.anl .ev.neg { color: #b3382c; } .anl .ev.pos { color: #1b7f6b; }
+.y2an .st { font-size: 14px; color: var(--muted); margin-top: 6px; }
+
+.y2n.half { background: #e3b43c; color: #2a1f00; border-color: #e3b43c; }
+.y2key i.half, .y2cnt i.half { background: #e3b43c; border-color: #e3b43c; }
+.y2foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; padding: 10px 14px; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.y2fb { flex: 1 1 160px; height: 8px; background: #e3e9f0; border-radius: 4px; overflow: hidden; } .y2fb i { display: block; height: 100%; background: #1b7f6b; }
+.y2cnt i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin: 0 4px 0 8px; vertical-align: -1px; } .y2cnt i.ok { background: #1b7f6b; } .y2cnt i.bad { background: #b3382c; }
+
+.y2cells { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; } .y2cells.two { grid-template-columns: repeat(2, 1fr); }
+.y2cell { display: flex; flex-direction: column; gap: 6px; padding: 18px; background: #fff; border: 1px solid var(--line); border-top: 3px solid #1e3a5f; border-radius: 8px; text-decoration: none; color: inherit; } .y2cell:hover { background: #f6f9fc; }
+.y2cell i { font: 700 13px var(--font-display); color: #a9792b; font-style: normal; letter-spacing: .08em; } .y2cell b { font: 700 20px var(--font-display); color: #1e3a5f; } .y2cell p { margin: 0; color: #34465a; font-size: 15px; } .y2cell span { margin-top: 6px; font-size: 13px; color: var(--muted); }
+.y2cell.soon { opacity: .6; }
+.y2h3 { font: 700 17px var(--font-display); color: #1e3a5f; margin: 18px 0 8px; }
+.y2tier { display: grid; grid-template-columns: 38px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); opacity: .55; } .y2tier.open { opacity: 1; background: #f6f9fc; } .y2tier:last-child { border-bottom: 0; }
+.y2me { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0; } .y2me span { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 13px; color: var(--muted); display: flex; flex-direction: column; } .y2me b { font: 700 24px var(--font-display); color: #1e3a5f; }
+.y2pls { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; } .y2pl { display: grid; grid-template-columns: 40px 1fr auto; grid-template-rows: auto auto; gap: 0 10px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px; } .y2pl .y2ava { grid-row: span 2; } .y2pl small { color: var(--muted); } .y2pl em { grid-row: span 2; font-style: normal; font-weight: 700; color: #1e3a5f; }
+.y2ava { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 18px var(--font-display); }
+.soonrow { opacity: .6; }
+@media (max-width: 640px) { .y2cells, .y2cells.two { grid-template-columns: 1fr; } .y2me { grid-template-columns: repeat(2, 1fr); } }
+
+.y2storm { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 22px; text-align: center; } .y2clock { font: 700 72px/1 var(--font-display); color: #1e3a5f; font-variant-numeric: tabular-nums; margin: 6px 0 14px; }
+.y2stm { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; } .y2stm span { min-width: 100px; background: #f6f9fc; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 13px; color: var(--muted); display: flex; flex-direction: column; } .y2stm b { font: 700 26px var(--font-display); color: #1e3a5f; }
+.y2race { display: flex; flex-direction: column; gap: 6px; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+.y2lane { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: center; } .y2lane.me .y2ln { font-weight: 700; color: #1e3a5f; } .y2ln { font-size: 13px; color: var(--muted); }
+.y2track { position: relative; height: 32px; border-radius: 4px; background: repeating-linear-gradient(90deg, #e9eef4 0 24px, #f4f7fa 24px 48px); border-right: 6px solid #1d2733; } .y2lane.me .y2track { background: repeating-linear-gradient(90deg, #dde7f2 0 24px, #eef3f9 24px 48px); }
+.y2cr { position: absolute; top: 2px; width: 56px; transform: translateX(-50%); transition: left .6s; } .y2car { width: 100%; display: block; }
+
+/* разделение «первый / второй год» в меню */
+.nav a[data-r="lessons"] { margin-left: 14px; position: relative; } .nav a[data-r="lessons"]::before { content: ''; position: absolute; left: -9px; top: 4px; bottom: 4px; width: 2px; background: #b8c2cf; border-radius: 1px; }
+.nav a[data-r="y2"] { background: #e6ecf4 !important; color: #1e3a5f !important; border: 1px solid #1e3a5f; border-radius: 8px; margin-right: 14px; position: relative; } .nav a[data-r="y2"]::after { content: ''; position: absolute; right: -9px; top: 4px; bottom: 4px; width: 2px; background: #b8c2cf; border-radius: 1px; }
+.nav a[data-r="y2"][aria-current="page"] { background: #1e3a5f !important; color: #fff !important; }
+@media (max-width: 640px) { .nav a[data-r="lessons"]::before, .nav a[data-r="y2"]::after { display: none; } .nav a[data-r="lessons"] { margin-left: 0; } .nav a[data-r="y2"] { margin-right: 0; } }
+
+/* вход в год обучения на главной */
+.yrdoors { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.yrd { display: flex; flex-direction: column; gap: 6px; padding: 18px 20px; border-radius: 20px; text-decoration: none; transition: transform .15s; } .yrd:hover { transform: translateY(-2px); }
+.yrd .yrk { font: 700 12px var(--font-display); letter-spacing: .08em; text-transform: uppercase; } .yrd b { font: 700 22px/1.15 var(--font-display); } .yrd p { margin: 0; font-size: 15px; } .yrd .yrgo { margin-top: 6px; font-weight: 800; }
+.yrd.y1 { background: #fff4c2; border: 3px solid #f2b300; color: #3d2f00; box-shadow: 0 5px 0 #f0d060; } .yrd.y1 .yrk { color: #8a5a00; }
+.yrd.y2 { background: #1e3a5f; border: 3px solid #1e3a5f; color: #fff; border-radius: 10px; box-shadow: 0 5px 0 #14263f; } .yrd.y2 .yrk { color: #e3b43c; } .yrd.y2 p { color: #d7e1ee; }
+@media (max-width: 640px) { .yrdoors { grid-template-columns: 1fr; } }
+.yrdoors { margin-top: 6px; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -519,7 +623,8 @@ body { padding-bottom: 96px; }
     <a class="brand" href="#home"><span>Шахматная</span><b>страна</b></a>
     <nav class="nav" aria-label="Разделы">
       <a href="#home" data-r="home">Главная</a>
-      <a href="#lessons" data-r="lessons">Уроки</a>
+      <a href="#lessons" data-r="lessons">Первый год обучения</a>
+      <a href="#y2" data-r="y2">Второй год обучения</a>
       <a href="#puzzles" data-r="puzzles">Задачи</a>
       <a href="#play" data-r="play">С роботом</a>
       <a href="#live" data-r="live">Живые</a>
@@ -1406,7 +1511,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   /* ---------- Конфетти ---------- */
   var fx = document.getElementById('fx'), fxRun = false, parts = [];
   function confetti(n) {
-    if (!fx) return;
+    if (!fx || document.body.classList.contains('y2')) return;
     var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) n = Math.round(n / 5);
     var w = fx.width = innerWidth, h = fx.height = innerHeight;
@@ -1572,6 +1677,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<p class="note"><b>⭐ ' + pts + ' баллов · звание «' + rk + '»</b>' + (nx ? ' · до звания «' + nx[1] + '» ещё ' + (nx[0] - pts) : '') + '</p>' +
       '<div class="stage"><img src="' + IMG.yasmin + '" alt=""><img src="' + IMG.tima + '" alt=""><img src="' + IMG.simba + '" alt=""></div>' +
       '<span class="spark" style="top:14px;right:22px">⭐</span><span class="spark" style="top:60px;right:150px;animation-delay:-.7s">✨</span><span class="spark" style="top:110px;right:14px;animation-delay:-1.3s">♟</span></div>' +
+      '<section class="yrdoors"><a class="yrd y1" href="#lessons"><span class="yrk">Первый год обучения</span><b>Знакомство с шахматами</b><p>Доска, фигуры, правила, шах и мат, первые задачи и игра с героями книги.</p><span class="yrgo">Начать ▶</span></a><a class="yrd y2" href="#y2"><span class="yrk">Второй год обучения</span><b>Тактика, дебюты, практика</b><p>Партии мастеров, задачи профессионального уровня, анализ движком, игры с сильными соперниками.</p><span class="yrgo">Перейти ▶</span></a></section>' +
       sayHero('king', 'За каждую победу тебя ждут звёзды и медали. Пройди все миры, и ты чемпион!', 'награды') +
       '<div class="cards">' +
       '<a class="card" href="#play"><img class="ch" src="' + IMG.arni + '" alt=""><span class="big">Игра с роботами</span><p>10 миров, 200 уровней. Начни с пешек и дойди до гроссмейстеров.</p><span class="pill">Побед: ' + w + ' из ' + TOTAL + ' · ' + title + '</span></a>' +
@@ -2474,7 +2580,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var step = 0, cap = '';
     host.innerHTML = body + (hasBoard ? boardHTML() + '<div class="msg" id="sm" role="status" aria-live="polite"></div>' : '') +
       (s.try ? '<div class="row"><button class="btn go" id="tReset">↺ Попробовать снова</button></div>' : '') + ((s.demo || s.show) ? '<div class="row"><button class="btn go" id="dPlay">▶ Показать</button><button class="btn" id="dNext">Следующий ход ▶</button><button class="btn alt" id="dReset">Сначала</button></div>' : '') +
-      '<div class="row snav"><button class="btn alt" id="sPrev"' + (idx === 0 ? ' disabled' : '') + '>◀ Назад</button><span class="count">' + (idx + 1) + ' из ' + n + '</span><button class="btn" id="sNext">' + (idx === n - 1 ? (L.levels ? 'К упражнениям' : 'Готово') : 'Дальше ▶') + '</button></div>';
+      '<div class="row snav"><button class="btn alt" id="sPrev"' + (idx === 0 ? ' disabled' : '') + '>◀ Назад</button><span class="count">' + (idx + 1) + ' из ' + n + '</span><button class="btn" id="sNext">' + (idx === n - 1 ? (L.y2 ? 'К задачам' : L.levels ? 'К упражнениям' : 'Готово') : 'Дальше ▶') + '</button></div>';
     var sm = document.getElementById('sm');
     function say(t, k) { if (sm) { sm.className = 'msg' + (k ? ' ' + k : ''); sm.textContent = t; } }
     function hlSet(a) { var o = {}; (a || []).forEach(function (i) { o[i] = true; }); return o; }
@@ -2551,6 +2657,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     document.getElementById('sPrev').onclick = function () { clearTimers(); if (idx > 0) showSlides(host, L, idx - 1); };
     document.getElementById('sNext').onclick = function () {
       if (idx < n - 1) { showSlides(host, L, idx + 1); return; }
+      if (L.y2) { location.hash = '#y2/' + L.id + '/t'; return; }
       var r = L.levels ? null : saveLv(L, 1, 3);
       if (r && r.gain) { addPts(r.gain, 'за урок'); sfx('good'); }
       if (L.levels) location.hash = '#lesson/' + L.id + '/1'; else location.hash = '#lessons';
@@ -4026,6 +4133,262 @@ if (typeof module !== 'undefined') module.exports = Eng;
     ]);
   })();
 
+  /* ===== Второй год обучения: строгий раздел. Уроки: примеры → задачи с баллами, 2 ошибки, скрытый прогресс ===== */
+  (function () {
+    var Y2 = [];                       /* список уроков второго года, по порядку */
+    var st = lsGet('ukc_y2', {});      /* id -> { n: { p: баллы, m: ошибки, ok: bool } } */
+    function save() { lsSet('ukc_y2', st); }
+    var opt = lsGet('ukc_y2opt', { hl: false });
+    function saveOpt() { lsSet('ukc_y2opt', opt); }
+    function rec(id) { return st[id] || (st[id] = {}); }
+    function sqi(s) { return (8 - (+s[1])) * 8 + (s.charCodeAt(0) - 97); }
+    function sqn(i) { return 'abcdefgh'[i & 7] + (8 - (i >> 3)); }
+    var PRM = { n: 2, b: 3, r: 4, q: 5 };
+    function toMove(pos, u) { var f = sqi(u.slice(0, 2)), t = sqi(u.slice(2, 4)); return E.legal(pos).filter(function (m) { return m.f === f && m.t === t && (u.length < 5 || m.p === PRM[u[4]]); })[0] || null; }
+    function plen(it) { return Math.ceil(it[1].split(' ').length / 2); }
+    function base(it) { var n = plen(it); return n <= 1 ? 10 : n === 2 ? 20 : n === 3 ? 30 : 40; }
+    function kind(it, L) { var n = plen(it); return L.mate ? 'Мат в ' + (n === 1 ? 'один ход' : n === 2 ? 'два хода' : n === 3 ? 'три хода' : n + ' хода') : 'Тактическая задача'; }
+    function maxPts(L) { var s = 0; L.bank.forEach(function (it) { s += base(it); }); return s || 1; }
+    function got(L) { var s = 0, r = rec(L.id); for (var k in r) s += r[k].p || 0; return s; }
+    function solved(L) { var s = 0, r = rec(L.id); for (var k in r) if (r[k].ok) s++; return s; }
+    function doneCount(L) { return Object.keys(rec(L.id)).length; }
+    function cls(x) { return x ? (x.ok ? (x.m ? 'half' : 'ok') : 'bad') : ''; }
+    function counts(L) { var c = { ok: 0, half: 0, bad: 0 }, r = rec(L.id); for (var k in r) c[cls(r[k])]++; return c; }
+    function nextN(L, from) {
+      var r = rec(L.id), N = L.bank.length;
+      for (var i = from; i <= N; i++) if (!r[i]) return i;
+      for (var j = 1; j < from; j++) if (!r[j]) return j;
+      return 0;
+    }
+
+    /* ---------- главная страница второго года ---------- */
+    function crumbs(t, up) { return '<div class="y2head"><a class="btn alt" href="' + (up || '#y2') + '">← Назад</a><h2>' + esc(t) + '</h2></div>'; }
+    function landing() {
+      var tot = 0, gt = 0; Y2.forEach(function (L) { tot += maxPts(L); gt += got(L); });
+      view.innerHTML = '<h2>Второй год обучения</h2><p class="y2lead">Раздел для тех, кто уже знает основы. Здесь теория с разбором партий, задачи профессионального уровня, игра с сильными соперниками и разбор позиций вместе с движком.</p>' +
+        '<div class="y2cells">' +
+        '<a class="y2cell" href="#y2/theory"><i>01</i><b>Теория</b><p>Уроки по темам: примеры, классические партии, затем задачи с баллами.</p><span>' + Y2.length + ' ' + (Y2.length === 1 ? 'тема' : 'темы') + ' · баллов ' + gt + '</span></a>' +
+        '<div class="y2cell soon"><i>02</i><b>Практика</b><p>Партии с виртуальными шахматистами и разыгрывание заданных позиций.</p><span>скоро</span></div>' +
+        '<div class="y2cell soon"><i>03</i><b>Мой прогресс</b><p>Рейтинг, результаты уроков, победы, ничьи и поражения.</p><span>скоро</span></div>' +
+        '<div class="y2cell soon"><i>04</i><b>Скорость</b><p>Задачи на время и гонка задач.</p><span>скоро</span></div>' +
+        '</div><p class="y2note">Новые разделы и темы появляются по мере готовности.</p>';
+    }
+    function theory() {
+      var h = crumbs('Теория', '#y2') + '<p class="y2lead">Темы идут по порядку программы. Каждая тема: разбор на примерах и партиях, затем задачи. Мат в один ход — 10 баллов, в два хода — 20, в три хода — 30.</p><div class="y2list">';
+      Y2.forEach(function (L, i) {
+        var n = L.bank.length, d = doneCount(L);
+        h += '<a class="y2row" href="#y2/' + L.id + '"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + esc(L.t) + '</b><small>' + esc(L.d) + '</small></span><span class="y2st">' + (d ? d + ' из ' + n + ' · ' + got(L) + ' баллов' : n + ' задач') + '</span></a>';
+      });
+      h += '</div><p class="y2note">Следующие темы появятся по порядку программы.</p>';
+      view.innerHTML = h;
+    }
+    var TIERS = [['4 разряд', '0–1400'], ['3 разряд', '1400–1600'], ['2 разряд', '1600–1800'], ['1 разряд', '1800–2000'], ['Кандидат в мастера', '2000–2100'], ['Мастер ФИДЕ', '2100–2300'], ['Международный мастер', '2300–2500'], ['Гроссмейстер', '2500 и выше']];
+    function practice() {
+      view.innerHTML = crumbs('Практика', '#y2') + '<div class="y2cells two">' +
+        '<a class="y2cell" href="#y2/games"><i>А</i><b>Игры с соперниками</b><p>Виртуальные шахматисты разных стран и возрастов, от 4 разряда до гроссмейстера. Следующий уровень открывается после завершения предыдущего.</p><span>8 уровней по 100 игроков</span></a>' +
+        '<a class="y2cell" href="#y2/pos"><i>Б</i><b>Практические позиции</b><p>Теоретические окончания и заданные позиции по темам: играйте их против компьютера до конца.</p><span>пешечные и матовые окончания</span></a></div>';
+    }
+    var SAMPLE = [['Лейла', 9, 'Азербайджан'], ['Артём', 10, 'Россия'], ['Айше', 11, 'Турция'], ['Нурлан', 12, 'Казахстан'], ['Эмма', 10, 'Германия'], ['Хироки', 11, 'Япония']];
+    function ava(n, i) { var hh = (i * 67 + 200) % 360; return '<span class="y2ava" style="background:hsl(' + hh + ' 35% 45%)">' + esc(n[0]) + '</span>'; }
+    function games() {
+      var rows = TIERS.map(function (t, i) {
+        var open = i === 0;
+        return '<div class="y2tier' + (open ? ' open' : '') + '"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + t[0] + '</b><small>Рейтинг ' + t[1] + ' · 100 соперников</small></span><span class="y2st">' + (open ? '0 из 100 · открыт' : 'закрыт: завершите предыдущий уровень с плюсом') + '</span></div>';
+      }).join('');
+      var pl = SAMPLE.map(function (x, i) { return '<div class="y2pl">' + ava(x[0], i) + '<b>' + x[0] + '</b><small>' + x[1] + ' лет · ' + x[2] + '</small><em>' + (400 + i * 150) + '</em></div>'; }).join('');
+      view.innerHTML = crumbs('Игры с соперниками', '#y2/practice') + '<div class="y2me"><span>Ваш рейтинг<b>1000</b></span><span>Победы<b>0</b></span><span>Ничьи<b>0</b></span><span>Поражения<b>0</b></span></div><h3 class="y2h3">Уровни</h3><div class="y2list">' + rows + '</div><h3 class="y2h3">Соперники первого уровня (пример)</h3><div class="y2pls">' + pl + '</div><p class="y2note">Макет. Игроки выдуманные; игра идёт против компьютера заданной силы.</p>';
+    }
+    var POS = [['Король и пешка против короля', 'Оппозиция, правило квадрата, ключевые поля'], ['Ладейные окончания: позиции Филидора и Лусены', 'Теоретические позиции для разыгрывания'], ['Король, ферзь и пешка', 'Выигрыш и ничья'], ['Мат двумя ладьями, ферзём, ладьёй', 'Техника матования'], ['Слон и конь против короля', 'Матовая сеть'], ['Слон и пешка, конь и пешка', 'Окончания с лёгкими фигурами']];
+    function positions() {
+      var h = POS.map(function (x, i) { return '<div class="y2row soonrow"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + x[0] + '</b><small>' + x[1] + '</small></span><span class="y2st">скоро</span></div>'; }).join('');
+      view.innerHTML = crumbs('Практические позиции', '#y2/practice') + '<p class="y2lead">Выберите тему, получите позицию и доведите её до результата против компьютера. Можно начать заново и попробовать другой план.</p><div class="y2list">' + h + '</div><p class="y2note">Макет списка тем.</p>';
+    }
+    function progressPage() {
+      var h = Y2.map(function (L) { var mx = maxPts(L), g = got(L); return '<div class="y2row"><span class="y2no"></span><span class="y2tt"><b>' + esc(L.t) + '</b></span><span class="y2st">' + Math.round(g * 100 / mx) + '% · ' + g + ' из ' + mx + '</span></div>'; }).join('');
+      view.innerHTML = crumbs('Мой прогресс', '#y2') + '<div class="y2me"><span>Рейтинг<b>1000</b></span><span>Победы<b>0</b></span><span>Ничьи<b>0</b></span><span>Поражения<b>0</b></span></div><h3 class="y2h3">Уроки</h3><div class="y2list">' + h + '</div>';
+    }
+    var CARS = [['#b3382c', 'Алый'], ['#1e3a5f', 'Синий'], ['#1b7f6b', 'Изумруд'], ['#a9792b', 'Золото'], ['#6b4c9a', 'Аметист'], ['#2f7de1', 'Лазурь'], ['#555d66', 'Графит'], ['#d9772b', 'Медь'], ['#8a2a5b', 'Гранат'], ['#3c8d2f', 'Нефрит']];
+    function car(c) { return '<svg class="y2car" viewBox="0 0 64 28" aria-hidden="true"><path d="M3 20 L6 12 Q8 9 13 9 L22 9 L28 3 L44 3 L52 9 L58 11 Q62 12 62 17 L62 20 Z" fill="' + c + '"/><path d="M26 9 L30 5 L42 5 L48 9 Z" fill="#fff" opacity=".85"/><circle cx="16" cy="21" r="5" fill="#1d2733"/><circle cx="48" cy="21" r="5" fill="#1d2733"/><circle cx="16" cy="21" r="2" fill="#cfd8e3"/><circle cx="48" cy="21" r="2" fill="#cfd8e3"/></svg>'; }
+    function speed() {
+      view.innerHTML = crumbs('Скорость', '#y2') + '<div class="y2cells two"><a class="y2cell" href="#y2/storm"><i>А</i><b>Шторм</b><p>Три минуты. Задачи идут одна за другой, серия верных ответов даёт бонус, ошибка отнимает время.</p><span>как на Lichess</span></a><a class="y2cell" href="#y2/race"><i>Б</i><b>Гонка с ботами</b><p>Вы и ещё девять машин-ботов решаете одни и те же задачи. Кто быстрее и точнее, тот впереди.</p><span>10 машин</span></a></div>';
+    }
+    function storm() {
+      view.innerHTML = crumbs('Шторм', '#y2/speed') + '<div class="y2storm"><div class="y2clock">3:00</div><div class="y2stm"><span>Серия<b>0</b></span><span>Решено<b>0</b></span><span>Ошибки<b>0</b></span></div><p class="y2note">Макет. Здесь будет доска с задачей, часы на три минуты и серия верных ответов. Ход начинает отсчёт времени.</p></div>';
+    }
+    function race() {
+      var lanes = CARS.map(function (c, i) { var w = [62, 18, 30, 24, 40, 12, 34, 28, 46, 22][i]; return '<div class="y2lane' + (i === 0 ? ' me' : '') + '"><span class="y2ln">' + (i === 0 ? 'Вы' : 'Бот ' + c[1]) + '</span><div class="y2track"><div class="y2cr" style="left:' + w + '%">' + car(c[0]) + '</div></div></div>'; }).join('');
+      view.innerHTML = crumbs('Гонка с ботами', '#y2/speed') + '<p class="y2lead">Каждая верная задача двигает вашу машину вперёд. Боты решают с разной скоростью: от новичка до мастера.</p><div class="y2race">' + lanes + '</div><p class="y2note">Макет. Здесь будет доска с задачей рядом с трассой.</p>';
+    }
+    function list() { landing(); }
+
+    /* ---------- заголовок урока ---------- */
+    function head(L, where) {
+      return '<div class="y2head"><a class="btn alt" href="#y2/theory">← Теория</a><h2>' + esc(L.t) + '</h2><span class="y2tabs"><a class="' + (where === 'ex' ? 'cur' : '') + '" href="#y2/' + L.id + '">Разбор</a><a class="' + (where === 'tk' ? 'cur' : '') + '" href="#y2/' + L.id + '/t">Задачи</a></span></div>';
+    }
+
+    function foot(L) {
+      var mx = maxPts(L), g = got(L), pc = Math.round(g * 100 / mx), c = counts(L);
+      return '<div class="y2foot"><div class="y2fb"><i style="width:' + pc + '%"></i></div><span><b>Успех: ' + pc + '%</b> · баллов ' + g + ' из ' + mx + '</span><span class="y2cnt"><i class="ok"></i>' + c.ok + ' <i class="half"></i>' + c.half + ' <i class="bad"></i>' + c.bad + '</span></div>';
+    }
+
+    /* ---------- задачи ---------- */
+    function task(L, n) {
+      var N = L.bank.length;
+      if (!N) { view.innerHTML = head(L, 'tk') + '<div class="y2sum"><h3>Задачи готовятся</h3><p>Задачи для этого урока появятся в ближайшее время.</p></div>'; return; }
+      if (!n) n = nextN(L, 1);
+      if (!n) { summary(L); return; }
+      var it = L.bank[n - 1], pos = E.fromFEN(it[0]), sol = it[1].split(' '), step = 0, mist = 0, busy = false, done = false, cur = pos, tg = [];
+      var black = pos.turn === -1, B = base(it), already = rec(L.id)[n];
+      var S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: black, coords: true, mark: {}, hl: null };
+      var d0 = doneCount(L);
+      view.innerHTML = head(L, 'tk') +
+        '<div class="y2task"><div class="y2cap"><b>' + kind(it, L) + '</b><span>' + B + ' баллов · ' + (black ? 'ход чёрных' : 'ход белых') + '</span></div>' + boardHTML() +
+        '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
+        '<div class="row"><button class="btn alt" id="resB">Сначала</button><button class="btn alt" id="hlB" aria-pressed="false">Подсветка ходов: выкл</button><button class="btn alt" id="prgB">Прогресс за урок</button></div><div id="after"></div></div>' + foot(L);
+      var msg = document.getElementById('msg');
+      function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function draw() { S.targets = opt.hl ? tg : []; if (!opt.hl) S.last = null; drawBoard(S, click); }
+      var draw0 = draw;
+      function reply() {
+        var u = sol[step]; if (!u) return;
+        busy = true; later(function () {
+          var m = toMove(cur, u), b0 = cur; cur = E.make(cur, m); S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); S.pos = cur; moveSound(b0, m, cur); step++; busy = false; S.badge = null; draw(); sm('Ответ соперника: ' + notation(m, b0) + '. Ваш ход.');
+        }, 800);
+      }
+      function finish(ok) {
+        done = true; busy = true;
+        var pts = ok ? Math.round(B * (mist === 0 ? 1 : mist === 1 ? 0.5 : 0.25)) : 0;
+        if (!already) { rec(L.id)[n] = { p: pts, m: mist, ok: ok }; save(); var ft = document.querySelector('.y2foot'); if (ft) ft.outerHTML = foot(L); }
+        var nx = nextN(L, n + 1), a = document.getElementById('after');
+        a.innerHTML = '<div class="y2res ' + (ok ? 'ok' : 'bad') + '"><b>' + (ok ? 'Задача решена' : 'Задача не решена') + '</b> ' + (already ? '(повторное решение, баллы не меняются)' : ok ? '+' + pts + ' баллов' + (mist ? ' (ошибок: ' + mist + ')' : '') : '0 баллов') + '</div><div class="row"><button class="btn go" id="nxB">' + (nx ? 'Продолжить' : 'Итог урока') + '</button><button class="btn alt" id="anB">Анализ на компьютере</button><button class="btn alt" id="solB">Показать правильный ответ</button></div><div id="anP"></div>';
+        document.getElementById('nxB').onclick = function () { if (nx) location.hash = '#y2/' + L.id + '/t/' + nx; else summary(L); };
+        document.getElementById('solB').onclick = function () {
+          var q = E.fromFEN(it[0]), k = 0, panel = document.getElementById('anP'); S.pos = q; S.sel = null; S.hint = null; S.hl = null; S.badge = null; S.last = null; S.flip = q.turn === -1; draw();
+          panel.innerHTML = '<div class="y2an"><h4>Правильный ответ</h4><p class="st" id="solT"></p></div>';
+          var txt = [], t = document.getElementById('solT');
+          (function nx() {
+            if (k >= sol.length) return;
+            var m = toMove(q, sol[k]); if (!m) return; var b0 = q; q = E.make(q, m); S.pos = q; S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); moveSound(b0, m, q); draw();
+            txt.push(pvTxt(b0, [sol[k]], 1)); t.textContent = txt.join('  '); k++; later(nx, 1100);
+          })();
+        };
+        document.getElementById('anB').onclick = function () { analysis(it[0], document.getElementById('anP'), S, draw0); };
+        document.getElementById('nxB').focus();
+      }
+      function play(m) {
+        var before = cur, np = E.make(before, m), want = toMove(before, sol[step]), good = want && want.f === m.f && want.t === m.t && (want.p || 0) === (m.p || 0);
+        var mates = E.status(np) === 'mate';
+        moveSound(before, m, np); S.anim = animOf(before, m); S.last = { f: m.f, t: m.t };
+        if (good || (L.mate && mates)) {
+          cur = np; S.pos = np; S.sel = null; S.hint = null; S.hl = null; S.badge = null; step++; draw();
+          if (mates || step >= sol.length) { sfx('good'); sm(L.mate ? 'Мат.' : 'Верно.', 'good'); finish(true); return; }
+          sm('Верно. Соперник отвечает…', 'good'); reply(); return;
+        }
+        mist++; sfx('bad'); S.pos = np; S.sel = null; S.badge = { sq: m.t, cls: 'blunder', s: '✕' }; draw(); busy = true;
+        var w = toMove(cur, sol[step]);
+        if (mist === 1) sm('Неверно. Подумайте ещё: осталась одна попытка без подсказки.', 'bad');
+        else if (mist === 2) { sm('Неверно. Подсказка: первый ход выделен.', 'bad'); }
+        else { sm('Решение: ' + notation(w, cur) + '.', 'bad'); }
+        later(function () {
+          S.pos = cur; S.badge = null; busy = false;
+          if (mist === 2) { S.hint = w.f; S.hl = {}; S.hl[w.t] = true; }
+          if (mist >= 3) { S.hint = w.f; S.hl = {}; S.hl[w.t] = true; draw(); finish(false); return; }
+          draw();
+        }, 1300);
+      }
+      function click(i) {
+        if (busy || done) return; var v = S.pos.b[i];
+        if (S.sel != null && tg.indexOf(i) >= 0) { var c = movesFrom(S.pos, S.sel).filter(function (x) { return x.t === i; }); if (c.length > 1) c = [c.filter(function (x) { return x.p === 5; })[0] || c[0]]; tg = []; play(c[0]); return; }
+        if (v && (black ? v < 0 : v > 0)) { S.sel = i; tg = movesFrom(S.pos, i).map(function (m) { return m.t; }); } else { S.sel = null; tg = []; }
+        draw();
+      }
+      document.getElementById('resB').onclick = function () { if (busy) return; task(L, n); };
+      document.getElementById('prgB').onclick = function () { progress(L, n); };
+      var hlB = document.getElementById('hlB');
+      function hlLabel() { hlB.textContent = 'Подсветка ходов: ' + (opt.hl ? 'вкл' : 'выкл'); hlB.setAttribute('aria-pressed', String(opt.hl)); }
+      hlB.onclick = function () { opt.hl = !opt.hl; saveOpt(); hlLabel(); draw(); }; hlLabel();
+      draw(); sm('Ваш ход.');
+    }
+
+    /* ---------- анализ на компьютере ---------- */
+    function ENG() { return window.__SFMOCK || SF; }
+    function evTxt(l, turn) { var w = turn === 1 ? 1 : -1; if (l.mate != null) { var m = l.mate * w; return (m > 0 ? '#' : '#-') + Math.abs(m); } var v = l.cp * w / 100; return (v > 0 ? '+' : '') + v.toFixed(2); }
+    function pvTxt(pos, pv, max) {
+      var out = [], p = pos, n = 1, first = true;
+      for (var i = 0; i < pv.length && i < max; i++) {
+        var m = toMove(p, pv[i]); if (!m) break;
+        var white = p.turn === 1, t = notation(m, p);
+        if (white) out.push(n + '.' + t); else out.push((first ? n + '…' : '') + t);
+        if (!white) n++; first = false; p = E.make(p, m);
+      }
+      return out.join(' ');
+    }
+    function analysis(fen0, panel, S, redraw) {
+      var A = { pos: E.fromFEN(fen0), hist: [], sel: null, tg: [], tok: 0, on: true };
+      panel.innerHTML = '<div class="y2an"><h4>Анализ на компьютере</h4><div class="row"><button class="btn alt" id="aBack">← Ход назад</button><button class="btn alt" id="aReset">Позиция задачи</button><button class="btn alt" id="aFlip">Перевернуть</button><button class="btn alt" id="aStop">Остановить анализ</button></div><div class="anl" id="anl"></div><p class="st" id="anst"></p><p class="st">Двигайте фигуры за обе стороны. Нажмите на линию, чтобы сыграть её первый ход. Движок: Stockfish 17.1, 5 линий.</p></div>';
+      S.hint = null; S.hl = null; S.badge = null; S.last = null; S.sel = null; S.flip = A.pos.turn === -1;
+      function show() { S.pos = A.pos; S.sel = A.sel; S.targets = []; drawBoard(S, clk); }
+      function think() {
+        var tok = ++A.tok, box = document.getElementById('anl'), st = document.getElementById('anst'), stt = E.status(A.pos);
+        if (!A.on) { box.innerHTML = ''; st.textContent = 'Анализ остановлен.'; return; }
+        if (stt === 'mate' || stt === 'stalemate') { box.innerHTML = ''; st.textContent = stt === 'mate' ? 'Мат.' : 'Пат: ничья.'; return; }
+        st.textContent = 'Движок считает…'; box.innerHTML = '';
+        var eng = ENG(); eng.stop && eng.stop();
+        eng.eval(E.toFEN(A.pos), 16, 5).then(function (r) {
+          if (tok !== A.tok) return;
+          if (!r || !r.lines || !r.lines.length) { st.textContent = eng.failed && eng.failed() ? 'Нет связи с движком (нужен интернет).' : 'Нет данных.'; return; }
+          st.textContent = 'Глубина ' + r.lines[0].depth + '.';
+          box.innerHTML = r.lines.map(function (l, i) { var e = evTxt(l, A.pos.turn); return '<button class="ln" data-u="' + l.move + '"><span class="ev ' + (e[0] === '-' || e.indexOf('#-') === 0 ? 'neg' : 'pos') + '">' + e + '</span><span class="pv">' + pvTxt(A.pos, l.pv, 9) + '</span></button>'; }).join('');
+          box.onclick = function (ev) { var b = ev.target.closest('.ln'); if (!b) return; var m = toMove(A.pos, b.dataset.u); if (m) mv(m); };
+        });
+      }
+      function mv(m) { var b0 = A.pos; A.hist.push(b0); A.pos = E.make(b0, m); S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); moveSound(b0, m, A.pos); A.sel = null; A.tg = []; show(); think(); }
+      function clk(i) {
+        var v = A.pos.b[i];
+        if (A.sel != null && A.tg.indexOf(i) >= 0) { var c = movesFrom(A.pos, A.sel).filter(function (x) { return x.t === i; }); if (c.length > 1) c = [c.filter(function (x) { return x.p === 5; })[0] || c[0]]; mv(c[0]); return; }
+        if (v && (A.pos.turn === 1 ? v > 0 : v < 0)) { A.sel = i; A.tg = movesFrom(A.pos, i).map(function (m) { return m.t; }); } else { A.sel = null; A.tg = []; }
+        show();
+      }
+      document.getElementById('aBack').onclick = function () { if (!A.hist.length) return; A.pos = A.hist.pop(); S.last = null; A.sel = null; show(); think(); };
+      document.getElementById('aReset').onclick = function () { A.pos = E.fromFEN(fen0); A.hist = []; S.last = null; A.sel = null; show(); think(); };
+      document.getElementById('aStop').onclick = function () { A.on = !A.on; this.textContent = A.on ? 'Остановить анализ' : 'Запустить анализ'; if (!A.on) { A.tok++; var e = ENG(); e.stop && e.stop(); document.getElementById('anst').textContent = 'Анализ остановлен.'; } else think(); };
+      document.getElementById('aFlip').onclick = function () { S.flip = !S.flip; show(); };
+      show(); think(); panel.scrollIntoView({ block: 'nearest' });
+    }
+
+    /* ---------- прогресс за урок (спрятан за кнопкой) ---------- */
+    function progress(L, cur) {
+      var old = document.getElementById('y2ov'); if (old) old.remove();
+      var r = rec(L.id), ov = document.createElement('div'); ov.id = 'y2ov';
+      var g = '';
+      for (var i = 1; i <= L.bank.length; i++) g += '<a class="y2n ' + cls(r[i]) + (i === cur ? ' cur' : '') + '" href="#y2/' + L.id + '/t/' + i + '">' + i + '</a>';
+      var mx = maxPts(L);
+      ov.innerHTML = '<div class="y2pop" role="dialog" aria-label="Прогресс за урок"><h3>Прогресс: ' + esc(L.t) + '</h3><p>Баллы: <b>' + got(L) + '</b> из ' + mx + ' (' + Math.round(got(L) * 100 / mx) + '%) · решено верно: ' + solved(L) + ' · не решено: ' + (doneCount(L) - solved(L)) + '</p><div class="y2grid">' + g + '</div><p class="y2key"><i class="ok"></i> верно с первой попытки <i class="half"></i> с ошибками (меньше баллов) <i class="bad"></i> не решена <i></i> ещё не открыта</p><div class="row"><button class="btn" id="y2x">Закрыть</button></div></div>';
+      document.body.appendChild(ov);
+      ov.onclick = function (e) { if (e.target === ov || e.target.id === 'y2x') ov.remove(); else if (e.target.closest('.y2n')) setTimeout(function () { ov.remove(); }, 0); };
+    }
+
+    /* ---------- итог ---------- */
+    function summary(L) {
+      var r = rec(L.id), mx = maxPts(L), g = got(L), rows = '';
+      for (var i = 1; i <= L.bank.length; i++) rows += '<a class="y2n ' + cls(r[i]) + '" href="#y2/' + L.id + '/t/' + i + '">' + i + '</a>';
+      view.innerHTML = head(L, 'tk') + '<div class="y2sum"><h3>Итог урока</h3><p class="y2big">' + Math.round(g * 100 / mx) + '%</p><p>Набрано <b>' + g + '</b> баллов из ' + mx + '. Чисто: ' + counts(L).ok + ', с ошибками: ' + counts(L).half + ', не решено: ' + counts(L).bad + '.</p><div class="y2grid">' + rows + '</div><p class="y2key"><i class="ok"></i> верно с первой попытки <i class="half"></i> с ошибками <i class="bad"></i> не решена</p><div class="row"><a class="btn" href="#y2">К списку тем</a></div></div>';
+    }
+
+    /* ---------- маршрут ---------- */
+    window.__y2 = function (parts) {
+      var pg = { theory: theory, practice: practice, games: games, pos: positions, progress: progressPage, speed: speed, storm: storm, race: race };
+      if (pg[parts[1]]) { pg[parts[1]](); return; }
+      var L = Y2.filter(function (x) { return x.id === parts[1]; })[0];
+      if (!L) { landing(); return; }
+      if (parts[2] === 't') { task(L, +parts[3] || 0); return; }
+      view.innerHTML = head(L, 'ex') + '<div id="ex"></div>';
+      showSlides(document.getElementById('ex'), L, 0);
+    };
+    window.__y2add = function (L, front) { L.y2 = true; if (front) Y2.unshift(L); else Y2.push(L); };
+    window.__y2list = Y2;
+  })();
+
 /* данные задач: спёртый мат */
   var SMOTHER_BANK = [["5rk1/1Q3ppp/2p5/3pP3/8/NB5n/1PP3PP/6RK b - - 0 1", "h3f2", 734], ["r1b2rk1/1p3ppp/8/pP1p4/P2Np3/2P3Pn/1B1NP1BP/1Q4RK b - - 0 1", "h3f2", 766], ["6k1/4ppBp/2bp2p1/8/1pP1PP2/1P3BNn/r5PP/1Q4RK b - - 0 1", "h3f2", 766], ["2rnkb1r/p2qnp2/1p2pp2/2p1P2p/3pNP2/3P1Q1P/PPPB2P1/R4RK1 w k - 0 1", "e4f6", 822], ["3r1rk1/1b3ppp/p3p3/1p4Q1/8/1B3P1n/PPP3PP/R3R1NK b - - 0 1", "h3f2", 890], ["r5rk/pp2b1pp/1q5N/4Pp2/7P/Pn3N2/1P3PP1/R4RK1 w - - 0 1", "h6f7", 899], ["r2qkb1r/1b1pnppp/p5n1/1p3N2/2p1PP2/1B6/PPP3PP/RNBQR1K1 w kq - 0 1", "f5d6", 1001], ["r2qkb1r/pp1npppp/2p5/8/3nN1P1/3P4/PPP1QP1P/RNB2RK1 w kq - 1 1", "e4d6", 1005], ["r2qkbnr/pp1bpppp/n1p5/8/4N3/5N2/PPPPQPPP/R1B1KB1R w KQkq - 1 1", "e4d6", 1047], ["4n1k1/Q4ppp/4pn2/3pN3/p2P4/1q2P3/5PPP/1r3RK1 w - - 1 1", "a7f7 g8h8 f7f8 f6g8 e5f7", 1197], ["5q1k/5r1p/1p6/p2p2p1/3Pn1Q1/4B3/PP4PP/4R2K b - - 1 1", "f7f1 e1f1 f8f1 e3g1 e4f2", 1271], ["5rk1/pp1b1ppp/1q2p1n1/8/1PP5/2P3N1/P1QB1nBP/R4RK1 b - - 1 1", "f2h3 g1h1 b6g1 f1g1 h3f2", 1278], ["3qkb1r/pprnnppp/4p1b1/1N1p4/3P4/5N2/PPP2PPP/R2QKB1R w KQk - 0 1", "b5d6", 1310], ["r2qkb1r/pp1nnp1p/6p1/2p5/3pN3/5N2/PPPPQPPP/R1B1K2R w KQkq - 0 1", "e4d6", 1395], ["r4rk1/pbpn1Npp/1p6/1P2p3/2Qq4/7P/P4RP1/2B3K1 w - - 1 1", "f7h6 g8h8 c4g8 f8g8 h6f7", 1427], ["5b2/7p/6pk/8/1PQPp3/2P1q3/1B1N1nPP/5RK1 b - - 1 1", "f2h3 g1h1 e3g1 f1g1 h3f2", 1451], ["r1b1k2r/bpp2ppp/p2p4/8/P1B1P1nq/5N2/1P3PPP/RNBQR1K1 b kq - 1 1", "h4f2 g1h1 f2g1 f3g1 g4f2", 1485], ["r4rk1/pR3Nbp/3p2p1/2pQ4/1nP5/7P/P2BKPP1/7q w - - 1 1", "f7h6 g8h8 d5g8 f8g8 h6f7", 1499], ["r2qkb1r/pp1bnppp/4p3/1N2n2P/3P1B2/8/PP4P1/R2QKB1R w KQkq - 0 1", "b5d6", 1527], ["r3k3/3p1pQ1/2p3p1/p1qpPP1p/8/8/PP3nPP/4RRK1 b q - 1 1", "f2h3 g1h1 c5g1 f1g1 h3f2", 1533], ["r5k1/pp3r2/1q6/3Q1p1p/5P2/PP6/5nPP/1BR2RK1 b - - 1 1", "f2h3 g1h1 b6g1 f1g1 h3f2", 1539], ["1q3r1k/5Qnp/6pN/R7/3P4/6PP/4rP1K/8 w - - 1 1", "f7g8 f8g8 h6f7", 1631], ["r1b1kb1r/5ppp/pqpp4/4p3/N1B1PP2/8/PPP2nPP/R1BQ1RK1 b kq - 1 1", "f2h3 g1h1 b6g1 f1g1 h3f2", 1667], ["4Q3/p5pk/7p/8/6n1/5N2/PPq2PPP/6K1 b - - 0 1", "c2f2 g1h1 f2f1 f3g1 g4f2", 1681], ["r1bnkb1r/pp1ppppp/8/qNBP4/8/2n2N2/P3QPPP/R3KB1R w KQkq - 0 1", "b5d6", 1745], ["Q7/p6p/5r2/7k/5P2/3nq3/P5PP/2R2R1K b - - 1 1", "d3f2 h1g1 f2h3 g1h1 e3g1 f1g1 h3f2", 1748], ["r1bqnr1k/p3p1bp/2ppQ1p1/1pn3N1/3P4/PBN5/1PP2PPP/R1B1K2R w KQ - 1 1", "e6g8 f8g8 g5f7", 1782], ["r1b2rk1/pp5p/2pbp3/3pNp2/2PP2P1/1P2q1Pn/PBQ1P1BP/R4R1K b - - 0 1", "e3g1 f1g1 h3f2", 1865], ["r1b2k1r/ppp2Bpp/3p4/2b5/4P1nq/5N2/PP3PPP/RNBQR1K1 b - - 1 1", "h4f2 g1h1 f2g1 f3g1 g4f2", 1868], ["r4rk1/pp4pp/2n1N3/2bQ1p2/4nB1q/2P2B2/PP3PPP/R3R1K1 b - - 0 1", "h4f2 g1h1 f2g1 e1g1 e4f2", 1889]];
 
@@ -4083,18 +4446,39 @@ if (typeof module !== 'undefined') module.exports = Eng;
     /* ---------- Урок: Спёртый мат ---------- */
     var SM = [];
     try { SM = SMOTHER_BANK; } catch (e) { SM = []; }
+    function G(uci, notes) { return { steps: uci.split(' ').map(function (u, i) { return notes && notes[i] ? u + '|' + notes[i] : u; }) }; }
     var LSM = {
-      id: 'smother', t: 'Спёртый мат', d: 'Мат конём: король закрыт своими же фигурами. Уроки с партиями и 30 задач.', levels: 30, bank: SM, mate: true, run: runTactic, slides: [
-        { h: 'Что такое спёртый мат', p: ['Король стоит в углу, а вокруг него <b>свои же фигуры</b>: ладья и пешки. Ему некуда идти. Тут приходит конь и ставит шах, а мат получается. Это <b>спёртый мат</b>. Нажми «Показать».'], demo: ST('5rk1/1Q3ppp/2p5/3pP3/8/NB5n/1PP3PP/6RK b - - 0 1', ['h3f2|Мат! Король h1 закрыт своими: ладья g1, пешки g2 и h2. Бить коня нечем, уйти некуда.']) },
-        { h: 'Почему именно конь', p: ['Любой другой шах можно <b>закрыть</b> или <b>отодвинуть</b>. А конь прыгает и бьёт «поверху», закрыться от него нельзя. Если рядом с королём нет свободных клеток, остаётся мат. Поэтому спёртый мат ставит почти всегда только конь.'], fen: '6rk/6pp/8/6N1/8/8/8/K7 w - - 0 1' },
-        { h: 'Классика: жертва ферзя', p: ['Часто спёртый мат приходится <b>подготовить</b>. Ферзь шахует и жертвует собой, король вынужден взять его ладьёй или конём, и после этого путь для коня свободен. Нажми «Показать» и смотри на жертву.'], demo: ST('r1b1k2r/bpp2ppp/p2p4/8/P1B1P1nq/5N2/1P3PPP/RNBQR1K1 b kq - 1 1', ['h4f2|Шах ферзём! Король может только на h1.', 'g1h1', 'f2g1|Жертва ферзя на g1: взять её можно только конём.', 'f3g1|Король закрыт своим же конём и ладьёй.', 'g4f2|Мат! Это «наследие Филидора».']) },
-        { h: 'Ещё одна жертва ферзя', p: ['Здесь жертвует ферзём белый. Он ставит шах с h8, а король и ладья вынуждены взять ферзя. Остаётся конь.'], demo: ST('r4rk1/pR3Nbp/3p2p1/2pQ4/1nP5/7P/P2BKPP1/7q w - - 1 1', ['f7h6|Шах конём! Король может только на h8.', 'g8h8', 'd5g8|Ферзь жертвует собой на g8.', 'f8g8|Ладья берёт ферзя и закрывает королю последнюю клетку.', 'h6f7|Мат конём!']) },
-        { h: 'Ловушка в дебюте', p: ['Спёртый мат бывает и в дебюте. Это ловушка «Блэкбёрна — Шиллинга»: чёрные жертвуют фигуры, а потом ставят мат. Белые ошибаются, взяв пешку на e5. Нажми «Показать».'], demo: ST('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1c4|Белые развивают слона.', 'c6d4|Чёрные ставят ловушку: на d4 стоит конь.', 'f3e5|Ошибка! Белые берут пешку e5.', 'd8g5|Ферзь нападает на g2 и e5.', 'e5f7|Белые берут ещё пешку f7 и нападают на ферзя.', 'g5g2|Ферзь берёт пешку g2 и нападает на ладью h1.', 'h1f1', 'g2e4|Шах! Ферзь берёт пешку e4.', 'c4e2|Слон закрывает шах.', 'd4f3|Спёртый мат! Король окружён своими фигурами.']) },
-        { h: 'Как заметить', p: ['Три признака: <b>1.</b> король в углу или у края; <b>2.</b> вокруг короля свои фигуры и пешки, свободных клеток нет; <b>3.</b> конь может прыгнуть на поле, с которого он бьёт короля. Если нужной клетки конь достичь не может, ищи жертву, которая «выманит» мешающую фигуру. Теперь решай задачи!'], fen: '6rk/5Npp/8/8/8/8/8/K7 b - - 0 1' }
+      id: 'smother', t: 'Спёртый мат', d: 'Мат конём, когда король заперт собственными фигурами. Десять примеров с классическими партиями и задачи с баллами.', bank: SM, mate: true, slides: [
+        { h: '1. Что такое спёртый мат', p: ['Спёртый мат — мат конём, при котором король не может уйти, потому что все соседние поля заняты его собственными фигурами и пешками. Чаще всего король стоит в углу, рядом с ним ладья и пешки.', 'Нажмите «Показать»: конь ставит шах с f2, король h1 закрыт ладьёй g1 и пешками g2 и h2.'], demo: ST('5rk1/1Q3ppp/2p5/3pP3/8/NB5n/1PP3PP/6RK b - - 0 1', ['h3f2|Мат. Король на h1 закрыт ладьёй и двумя пешками, бить коня нечем.']) },
+        { h: '2. Почему мат ставит именно конь', p: ['Шах ферзя, ладьи или слона обычно можно закрыть или отразить взятием. Конь бьёт «поверх» фигур, а поле, с которого он шахует, никогда не соседнее с королём: взять его королём нельзя, закрыться от шаха тоже.', 'Если все поля вокруг короля заняты, остаётся мат. Поэтому спёртый мат ставит практически только конь.'], fen: '6rk/6pp/8/6N1/8/8/8/K7 w - - 0 1' },
+        { h: '3. Схема «Наследие Филидора»', p: ['Схему описал Франсуа-Андре Филидор в XVIII веке. Ферзь шахует, король уходит в угол, затем ферзь жертвуется на поле рядом с королём. Взять его вынуждены своя ладья или конь, и путь для коня открыт.', 'Запомните порядок: шах ферзём, жертва ферзя, мат конём.'], demo: ST('r1b1k2r/bpp2ppp/p2p4/8/P1B1P1nq/5N2/1P3PPP/RNBQR1K1 b kq - 1 1', ['h4f2|Шах ферзём: король может пойти только на h1.', 'g1h1', 'f2g1|Жертва ферзя на g1: взять его можно только конём.', 'f3g1|Король остался без полей: его закрывают свой конь и ладья.', 'g4f2|Мат. Это схема «Наследия Филидора».']) },
+        { h: '4. Унцикер — Сарапу, Зиген, 1970', p: ['Партия сыграна на шахматной олимпиаде в Зигене. Белые поставили ловушку ходом 17.Сf4, чёрные взяли слона и получили спёртый мат по уже знакомой схеме.', 'Обратите внимание на последние три хода: шах ферзём на f7, жертва ферзя на g8, мат конём на f7.'], demo: G('e2e4 c7c5 g1f3 g8f6 e4e5 f6d5 b1c3 e7e6 c3d5 e6d5 d2d4 b8c6 d4c5 f8c5 d1d5 d8b6 f1c4 c5f2 e1e2 e8g8 h1f1 f2c5 f3g5 c6d4 e2d1 d4e6 g5e4 d7d6 e5d6 c5d6 e4d6 f8d8 c1f4 e6f4 d5f7 g8h8 f7g8 d8g8 d6f7', { 32: 'Белые предлагают слона: взять его опасно.', 33: 'Чёрные берут слона и попадают в ловушку.', 34: 'Шах ферзём.', 36: 'Жертва ферзя: ладья вынуждена взять и закрыть поле g8.', 38: 'Мат конём. Король на h8 закрыт ладьёй g8 и пешками.' }) },
+        { h: '5. Жертва ферзя ради мата', p: ['Здесь жертвует ферзём белый. Шах конём гонит короля в угол, затем ферзь уходит на g8, ладья берёт его и закрывает последнюю клетку.', 'Сравните с предыдущим примером: идея та же, меняются только фигуры вокруг короля.'], demo: ST('r4rk1/pR3Nbp/3p2p1/2pQ4/1nP5/7P/P2BKPP1/7q w - - 1 1', ['f7h6|Шах конём: король может пойти только на h8.', 'g8h8', 'd5g8|Ферзь жертвует собой на g8.', 'f8g8|Ладья берёт ферзя и закрывает королю последнюю клетку.', 'h6f7|Мат конём.']) },
+        { h: '6. Ласкер — Горовиц, Нью-Йорк, 1946', p: ['Спёртый мат здесь получает белый король. Чёрные открывают игру, ставят шахи и в нужный момент подводят коня к d3.', 'Когда белые заблокировали шах конём на e2, они сами закрыли королю поле. Остался удар коня с b4 на d3.'], demo: G('d2d4 g8f6 g1f3 d7d5 e2e3 c7c5 c2c4 c5d4 f3d4 e7e5 d4f3 b8c6 b1c3 d5d4 e3d4 e5d4 c3b5 f8b4 c1d2 e8g8 d2b4 c6b4 b5d4 d8a5 f3d2 a5e5 d4e2 b4d3', { 25: 'Шах ферзём.', 26: 'Белые закрылись конём. Теперь у короля нет свободных полей.', 27: 'Мат конём: король закрыт собственными фигурами.' }) },
+        { h: '7. Будапештская ловушка', p: ['Будапештский гамбит: чёрные отдают пешку и быстро развиваются. Ловушка стоит на единственной ошибке белых.', 'После 8.axb4 ход 8…Кd3 ставит мат. Белые взяли фигуру и забыли про своего короля.'], demo: G('d2d4 g8f6 c2c4 e7e5 d4e5 f6g4 c1f4 b8c6 g1f3 f8b4 b1d2 d8e7 a2a3 g4e5 a3b4 e5d3', { 14: 'Ошибка: белые берут слона и не замечают угрозу на d3.', 15: 'Мат конём: король закрыт своими ферзём, слоном, конём и пешками.' }) },
+        { h: '8. Ловушка Блэкбёрна — Шиллинга', p: ['Название связывают с английским мастером Джозефом Блэкбёрном. Чёрные жертвуют несколько пешек, а потом ставят спёртый мат.', 'Белые ошибаются, взяв пешку e5 и затем f7. Ловушку нужно знать и за чёрных, и за белых.'], demo: G('e2e4 e7e5 g1f3 b8c6 f1c4 c6d4 f3e5 d8g5 e5f7 g5g2 h1f1 g2e4 c4e2 d4f3', { 5: 'Ловушка: на d4 стоит конь.', 6: 'Ошибка: белые берут пешку e5.', 7: 'Ферзь нападает на g2 и e5.', 8: 'Ещё одна ошибка: белые берут пешку f7.', 12: 'Белые закрыли шах слоном.', 13: 'Спёртый мат: король окружён своими фигурами.' }) },
+        { h: '9. Алёхин, сеанс одновременной игры, 1935', p: ['Ловушка в защите Каро — Канн. После 5.Фe2 чёрные ответили 5…Кgf6, и конь с e4 пошёл на d6 с матом.', 'Шах конём на d6 оказывается матом: король e8 закрыт собственными ферзём, слоном, конём d7 и пешками. Ловушку нужно знать за чёрных, чтобы её избегать.'], demo: G('e2e4 c7c6 d2d4 d7d5 b1c3 d5e4 c3e4 b8d7 d1e2 g8f6 e4d6', { 8: 'Фe2 ставит ловушку.', 9: 'Ошибка: после этого хода конь e4 даёт мат на d6.', 10: 'Мат конём.' }) },
+        { h: '10. Как заметить и как защититься', p: ['Признаки: <b>1.</b> король в углу или у края; <b>2.</b> рядом свои фигуры и пешки, свободных полей нет; <b>3.</b> конь может прыгнуть на поле, откуда бьёт короля. Если нужное поле для коня недоступно, ищите жертву, которая отвлечёт мешающую фигуру.', 'Защита: дайте королю «форточку». Пешка h6, g6 или ход королём на запасное поле лишают противника этой возможности. Теперь решайте задачи.'], fen: '6rk/5Npp/8/8/8/8/8/K7 b - - 0 1' }
       ]
     };
-    var GY2 = { n: 'Второй год: тактика', ids: ['smother'] };
-    GROUPS.push(GY2); LESS.smother = LSM;
+    LESS.smother = LSM; window.__y2add(LSM);
+  })();
+
+  /* ===== Второй год, урок 1: Повторение первого года ===== */
+  (function () {
+    var BK = [];
+    try { BK = REVIEW2_BANK; } catch (e) { BK = []; }
+    function ST(fen, steps) { return { fen: fen, steps: steps }; }
+    var LR = {
+      id: 'review2', t: 'Повторение первого года', d: 'Ценность фигур, шах, мат и пат, рокировка, взятие на проходе, линейный мат и двойной удар. Затем задачи.', bank: BK, mate: false, ask: 'Найдите лучший ход.', slides: [
+        { h: '1. Ценность фигур и размен', p: ['Пешка — 1, конь и слон — по 3, ладья — 5, ферзь — 9. Король не оценивается, его нельзя разменять.', 'Размен выгоден, если вы получаете больше, чем отдаёте. Ладья за слон и пешку (5 за 4) невыгодна, ферзь за ладью и слона (9 за 8) почти равен. Перед каждым взятием считайте, что останется на доске.'], fen: 'r3k2r/ppp2ppp/2n1bn2/3qp3/3P4/2N1BN2/PPP2PPP/R2QK2R w KQkq - 0 1' },
+        { h: '2. Шах, мат и пат', p: ['Шах — угроза королю. Его отражают тремя способами: уйти королём, закрыться, взять атакующую фигуру. Если ни один способ не работает, это мат.', 'Пат — когда у стороны нет ни одного допустимого хода, но шаха нет. Результат — ничья. Не допустите пата в выигранной позиции: здесь у чёрных нет ходов, но король не под шахом.'], fen: '7k/5Q2/6K1/8/8/8/8/8 b - - 0 1' },
+        { h: '3. Рокировка и взятие на проходе', p: ['Рокировка невозможна, если король или эта ладья уже ходили, если король под шахом, если он проходит через атакованное поле или попадает под шах, или если между королём и ладьёй стоят фигуры.', 'Взятие на проходе: пешка соперника прошла два поля и встала рядом с вашей. Бить её можно только сразу, на следующем ходу.'], fen: 'r3k2r/pppq1ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQK2R w KQkq - 0 1' },
+        { h: '4. Линейный мат двумя ладьями', p: ['Две ладьи ставят мат «лесенкой»: одна отрезает короля по горизонтали, вторая шахует по следующей. Нажмите «Показать».'], demo: ST('7k/8/8/8/8/8/R7/1R4K1 w - - 0 1', ['a2a7|Ладья отрезает короля по седьмой горизонтали.', 'h8g8', 'b1b8|Вторая ладья даёт шах по восьмой: мат.']) },
+        { h: '5. Двойной удар', p: ['Двойной удар — ход, после которого одна фигура атакует сразу две цели. Конь с c7 бьёт короля и ладью a8: король отвечает на шах, а ладья пропадает.'], demo: ST('r3k3/8/8/3N4/8/8/8/4K3 w - - 0 1', ['d5c7|Шах и нападение на ладью a8.', 'e8d7', 'c7a8|Конь забирает ладью.']) }
+      ]
+    };
+    window.__y2add(LR, true);
   })();
 
   /* ---------- Stockfish: сильный движок, грузится при первом использовании ---------- */
@@ -4902,7 +5286,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function route() {
     clearTimers(); view.onclick = null;
     var parts = (location.hash || '#home').slice(1).split('/'), r = parts[0];
-    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'board', 'awards'].indexOf(r) < 0) r = 'home';
+    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards'].indexOf(r) < 0) r = 'home';
+    document.body.classList.toggle('y2', r === 'y2');
     var m = document.getElementById('modal'); if (m) m.remove();
     setActive(r === 'lesson' ? 'lessons' : r);
     if (r === 'puzzles') puzzles();
@@ -4910,6 +5295,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     else if (r === 'live') liveList();
     else if (r === 'lessons') lessons();
     else if (r === 'lesson') lessonPage(parts[1], +parts[2] || 0);
+    else if (r === 'y2') window.__y2(parts);
     else if (r === 'board') boardPage();
     else if (r === 'awards') awards();
     else home();
