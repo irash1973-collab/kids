@@ -601,6 +601,12 @@ body.y2 .sq.sel { box-shadow: inset 0 0 0 3px #a9792b; }
 .yrd.y2 { background: #1e3a5f; border: 3px solid #1e3a5f; color: #fff; border-radius: 10px; box-shadow: 0 5px 0 #14263f; } .yrd.y2 .yrk { color: #e3b43c; } .yrd.y2 p { color: #d7e1ee; }
 @media (max-width: 640px) { .yrdoors { grid-template-columns: 1fr; } }
 .yrdoors { margin-top: 6px; }
+
+.y2score { margin: 8px 0; } .y2sc { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 4px; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; max-height: 190px; overflow: auto; font-size: 15px; line-height: 1.9; }
+.y2mn { color: var(--muted); margin-left: 6px; font-variant-numeric: tabular-nums; }
+.y2mv { border: 0; background: transparent; font: inherit; padding: 0 5px; border-radius: 4px; cursor: pointer; color: var(--ink); } .y2mv:hover { background: #e8eef6; } .y2mv.cur { background: #1e3a5f; color: #fff; }
+.y2mv sup { font-size: .75em; font-weight: 700; margin-left: 1px; } .y2mv.kq sup, .y2mv.kqq sup { color: #b3382c; } .y2mv.ke sup, .y2mv.kee sup { color: #1b7f6b; } .y2mv.keq sup, .y2mv.kqe sup { color: #a9792b; } .y2mv.cur sup { color: #fff !important; }
+.y2leg { margin: 6px 2px 0; font-size: 13px; color: var(--muted); }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2595,14 +2601,41 @@ if (typeof module !== 'undefined') module.exports = Eng;
       say('Нажимай на любую клетку: фигура встанет туда, и ты увидишь все её ходы (жёлтые точки).'); upd();
     }
     if (s.demo) {
-      var fen0 = s.demo.fen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', steps = s.demo.steps.map(function (x) { var a = x.split('|'); return { u: a[0], c: a[1] || '' }; });
+      var fen0 = s.demo.fen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', steps = s.demo.steps.map(function (x) { var a = x.split('|'); return { u: a[0], c: a[1] || '', k: a[2] || '' }; });
+      var scoreEl = null, seqN = [];
+      if (L.y2) {
+        var sp = E.fromFEN(fen0), cn = 0;
+        steps.forEach(function (st0, ii) { var mm = uciMove(sp, st0.u); if (!mm) { seqN.push({ t: st0.u, w: sp.turn === 1 }); return; } seqN.push({ t: notation(mm, sp), w: sp.turn === 1 }); sp = E.make(sp, mm); });
+        var tb = document.createElement('div'); tb.className = 'row y2tb'; tb.innerHTML = '<button class="btn alt" id="y2Flip">⇅ Перевернуть доску</button><button class="btn alt" id="y2An">Анализ на компьютере</button><button class="btn alt" id="y2Bm">☆ Закладка</button>';
+        var smE = document.getElementById('sm'); if (smE && smE.parentNode) smE.parentNode.insertBefore(tb, smE.nextSibling);
+        var anP = document.createElement('div'); anP.id = 'y2anP'; tb.parentNode.insertBefore(anP, tb.nextSibling);
+        var bmKey = 'ukc_y2bm', bmId = L.id + ':' + idx, bmGet = function () { var o = lsGet(bmKey, {}); return o && typeof o === 'object' ? o : {}; };
+        var bmPaint = function () { document.getElementById('y2Bm').textContent = (bmGet()[bmId] ? '★ В закладках' : '☆ Закладка'); }; bmPaint();
+        document.getElementById('y2Bm').onclick = function () { var o = bmGet(); if (o[bmId]) delete o[bmId]; else o[bmId] = { t: L.title || L.id, h: s.h || '' }; lsSet(bmKey, o); bmPaint(); };
+        document.getElementById('y2Flip').onclick = function () { S.flip = !S.flip; drawBoard(S, function () {}); };
+        document.getElementById('y2An').onclick = function () { clearTimers(); var f = E.toFEN(S.pos); window.__y2analysis(f, anP, S, function () { render(true); }); };
+        scoreEl = document.createElement('div'); scoreEl.className = 'y2score'; var smEl = document.getElementById('sm'); if (smEl && smEl.parentNode) smEl.parentNode.insertBefore(scoreEl, smEl.nextSibling);
+      }
+      var paintScore = function () {
+        if (!scoreEl) return;
+        var h = '<div class="y2sc">', startBlack = steps.length && !seqN[0].w, no = 1;
+        if (startBlack) h += '<span class="y2mn">1…</span>';
+        steps.forEach(function (st0, ii) {
+          if (seqN[ii].w) h += '<span class="y2mn">' + no + '.</span>';
+          h += '<button class="y2mv' + (ii === step - 1 ? ' cur' : '') + (st0.k ? ' k' + st0.k.replace(/[^!?#]/g, '').replace(/\?/g, 'q').replace(/!/g, 'e') : '') + '" data-i="' + ii + '">' + esc(seqN[ii].t) + (st0.k ? '<sup>' + esc(st0.k) + '</sup>' : '') + '</button>';
+          if (!seqN[ii].w) no++;
+        });
+        h += '</div><p class="y2leg"><b>!</b> сильный ход · <b>!?</b> интересный ход · <b>?!</b> сомнительный ход · <b>?</b> ошибка · <b>??</b> грубая ошибка</p>';
+        scoreEl.innerHTML = h;
+        scoreEl.onclick = function (ev) { var b = ev.target.closest('.y2mv'); if (!b) return; clearTimers(); step = +b.dataset.i + 1; render(false); };
+      };
       var render = function (silent) {
         var lastAnim = null, pos = E.fromFEN(fen0), last = null, c = s.demo.start || 'Нажимай «Следующий ход».';
         for (var i = 0; i < step; i++) { var m = uciMove(pos, steps[i].u); if (!m) break; var before = pos; pos = E.make(pos, m); last = { f: m.f, t: m.t }; if (i === step - 1) lastAnim = animOf(before, m); if (i === step - 1) { c = (steps[i].c ? steps[i].c + ' ' : '') + '(' + notation(m, before) + ')'; if (!silent) moveSound(before, m, pos); } }
         S.pos = pos; S.last = last; S.sel = null; S.targets = []; if (!silent) S.anim = lastAnim; drawBoard(S, function () {});
         var kind = ''; var st = E.status(pos); if (st === 'mate') { c += ' Это мат!'; kind = 'good'; } else if (st === 'check') { c += ' Шах!'; kind = 'bad'; } else if (st === 'stalemate') { c += ' Это пат: ничья.'; }
         say(c, kind);
-        document.getElementById('dNext').disabled = step >= steps.length;
+        document.getElementById('dNext').disabled = step >= steps.length; paintScore();
       };
       document.getElementById('dNext').onclick = function () { if (step < steps.length) { step++; render(false); } };
       document.getElementById('dReset').onclick = function () { clearTimers(); step = 0; render(true); };
@@ -4323,6 +4356,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       }
       return out.join(' ');
     }
+    window.__y2analysis = function (f, p, S, r) { return analysis(f, p, S, r); };
     function analysis(fen0, panel, S, redraw) {
       var A = { pos: E.fromFEN(fen0), hist: [], sel: null, tg: [], tok: 0, on: true };
       panel.innerHTML = '<div class="y2an"><h4>Анализ на компьютере</h4><div class="row"><button class="btn alt" id="aBack">← Ход назад</button><button class="btn alt" id="aReset">Позиция задачи</button><button class="btn alt" id="aFlip">Перевернуть</button><button class="btn alt" id="aStop">Остановить анализ</button></div><div class="anl" id="anl"></div><p class="st" id="anst"></p><p class="st">Двигайте фигуры за обе стороны. Нажмите на линию, чтобы сыграть её первый ход. Движок: Stockfish 17.1, 5 линий.</p></div>';
@@ -4452,13 +4486,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
         { h: '1. Что такое спёртый мат', p: ['Спёртый мат — мат конём, при котором король не может уйти, потому что все соседние поля заняты его собственными фигурами и пешками. Чаще всего король стоит в углу, рядом с ним ладья и пешки.', 'Нажмите «Показать»: конь ставит шах с f2, король h1 закрыт ладьёй g1 и пешками g2 и h2.'], demo: ST('5rk1/1Q3ppp/2p5/3pP3/8/NB5n/1PP3PP/6RK b - - 0 1', ['h3f2|Мат. Король на h1 закрыт ладьёй и двумя пешками, бить коня нечем.']) },
         { h: '2. Почему мат ставит именно конь', p: ['Шах ферзя, ладьи или слона обычно можно закрыть или отразить взятием. Конь бьёт «поверх» фигур, а поле, с которого он шахует, никогда не соседнее с королём: взять его королём нельзя, закрыться от шаха тоже.', 'Если все поля вокруг короля заняты, остаётся мат. Поэтому спёртый мат ставит практически только конь.'], fen: '6rk/6pp/8/6N1/8/8/8/K7 w - - 0 1' },
         { h: '3. Схема «Наследие Филидора»', p: ['Схему описал Франсуа-Андре Филидор в XVIII веке. Ферзь шахует, король уходит в угол, затем ферзь жертвуется на поле рядом с королём. Взять его вынуждены своя ладья или конь, и путь для коня открыт.', 'Запомните порядок: шах ферзём, жертва ферзя, мат конём.'], demo: ST('r1b1k2r/bpp2ppp/p2p4/8/P1B1P1nq/5N2/1P3PPP/RNBQR1K1 b kq - 1 1', ['h4f2|Шах ферзём: король может пойти только на h1.', 'g1h1', 'f2g1|Жертва ферзя на g1: взять его можно только конём.', 'f3g1|Король остался без полей: его закрывают свой конь и ладья.', 'g4f2|Мат. Это схема «Наследия Филидора».']) },
-        { h: '4. Унцикер — Сарапу, Зиген, 1970', p: ['Партия сыграна на шахматной олимпиаде в Зигене. Белые поставили ловушку ходом 17.Сf4, чёрные взяли слона и получили спёртый мат по уже знакомой схеме.', 'Обратите внимание на последние три хода: шах ферзём на f7, жертва ферзя на g8, мат конём на f7.'], demo: G('e2e4 c7c5 g1f3 g8f6 e4e5 f6d5 b1c3 e7e6 c3d5 e6d5 d2d4 b8c6 d4c5 f8c5 d1d5 d8b6 f1c4 c5f2 e1e2 e8g8 h1f1 f2c5 f3g5 c6d4 e2d1 d4e6 g5e4 d7d6 e5d6 c5d6 e4d6 f8d8 c1f4 e6f4 d5f7 g8h8 f7g8 d8g8 d6f7', { 32: 'Белые предлагают слона: взять его опасно.', 33: 'Чёрные берут слона и попадают в ловушку.', 34: 'Шах ферзём.', 36: 'Жертва ферзя: ладья вынуждена взять и закрыть поле g8.', 38: 'Мат конём. Король на h8 закрыт ладьёй g8 и пешками.' }) },
+        { h: '4. Унцикер — Сарапу, Зиген, 1970', p: ['Партия сыграна на шахматной олимпиаде в Зигене. Белые поставили ловушку ходом 17.Сf4, чёрные взяли слона и получили спёртый мат по уже знакомой схеме.', 'Обратите внимание на последние три хода: шах ферзём на f7, жертва ферзя на g8, мат конём на f7.'], demo: G('e2e4 c7c5 g1f3 g8f6 e4e5 f6d5 b1c3 e7e6 c3d5 e6d5 d2d4 b8c6 d4c5 f8c5 d1d5 d8b6 f1c4 c5f2 e1e2 e8g8 h1f1 f2c5 f3g5 c6d4 e2d1 d4e6 g5e4 d7d6 e5d6 c5d6 e4d6 f8d8 c1f4 e6f4 d5f7 g8h8 f7g8 d8g8 d6f7', { 29: 'Ошибка: слон берёт пешку и теряет защиту короля.|??', 32: 'Сильный ход: слон предлагает себя, взять его опасно.|!', 33: 'Чёрные берут слона и попадают в ловушку.|?', 34: 'Шах ферзём: король уходит в угол.', 36: 'Жертва ферзя: ладья вынуждена взять и закрыть поле g8.|!', 38: 'Мат конём. Король на h8 закрыт ладьёй g8 и пешками.' }) },
         { h: '5. Жертва ферзя ради мата', p: ['Здесь жертвует ферзём белый. Шах конём гонит короля в угол, затем ферзь уходит на g8, ладья берёт его и закрывает последнюю клетку.', 'Сравните с предыдущим примером: идея та же, меняются только фигуры вокруг короля.'], demo: ST('r4rk1/pR3Nbp/3p2p1/2pQ4/1nP5/7P/P2BKPP1/7q w - - 1 1', ['f7h6|Шах конём: король может пойти только на h8.', 'g8h8', 'd5g8|Ферзь жертвует собой на g8.', 'f8g8|Ладья берёт ферзя и закрывает королю последнюю клетку.', 'h6f7|Мат конём.']) },
         { h: '6. Ласкер — Горовиц, Нью-Йорк, 1946', p: ['Спёртый мат здесь получает белый король. Чёрные открывают игру, ставят шахи и в нужный момент подводят коня к d3.', 'Когда белые заблокировали шах конём на e2, они сами закрыли королю поле. Остался удар коня с b4 на d3.'], demo: G('d2d4 g8f6 g1f3 d7d5 e2e3 c7c5 c2c4 c5d4 f3d4 e7e5 d4f3 b8c6 b1c3 d5d4 e3d4 e5d4 c3b5 f8b4 c1d2 e8g8 d2b4 c6b4 b5d4 d8a5 f3d2 a5e5 d4e2 b4d3', { 25: 'Шах ферзём.', 26: 'Белые закрылись конём. Теперь у короля нет свободных полей.', 27: 'Мат конём: король закрыт собственными фигурами.' }) },
-        { h: '7. Будапештская ловушка', p: ['Будапештский гамбит: чёрные отдают пешку и быстро развиваются. Ловушка стоит на единственной ошибке белых.', 'После 8.axb4 ход 8…Кd3 ставит мат. Белые взяли фигуру и забыли про своего короля.'], demo: G('d2d4 g8f6 c2c4 e7e5 d4e5 f6g4 c1f4 b8c6 g1f3 f8b4 b1d2 d8e7 a2a3 g4e5 a3b4 e5d3', { 14: 'Ошибка: белые берут слона и не замечают угрозу на d3.', 15: 'Мат конём: король закрыт своими ферзём, слоном, конём и пешками.' }) },
-        { h: '8. Ловушка Блэкбёрна — Шиллинга', p: ['Название связывают с английским мастером Джозефом Блэкбёрном. Чёрные жертвуют несколько пешек, а потом ставят спёртый мат.', 'Белые ошибаются, взяв пешку e5 и затем f7. Ловушку нужно знать и за чёрных, и за белых.'], demo: G('e2e4 e7e5 g1f3 b8c6 f1c4 c6d4 f3e5 d8g5 e5f7 g5g2 h1f1 g2e4 c4e2 d4f3', { 5: 'Ловушка: на d4 стоит конь.', 6: 'Ошибка: белые берут пешку e5.', 7: 'Ферзь нападает на g2 и e5.', 8: 'Ещё одна ошибка: белые берут пешку f7.', 12: 'Белые закрыли шах слоном.', 13: 'Спёртый мат: король окружён своими фигурами.' }) },
-        { h: '9. Алёхин, сеанс одновременной игры, 1935', p: ['Ловушка в защите Каро — Канн. После 5.Фe2 чёрные ответили 5…Кgf6, и конь с e4 пошёл на d6 с матом.', 'Шах конём на d6 оказывается матом: король e8 закрыт собственными ферзём, слоном, конём d7 и пешками. Ловушку нужно знать за чёрных, чтобы её избегать.'], demo: G('e2e4 c7c6 d2d4 d7d5 b1c3 d5e4 c3e4 b8d7 d1e2 g8f6 e4d6', { 8: 'Фe2 ставит ловушку.', 9: 'Ошибка: после этого хода конь e4 даёт мат на d6.', 10: 'Мат конём.' }) },
-        { h: '10. Как заметить и как защититься', p: ['Признаки: <b>1.</b> король в углу или у края; <b>2.</b> рядом свои фигуры и пешки, свободных полей нет; <b>3.</b> конь может прыгнуть на поле, откуда бьёт короля. Если нужное поле для коня недоступно, ищите жертву, которая отвлечёт мешающую фигуру.', 'Защита: дайте королю «форточку». Пешка h6, g6 или ход королём на запасное поле лишают противника этой возможности. Теперь решайте задачи.'], fen: '6rk/5Npp/8/8/8/8/8/K7 b - - 0 1' }
+        { h: '7. Будапештская ловушка', p: ['Будапештский гамбит: чёрные отдают пешку и быстро развиваются. Ловушка стоит на единственной ошибке белых.', 'После 8.axb4 ход 8…Кd3 ставит мат. Белые взяли фигуру и забыли про своего короля.'], demo: G('d2d4 g8f6 c2c4 e7e5 d4e5 f6g4 c1f4 b8c6 g1f3 f8b4 b1d2 d8e7 a2a3 g4e5 a3b4 e5d3', { 14: 'Грубая ошибка: белые берут слона и не замечают угрозу на d3.|??', 15: 'Мат конём: король закрыт своими ферзём, слоном, конём и пешками.' }) },
+        { h: '8. Ловушка Блэкбёрна — Шиллинга', p: ['Название связывают с английским мастером Джозефом Блэкбёрном. Чёрные жертвуют несколько пешек, а потом ставят спёртый мат.', 'Белые ошибаются, взяв пешку e5 и затем f7. Ловушку нужно знать и за чёрных, и за белых.'], demo: G('e2e4 e7e5 g1f3 b8c6 f1c4 c6d4 f3e5 d8g5 e5f7 g5g2 h1f1 g2e4 c4e2 d4f3', { 5: 'Чёрные ставят ловушку: конь идёт на d4, где его можно взять.|?!', 6: 'Белые берут «бесплатную» пешку e5, не проверив шахи и жертвы. Спокойнее было взять коня на d4.|?!', 7: 'Сильный ход: ферзь нападает на g2 и e5 сразу.|!', 8: 'Грубая ошибка: пешка f7 стоила белым партии. Нужно было думать о защите ладьи h1.|??', 12: 'Белые закрыли шах слоном.', 13: 'Спёртый мат: король окружён своими фигурами.' }) },
+        { h: '9. Алёхин, сеанс одновременной игры, 1935', p: ['Ловушка в защите Каро — Канн. После 5.Фe2 чёрные ответили 5…Кgf6, и конь с e4 пошёл на d6 с матом.', 'Шах конём на d6 оказывается матом: король e8 закрыт собственными ферзём, слоном, конём d7 и пешками. Ловушку нужно знать за чёрных, чтобы её избегать.'], demo: G('e2e4 c7c6 d2d4 d7d5 b1c3 d5e4 c3e4 b8d7 d1e2 g8f6 e4d6', { 8: 'Фe2 ставит ловушку.|!?', 9: 'Грубая ошибка: после этого хода конь e4 даёт мат на d6.|??', 10: 'Мат конём.' }) },
+        { h: '10. Как заметить и как защититься', p: ['Признаки: <b>1.</b> король в углу или у края; <b>2.</b> рядом свои фигуры и пешки, свободных полей нет; <b>3.</b> конь может прыгнуть на поле, откуда бьёт короля. Если нужное поле для коня недоступно, ищите жертву, которая отвлечёт мешающую фигуру.', 'Защита: дайте королю «форточку». Пешка h6, g6 или ход королём на запасное поле лишают противника этой возможности. Теперь решайте задачи.', '<b>Правила из партий этого урока:</b> 1) «бесплатная» пешка или фигура — повод проверить шахи и жертвы соперника; 2) не убирайте фигуры, которые закрывают вашего короля, когда рядом вражеский конь; 3) оставьте королю запасное поле; 4) увидели жертву ферзя — считайте варианты до конца, до мата.'], fen: '6rk/5Npp/8/8/8/8/8/K7 b - - 0 1' }
       ]
     };
     LESS.smother = LSM; window.__y2add(LSM);
