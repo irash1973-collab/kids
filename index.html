@@ -695,6 +695,11 @@ a.y2tier,a.y2pl{text-decoration:none;color:inherit}.y2pl{position:relative}.y2pl
 .nav a, .y2nav a, .y2setbtn { padding: 4px 10px !important; font-size: 13px !important; }
 .top .btn, .top button { padding: 4px 10px !important; font-size: 13px !important; }
 .y2cap { padding-right: 92px; position: relative; } .y2cap > span { white-space: nowrap; }
+
+/* яркие лабиринты: эмодзи на клетках */
+.sq .mk.em { font-size: 9.5cqw; color: inherit; text-shadow: none; display: flex; align-items: center; justify-content: center; inset: 0; }
+.sq.ewall { background: #b9e6a5 !important; }
+.sq.ewall:nth-child(odd) { background: #cdeeb9 !important; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -1747,13 +1752,15 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var mk = S.mark && S.mark[i], co = '';
       if (S.hl && S.hl[i]) cls += ' hl';
       if (mk === 'wall') cls += ' wall';
+      var emo = typeof mk === 'string' && (mk.charAt(0) === 'e' || mk.charAt(0) === 'w') && mk.charAt(1) === ':' ? mk.slice(2) : '';
+      if (emo && mk.charAt(0) === 'w') cls += ' ewall';
       if (true) {
         if (x === (S.flip ? 7 : 0)) co += '<i class="co r">' + (8 - y) + '</i>';
         if (y === (S.flip ? 0 : 7)) co += '<i class="co f">' + 'abcdefgh'[x] + '</i>';
       }
       var label = (v ? (v > 0 ? 'белый ' : 'чёрный ') + PNAME[Math.abs(v)] : mk === 'wall' ? 'стена' : mk === 'star' ? 'звезда' : mk === 'flag' ? 'флажок' : 'пустое поле') + ', ' + SQN(i);
       html += '<button class="' + cls + '" data-i="' + i + '" aria-label="' + label + '">' +
-        (v ? pcHTML(v) : '') + (bdg ? '<span class="bdg b-' + bdg.cls + '">' + bdg.s + '</span>' : '') + (mk === 'star' ? '<span class="mk">★</span>' : mk === 'flag' ? '<span class="mk fl">⚑</span>' : '') + co + '</button>';
+        (v ? pcHTML(v) : '') + (bdg ? '<span class="bdg b-' + bdg.cls + '">' + bdg.s + '</span>' : '') + (emo ? '<span class="mk em">' + emo + '</span>' : mk === 'star' ? '<span class="mk">★</span>' : mk === 'flag' ? '<span class="mk fl">⚑</span>' : '') + co + '</button>';
     }
     el.innerHTML = html; applyAnim(el, S);
     el.onclick = function (e) { var b = e.target.closest('.sq'); if (b) onClick(+b.dataset.i); };
@@ -2322,7 +2329,40 @@ if (typeof module !== 'undefined') module.exports = Eng;
   }
 
   /* --- создание уровней для фигур (всегда одинаковые для одного номера) --- */
+  var RTH = [
+    { type: 'collect', cnt: 4, walls: 8, wall: '🌳', star: '🍎', text: 'Собери все яблоки 🍎 за как можно меньше ходов. Деревья 🌳 мешают: через них ладья не ходит.' },
+    { type: 'maze', walls: 17, wall: '💣', flag: '🏁', text: 'Доберись до финиша 🏁 и не наступи на бомбочки 💣: через них ладья не ходит.' },
+    { type: 'maze', walls: 16, wall: '🌳', flag: '🐱', text: 'Помоги ладье добраться до котика 🐱. Обходи деревья 🌳.' },
+    { type: 'maze', walls: 19, wall: '🧱', flag: '🏰', text: 'Доведи ладью до королевства 🏰. Стены 🧱 закрывают дорогу, ищи проход.' },
+    { type: 'collect', cnt: 5, walls: 10, wall: '🪨', star: '🍐', text: 'Собери все груши 🍐. Камни 🪨 стоят на пути.' },
+    { type: 'maze', walls: 21, wall: '🧊', flag: '🍦', text: 'Добери до мороженого 🍦 через ледяные глыбы 🧊.' },
+    { type: 'maze', walls: 21, wall: '🐝', flag: '🍯', text: 'Пробирайся к мёду 🍯. Пчёлы 🐝 не пускают, их не пройти.' },
+    { type: 'maze', walls: 23, wall: '🌵', flag: '💎', text: 'Найди сокровище 💎 в пустыне. Колючки 🌵 перегораживают путь.' },
+    { type: 'maze', walls: 23, wall: '☄️', flag: '🚀', text: 'Доберись до ракеты 🚀. Между звёзд летят кометы ☄️, их надо обходить.' },
+    { type: 'collect', cnt: 6, walls: 8, wall: '🍫', star: '🍬', text: 'Финал! Собери все конфеты 🍬. Шоколадные плитки 🍫 стоят на пути.' }
+  ];
+  function genRookTheme(r, th, idx) {
+    var st = { walls: {}, enemies: {} }, start = Math.floor(r() * 64), ex = { type: th.type, code: 'R', st: st, start: start, stars: [], tg: [], flag: -1, theme: th };
+    for (var i = 0, t = 0; i < th.walls && t < 600; t++) { var w = Math.floor(r() * 64); if (w !== start && !st.walls[w]) { st.walls[w] = true; i++; } }
+    var res = bfs('R', start, st), reach = [], maxd = 0, q;
+    for (q in res.d) { if (+q !== start) reach.push(+q); maxd = Math.max(maxd, res.d[q]); }
+    if (th.type === 'maze') {
+      var need = Math.min(maxd, 4 + Math.floor(idx / 3)), cand = reach.filter(function (z) { return res.d[z] >= need; });
+      if (!cand.length) return null; ex.flag = pick(r, cand); return ex;
+    }
+    if (reach.length < th.cnt) return null;
+    var used = {};
+    while (ex.stars.length < th.cnt) { var z = pick(r, reach); if (!used[z]) { used[z] = 1; ex.stars.push(z); } }
+    ex.tg = ex.stars.slice(); return ex;
+  }
   function genPiece(code, lv, seedx) {
+    if (code === 'R' && lv > 30) {
+      for (var a0 = 0; a0 < 400; a0++) {
+        var rr = mkRng(hstr('rth' + lv + '_' + (seedx || 0)) + a0 * 733), ex0 = genRookTheme(rr, RTH[lv - 31], lv - 31);
+        if (ex0 && solveEx(ex0) && solveEx(ex0).len >= (ex0.type === 'maze' ? 3 : ex0.stars.length + 1)) { ex0.lv = lv; ex0.opt = solveEx(ex0).len; return ex0; }
+      }
+      return null;
+    }
     for (var attempt = 0; attempt < 300; attempt++) {
       var r = mkRng(hstr('pc' + code + lv + '_' + (seedx || 0)) + attempt * 977), maze = lv > 15, k = maze ? Math.ceil((lv - 15) * 2 / 3) : Math.ceil(lv * 2 / 3), ex;
       if (code === 'P') ex = genPawn(r, maze, k); else ex = genLone(code, r, maze, k);
@@ -2806,12 +2846,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
   /* --- упражнение «собери звёзды / лабиринт» --- */
   function runPiece(host, L, lv, finish) {
-    var code = L.p, ex = genPiece(code, lv), pv = PN[code];
+    var code = L.p, ex = genPiece(code, lv), pv = PN[code]; window.__rex = ex; window.__rsolve = solveEx;
     if (!ex) { host.innerHTML = '<div class="slide"><p>Не получилось создать упражнение. Попробуй другое.</p></div>'; return; }
     var S = { pos: null, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
     var cur, left, enemies, moves, busy, over, helped;
     var maze = ex.type === 'maze';
-    var task = maze ? (code === 'P' ? 'Доведи пешку до последней горизонтали. Обходи стены, бери фигуры по диагонали!' : 'Лабиринт: доберись до флажка ⚑. Через стены ходить нельзя!') : (code === 'P' ? 'Собери все звёздочки ★ и съешь чёрные фигуры. Пешка бьёт по диагонали вперёд.' : 'Собери все звёздочки ★ за как можно меньше ходов!');
+    var task = ex.theme ? ex.theme.text : maze ? (code === 'P' ? 'Доведи пешку до последней горизонтали. Обходи стены, бери фигуры по диагонали!' : 'Лабиринт: доберись до флажка ⚑. Через стены ходить нельзя!') : (code === 'P' ? 'Собери все звёздочки ★ и съешь чёрные фигуры. Пешка бьёт по диагонали вперёд.' : 'Собери все звёздочки ★ за как можно меньше ходов!');
     host.innerHTML = say(av(lv % 2 ? 'arni' : 'simba'), PRUS[code] + ' · упражнение ' + lv, task, 'лучший результат: ' + ex.opt + ' ' + (ex.opt === 1 ? 'ход' : ex.opt < 5 ? 'хода' : 'ходов')) + boardHTML() +
       '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
       '<div class="row"><button class="btn alt" id="hintB">Подсказка</button><button class="btn alt" id="ansB">Показать ответ</button><button class="btn alt" id="resB">Заново</button><span class="count" id="cnt"></span></div>';
@@ -2828,9 +2868,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
       for (var q in enemies) b[q] = enemies[q];
       b[cur] = (code === 'P' && (cur >> 3) === 0) ? 5 : pv;
       S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 };
-      S.mark = {}; for (var w in ex.st.walls) S.mark[w] = 'wall';
-      left.forEach(function (t) { if (!enemies[t]) S.mark[t] = 'star'; });
-      if (maze && code !== 'P') S.mark[ex.flag] = 'flag';
+      S.mark = {}; for (var w in ex.st.walls) S.mark[w] = ex.theme ? 'w:' + ex.theme.wall : 'wall';
+      left.forEach(function (t) { if (!enemies[t]) S.mark[t] = ex.theme ? 'e:' + ex.theme.star : 'star'; });
+      if (maze && code !== 'P') S.mark[ex.flag] = ex.theme ? 'e:' + ex.theme.flag : 'flag';
       S.sel = cur; S.targets = over ? [] : lone(code, cur, { walls: ex.st.walls, enemies: enemies });
       document.getElementById('cnt').textContent = 'Ходов: ' + moves;
       drawBoard(S, click);
@@ -3550,6 +3590,39 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var x = rnd(r, 0, 7), y = rnd(r, 0, 7);
       return { pcs: {}, coords: true, text: 'Найди клетку на пересечении вертикали «' + 'abcdefgh'[x] + '» и горизонтали ' + (8 - y) + '.', ok: function (i) { return i === y * 8 + x; }, why: 'Буква показывает вертикаль, цифра показывает горизонталь.' };
     };
+
+    /* --- задачи про доску без ходов фигур --- */
+    var FL = 'abcdefgh';
+    T.twostars = function (r) {
+      for (var k = 0; k < 200; k++) {
+        var a = Math.floor(r() * 64), b = Math.floor(r() * 64); if (a === b) continue;
+        var ax = a & 7, ay = a >> 3, bx = b & 7, by = b >> 3, kind = ax === bx ? 'file' : ay === by ? 'rank' : Math.abs(ax - bx) === Math.abs(ay - by) ? 'diag' : 'none';
+        if (kind === 'none' && r() < .6) continue;
+        var names = { file: 'на одной вертикали', rank: 'на одной горизонтали', diag: 'на одной диагонали', none: 'ни на одной линии' };
+        return { pcs: {}, coords: true, stars: [a, b], text: 'Соедини звёздочки мысленно прямой линией. Где они стоят?', opts: ['на одной вертикали', 'на одной горизонтали', 'на одной диагонали', 'ни на одной линии'], ans: names[kind], why: 'Вертикаль идёт сверху вниз, горизонталь слева направо, диагональ по углам клеток. Проверь по буквам и цифрам.' };
+      }
+      return T.cross(r);
+    };
+    T.between = function (r) {
+      var horiz = r() < .5, a = rnd(r, 0, 5), b = rnd(r, a + 2, 7), fix = rnd(r, 0, 7), s1 = horiz ? fix * 8 + a : a * 8 + fix, s2 = horiz ? fix * 8 + b : b * 8 + fix, n = b - a - 1;
+      return { pcs: {}, coords: true, stars: [s1, s2], text: 'Две звёздочки стоят на одной ' + (horiz ? 'горизонтали' : 'вертикали') + '. Сколько клеток между ними?', opts: numOpts(r, n, 1, 6), ans: String(n), why: 'Считай только клетки между звёздочками, сами звёздочки не считай.' };
+    };
+    T.colorq = function (r) {
+      var a = Math.floor(r() * 64), b = Math.floor(r() * 64); if (a === b) b = (a + 3) % 64;
+      var same = (((a & 7) + (a >> 3)) % 2) === (((b & 7) + (b >> 3)) % 2);
+      return { pcs: {}, coords: true, text: 'Клетки ' + SQN(a) + ' и ' + SQN(b) + ' одного цвета?', opts: ['Да', 'Нет'], ans: same ? 'Да' : 'Нет', why: 'Поле a1 тёмное. Цвета чередуются: если сумма номера буквы и цифры чётная, поле тёмное.' };
+    };
+    T.whichline = function (r, d) {
+      var kind = pickOne(r, ['file', 'rank', 'diag']), hl = {};
+      if (kind === 'file') { var x = rnd(r, 0, 7); for (var y = 0; y < 8; y++) hl[y * 8 + x] = true; return { pcs: {}, hl: hl, coords: true, text: 'Какая вертикаль выделена?', opts: FL.split('').filter(function (c, i) { return Math.abs(i - x) <= 2; }).slice(0, 4), ans: FL[x], why: 'Буква вертикали написана внизу доски.' }; }
+      if (kind === 'rank') { var yy = rnd(r, 0, 7); for (var xx = 0; xx < 8; xx++) hl[yy * 8 + xx] = true; return { pcs: {}, hl: hl, coords: true, text: 'Какая горизонталь выделена?', opts: [1, 2, 3, 4, 5, 6, 7, 8].filter(function (n) { return Math.abs(n - (8 - yy)) <= 2; }).slice(0, 4).map(String), ans: String(8 - yy), why: 'Номер горизонтали написан слева от доски.' }; }
+      var big = r() < .5; for (var i = 0; i < 8; i++) hl[big ? i * 8 + i : i * 8 + (7 - i)] = true;
+      return { pcs: {}, hl: hl, coords: true, text: 'Эта большая диагональ идёт из левого нижнего угла в правый верхний или из правого нижнего в левый верхний?', opts: ['a1 — h8', 'h1 — a8'], ans: big ? 'a1 — h8' : 'h1 — a8', why: 'a1 — левый нижний угол, h8 — правый верхний. h1 — правый нижний, a8 — левый верхний.' };
+    };
+    T.opposite = function (r) {
+      var sq = Math.floor(r() * 64), opp = 63 - sq;
+      return { pcs: {}, coords: true, star: sq, text: 'Найди клетку, которая стоит «зеркально» звёздочке: на противоположной стороне доски, если повернуть её вверх ногами. Например, для a1 это h8.', ok: function (i) { return i === opp; }, why: 'Если звёздочка в первой вертикали, то нужная клетка в последней. Если она на 1-й горизонтали, то нужная на 8-й.' };
+    };
     T.race = function (r) {
       for (var k = 0; k < 100; k++) {
         var wr = rnd(r, 2, 6), br = rnd(r, 3, 7), wx = rnd(r, 0, 7), bx = rnd(r, 0, 7); if (wx === bx) continue;
@@ -3570,6 +3643,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var r = mkRng(hstr(L.id + lv + '_' + Date.now() % 100000)), types = L.types, key = types[(lv - 1) % types.length], d = Math.min(4, Math.ceil(lv / types.length));
       var q = T[key](r, d), S = { pos: E.fromFEN(fenOf(q.pcs)), sel: null, targets: [], last: null, hint: null, flip: false, coords: q.coords !== false && (lv <= 12 || q.coords), mark: {}, hl: q.hl || null };
       if (q.star != null) { S.hl = S.hl || {}; S.hl[q.star] = true; S.mark[q.star] = 'star'; }
+      if (q.stars) q.stars.forEach(function (z) { S.hl = S.hl || {}; S.hl[z] = true; S.mark[z] = 'star'; });
       var mistakes = 0, done = false;
       host.innerHTML = say(av('prof'), 'Профессор', q.text, 'логика ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
         (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
@@ -3589,7 +3663,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     var N = 24;
     var DEF = [
-      { id: 'lg_board', t: 'Логика: доска', d: 'Клетки, цвета, диагонали и путь короля: 24 задачи на внимание.', types: ['cross', 'samecolor', 'line', 'minmoves'], g: 0 },
+      { id: 'lg_board', t: 'Логика: доска', d: 'Клетки, цвета, линии и диагонали: 24 задачи на внимание. Фигуры здесь не ходят.', types: ['cross', 'samecolor', 'line', 'twostars', 'between', 'colorq', 'whichline', 'opposite'], g: 0 },
       { id: 'lg_pieces', t: 'Логика: ходы фигур', d: 'Сколько клеток бьёт фигура, как быстро она дойдёт, кто атакует.', types: ['count', 'clickreach', 'minmoves', 'which', 'danger', 'knightcolor'], g: 1 },
       { id: 'lg_pawn', t: 'Логика: пешки и ценность', d: 'Путь пешки, гонка пешек, ценность фигур, подсчёт.', types: ['pawnsteps', 'value', 'race', 'countp', 'which', 'danger'], g: 2 }
     ];
@@ -3632,11 +3706,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
       { h: 'Цвета и первый ход', p: ['Игрок белыми ходит <b>первым</b>. Потом ходы идут по очереди: один ход белых, один ход чёрных. Пропускать ход нельзя. Доска стоит так, что у каждого игрока справа внизу светлое поле, а белые фигуры стоят ближе к тому, кто играет белыми.'], fen: START0 },
       { h: 'Ход фигуры', p: ['Нажми «Показать»: белые сходили пешкой e2–e4. Чёрные ответили e7–e5. Каждый ходит по одному разу.'], demo: { steps: ['e2e4|Белые ходят первыми.', 'e7e5|Теперь очередь чёрных.', 'g1f3|И снова ход белых.'] } },
       { h: 'Взятие фигур', p: ['Если фигура может прийти на клетку, где стоит фигура соперника, она её <b>берёт</b>: чужая фигура снимается с доски, а твоя встаёт на её место. Свои фигуры брать нельзя. Нажми «Показать»: белая пешка берёт чёрную.'], demo: { steps: ['e2e4', 'd7d5|Пешка d5 встала напротив.', 'e4d5|Пешка берёт по диагонали и убирает чёрную пешку.', 'd8d5|А теперь чёрный ферзь берёт пешку.'] } },
-      { h: 'Тронул — ходи', p: ['Если ты <b>дотронулся</b> до своей фигуры, ходить надо именно ею. Если дотронулся до фигуры соперника, надо её взять (если можно). Поэтому сначала думай, а потом бери фигуру в руку. Если хочешь поправить фигуру на доске, сначала скажи: «Поправляю».'] },
+      { h: 'Тронул — ходи', p: ['Правило турнирных шахматистов: <b>«тронул — ходи»</b>. Если ты дотронулся до своей фигуры, ходить надо именно ею. Поэтому сначала думай, а уже потом берись за фигуру.', 'Если фигуру нельзя сдвинуть по правилам, ты просто ходишь другой фигурой.'] },
+      { h: 'Тронул чужую фигуру — бери', p: ['Если ты дотронулся до <b>фигуры соперника</b>, ты должен <b>взять её</b>, если у тебя есть такой ход. Если взять нельзя, тогда ходи любой фигурой по своему выбору. Нажми «Показать»: белый слон дотронулся до чёрной пешки, и ему пришлось её взять.'], demo: { fen: '4k3/8/8/3p4/8/5B2/8/4K3 w - - 0 1', start: 'Слон тронул чужую пешку d5.', steps: ['f3d5|Слон взял пешку: правило «тронул — бери».'] } },
+      { h: 'Поправляю', p: ['Иногда фигура стоит на клетке криво. Поправить её можно, но <b>только в свой ход</b> и только сказав вслух: <b>«Поправляю»</b>. Сначала скажи слово, потом касайся фигуры. Тогда никто не подумает, что ты собираешься ею ходить.', 'Без этого слова касание считается началом хода: надо ходить этой фигурой.'] },
+      { h: 'Одна рука', p: ['В шахматы играют <b>одной рукой</b>. Той же рукой, которой делаешь ход, нажимаешь кнопку часов. Нельзя переставлять фигуру одной рукой, а другой придерживать часы или голову. Так всем ясно, что ходит именно эта фигура.'] },
       { h: 'Цель игры: поставить мат', p: ['Цель партии — <b>поставить мат</b> королю соперника. Король нападён (это шах), и спастись он не может: уйти некуда, закрыться нечем, атакующую фигуру не съесть. Нажми «Показать»: ладья ставит мат.'], demo: { fen: '6k1/5ppp/8/8/8/8/8/R3K3 w - - 0 1', steps: ['a1a8|Ладья даёт шах на последней горизонтали. Король закрыт своими пешками: это мат!'] } },
       { h: 'Шах — ещё не мат', p: ['Если королю шах, надо сразу его убрать: уйти, закрыться или съесть атакующую фигуру. Нажми «Показать»: король получает шах и просто уходит.'], demo: { fen: '4k3/8/8/8/8/8/8/R3K3 w - - 0 1', steps: ['a1a8|Шах! Ладья нападает на короля.', 'e8d7|Король ушёл. Это не мат.'] } },
       { h: 'Пат — это ничья', p: ['Бывает, что у игрока нет ни одного хода, а королю шаха нет. Это <b>пат</b>. Партия заканчивается <b>ничьёй</b>. Нажми «Показать»: белый ферзь не должен был так ходить!'], demo: { fen: 'k7/8/1K6/8/8/8/8/2Q5 w - - 0 1', steps: ['c1c7|Король a8 не может ходить, а шаха нет. Это пат: ничья!'] } },
-      { h: 'Результат партии', p: ['Победа даёт <b>1 очко</b>, ничья — <b>пол-очка</b>, поражение — 0. Партия заканчивается матом, ничьей, либо игрок сдаётся (признаёт поражение) или у него закончилось время на часах.'] },
+      { h: 'Результат партии', p: ['Победа даёт <b>1 очко</b>, ничья — <b>пол-очка</b>, поражение — 0. Партия заканчивается матом, ничьей, либо игрок сдаётся (признаёт поражение), либо у него заканчивается время на часах.', 'Результат записывают <b>двумя числами</b>: первое — очки белых, второе — очки чёрных.'], v: '<table class="tbl"><tr><th>Запись</th><th>Что значит</th></tr><tr><td><b>1 — 0</b></td><td>выиграли белые</td></tr><tr><td><b>0 — 1</b></td><td>выиграли чёрные</td></tr><tr><td><b>½ — ½</b></td><td>ничья: каждому по пол-очка</td></tr></table>' },
       { h: 'Шахматные часы', p: ['В турнирах у каждого игрока есть время на всю партию. Часы стоят рядом с доской: сделал ход — нажал на свою кнопку, время пошло у соперника. Если время закончилось, игрок проигрывает. Есть быстрые партии (блиц), где времени очень мало.'] },
       { h: 'Звания и разряды', p: ['Чтобы расти, шахматисты получают <b>разряды</b> и <b>звания</b> за успехи в турнирах. Это лесенка, по которой ты поднимаешься:'],
         v: '<table class="tbl"><tr><th>Ступень</th><th>Что это</th></tr><tr><td>Юношеские разряды</td><td>3-й, 2-й и 1-й юношеский: первые разряды для школьников</td></tr><tr><td>Спортивные разряды</td><td>3-й, 2-й, 1-й разряд</td></tr><tr><td>Кандидат в мастера спорта (КМС)</td><td>сильный шахматист</td></tr><tr><td>Мастер спорта</td><td>очень сильный игрок</td></tr><tr><td>Звания ФИДЕ</td><td>кандидат в мастера ФИДЕ (CM), мастер ФИДЕ (FM), международный мастер (IM)</td></tr><tr><td>Международный гроссмейстер (GM)</td><td>высшее звание, их в мире около двух тысяч</td></tr></table><p class="note">В разных странах разряды называются немного по-разному, но идея везде одна: чем лучше играешь, тем выше ступенька.</p>' },
@@ -3652,7 +3729,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
       ['Цвет, которым играешь, часто выбирают по жеребьёвке?', true, 'Да: прячут в кулаках пешки, и соперник выбирает кулак.'],
       ['Короля можно съесть?', false, 'Нет, королю ставят шах и мат, но его не съедают.'],
       ['Ничья даёт каждому игроку по пол-очка?', true, 'Да: победа 1 очко, ничья по 0,5, поражение 0.'],
-      ['Это мат? Чёрному королю некуда уйти, ладья даёт шах.', true, 'Король закрыт своими пешками, ладья даёт шах, значит мат.', '6k1/5ppp/8/8/8/8/8/R3K3 w - - 0 1'],
+      ['Если выиграли белые, партию записывают 1 — 0?', true, 'Да: первое число — очки белых.'],
+      ['Запись 0 — 1 значит: выиграли белые?', false, 'Нет. 0 — 1 значит, что выиграли чёрные.'],
+      ['Если ничья, пишут ½ — ½?', true, 'Да, каждый игрок получает по пол-очка.'],
+      ['Если ты тронул чужую фигуру и можешь её взять, надо взять?', true, 'Да, правило «тронул — бери».'],
+      ['Чтобы поправить фигуру, надо сказать «Поправляю»?', true, 'Да, и говорить это надо до того, как коснулся фигуры.'],
+      ['Можно ходить одной рукой, а часы нажимать другой?', false, 'Нет, играют и нажимают часы одной рукой.'],
+      ['Можно трогать фигуру, а потом передумать и пойти другой?', false, 'Нет, тронул свою фигуру — ходи ею.']
       ['Рейтинг показывает силу шахматиста?', true, 'Да, у гроссмейстеров он выше 2500.'],
       ['Свои фигуры можно брать?', false, 'Нет, брать можно только фигуры соперника.'],
       ['Пат — победа того, кто его поставил?', false, 'Нет, пат — это ничья.'],
@@ -3662,7 +3745,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       ['Можно подсказывать сопернику, как ходить?', false, 'Нет, во время партии мешать и подсказывать нельзя.']
     ];
     LESS.rules.slides = RUL; LESS.rules.levels = RQ.length; LESS.rules.run = bank('', RQ, 'Вспомни урок про правила и вежливость.');
-    LESS.rules.d = 'Вежливость, жеребьёвка, цель игры, мат, пат, разряды и турниры.';
+    LESS.rules.d = 'Вежливость, жеребьёвка, «тронул — ходи», «поправляю», результаты 1–0, мат, пат, разряды и турниры.';
 
     /* ---------- ФИГУРЫ ---------- */
     var PS = {
@@ -3691,9 +3774,18 @@ if (typeof module !== 'undefined') module.exports = Eng;
           stencil('N', 'a4', 'Конь у края', ['У края доски у коня <b>4</b> хода.'])
         );
       }
+      if (code === 'R') {
+        sl.push(
+          { h: 'Ладья — линейная фигура', p: ['Ладья ходит только по <b>прямым линиям</b>: по вертикали вверх и вниз, по горизонтали вправо и влево. По диагонали ладья ходить не умеет. Её рисуют как башню.'], fen: fen1('R', 'd4'), hl: lone('R', sqIdx('d4'), {}) },
+          { h: 'Сколько стоит ладья', p: ['У фигур есть цена: пешка — 1, конь и слон — по 3, <b>ладья — 5</b>, ферзь — 9. Ладья сильнее коня и слона, но слабее ферзя. Менять ладью на коня или слона невыгодно: ты отдаёшь 5, а получаешь 3.'], v: '<table class="tbl"><tr><th>Фигура</th><th>Цена</th></tr><tr><td>Пешка</td><td>1</td></tr><tr><td>Конь, слон</td><td>3</td></tr><tr><td><b>Ладья</b></td><td><b>5</b></td></tr><tr><td>Ферзь</td><td>9</td></tr></table>' },
+          { h: 'Дальнобойная фигура', p: ['Ладья — <b>дальнобойная</b> фигура: за один ход она может пройти через всю доску, если на пути нет других фигур. Особенно сильна ладья на <b>открытой линии</b>, где нет пешек. Нажми «Показать».'], show: { code: 'R', at: 'a1', seq: ['a8|Через всю вертикаль за один ход!', 'h8|И через всю горизонталь!', 'h1|Вниз до самого края.'] } },
+          { h: 'Свои фигуры не перепрыгнуть', p: ['Через <b>свои фигуры</b> ладья не перепрыгивает и на их клетки встать не может. Она останавливается перед своей фигурой. Белая ладья на a1 не может пройти дальше своей пешки a4 и короля e1: жёлтые точки показывают, куда она всё-таки может пойти.'], fen: '4k3/8/8/8/P7/8/8/R3K3 w - - 0 1', hl: [sqIdx('a2'), sqIdx('a3'), sqIdx('b1'), sqIdx('c1'), sqIdx('d1')] },
+          { h: 'Чужую фигуру можно взять', p: ['Если на пути стоит <b>фигура соперника</b>, ладья может её <b>взять</b> и встать на её клетку. Но перепрыгнуть и идти дальше нельзя. Здесь ладья может взять чёрную пешку a4, но не a5 и выше.'], fen: '4k3/8/8/8/p7/8/8/R3K3 w - - 0 1', hl: [sqIdx('a2'), sqIdx('a3'), sqIdx('a4'), sqIdx('b1'), sqIdx('c1'), sqIdx('d1')] }
+        );
+      }
       sl.push({ h: 'Попробуй сам', p: ['Нажимай на любые клетки: фигура встанет туда, и жёлтые точки покажут все её ходы.'], free: code, at: code === 'P' ? 'e2' : 'd4' });
-      sl.push({ h: 'Что дальше', p: ['Тебя ждут <b>30 упражнений</b>. В первых пятнадцати надо собирать звёздочки ★ за как можно меньше ходов. В остальных пятнадцати ты проходишь лабиринты со стенами. Чем меньше ходов, тем больше звёзд и баллов! Если непонятно, вернись к урокам и ещё раз нажми «Показать».'] });
-      L.slides = sl; L.levels = 30;
+      sl.push({ h: 'Что дальше', p: [code === 'R' ? 'Тебя ждут <b>40 упражнений</b>. В первых пятнадцати надо собирать звёздочки ★ за как можно меньше ходов. Потом ещё пятнадцать лабиринтов со стенами. А в последних десяти ты собираешь яблоки и груши, добираешься до котика, мёда и королевства, обходишь бомбочки!' : 'Тебя ждут <b>30 упражнений</b>. В первых пятнадцати надо собирать звёздочки ★ за как можно меньше ходов. В остальных пятнадцати ты проходишь лабиринты со стенами. Чем меньше ходов, тем больше звёзд и баллов! Если непонятно, вернись к урокам и ещё раз нажми «Показать».'] });
+      L.slides = sl; L.levels = code === 'R' ? 40 : 30;
     });
 
     /* ---------- НИЧЬЯ ---------- */
@@ -4016,10 +4108,17 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var START0 = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     /* --- нотация --- */
     function randPos(r, plies) { var p = E.fromFEN(START0); for (var i = 0; i < plies; i++) { var ms = E.legal(p); if (!ms.length) break; p = E.make(p, ms[Math.floor(r() * ms.length)]); } return p; }
+    var BOOKL = ['e2e4 e7e5 g1f3 b8c6 f1c4 f8c5 c2c3 g8f6 d2d4 e5d4', 'e2e4 e7e5 g1f3 b8c6 f1b5 a7a6 b5a4 g8f6 e1g1 f8e7', 'd2d4 d7d5 c2c4 e7e6 b1c3 g8f6 c1g5 f8e7 e2e3 e8g8', 'e2e4 c7c5 g1f3 d7d6 d2d4 c5d4 f3d4 g8f6 b1c3 a7a6', 'e2e4 e7e6 d2d4 d7d5 b1c3 g8f6 c1g5 f8e7 e4e5 f6d7', 'e2e4 c7c6 d2d4 d7d5 b1c3 d5e4 c3e4 c8f5 e4g3 f5g6', 'd2d4 d7d5 g1f3 g8f6 c1f4 e7e6 e2e3 f8d6 f4g3 e8g8', 'c2c4 e7e5 b1c3 g8f6 g1f3 b8c6 g2g3 d7d5 c4d5 f6d5', 'd2d4 g8f6 c2c4 g7g6 b1c3 f8g7 e2e4 d7d6 g1f3 e8g8', 'e2e4 e7e5 g1f3 b8c6 d2d4 e5d4 f3d4 g8f6 d4c6 b7c6', 'e2e4 e7e5 g1f3 g8f6 f3e5 d7d6 e5f3 f6e4 d2d4 d6d5', 'd2d4 d7d5 c2c4 c7c6 g1f3 g8f6 b1c3 d5c4 a2a4 c8f5', 'e2e4 d7d6 d2d4 g8f6 b1c3 g7g6 g1f3 f8g7 f1e2 e8g8', 'e2e4 d7d5 e4d5 d8d5 b1c3 d5a5 d2d4 g8f6 g1f3 c8f5'].map(function (l) { return l.split(' '); });
+    function bookStep(pos, u) { var f = sqIdx(u.slice(0, 2)), t = sqIdx(u.slice(2, 4)); return E.legal(pos).filter(function (m) { return m.f === f && m.t === t; })[0]; }
+    /* позиция из настоящего дебюта и следующий ход из этого дебюта */
+    function bookPos(r, minPly, maxPly) {
+      var ln = BOOKL[Math.floor(r() * BOOKL.length)], k = minPly + Math.floor(r() * (maxPly - minPly + 1)), p = E.fromFEN(START0);
+      for (var i = 0; i < k && i < ln.length - 1; i++) p = E.make(p, bookStep(p, ln[i]));
+      return { pos: p, m: bookStep(p, ln[Math.min(k, ln.length - 1)]), line: ln, k: k };
+    }
     function runNote(host, L, lv, finish) {
-      var r = mkRng(hstr('nt' + lv) + Date.now() % 100000), pos = null, ms;
-      for (var t = 0; t < 50; t++) { pos = randPos(r, 2 * Math.floor(r() * 6) + (lv > 20 ? 6 : 0)); ms = E.legal(pos); if (ms.length > 4 && E.status(pos) !== 'mate') break; }
-      var S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, mist = 0, done = false, choose = lv % 2 === 1, m0 = ms[Math.floor(r() * ms.length)], txt = notation(m0, pos);
+      var r = mkRng(hstr('nt' + lv) + Date.now() % 100000), bp = bookPos(r, 0, lv > 20 ? 8 : 5), pos = bp.pos, ms = E.legal(pos);
+      var S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, mist = 0, done = false, choose = lv % 2 === 1, m0 = bp.m, txt = notation(m0, pos);
       if (choose) {
         var all = [txt], seen = {}; seen[txt] = 1; var g = 0; while (all.length < 4 && g++ < 60) { var o = notation(ms[Math.floor(r() * ms.length)], pos); if (!seen[o]) { seen[o] = 1; all.push(o); } }
         all.sort(function () { return r() - .5; });
@@ -4044,14 +4143,83 @@ if (typeof module !== 'undefined') module.exports = Eng;
         drawBoard(S, click);
       }
     }
-    LESS.notation = { id: 'notation', t: 'Запись ходов', d: 'Как записывать и читать ходы: буквы фигур, шах, мат, взятие, рокировка.', levels: 30, run: runNote, slides: [
-      { h: 'Зачем записывать ходы', p: ['Шахматисты записывают партии, чтобы потом разбирать ошибки и учиться у чемпионов. Запись ходов — это язык шахмат. Выучи его, и ты сможешь читать книги!'], fen: START0 },
-      { h: 'Буквы фигур', p: ['Фигуры обозначаются первой буквой: <b>Кр</b> — король, <b>Ф</b> — ферзь, <b>Л</b> — ладья, <b>С</b> — слон, <b>К</b> — конь. Пешка буквы не имеет: пишут только клетку.'], fen: START0 },
-      { h: 'Как записать ход', p: ['Пишем букву фигуры, клетку откуда и клетку куда. Например, <b>Кg1–f3</b>: конь с g1 на f3. Пешка: <b>e2–e4</b>. Нажми «Показать».'], demo: { steps: ['e2e4|Пешка e2 идёт на e4: e2–e4.', 'e7e5|Пешка e7–e5.', 'g1f3|Конь с g1 на f3: Кg1–f3.', 'b8c6|Конь b8–c6.'] } },
-      { h: 'Взятие, шах, мат', p: ['Взятие записывают значком <b>×</b>: Кf3×e5. Шах отмечают <b>+</b>, мат — <b>#</b>. Нажми «Показать».'], demo: { steps: ['e2e4', 'e7e5', 'f1c4', 'b8c6', 'd1h5', 'g8f6|Конь защищает.', 'h5f7|Ферзь берёт на f7 с шахом, и это мат: Ф×f7#.'] } },
-      { h: 'Рокировка', p: ['Короткую рокировку записывают <b>O-O</b>, длинную — <b>O-O-O</b>. Нажми «Показать».'], demo: { fen: 'r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1', steps: ['e1g1|Короткая рокировка O-O.', 'e8c8|Длинная рокировка O-O-O.'] } },
-      { h: 'Дальше упражнения', p: ['В нечётных упражнениях выбери правильную запись хода. В чётных сделай на доске ход, который записан.'] }
-    ] };
+    var BLANK = '<div style="background:#fff;border:2px solid #444;border-radius:8px;padding:8px 10px;font-size:13px;max-width:460px"><div style="display:flex;flex-wrap:wrap;gap:4px 14px"><span><b>Турнир:</b> ____________</span><span><b>Дата:</b> ________</span><span><b>Тур:</b> ____</span><span><b>Доска:</b> ____</span></div><div style="display:flex;flex-wrap:wrap;gap:4px 14px;margin:4px 0"><span><b>Белые:</b> ______________</span><span><b>Чёрные:</b> ______________</span></div><table class="tbl" style="width:100%"><tr><th>№</th><th>Белые</th><th>Чёрные</th></tr><tr><td>1</td><td>e2–e4</td><td>e7–e5</td></tr><tr><td>2</td><td>Кg1–f3</td><td>Кb8–c6</td></tr><tr><td>3</td><td>Сf1–c4</td><td>Сf8–c5</td></tr><tr><td>4</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>5</td><td>&nbsp;</td><td>&nbsp;</td></tr></table><div style="margin-top:4px"><b>Результат:</b> ______ &nbsp; <b>Подписи:</b> __________ &nbsp; __________</div></div>';
+    var NOTE_SL = [
+      { h: 'Зачем записывать ходы', p: ['Шахматисты записывают партии, чтобы потом разбирать ошибки и учиться у чемпионов. Запись ходов — это язык шахмат. Выучи его, и ты сможешь читать шахматные книги и записывать свои партии на турнирах.'], fen: START0 },
+      { h: 'Буквы фигур', p: ['Фигуры обозначаются первой буквой: <b>Кр</b> — король, <b>Ф</b> — ферзь, <b>Л</b> — ладья, <b>С</b> — слон, <b>К</b> — конь. У <b>пешки буквы нет</b>: для пешки пишут только клетки.'], fen: START0,
+        v: '<table class="tbl"><tr><th>Фигура</th><th>Буква</th></tr><tr><td>Король</td><td><b>Кр</b></td></tr><tr><td>Ферзь</td><td><b>Ф</b></td></tr><tr><td>Ладья</td><td><b>Л</b></td></tr><tr><td>Слон</td><td><b>С</b></td></tr><tr><td>Конь</td><td><b>К</b></td></tr><tr><td>Пешка</td><td>нет буквы</td></tr></table>' },
+      { h: 'Откуда и куда', p: ['Ход записывают так: <b>буква фигуры + клетка, откуда ушла + чёрточка + клетка, куда пришла</b>. Например, <b>Кg1–f3</b>: конь с g1 на f3. Пешка без буквы: <b>e2–e4</b>. Нажми «Показать».'], demo: { steps: ['e2e4|Пешка e2 идёт на e4: e2–e4.', 'e7e5|Пешка e7–e5.', 'g1f3|Конь с g1 на f3: Кg1–f3.', 'b8c6|Конь b8–c6: Кb8–c6.'] } },
+      { h: 'Читаем запись по шагам', p: ['Прочитаем запись <b>Сf1–c4</b>. «С» — значит, ходит слон. «f1» — откуда он идёт. «c4» — куда. Найди слон на f1: он идёт по диагонали на c4. Нажми «Показать».'], fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', demo: { fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', steps: ['f1c4|Сf1–c4: слон с f1 на c4.'] } },
+      { h: 'Взятие: значок ×', p: ['Когда фигура берёт фигуру соперника, вместо чёрточки пишут значок <b>×</b>. Например, <b>Кf3×e5</b>: конь с f3 берёт фигуру на e5. Нажми «Показать».'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3', steps: ['f3e5|Кf3×e5: конь берёт пешку e5.'] } },
+      { h: 'Шах: знак +', p: ['Если ход ставит шах, в конце записи пишут <b>+</b>. Нажми «Показать»: белая ладья даёт шах чёрному королю.'], demo: { fen: '4k3/8/8/8/8/8/4R3/4K3 w - - 0 1', steps: ['e2e7|Ле2–e7+: шах! Ладья атакует короля.'] } },
+      { h: 'Мат: знак #', p: ['Если ход ставит мат, пишут <b>#</b>. Нажми «Показать»: ладья даёт шах, а король не может спастись: все его поля заняты или под боем.'], demo: { fen: '6k1/8/6K1/8/8/8/8/R7 w - - 0 1', steps: ['a1a8|Ла1–a8#: мат!'] } },
+      { h: 'Рокировка', p: ['Короткую рокировку записывают <b>O-O</b>, длинную — <b>O-O-O</b> (буква «О», не ноль). Нажми «Показать».'], demo: { fen: 'r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1', steps: ['e1g1|Короткая рокировка O-O.', 'e8c8|Длинная рокировка O-O-O.'] } },
+      { h: 'Превращение пешки', p: ['Когда пешка дошла до последней горизонтали, её превращают в фигуру. Это записывают знаком <b>=</b> и буквой фигуры: <b>e7–e8=Ф</b> — пешка стала ферзём.'], demo: { fen: '8/4P3/8/8/8/8/k7/4K3 w - - 0 1', steps: ['e7e8q|e7–e8=Ф: пешка стала ферзём.'] } },
+      { h: 'Знаки оценки: ! и ?', p: ['Комментаторы ставят знаки после хода. Они показывают, хорош ход или плох. Это не часть самой записи, а оценка.'], v: '<table class="tbl"><tr><th>Знак</th><th>Что значит</th></tr><tr><td><b>!</b></td><td>хороший ход</td></tr><tr><td><b>!!</b></td><td>отличный, очень красивый ход</td></tr><tr><td><b>?</b></td><td>плохой ход, ошибка</td></tr><tr><td><b>??</b></td><td>грубая ошибка</td></tr><tr><td><b>!?</b></td><td>интересный, но рискованный ход</td></tr><tr><td><b>?!</b></td><td>сомнительный ход</td></tr></table>' },
+      { h: 'Партия в столбик', p: ['Партию записывают <b>в столбик</b>: слева номер хода, потом ход белых, потом ход чёрных. Ход белых и ответ чёрных вместе называют <b>одним ходом</b>. Читать надо слева направо и сверху вниз.'], fen: START0,
+        v: '<table class="tbl"><tr><th>№</th><th>Белые</th><th>Чёрные</th></tr><tr><td>1</td><td>e2–e4</td><td>e7–e5</td></tr><tr><td>2</td><td>Кg1–f3</td><td>Кb8–c6</td></tr><tr><td>3</td><td>Сf1–c4</td><td>Сf8–c5</td></tr><tr><td>4</td><td>c2–c3</td><td>Кg8–f6</td></tr></table>' },
+      { h: 'Бланк шахматной партии', p: ['На турнирах партию записывают на <b>бланке</b>. Вверху пишут турнир, дату, имена и фамилии игроков. Ниже таблица, где идут ходы. После партии пишут результат (1–0, 0–1 или ½–½), и оба игрока ставят подписи.'], v: BLANK },
+      { h: 'Как правильно записывать', p: ['<b>1.</b> Записывай ход сразу после того, как сделал его. <b>2.</b> Пиши аккуратно и разборчиво, как в тетради. <b>3.</b> Ходы белых и чёрных пиши в свои столбики. <b>4.</b> Не торопись и проверяй номер хода. <b>5.</b> Запись партии — это твоя память: потом по ней можно найти ошибки вместе с тренером.'] },
+      { h: 'Играем по записи', p: ['Теперь попробуй сыграть партию по записи. Нажми «Показать»: ходы идут по порядку, и под каждым написано, что произошло.'], demo: { steps: ['e2e4|1. e2–e4', 'e7e5|1... e7–e5', 'g1f3|2. Кg1–f3', 'b8c6|2... Кb8–c6', 'f1b5|3. Сf1–b5: слон давит на коня c6.', 'a7a6|3... a7–a6', 'b5a4|4. Сb5–a4: слон отступает.', 'g8f6|4... Кg8–f6'] } },
+      { h: 'Записываем позицию', p: ['Позицию тоже можно записать списком: перечислить, где стоит каждая фигура. Например: белые — <b>Крe1, Фd1, Лa1, Лh1, пешки e4, f2, g2</b>; чёрные — <b>Крe8, Фd8, Лa8, Лh8, пешки e5, f7, g7</b>.', 'Попробуй прочитать такую запись и расставить фигуры на доске. Так шахматисты передают позиции в книгах и задачах.'], fen: 'r2qk2r/5pp1/8/4p3/4P3/8/5PP1/R2QK2R w KQkq - 0 1' },
+      { h: 'Дальше упражнения', p: ['<b>30 упражнений</b> всех видов: выбери правильную запись хода; сделай на доске записанный ход; найди клетку, куда пошла фигура; выбери нужный знак (×, +, #, O-O, =); сыграй несколько ходов подряд по записи.'] }
+    ];
+    LESS.notation = { id: 'notation', t: 'Запись ходов', d: 'Буквы фигур, откуда и куда, взятие, шах, мат, рокировка, знаки оценки, запись партии и бланк.', levels: 30, run: runNote2, slides: NOTE_SL };
+    function signBank() {
+      return [
+        ['r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3', 'f3e5', '×', 'Конь берёт пешку: пишем ×.'],
+        ['7k/8/5K2/8/8/8/8/R7 w - - 0 1', 'a1a7', 'нет знака', 'Ладья просто ходит: шаха нет, взятия нет.'],
+        ['k7/8/1K6/8/8/8/8/7R w - - 0 1', 'h1h8', '#', 'Король a8 не может уйти: это мат, пишем #.'],
+        ['r3k2r/pppq1ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPPQ1PPP/R3K2R w KQkq - 0 8', 'e1g1', 'O-O', 'Король и ладья ходят вместе: короткая рокировка O-O.'],
+        ['r3k3/1P6/8/8/8/8/8/4K3 w - - 0 1', 'b7b8q', '=', 'Пешка дошла до последней горизонтали и стала фигурой: пишем =.'],
+        ['4k3/8/8/8/8/8/4R3/4K3 w - - 0 1', 'e2e7', '+', 'Ладья даёт шах чёрному королю: пишем +.'],
+        ['rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', 'g1f3', 'нет знака', 'Конь выходит на f3: ни шаха, ни взятия.'],
+        ['rnb1kbnr/pppp1ppp/8/4p3/4P2q/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3', 'f3h4', '×', 'Конь берёт ферзя: ×.']
+      ];
+    }
+    function runNote2(host, Lx, lv, finish) {
+      var kind = (lv - 1) % 5;
+      if (kind === 0) return runNote(host, Lx, 1 + 20 * (lv > 15 ? 1 : 0), finish);
+      if (kind === 1) return runNote(host, Lx, 2 + 20 * (lv > 15 ? 1 : 0), finish);
+      var r = mkRng(hstr('nt2' + lv) + Date.now() % 100000), mist = 0, done = false;
+      if (kind === 2) {  /* найди клетку, куда пошла фигура */
+        var bp2 = bookPos(r, 0, lv > 15 ? 8 : 5), pos = bp2.pos, m0 = bp2.m, txt = notation(m0, pos), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: {} };
+        S.hl[m0.f] = true; S.mark[m0.f] = 'star';
+        host.innerHTML = say(av('prof'), 'Запись хода ' + lv, 'Записан ход ' + txt + '. Нажми на клетку, куда пошла фигура.', 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>';
+        var msg = document.getElementById('msg');
+        var click = function (i) { if (done) return; if (i === m0.t) { done = true; S.mark[i] = 'star'; drawBoard(S, function () {}); msg.className = 'msg good'; msg.textContent = 'Верно! ' + txt; sfx('good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); } else { mist++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Это поле ' + SQN(i) + '. Смотри на вторую клетку в записи.'; } };
+        drawBoard(S, click); return;
+      }
+      if (kind === 3) {  /* нужный знак */
+        var B = signBank(), q = B[(lv * 3 + Math.floor(r() * 5)) % B.length], p2 = E.fromFEN(q[0]), mv = E.legal(p2).filter(function (m) { return (SQN(m.f) + SQN(m.t)) === q[1].slice(0, 4) && (!m.p || m.p === 5); })[0];
+        if (!mv) { return runNote(host, Lx, 1, finish); }
+        var S2 = { pos: p2, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: {} }; S2.hl[mv.f] = true; S2.hl[mv.t] = true;
+        var opts = ['×', '+', '#', 'O-O', '=', 'нет знака'];
+        host.innerHTML = say(av('prof'), 'Знак хода ' + lv, 'Этот ход выделен на доске. Какой знак нужен в его записи?', 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>';
+        drawBoard(S2, function () {});
+        document.getElementById('opts').onclick = function (e) { var b = e.target.closest('button'), msg3 = document.getElementById('msg'); if (!b || done) return; if (b.dataset.o === q[2]) { b.className = 'good'; done = true; msg3.className = 'msg good'; msg3.textContent = 'Верно! ' + q[3]; sfx('good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); } else { b.className = 'bad'; mist++; sfx('bad'); msg3.className = 'msg bad'; msg3.textContent = 'Нет. Вспомни: × взятие, + шах, # мат, O-O рокировка, = превращение.'; } };
+        return;
+      }
+      /* kind 4: сыграй по записи три хода подряд */
+      var bp4 = bookPos(r, 0, 2), p0 = bp4.pos, seq = [], cur = p0, k;
+      for (k = 0; k < 3; k++) { var mm = bookStep(cur, bp4.line[bp4.k + k]); if (!mm) break; seq.push({ m: mm, pos: cur, t: notation(mm, cur) }); cur = E.make(cur, mm); }
+      if (seq.length < 3) return runNote(host, Lx, 2, finish);
+      var S3 = { pos: p0, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, idx = 0;
+      host.innerHTML = say(av('prof'), 'Играем по записи ' + lv, 'Сыграй на доске три хода подряд: ' + seq.map(function (s) { return s.t; }).join(', ') + '.', 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite">Первый ход: ' + seq[0].t + '</div>';
+      var msg4 = document.getElementById('msg');
+      var click4 = function (i) {
+        if (done) return; var cp = seq[idx].pos, v = S3.pos.b[i];
+        if (S3.sel != null && S3.targets.indexOf(i) >= 0) {
+          var c = movesFrom(S3.pos, S3.sel).filter(function (x) { return x.t === i; })[0];
+          if (notation(c, S3.pos) === seq[idx].t) { var np = E.make(S3.pos, c); S3.anim = animOf(S3.pos, c); moveSound(S3.pos, c, np); S3.pos = np; S3.sel = null; S3.targets = []; idx++; if (idx >= 3) { done = true; drawBoard(S3, function () {}); msg4.className = 'msg good'; msg4.textContent = 'Верно! Партия сыграна по записи.'; sfx('good'); finish(mist === 0 ? 3 : mist <= 2 ? 2 : 1); return; } msg4.className = 'msg'; msg4.textContent = 'Верно! Дальше: ' + seq[idx].t; drawBoard(S3, click4); }
+          else { mist++; sfx('bad'); msg4.className = 'msg bad'; msg4.textContent = 'Это ход ' + notation(c, S3.pos) + ', а нужен ' + seq[idx].t + '.'; S3.sel = null; S3.targets = []; drawBoard(S3, click4); }
+          return;
+        }
+        if (v && (v > 0) === (S3.pos.turn > 0)) { S3.sel = i; S3.targets = movesFrom(S3.pos, i).map(function (m) { return m.t; }); } else { S3.sel = null; S3.targets = []; }
+        drawBoard(S3, click4);
+      };
+      drawBoard(S3, click4);
+    }
 
     /* --- двойной удар (вилка) --- */
     var VAL = { 1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 99 }, CH = { 1: 'P', 2: 'N', 3: 'B', 4: 'R', 5: 'Q', 6: 'K' };
@@ -4299,6 +4467,114 @@ if (typeof module !== 'undefined') module.exports = Eng;
   };
   var sl = L.slides[L.slides.length - 1]; sl.p[0] = sl.p[0].replace(/\(Упражнения[^)]*\)/, '(Упражнения 1–8: сделай рокировку. 9–30: вопросы про настоящие позиции.)');
   window.__castleBank = CI;
+})();
+
+/* ===== Урок «Шахматная доска»: 30 разных заданий (свои формулировки) ===== */
+(function () {
+  var L = LESS.board; if (!L) return;
+  var FL = 'abcdefgh';
+  function sn(i) { return FL.charAt(i & 7) + (8 - (i >> 3)); }
+  function rnd(r, a, b) { return a + Math.floor(r() * (b - a + 1)); }
+  function pick(r, a) { return a[Math.floor(r() * a.length)]; }
+  function line(f) { var a = []; for (var i = 0; i < 64; i++) if (f(i & 7, i >> 3)) a.push(i); return a; }
+  function fileSq(x) { return line(function (cx) { return cx === x; }); }
+  function rankSq(y) { return line(function (cx, cy) { return cy === y; }); }
+  function diagA1H8() { return line(function (x, y) { return x === 7 - y; }); }   /* a1–h8: x = 7 - y (y=7 внизу) */
+  function diagH1A8() { return line(function (x, y) { return x === y; }); }
+  function diagThrough(sq, plus) { var x = sq & 7, y = sq >> 3; return line(function (cx, cy) { return plus ? cx + cy === x + y : cx - cy === x - y; }); }
+  function numOpts(r, ans, lo, hi) { var s = {}, a = [ans]; s[ans] = 1; var g = 0; while (a.length < 4 && g++ < 60) { var v = ans + rnd(r, -3, 3); if (v < lo || v > hi || s[v]) continue; s[v] = 1; a.push(v); } return a.sort(function (p, q) { return p - q; }).map(String); }
+  function shuf(r, a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function names(r, n, avoid) { var s = {}, a = []; while (a.length < n) { var q = Math.floor(r() * 64); if (!s[q]) { s[q] = 1; a.push(q); } } return a; }
+
+  /* Описание заданий: возвращает {text, mode:'all'|'seq'|'opts', targets, opts, ans, hint, hl, stars} */
+  function make(lv, r) {
+    var x, y, sq, a, b, t;
+    switch (lv) {
+      case 1: sq = Math.floor(r() * 64); return { text: 'Найди и нажми на поле ' + sn(sq) + '.', mode: 'seq', targets: [sq] };
+      case 2: return { text: 'Найди по очереди три поля и нажимай на них.', mode: 'seq', targets: names(r, 3) };
+      case 3: sq = Math.floor(r() * 64); return star1(r, sq);
+      case 4: x = rnd(r, 0, 7); return { text: 'Отметь нажатиями все клетки вертикали «' + FL[x] + '».', mode: 'all', targets: fileSq(x) };
+      case 5: return { text: 'Нажми на все четыре угла доски.', mode: 'all', targets: [0, 7, 56, 63] };
+      case 6: y = rnd(r, 0, 7); return { text: 'Отметь нажатиями все клетки горизонтали ' + (8 - y) + '.', mode: 'all', targets: rankSq(y) };
+      case 7: return twoStars(r, 'any');
+      case 8: return { text: 'Найди центр доски: нажми на четыре центральные клетки.', mode: 'all', targets: [27, 28, 35, 36] };
+      case 9: return colorQ(r);
+      case 10: return { text: 'Отметь всю большую диагональ от a1 до h8 (она тёмная).', mode: 'all', targets: diagA1H8() };
+      case 11: return twoStars(r, 'file');
+      case 12: return { text: 'Найди по очереди четыре поля.', mode: 'seq', targets: names(r, 4) };
+      case 13: return { text: 'Отметь всю большую диагональ от h1 до a8 (она светлая).', mode: 'all', targets: diagH1A8() };
+      case 14: return twoStars(r, 'rank');
+      case 15: return { text: 'Отметь большой центр: квадрат из 16 клеток от c3 до f6.', mode: 'all', targets: line(function (cx, cy) { return cx >= 2 && cx <= 5 && cy >= 2 && cy <= 5; }) };
+      case 16: a = r() < .5; return { text: 'Эта диагональ идёт из какого угла в какой?', mode: 'opts', hl: a ? diagA1H8() : diagH1A8(), opts: ['a1 — h8', 'h1 — a8'], ans: a ? 'a1 — h8' : 'h1 — a8', hint: 'a1 — левый нижний угол, h1 — правый нижний.' };
+      case 17: x = rnd(r, 0, 7); y = rnd(r, 0, 7); return { text: 'Найди клетку на пересечении вертикали «' + FL[x] + '» и горизонтали ' + (8 - y) + '.', mode: 'seq', targets: [y * 8 + x] };
+      case 18: x = rnd(r, 1, 6); y = rnd(r, 1, 6); sq = y * 8 + x; a = r() < .5; return { text: 'Звёздочка стоит на диагонали. Отметь все клетки этой диагонали (она идёт ' + (a ? 'из левого нижнего угла вверх вправо' : 'из левого верхнего угла вниз вправо') + ').', mode: 'all', targets: diagThrough(sq, a), stars: [sq], hint: 'Диагональ идёт по углам клеток в обе стороны от звёздочки до края доски.' };
+      case 19: return { text: 'Какого цвета все клетки диагонали a1 — h8?', mode: 'opts', hl: diagA1H8(), opts: ['Тёмные', 'Светлые', 'Разные'], ans: 'Тёмные', hint: 'Поле a1 тёмное, и вся эта диагональ того же цвета.' };
+      case 20: y = rnd(r, 0, 7); return { text: 'Отметь все светлые клетки на горизонтали ' + (8 - y) + '.', mode: 'all', targets: rankSq(y).filter(function (i) { return ((i & 7) + (7 - (i >> 3))) % 2 === 1; }), hint: 'Светлых клеток на горизонтали ровно четыре. Они стоят через одну.' };
+      case 21: return { text: 'Найди по очереди пять полей.', mode: 'seq', targets: names(r, 5) };
+      case 22: return twoStars(r, 'diag');
+      case 23: sq = Math.floor(r() * 64); return { text: 'Звёздочка стоит на вертикали. Отметь все клетки этой вертикали.', mode: 'all', targets: fileSq(sq & 7), stars: [sq] };
+      case 24: a = pick(r, [diagA1H8, diagH1A8])(); return { text: 'Сколько клеток на этой диагонали?', mode: 'opts', hl: a, opts: ['6', '7', '8'], ans: '8', hint: 'Посчитай выделенные клетки: большая диагональ идёт из угла в угол.' };
+      case 25: x = rnd(r, 0, 7); y = rnd(r, 0, 7); return { text: 'Отметь всю вертикаль «' + FL[x] + '» и всю горизонталь ' + (8 - y) + ' (получится крест).', mode: 'all', targets: fileSq(x).concat(rankSq(y).filter(function (i) { return (i & 7) !== x; })) };
+      case 26: sq = Math.floor(r() * 64); return { text: 'Найди клетку на противоположной стороне доски: поверни доску вверх ногами, и звёздочка окажется там. Для a1 это h8.', mode: 'seq', targets: [63 - sq], stars: [sq], hint: 'Если звёздочка на вертикали c, то нужная клетка на вертикали f. Если на горизонтали 2, то нужная на 7.' };
+      case 27: return { text: 'Быстро найди шесть полей по очереди.', mode: 'seq', targets: names(r, 6) };
+      case 28: sq = pick(r, [27, 28, 35, 36]); return colorQ(r, sq);
+      case 29: return { text: 'Отметь обе большие диагонали: a1–h8 и h1–a8.', mode: 'all', targets: diagA1H8().concat(diagH1A8()) };
+      default: return { text: 'Финал! Найди по очереди семь полей.', mode: 'seq', targets: names(r, 7) };
+    }
+  }
+  function diagOther() { return []; }
+  function star1(r, sq) { var s = {}, all = [sn(sq)]; s[all[0]] = 1; while (all.length < 4) { var o = sn(Math.floor(r() * 64)); if (!s[o]) { s[o] = 1; all.push(o); } } return { text: 'Как называется поле со звёздочкой?', mode: 'opts', stars: [sq], opts: shuf(r, all), ans: sn(sq), hint: 'Сначала буква вертикали, потом цифра горизонтали.' }; }
+  function colorQ(r, fixed) { var sq = fixed != null ? fixed : Math.floor(r() * 64), dark = (((sq & 7) + 1) + (8 - (sq >> 3))) % 2 === 0; return { text: 'Какого цвета поле ' + sn(sq) + '?', mode: 'opts', opts: ['Светлое', 'Тёмное'], ans: dark ? 'Тёмное' : 'Светлое', hint: 'Поле a1 тёмное, цвета чередуются. Сложи номер буквы (a=1) и цифру: чётное число — тёмное поле.' }; }
+  function twoStars(r, want) {
+    for (var k = 0; k < 400; k++) {
+      var a = Math.floor(r() * 64), b = Math.floor(r() * 64); if (a === b) continue;
+      var ax = a & 7, ay = a >> 3, bx = b & 7, by = b >> 3, kind = ax === bx ? 'file' : ay === by ? 'rank' : Math.abs(ax - bx) === Math.abs(ay - by) ? 'diag' : 'none';
+      if (want === 'any' && kind === 'none') continue;
+      if (want !== 'any' && kind !== want) continue;
+      if (want === 'any') return { text: 'Соедини две звёздочки линией. Что получилось?', mode: 'opts', stars: [a, b], opts: ['вертикаль', 'горизонталь', 'диагональ'], ans: { file: 'вертикаль', rank: 'горизонталь', diag: 'диагональ' }[kind], hint: 'Вертикаль идёт сверху вниз, горизонталь слева направо, диагональ по углам клеток.' };
+      if (kind === 'file') { var fo = {}, fa = [FL[ax]]; fo[FL[ax]] = 1; while (fa.length < 4) { var f = FL[rnd(r, 0, 7)]; if (!fo[f]) { fo[f] = 1; fa.push(f); } } return { text: 'Соедини звёздочки линией. Какая вертикаль получилась?', mode: 'opts', stars: [a, b], opts: fa.sort(), ans: FL[ax], hint: 'Букву вертикали ищи под доской.' }; }
+      if (kind === 'rank') { return { text: 'Соедини звёздочки линией. Какая горизонталь получилась?', mode: 'opts', stars: [a, b], opts: numOpts(r, 8 - ay, 1, 8), ans: String(8 - ay), hint: 'Цифру горизонтали ищи слева от доски.' }; }
+      /* diag: на какой клетке заканчивается диагональ внизу-слева */
+      var d = diagThrough(a, (ax - ay) !== (bx - by));
+      return { text: 'Звёздочки стоят на одной диагонали. Отметь все клетки этой диагонали.', mode: 'all', stars: [a, b], targets: d, hint: 'Диагональ идёт по углам клеток в обе стороны от звёздочек до самого края доски.' };
+    }
+    return colorQ(r);
+  }
+
+  function run(host, Lx, lv, finish) {
+    var r = mkRng(hstr('board2_' + lv + '_' + Date.now() % 100000)), q = make(lv, r), mistakes = 0, done = false, picked = {}, idx = 0; window.__b2q = q;
+    var hideC = (q.mode === 'seq' && lv >= 21);
+    var S = { pos: E.fromFEN('8/8/8/8/8/8/8/8 w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: !hideC, mark: {}, hl: {} };
+    (q.hl || []).forEach(function (i) { S.hl[i] = true; });
+    (q.stars || []).forEach(function (i) { S.mark[i] = 'star'; });
+    var need = q.mode === 'all' ? q.targets.length : q.mode === 'seq' ? q.targets.length : 0;
+    host.innerHTML = say(av('prof'), 'Профессор', q.text, 'упражнение ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' + (q.mode === 'opts' ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
+    var msg = document.getElementById('msg');
+    function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+    function win() { done = true; sfx('good'); setMsg('Верно!', 'good'); finish(mistakes === 0 ? 3 : mistakes <= 2 ? 2 : 1); }
+    function bad(t) { mistakes++; sfx('bad'); setMsg(t, 'bad'); }
+    function prog() { if (q.mode === 'seq') { setMsg('Теперь найди: ' + sn(q.targets[idx]) + '   (' + (idx + 1) + ' из ' + q.targets.length + ')'); } else if (q.mode === 'all') { setMsg('Отмечено: ' + Object.keys(picked).length + ' из ' + need); } }
+    function onClick(i) {
+      if (done || q.mode === 'opts') return;
+      if (q.mode === 'seq') {
+        if (i === q.targets[idx]) { S.mark[i] = 'star'; idx++; if (idx >= q.targets.length) { drawBoard(S, function () {}); win(); return; } sfx('good'); prog(); drawBoard(S, onClick); }
+        else bad('Это поле ' + sn(i) + '. Нужно ' + sn(q.targets[idx]) + '. Попробуй ещё!');
+        return;
+      }
+      if (q.targets.indexOf(i) >= 0) {
+        if (picked[i]) return; picked[i] = 1; S.hl[i] = true; sfx('good');
+        if (Object.keys(picked).length >= need) { drawBoard(S, function () {}); win(); } else { prog(); drawBoard(S, onClick); }
+      } else bad('Эта клетка не подходит. Подсказка: ' + (q.hint || 'смотри на буквы и цифры у краёв доски.'));
+    }
+    drawBoard(S, onClick);
+    if (q.mode === 'seq') { if (q.targets.length > 1 || lv > 1) prog(); }
+    else if (q.mode === 'all') prog();
+    var ob = document.getElementById('opts');
+    if (ob) ob.onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; if (b.dataset.o === q.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; bad('Нет. ' + (q.hint || 'Подумай ещё.')); } };
+  }
+  L.levels = 30; L.kind = 'board'; L.run = run;
+  var last = L.slides[L.slides.length - 1];
+  if (last && last.p) last.p[0] = last.p[0].replace(/Теперь тебя ждут упражнения:[^.]*\./, 'Теперь тебя ждут <b>30 разных упражнений</b>: найди поля, отметь вертикали, горизонтали и большие диагонали, найди центр, назови цвета клеток.');
 })();
 
   /* ===== Дополнения к урокам Король и Пешка ===== */
