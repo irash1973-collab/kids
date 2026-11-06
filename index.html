@@ -762,6 +762,9 @@ a.y2tier,a.y2pl{text-decoration:none;color:inherit}.y2pl{position:relative}.y2pl
 .tcell i { position: absolute; right: 2px; bottom: 0; font-style: normal; font-weight: 800; font-size: 14px; background: #ffd34d; border-radius: 8px; padding: 0 6px; }
 .tcell.sel { border-color: #2e9e4f; background: #e6f8ec; box-shadow: 0 0 0 3px rgba(46,158,79,.4); }
 .tcell.empty { opacity: .3; cursor: default; }
+.gscore{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.gs{background:#fff;border-radius:12px;padding:6px 12px;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.gs.you{background:#d9f7e4}.gs.cpu{background:#ffe1e1}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2505,12 +2508,22 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     for (var attempt = 0; attempt < 300; attempt++) {
       var r = mkRng(hstr('pc' + code + lv + '_' + (seedx || 0)) + attempt * 977), maze = lv > 15, k = maze ? Math.ceil((lv - 15) * 2 / 3) : Math.ceil(lv * 2 / 3), ex;
-      var hunt = code !== 'P' && lv % 4 === 0;
+      var hunt = code !== 'P' && code !== 'K' && lv % 4 === 0;
       if (code === 'P') ex = genPawn(r, maze, k); else if (hunt) ex = genHunt(code, r, k); else ex = genLone(code, r, maze, k);
       if (ex && solveEx(ex)) { var th0 = ex.theme; ex.code = code; ex.lv = lv; ex.opt = solveEx(ex).len; if (hunt) ex.theme = th0; else if (code !== 'P') ex.theme = lvTheme(code, lv, ex); return ex; }
     }
     return null;
   }
+  var MPAT = [
+    ['........', '#######.', '........', '.#######', '........', '#######.', '........', '........'],
+    ['...#....', '...#....', '...#....', '###.####', '...#....', '...#....', '...#....', '...#....'],
+    ['........', '.######.', '.#....#.', '.#....#.', '.#....#.', '.##.###.', '........', '........'],
+    ['#.......', '.#......', '..#.....', '...#....', '....#...', '.....#..', '......#.', '.......#'],
+    ['..#..#..', '..#..#..', '..#.....', '.....#..', '..#..#..', '..#..#..', '.....#..', '..#.....'],
+    ['.#.#.#.#', '........', '#.#.#.#.', '........', '.#.#.#.#', '........', '#.#.#.#.', '........'],
+    ['........', '.##..##.', '.#....#.', '........', '........', '.#....#.', '.##..##.', '........'],
+    ['....#...', '....#...', '....#...', '....#...', '........', '...#....', '...#....', '...#....']
+  ];
   function genLone(code, r, maze, k) {
     var st = { walls: {}, enemies: {} }, start = Math.floor(r() * 64), ex = { type: maze ? 'maze' : 'collect', code: code, st: st, start: start, stars: [], tg: [], flag: -1 };
     function col(s) { return ((s & 7) + (s >> 3)) & 1; }
@@ -2531,7 +2544,17 @@ if (typeof module !== 'undefined') module.exports = Eng;
       return ex;
     }
     var wn = 5 + 2 * k, tries = 0;
+    if (code !== 'K' && r() < 0.7) {
+      var pat = MPAT[Math.floor(r() * MPAT.length)], tr = Math.floor(r() * 8);
+      for (var py = 0; py < 8; py++) for (var px = 0; px < 8; px++) if (pat[py][px] === '#') {
+        var ax = px, ay = py; if (tr & 1) ax = 7 - ax; if (tr & 2) ay = 7 - ay; if (tr & 4) { var tt = ax; ax = ay; ay = tt; }
+        st.walls[ay * 8 + ax] = true;
+      }
+      var free = []; for (var fq = 0; fq < 64; fq++) if (!st.walls[fq]) free.push(fq);
+      ex.start = start = free[Math.floor(r() * free.length)];
+    } else {
     for (var i = 0; i < wn && tries < 500; tries++) { var w = Math.floor(r() * 64); if (w !== start && !st.walls[w]) { st.walls[w] = true; i++; } }
+    }
     var res = bfs(code, start, st), cand = [], maxd = 0, q;
     for (q in res.d) maxd = Math.max(maxd, res.d[q]);
     var need = Math.min(maxd, 2 + Math.floor(k / 3));
@@ -3459,7 +3482,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       { h: 'Во что можно превратиться', p: ['Можно выбрать ферзя, ладью, слона или коня. Нельзя оставаться пешкой и нельзя стать королём. Цена фигур рядом.'],
         v: '<div class="hgrid four">' + pcard('c0', 5, 'Ферзь', 'цена 9') + pcard('c1', 4, 'Ладья', 'цена 5') + pcard('c2', 3, 'Слон', 'цена 3') + pcard('c3', 2, 'Конь', 'цена 3') + '</div>' },
       { h: 'Превращение со взятием', p: ['Пешка может превратиться и со взятием: бьёт фигуру по диагонали на последней горизонтали и сразу становится новой фигурой. Здесь пешка берёт ладью и становится ферзём.'],
-        demo: { fen: 'r3k3/1P6/8/8/8/8/8/K7 w - - 0 1', start: 'Белая пешка на b7, а на a8 стоит чёрная ладья.', steps: ['b7a8q|Пешка взяла ладью и стала ферзём.'] } },
+        demo: { fen: 'r3k3/1P6/8/8/8/8/8/7K w - - 0 1', start: 'Белая пешка на b7, а на a8 стоит чёрная ладья.', steps: ['b7a8q|Пешка взяла ладью и стала ферзём.'] } },
       { h: 'Иногда лучше конь', p: ['Бывает, что конь лучше ферзя. Если пешка станет ферзём на e8, шаха не будет. А если превратиться в коня, получится шах и ещё удар по ладье!'],
         demo: { fen: '8/2r1P1k1/8/8/8/8/8/K7 w - - 0 1', start: 'Белая пешка на e7. Чёрная ладья на c7.', steps: ['e7e8n|Конь даёт шах королю g7 и бьёт ладью c7. Ферзь так не умеет!'] } },
       { h: 'Когда ферзь — плохой выбор: пат!', p: ['Ферзь самая сильная фигура, но иногда он портит выигрыш. Здесь белые должны выиграть. Смотри, что будет, если превратиться в ферзя: чёрному королю некуда ходить, но шаха нет. Это <b>пат</b>, ничья!'],
@@ -4380,7 +4403,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       B: { n: 'Слон', show: { code: 'B', at: 'c1', seq: ['h6|Слон ходит по диагонали.', 'f8|Теперь в другую диагональ.', 'a3|Длинный ход!', 'c1|И назад.'] }, cap: { code: 'B', at: 'd4', enemies: ['f6', 'b2'], seq: ['f6|Слон берёт пешку.', 'b2|И ещё одну.'] }, st: ['d4', 'a1'], extra: '' },
       Q: { n: 'Ферзь', show: { code: 'Q', at: 'd4', seq: ['d8|Вверх, как ладья.', 'h4|По диагонали вниз, как слон.', 'h1|Вниз, как ладья.', 'a8|Длинная диагональ, как слон.'] }, cap: { code: 'Q', at: 'd1', enemies: ['d6', 'h6'], seq: ['d6|Ферзь берёт пешку.', 'h6|И ещё одну.'] }, st: ['d4', 'a1'], extra: '' },
       N: { n: 'Конь', show: { code: 'N', at: 'g1', seq: ['f3|Конь ходит буквой «Г».', 'e5|Две клетки вперёд, одна вбок.', 'c6|Ещё прыжок.', 'd4|И ещё!'] }, cap: { code: 'N', at: 'b1', enemies: ['c3', 'd5', 'f6'], seq: ['c3|Конь берёт пешку.', 'd5|И ещё.', 'f6|И ещё!'] }, st: ['d4', 'a1'], extra: '' },
-      K: { n: 'Король', show: { code: 'K', at: 'e4', seq: ['e5|Король ходит на одну клетку.', 'f6|В любую сторону.', 'f5', 'e4', 'd3', 'c4'] }, cap: { code: 'K', at: 'd4', enemies: ['d5', 'e6'], seq: ['d5|Король берёт фигуру рядом.', 'e6|И ещё.'] }, st: ['d4', 'a1'], extra: '' },
+      K: { n: 'Король', show: { code: 'K', at: 'e4', seq: ['e5|Король ходит на одну клетку.', 'f6|В любую сторону.', 'f5', 'e4', 'd3', 'c4'] }, cap: { code: 'K', at: 'd4', enemies: ['d5', 'e4'], seq: ['d5|Король берёт пешку рядом: её никто не защищает.', 'e4|И ещё одну, она тоже без защиты.'] }, st: ['d4', 'a1'], extra: '' },
       P: { n: 'Пешка', show: { code: 'P', at: 'e2', seq: ['e4|С начального места пешка может пройти две клетки.', 'e5|Дальше только на одну.', 'e6'] }, cap: { code: 'P', at: 'e4', enemies: ['d5', 'c6'], seq: ['d5|Пешка ходит прямо, а берёт по диагонали вперёд.', 'c6|И ещё.'] }, st: ['e2', 'e4'], extra: '' }
     };
     Object.keys(PS).forEach(function (code) {
@@ -4466,7 +4489,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       { h: '3. Троекратное повторение', p: ['Если <b>одна и та же позиция</b> повторилась на доске <b>три раза</b>, игрок, чей ход, может потребовать ничью. Нажми «Показать»: игроки ходят туда-сюда. А если позиция повторится <b>пять раз</b>, ничья засчитывается сама.'], demo: { fen: '6k1/8/8/8/8/8/8/R5K1 w - - 0 1', steps: ['a1a2|Ладья пошла.', 'g8f8|Король пошёл.', 'a2a1|Ладья вернулась.', 'f8g8|И король. Это та же позиция, что в начале: второй раз!', 'a1a2', 'g8f8', 'a2a1', 'f8g8|Третий раз! Можно требовать ничью.'] } },
       { h: '4. Правило 50 ходов', p: ['Если <b>50 ходов подряд</b> никто не брал фигуры и никто не ходил пешкой, можно потребовать ничью. Это защита от бесконечной партии. Одна пешка или одно взятие обнуляют счёт. Если же прошло <b>75 ходов</b> без взятий и пешечных ходов, ничья ставится сама, и требовать её не нужно.'], fen: '8/8/8/3k4/8/3K4/8/6R1 w - - 0 1' },
       { h: '5. Мало фигур для мата', p: ['Если ни у кого не хватает фигур, чтобы поставить мат, партия заканчивается ничьёй. Это «голые» короли, король и слон против короля, король и конь против короля. Нажми кнопки ниже: смотри на позиции.'], fen: '8/8/8/3k4/8/3K4/8/8 w - - 0 1' },
-      { h: 'Король и слон — ничья', p: ['Один слон не может поставить мат одному королю. Позиция: король и слон против короля. Это ничья.'], fen: '8/8/8/3k4/8/3K1B2/8/8 w - - 0 1' },
+      { h: 'Король и слон — ничья', p: ['Один слон не может поставить мат одному королю. Позиция: король и слон против короля. Это ничья.'], fen: '8/8/8/3k4/8/3K2B1/8/8 w - - 0 1' },
       { h: 'Король и конь — ничья', p: ['Один конь тоже не может поставить мат. Король и конь против короля — ничья. А вот король и ладья, король и ферзь, или король и пешка (которая может стать ферзём) — выигрывают.'], fen: '8/8/8/3k4/8/3K1N2/8/8 w - - 0 1' },
       { h: '6. По соглашению', p: ['Любой игрок в свой ход может <b>предложить ничью</b>: сказать «Предлагаю ничью» и сделать ход. Если соперник согласен, партия окончена. Предлагать надо после своего хода, а не во время хода соперника. Соперник может отказаться и продолжить игру.'], fen: START0 },
       { h: 'Что запомнить', p: ['<b>Шесть видов ничьи:</b> пат, вечный шах, троекратное повторение, правило 50 ходов, недостаточно фигур для мата, ничья по соглашению. Теперь потренируемся определять, что на доске!'] }
@@ -4477,7 +4500,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       ['Вечный шах заканчивается ничьёй?', true, 'Да, если шахи не прекращаются, фиксируют ничью.'],
       ['Если позиция повторилась 3 раза, можно требовать ничью?', true, 'Да, это троекратное повторение.'],
       ['Нужно ли 50 ходов подряд без взятий и ходов пешками, чтобы потребовать ничью?', true, 'Да, это правило 50 ходов.'],
-      ['Король и слон против короля: можно ли поставить мат?', false, 'Нет, слон один не ставит мат: это ничья.', '8/8/8/3k4/8/3K1B2/8/8 w - - 0 1'],
+      ['Король и слон против короля: можно ли поставить мат?', false, 'Нет, слон один не ставит мат: это ничья.', '8/8/8/3k4/8/3K2B1/8/8 w - - 0 1'],
       ['Король и конь против короля: можно ли поставить мат?', false, 'Нет, один конь не ставит мат.', '8/8/8/3k4/8/3K1N2/8/8 w - - 0 1'],
       ['Король и ладья против короля: можно ли поставить мат?', true, 'Да, ладья с королём ставит мат. Это не ничья.', '8/8/8/3k4/8/3K4/8/6R1 w - - 0 1'],
       ['Можно ли предложить ничью сопернику?', true, 'Да, в свой ход. Соперник может согласиться или отказаться.'],
@@ -4493,7 +4516,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       'k7/1Q6/1K6/8/8/8/8/8 b - - 0 1', 'rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3', 'r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4',
       '7k/5Q2/6K1/8/8/8/8/8 b - - 0 1', 'k7/2Q5/1K6/8/8/8/8/8 b - - 0 1', '8/8/8/8/8/5k2/5p2/5K2 w - - 0 1', 'k7/8/1Q6/8/8/8/8/K7 b - - 0 1', 'K7/8/kq6/8/8/8/8/8 w - - 0 1', 'k7/1R6/1K6/8/8/8/8/8 b - - 0 1',
       'k7/8/8/8/8/8/8/K7 w - - 0 1', 'k7/8/8/8/8/8/8/KB6 w - - 0 1', 'k7/8/8/8/8/8/8/KN6 w - - 0 1', 'k7/8/8/8/8/8/8/R3K3 b - - 0 1', '7k/8/8/8/8/8/8/Q3K3 w - - 0 1', '7k/8/5QK1/8/8/8/8/8 b - - 0 1',
-      'k7/8/1Q6/8/8/8/8/K7 w - - 0 1', START0, 'r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1', '8/8/8/3k4/8/3K1B2/8/8 w - - 0 1', '6k1/5ppp/8/8/8/8/8/R3K3 w - - 0 1'
+      'k7/8/1Q6/8/8/8/8/K7 w - - 0 1', START0, 'r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1', '8/8/8/3k4/8/3K2B1/8/8 w - - 0 1', '6k1/5ppp/8/8/8/8/8/R3K3 w - - 0 1'
     ];
     function classify(f) { var p = E.fromFEN(f), st = E.status(p); if (st === 'mate') return 'Мат'; if (st === 'stalemate') return 'Пат'; if (E.insufficient(p)) return 'Ничья: мало фигур'; return 'Игра продолжается'; }
     window.__cl = function () { return CL.map(classify); };
@@ -4765,8 +4788,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var KQA = [
       ['Чёрная ладья стоит на a2. Может ли белый король с e1 пойти на e2?', '4k3/8/8/8/8/8/r7/4K3', 'Нет', 'Ладья бьёт всю вторую горизонталь, а под удар королю ходить нельзя.'],
       ['Белый король на d4, чёрный на d6. Может ли белый король пойти на d5?', '8/8/3k4/8/3K4/8/8/8', 'Нет', 'Клетка d5 рядом с чёрным королём: короли не могут стоять рядом.'],
-      ['Чёрная пешка c5 защищена пешкой b6. Может ли король d4 съесть её?', '7k/8/1p6/2p5/3K4/8/8/8', 'Нет', 'Защищённую фигуру король брать не может: он попал бы под удар.'],
-      ['Чёрная пешка c5 никем не защищена. Может ли король d4 съесть её?', '7k/8/8/2p5/3K4/8/8/8', 'Да', 'Незащищённую фигуру король взять может.'],
+      ['Чёрная пешка c5 защищена пешкой b6. Может ли король c4 съесть её?', '7k/8/1p6/2p5/2K5/8/8/8', 'Нет', 'Защищённую фигуру король брать не может: он попал бы под удар.'],
+      ['Чёрная пешка c5 никем не защищена. Может ли король c4 съесть её?', '7k/8/8/2p5/2K5/8/8/8', 'Да', 'Незащищённую фигуру король взять может.'],
       ['Белому королю шах ладьёй. Можно ли оставить его так и походить другой фигурой?', '4r1k1/8/8/8/8/8/P7/4K3', 'Нет', 'Из-под шаха надо выйти сразу: уйти, закрыться или съесть фигуру, дающую шах.'],
       ['Белый король на e3, чёрный на e5. Может ли белый король пойти на d4?', '8/8/8/4k3/8/4K3/8/8', 'Нет', 'Клетка d4 соседняя с чёрным королём e5.'],
       ['Чёрный конь на d4 никем не защищён. Может ли король e3 съесть его?', '7k/8/8/8/3n4/4K3/8/8', 'Да', 'Незащищённого коня король съесть может.'],
@@ -4786,8 +4809,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
       { h: 'Короля нельзя съесть', p: ['Короля нельзя взять, как другие фигуры. Ему <b>объявляют шах</b>, и он обязан сразу спастись. Если спастись нельзя, это <b>мат</b>: партия закончена.'] },
       { h: 'Нельзя ходить под шах', p: ['Король не может встать на клетку, которую <b>бьёт чужая фигура</b>. Здесь чёрная ладья на a2 бьёт всю вторую горизонталь, поэтому королю e1 нельзя на d2, e2, f2. Подсвечены клетки, куда можно.'], fen: '4k3/8/8/8/8/8/r7/4K3 w - - 0 1', hl: hlK('4k3/8/8/8/8/8/r7/4K3 w - - 0 1') },
       { h: 'Нельзя оставаться под шахом', p: ['Если королю поставили шах, надо сразу <b>выйти из-под шаха</b>: уйти на безопасную клетку, закрыться другой фигурой или съесть ту, что дала шах. Оставить короля под шахом и сделать другой ход нельзя. Здесь шах ладьёй e8: королю можно уйти только вбок.'], fen: '4r1k1/8/8/8/8/8/8/4K3 w - - 0 1', hl: hlK('4r1k1/8/8/8/8/8/8/4K3 w - - 0 1') },
-      { h: 'Защищённую фигуру брать нельзя', p: ['Король может съесть фигуру соперника, но только <b>незащищённую</b>. Чёрная пешка c5 защищена пешкой b6: если король её возьмёт, пешка b6 возьмёт короля, то есть он окажется под шахом. Поэтому на c5 король не пойдёт.'], fen: '7k/8/1p6/2p5/3K4/8/8/8 w - - 0 1', hl: hlK('7k/8/1p6/2p5/3K4/8/8/8 w - - 0 1') },
-      { h: 'Незащищённую фигуру можно взять', p: ['А здесь пешка c5 никем не защищена. Король может её съесть: клетка c5 подсвечена.'], fen: '7k/8/8/2p5/3K4/8/8/8 w - - 0 1', hl: hlK('7k/8/8/2p5/3K4/8/8/8 w - - 0 1') },
+      { h: 'Защищённую фигуру брать нельзя', p: ['Король может съесть фигуру соперника, но только <b>незащищённую</b>. Чёрная пешка c5 защищена пешкой b6: если король её возьмёт, пешка b6 возьмёт короля, то есть он окажется под шахом. Поэтому на c5 король не пойдёт.'], fen: '7k/8/1p6/2p5/2K5/8/8/8 w - - 0 1', hl: hlK('7k/8/1p6/2p5/2K5/8/8/8 w - - 0 1') },
+      { h: 'Незащищённую фигуру можно взять', p: ['А здесь пешка c5 никем не защищена. Король может её съесть: клетка c5 подсвечена.'], fen: '7k/8/8/2p5/2K5/8/8/8 w - - 0 1', hl: hlK('7k/8/8/2p5/2K5/8/8/8 w - - 0 1') },
       { h: 'Король королю не подходит', p: ['Два короля <b>никогда не стоят рядом</b>: каждый король бьёт все клетки вокруг себя. Белый король d4 не может встать на c5, d5, e5, потому что они рядом с чёрным королём d6. Между королями всегда остаётся хотя бы одна клетка.'], fen: '8/8/3k4/8/3K4/8/8/8 w - - 0 1', hl: hlK('8/8/3k4/8/3K4/8/8/8 w - - 0 1') },
       { h: 'Запомни пять правил', p: ['<b>1.</b> Король ходит на одну клетку. <b>2.</b> Короля нельзя съесть. <b>3.</b> Под шах ходить нельзя. <b>4.</b> Оставаться под шахом нельзя. <b>5.</b> Защищённую фигуру брать нельзя, и король к королю не подходит. Впереди <b>40 заданий</b>: куда можно пойти, что можно съесть, сколько ходов, как уйти от шаха и вопросы «Да или Нет».'] }
     ];
@@ -5117,7 +5140,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       ['Пешка, дошедшая до последней горизонтали, может стать ферзём?', true, 'Да, и ещё ладьёй, слоном или конём.'],
       ['Если позиция повторилась три раза, можно требовать ничью?', true, 'Да, это троекратное повторение.'],
       ['Ладью можно менять на пешку выгодно?', false, 'Нет: ладья 5 очков, пешка 1.'],
-      ['Король и слон против короля: это ничья?', true, 'Да, мат поставить нельзя.', '8/8/8/3k4/8/3K1B2/8/8 w - - 0 1'],
+      ['Король и слон против короля: это ничья?', true, 'Да, мат поставить нельзя.', '8/8/8/3k4/8/3K2B1/8/8 w - - 0 1'],
       ['Двойной удар — это когда одна фигура нападает на две?', true, 'Да, соперник не успевает спасти обе.'],
       ['Взятие на проходе делают только сразу?', true, 'Да, только на следующем ходу.'],
       ['Конь может перепрыгивать через фигуры?', true, 'Да, только конь.'],
@@ -5140,6 +5163,159 @@ if (typeof module !== 'undefined') module.exports = Eng;
     GROUPS.forEach(function (g) { var k = g.ids.indexOf('rules'); if (k >= 0) g.ids.splice(k, 1); });
     var G = GROUPS.filter(function (g) { return g.n === 'Правила и приёмы'; })[0];
     if (G) G.ids.unshift('rules'); else GROUPS.push({ n: 'Правила игры', ids: ['rules'] });
+  })();
+
+  /* ===== «Игровая практика»: игры с компьютером ===== */
+  (function () {
+    var PCS = ['N', 'K', 'R', 'B', 'Q'], PV = { N: 2, K: 6, R: 4, B: 3, Q: 5 };
+    var PRU = { N: 'Конь', K: 'Король', R: 'Ладья', B: 'Слон', Q: 'Ферзь' };
+    var START = { N: 57, K: 60, R: 56, B: 58, Q: 59 }, LIM = { N: 12, K: 14, R: 10, B: 10, Q: 8 };
+    var BALLS = ['⚽', '🏀', '🎾', '🍎', '⭐', '🍓', '🥕', '🍪', '🎈', '🍩'];
+    var DIFF = ['Лёгкий', 'Средний', 'Сложный'];
+    function other(b) { return b; }
+    function mkGame(code, lv) {
+      var r = mkRng(hstr('gc' + code + lv)), p0 = START[code], c0 = 63 - p0, col = ((p0 & 7) + (p0 >> 3)) & 1;
+      var pool = [];
+      for (var s = 0; s < 32; s++) {
+        if (s === p0 || s === c0 || 63 - s === p0 || 63 - s === c0) continue;
+        if (code === 'B' && ((((s & 7) + (s >> 3)) & 1) !== col)) continue;
+        pool.push(s);
+      }
+      pool = shuffle(r, pool);
+      var balls = {}; pool.slice(0, 8).forEach(function (s) { balls[s] = 1; balls[63 - s] = 1; });
+      return { p0: p0, c0: c0, balls: balls };
+    }
+    function runCoins(host, L, lv, finish) {
+      var code = L.pc, d = (lv - 1) % 3, ball = BALLS[(lv + PCS.indexOf(code) * 2) % BALLS.length], lim = LIM[code], g = mkGame(code, lv);
+      var S = { pos: null, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
+      var me, cp, balls, sc, sk, mv, over, busy;
+      host.innerHTML = say(av('simba'), PRU[code] + ' · игра ' + lv, 'Кто соберёт больше мячиков? Ходи по очереди с компьютером. Фигуры друг друга не берут.', 'уровень: ' + DIFF[d]) +
+        '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
+        '<div class="gscore" id="gsc"></div>' +
+        '<div class="row"><button class="btn alt" id="resB">Заново</button></div>' + boardHTML();
+      var msg = document.getElementById('msg');
+      function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function reach(c, from, opp) { var w = {}; w[opp] = true; return lone(c, from, { walls: w, enemies: {} }); }
+      function reset() {
+        clearTimers(); me = g.p0; cp = g.c0; balls = {}; for (var k in g.balls) balls[k] = 1;
+        sc = 0; sk = 0; mv = 0; over = false; busy = false; S.last = null; setMsg('Твой ход. Нажми на клетку, куда хочешь пойти.'); draw();
+      }
+      function left() { var n = 0; for (var k in balls) n++; return n; }
+      function draw() {
+        var b = new Int8Array(64); b[me] = PV[code]; b[cp] = -PV[code];
+        S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 };
+        S.mark = {}; for (var k in balls) S.mark[k] = 'e:' + ball;
+        S.sel = me; S.targets = over || busy ? [] : reach(code, me, cp);
+        document.getElementById('gsc').innerHTML = '<span class="gs you">Ты: <b>' + sc + '</b></span><span class="gs cpu">Компьютер: <b>' + sk + '</b></span><span class="gs">Осталось: <b>' + left() + '</b></span><span class="gs">Ход ' + Math.min(mv + 1, lim) + ' из ' + lim + '</span>';
+        drawBoard(S, click);
+      }
+      function endCheck() {
+        if (left() === 0 || (mv >= lim && !busy)) return true; return false;
+      }
+      function result() {
+        over = true; draw();
+        if (sc > sk) { sfx('good'); setMsg('Ты победил со счётом ' + sc + ' : ' + sk + '! Молодец!', 'good'); finish(sc - sk >= 4 ? 3 : sc - sk >= 2 ? 2 : 1); }
+        else if (sc === sk) { sfx('bad'); setMsg('Ничья ' + sc + ' : ' + sk + '. Нажми «Заново» и попробуй ещё раз.', 'bad'); }
+        else { sfx('bad'); setMsg('Компьютер собрал больше: ' + sk + ' : ' + sc + '. Нажми «Заново» — у тебя получится!', 'bad'); }
+      }
+      function aiPick() {
+        var mvs = reach(code, cp, me); if (!mvs.length) return -1;
+        var best = -1e9, bm = [];
+        mvs.forEach(function (m) {
+          var gain = balls[m] ? 1 : 0, sc2;
+          if (d === 0) sc2 = (gain && Math.random() < 0.5 ? 1 : 0) + Math.random();
+          else {
+            var nb = {}; for (var k in balls) if (+k !== m) nb[k] = 1;
+            var nxt = 0; reach(code, m, me).forEach(function (t) { if (nb[t]) nxt++; });
+            sc2 = gain * 3 + Math.random() * 0.2;
+            if (d === 1) sc2 += nxt * 0.15;
+            else { var opp = 0; reach(code, me, m).forEach(function (t) { if (nb[t]) opp = 1; }); sc2 += nxt * 0.3 - opp * 1.5; if (!gain && !nxt) { var near = 99; for (var q in nb) near = Math.min(near, Math.max(Math.abs((q & 7) - (m & 7)), Math.abs((q >> 3) - (m >> 3)))); sc2 -= near * 0.1; } }
+          }
+          if (sc2 > best) { best = sc2; bm = [m]; }
+        });
+        return bm[0];
+      }
+      function click(i) {
+        if (over || busy) return;
+        if (S.targets.indexOf(i) < 0) { sfx('bad'); setMsg('Сюда ходить нельзя. Выбери другую клетку.', 'bad'); return; }
+        me = i; mv++; if (balls[i]) { delete balls[i]; sc++; sfx('good'); setMsg('Мячик твой!', 'good'); } else { sfx('move'); setMsg('Ход компьютера…'); }
+        busy = true; draw();
+        if (left() === 0) return later(result, 500);
+        later(function () {
+          var m = aiPick();
+          if (m >= 0) { cp = m; if (balls[m]) { delete balls[m]; sk++; } }
+          busy = false;
+          if (left() === 0 || mv >= lim) return result();
+          setMsg('Твой ход.'); draw();
+        }, 700);
+      }
+      document.getElementById('resB').onclick = reset;
+      reset();
+    }
+
+    /* ===== Ферзь/ладья против пешек ===== */
+    function genPawns(code, lv) {
+      var r = mkRng(hstr('gp' + code + lv)), n = 3 + (lv - 1) % 6, lo = code === 'Q' ? 2 : 1, hi = code === 'Q' ? 4 : 3;
+      var files = shuffle(r, [0, 1, 2, 3, 4, 5, 6, 7]).slice(0, n), pw = {};
+      files.forEach(function (f) { pw[(lo + Math.floor(r() * (hi - lo + 1))) * 8 + f] = 1; });
+      return pw;
+    }
+    function runPawns(host, L, lv, finish) {
+      var code = L.pc, pw0 = genPawns(code, lv), n0 = 0; for (var k in pw0) n0++;
+      var S = { pos: null, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
+      var me, pw, mv, over, busy, caught;
+      host.innerHTML = say(av('arni'), PRU[code] + ' против пешек · игра ' + lv, 'Пешек ' + n0 + '. Они идут вниз, к твоей стороне. Бери их все, пока ни одна не дошла до последней горизонтали!', 'уровень ' + lv) +
+        '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
+        '<div class="gscore" id="gsc"></div>' +
+        '<div class="row"><button class="btn alt" id="resB">Заново</button></div>' + boardHTML();
+      var msg = document.getElementById('msg');
+      function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function left() { var n = 0; for (var q in pw) n++; return n; }
+      function reset() {
+        clearTimers(); me = START[code]; pw = {}; for (var q in pw0) pw[q] = 1; mv = 0; over = false; busy = false; caught = 0; S.last = null;
+        setMsg('Твой ход. Нажми на клетку, куда хочешь пойти.'); draw();
+      }
+      function reachP() { var en = {}; for (var q in pw) en[q] = 1; return lone(code, me, { walls: {}, enemies: en }); }
+      function draw() {
+        var b = new Int8Array(64); b[me] = PV[code]; for (var q in pw) b[q] = -1;
+        S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; S.mark = {};
+        S.sel = me; S.targets = over || busy ? [] : reachP();
+        document.getElementById('gsc').innerHTML = '<span class="gs you">Взято: <b>' + caught + '</b></span><span class="gs">Пешек осталось: <b>' + left() + '</b></span><span class="gs">Ходов: <b>' + mv + '</b></span>';
+        drawBoard(S, click);
+      }
+      function lose() { over = true; draw(); sfx('bad'); setMsg('Пешка дошла до конца и стала ферзём. Нажми «Заново» — попробуй ещё!', 'bad'); }
+      function win() { over = true; draw(); sfx('good'); setMsg('Все пешки взяты за ' + mv + ' ' + (mv < 5 ? 'хода' : 'ходов') + '! Молодец!', 'good'); finish(mv <= n0 + 2 ? 3 : mv <= n0 + 5 ? 2 : 1); }
+      function click(i) {
+        if (over || busy) return;
+        if (S.targets.indexOf(i) < 0) { sfx('bad'); setMsg('Сюда ходить нельзя. Выбери другую клетку.', 'bad'); return; }
+        me = i; mv++;
+        if (pw[i]) { delete pw[i]; caught++; sfx('good'); } else sfx('move');
+        if (!left()) { draw(); return later(win, 400); }
+        busy = true; draw(); setMsg('Ход пешек…');
+        later(function () {
+          if (lv <= 6 && mv % 2 === 1) { busy = false; setMsg('Пешки стоят. Твой ход.'); draw(); return; }
+          var mp = Object.keys(pw).map(Number).sort(function (a, b) { return (b >> 3) - (a >> 3); }), moved = false;
+          for (var j = 0; j < mp.length && !moved; j++) { var s = mp[j], t = s + 8; if (t < 64 && !pw[t] && t !== me) { delete pw[s]; pw[t] = 1; moved = true; if ((t >> 3) === 7) { busy = false; return lose(); } } }
+          busy = false; setMsg('Твой ход.'); draw();
+        }, 500);
+      }
+      document.getElementById('resB').onclick = reset;
+      reset();
+    }
+
+    function lessonCoins(code, ti) {
+      return { id: 'gc' + code, t: PRU[code] + ': мячики', d: 'Игра с компьютером: кто соберёт больше мячиков. Три уровня сложности.', pc: code, levels: 9, run: runCoins,
+        slides: [{ h: 'Правила игры', p: ['На доске лежат мячики. Ты ходишь белой фигурой (' + PRU[code].toLowerCase() + '), компьютер — чёрной. Ходите по очереди.', 'Если встал на клетку с мячиком — он твой. Фигуры друг друга не берут.', 'Игра идёт, пока не кончатся мячики или ходы. Кто собрал больше, тот и победил. Уровни: лёгкий, средний, сложный.'] }] };
+    }
+    var ids = [];
+    PCS.forEach(function (c) { LESS['gc' + c] = lessonCoins(c); ids.push('gc' + c); });
+    ['Q', 'R'].forEach(function (c) {
+      LESS['gp' + c] = { id: 'gp' + c, t: PRU[c] + ' против пешек', d: 'Пешки идут вперёд. Успей взять их все!', pc: c, levels: 12, run: runPawns,
+        slides: [{ h: 'Правила игры', p: ['Чёрные пешки идут вниз. Каждый раз, когда ты сделал ход, одна пешка делает шаг вперёд.', 'Пешки в этой игре ничего не берут. Если хоть одна дойдёт до последней горизонтали, ты проиграл.', 'Бери пешки своей фигурой и постарайся сделать это быстро.'] }] };
+      ids.push('gp' + c);
+    });
+    var gi = -1; GROUPS.forEach(function (g, i) { if (g.n === 'Повторение') gi = i; });
+    GROUPS.splice(gi < 0 ? GROUPS.length : gi, 0, { n: 'Игровая практика', ids: ids });
   })();
 
   /* ===== Рокировка и взятие на проходе: много позиций, «попробуй сам» ===== */
@@ -5904,342 +6080,6 @@ if (typeof module !== 'undefined') module.exports = Eng;
         tvEl.textContent = fmtT(left); tvEl.parentNode.classList.toggle('low', left <= 30);
       }, 500);
       var msg = document.getElementById('msg');
-      function sm(x, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = x; }
-      function draw() { S.targets = opt.hl ? tg : []; if (!opt.hl) S.last = S.last; drawBoard(S, click); }
-      function pgn() { var h = '', n = 1; mv.forEach(function (x, k) { h += (k % 2 === 0 ? '<span class="y2pn">' + n + '.</span> ' : '') + '<span class="y2mv">' + esc(x) + '</span> '; if (k % 2 === 1) n++; }); document.getElementById('pgn').innerHTML = h || '<span class="y2note">Партия начинается.</span>'; }
-      function apply(m) {
-        var b0 = S.pos, np = E.make(b0, m), cap = b0.b[m.t] || m.fl === 1, pawn = Math.abs(b0.b[m.f]) === 1;
-        mv.push(notation(m, b0)); hm = (cap || pawn) ? 0 : hm + 1; S.anim = animOf(b0, m); S.last = { f: m.f, t: m.t }; S.pos = np; S.sel = null; tg = []; moveSound(b0, m, np);
-        var k = E.key(np); keys[k] = (keys[k] || 0) + 1; pgn(); draw(); return np;
-      }
-      function result() {
-        var st = E.status(S.pos);
-        if (st === 'mate') return S.pos.turn === (meW ? 1 : -1) ? 'loss' : 'win';
-        if (st === 'stalemate') return 'draw-пат';
-        if (E.insufficient(S.pos)) return 'draw-недостаточно материала';
-        if (keys[E.key(S.pos)] >= 3) return 'draw-троекратное повторение';
-        if (hm >= 100) return 'draw-правило 50 ходов';
-        return '';
-      }
-      function finish(res, why) {
-        over = true; busy = true; if (clkIv) clearInterval(clkIv); document.removeEventListener('visibilitychange', onVis); var sc = res === 'win' ? 1 : res === 'loss' ? 0 : 0.5, g = gst();
-        var ex = 1 / (1 + Math.pow(10, (o.rt - g.r) / 400)), dr = Math.round(32 * (sc - ex));
-        var key = t + ':' + i, prev = g.done[key];
-        if (cu) dr = 0; else { g.r = Math.max(100, g.r + dr); if (sc === 1) g.w++; else if (sc === 0) g.l++; else g.d++;
-        if (prev == null || sc > prev) g.done[key] = sc;
-        lsSet('ukc_y2g', g); }
-        var txt = (res === 'win' ? 'Победа!' : res === 'loss' ? 'Поражение.' : 'Ничья.') + (why ? ' ' + why : '');
-        sm(txt + (away ? ' Уходов со страницы: ' + away + ' (' + awayT + ' с).' : ' Нарушений честной игры не замечено.'), res === 'win' ? 'good' : res === 'loss' ? 'bad' : ''); speak(txt);
-        var nx = cu ? '#y2/engine' : i < 99 ? '#y2/play/' + t + '/' + (i + 1) : '#y2/games/' + t;
-        document.getElementById('after').innerHTML = '<div class="y2res ' + (res === 'win' ? 'ok' : res === 'loss' ? 'bad' : '') + '"><b>' + txt + '</b>' + (cu ? '' : ' Рейтинг: ' + g.r + ' (' + (dr >= 0 ? '+' : '') + dr + ')') + '</div><div class="row"><a class="btn go" href="' + nx + '">' + (cu ? 'Новая партия' : 'Следующий соперник') + '</a><button class="btn alt" id="anB2">Анализ на компьютере</button><a class="btn alt" href="#y2/play/' + t + '/' + i + '" id="agB">Сыграть ещё раз</a></div>';
-        document.getElementById('anB2').onclick = function () { analysis(E.toFEN(S.pos), document.getElementById('anP'), S, draw); };
-        document.getElementById('agB').onclick = function (e) { e.preventDefault(); play(t, i, tc, cu, colOv); };
-      }
-      function after() { var r = result(); if (r) { finish(r === 'win' ? 'win' : r === 'loss' ? 'loss' : 'draw', r.indexOf('draw-') === 0 ? r.slice(5) : ''); return true; } return false; }
-      function engine() {
-        if (over) return; busy = true; sm(esc(o.n) + ' думает…'); var my = gen;
-        later(function () {
-          if (over || my !== gen) return;
-          var m = null; try { m = E.bestMove(S.pos, lv); } catch (e) { m = null; }
-          if (!m) { var L = E.legal(S.pos); m = L[Math.floor(Math.random() * L.length)]; }
-          if (!m) { after(); return; }
-          apply(m); clkSwitch('op'); busy = false; if (after()) return; sm(E.inCheck(S.pos) ? 'Вам шах. Ваш ход.' : 'Ваш ход.'); if (mv.length >= 40 && mv.length - lastOffer >= 20 && matMe() >= 0 && !E.inCheck(S.pos) && Math.random() < 0.2) offerFromOpp();
-        }, 450);
-      }
-      function click(sq) {
-        if (busy || over) return; var v = S.pos.b[sq];
-        if (S.sel != null && tg.indexOf(sq) >= 0) { var c = movesFrom(S.pos, S.sel).filter(function (x) { return x.t === sq; }); var m = c.filter(function (x) { return x.p === 5; })[0] || c[0]; tg = []; if (!over) document.getElementById('after').innerHTML = ''; apply(m); clkSwitch('me'); if (after()) return; engine(); return; }
-        if (v && (meW ? v > 0 : v < 0)) { S.sel = sq; tg = movesFrom(S.pos, sq).map(function (x) { return x.t; }); } else { S.sel = null; tg = []; }
-        draw();
-      }
-      document.getElementById('flB').onclick = function () { S.flip = !S.flip; draw(); };
-      document.getElementById('rsB').onclick = function () { if (over) return; if (!confirm('Сдаться?')) return; gen = Math.random(); finish('loss', 'Вы сдались.'); };
-      var lastOffer = -99;
-      function matMe() { var P = { 1: 1, 2: 3, 3: 3, 4: 5, 5: 9 }, s2 = 0; for (var q = 0; q < 64; q++) { var vv = S.pos.b[q]; if (vv && Math.abs(vv) < 6) s2 += (vv > 0 ? 1 : -1) * P[Math.abs(vv)]; } return meW ? s2 : -s2; }
-      document.getElementById('dwB').onclick = function () {
-        if (over || busy) return;
-        if (mv.length - lastOffer < 10) { sm('Вы недавно предлагали ничью. Подождите несколько ходов.'); return; }
-        lastOffer = mv.length;
-        var ev = matMe();
-        if (ev <= 0 && mv.length >= 20 && lv >= 1) { gen = Math.random(); finish('draw', 'Ничья по соглашению.'); }
-        else sm(o.n + ' отклоняет предложение ничьей.');
-      };
-      function offerFromOpp() {
-        var a = document.getElementById('after'); lastOffer = mv.length;
-        a.innerHTML = '<div class="y2res"><b>' + esc(o.n) + ' предлагает ничью.</b></div><div class="row"><button class="btn go" id="okD">Принять</button><button class="btn alt" id="noD">Отказать</button></div>';
-        speak('Соперник предлагает ничью.');
-        document.getElementById('okD').onclick = function () { gen = Math.random(); finish('draw', 'Ничья по соглашению.'); };
-        document.getElementById('noD').onclick = function () { a.innerHTML = ''; sm('Вы отказались от ничьей. Ваш ход.'); };
-      }
-      var away = 0, awayT = 0, awayAt = 0;
-      function onVis() { if (over) return; if (document.hidden) { awayAt = Date.now(); } else if (awayAt) { away++; awayT += Math.round((Date.now() - awayAt) / 1000); awayAt = 0; var f = document.querySelector('.y2fair'); if (f) f.classList.add('warn'); sm('Вы уходили со страницы. Это записано: ' + away + ' раз.', 'bad'); } }
-      document.addEventListener('visibilitychange', onVis);
-      var fairIv = setInterval(function () { if (!document.getElementById('flB')) { clearInterval(fairIv); document.removeEventListener('visibilitychange', onVis); } }, 1000);
-      document.getElementById('mnB').onclick = settings; window.__y2redraw = draw;
-      function clkDraw() { var a = document.getElementById('clO'), b = document.getElementById('clM'); if (!a || !b) return false; a.textContent = esc(o.n) + (timed ? '  ' + fmt(T.op) : ''); b.textContent = 'Вы' + (timed ? '  ' + fmt(T.me) : ''); a.className = !turnMe && !over ? 'on' : ''; b.className = turnMe && !over ? 'on' : ''; return true; }
-      function clkSwitch(mover) { /* mover: 'me'|'op' только что сделал ход */ var now = Date.now(); if (timed) { T[mover] -= (now - lastTs); T[mover] += inc; } lastTs = now; turnMe = mover === 'op'; clkDraw(); }
-      if (timed) { clkIv = setInterval(function () { if (!clkDraw()) { clearInterval(clkIv); return; } if (over) { clearInterval(clkIv); return; } var now = Date.now(), who = turnMe ? 'me' : 'op', left = T[who] - (now - lastTs); var a = document.getElementById(turnMe ? 'clM' : 'clO'); if (a) a.textContent = (turnMe ? 'Вы' : esc(o.n)) + '  ' + fmt(left); if (left <= 0) { gen = Math.random(); T[who] = 0; finish(turnMe ? 'loss' : 'win', 'Время вышло.'); clearInterval(clkIv); clkDraw(); } }, 250); }
-      pgn(); draw(); clkDraw();
-      if (!meW) { engine(); } else sm('Ваш ход. Вы играете белыми.');
-    }
-
-    var MINS = [1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 45, 60, 90], INCS = [0, 1, 2, 3, 5, 10, 15, 20, 30];
-    var DIFF = [3, 7, 11, 15, 19, 22, 25, 28];
-    function enginePage() {
-      var st = lsGet('ukc_y2eng', null); if (!st || st.d == null) st = { d: 3, col: 'r', timed: true, m: 6, inc: 0 };
-      function ratOf(l) { return l < 5 ? 600 + (l - 1) * 100 : l < 14 ? 1000 + Math.round((l - 5) * 45 / 5) * 5 : l < 18 ? 1400 + (l - 14) * 100 : l < 23 ? 1800 + (l - 18) * 100 : 2300 + (l - 23) * 50; }
-      view.innerHTML = crumbs('Игра с компьютером', '#y2/practice') + '<div class="y2eng"><div class="y2row y2tabs"><button class="btn alt" data-tm="0">Без времени</button><button class="btn alt" data-tm="1">По часам</button></div><div id="enT"><div class="y2row"><span>Минут на партию: <b id="mL"></b></span><input type="range" id="mS" min="0" max="' + (MINS.length - 1) + '" aria-label="Минут на партию"></div><div class="y2row"><span>Добавление секунд на ход: <b id="iL"></b></span><input type="range" id="iS" min="0" max="' + (INCS.length - 1) + '" aria-label="Секунд на ход"></div><div class="row y2tcs">' + TCS.slice(1).map(function (x, k) { return '<button class="btn alt" data-p="' + (k + 1) + '">' + x[0] + '</button>'; }).join('') + '</div></div><h3 class="y2h3">Сложность</h3><div class="row y2dif">' + DIFF.map(function (l, k) { return '<button class="btn alt" data-d="' + k + '">' + (k + 1) + '</button>'; }).join('') + '</div><p class="y2note" id="dN"></p><h3 class="y2h3">Сторона</h3><div class="row y2cols"><button class="btn alt" data-c="w">Белые</button><button class="btn alt" data-c="r">Случайный цвет</button><button class="btn alt" data-c="b">Чёрные</button></div><div class="row"><button class="btn go" id="goB">Сыграть с компьютером</button></div><p class="y2note">Результат не влияет на рейтинг: это свободная тренировка.</p></div>';
-      function ap() {
-        view.querySelectorAll('[data-tm]').forEach(function (b) { b.setAttribute('aria-pressed', String((b.getAttribute('data-tm') === '1') === st.timed)); });
-        document.getElementById('enT').style.display = st.timed ? '' : 'none';
-        document.getElementById('mS').value = MINS.indexOf(st.m) < 0 ? 6 : MINS.indexOf(st.m); document.getElementById('iS').value = Math.max(0, INCS.indexOf(st.inc));
-        document.getElementById('mL').textContent = st.m; document.getElementById('iL').textContent = st.inc;
-        view.querySelectorAll('.y2tcs button').forEach(function (b) { var x = TCS[+b.getAttribute('data-p')]; b.setAttribute('aria-pressed', String(x[1] === st.m && x[2] === st.inc)); });
-        view.querySelectorAll('[data-d]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-d') === st.d)); });
-        view.querySelectorAll('[data-c]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-c') === st.col)); });
-        document.getElementById('dN').textContent = 'Сложность ' + (st.d + 1) + ' — примерно ' + ratOf(DIFF[st.d]) + ' по рейтингу.';
-      }
-      document.getElementById('mS').oninput = function () { st.m = MINS[+this.value]; ap(); };
-      document.getElementById('iS').oninput = function () { st.inc = INCS[+this.value]; ap(); };
-      view.onclick = function (e) { var b = e.target.closest('button'); if (!b) return;
-        if (b.hasAttribute('data-tm')) st.timed = b.getAttribute('data-tm') === '1';
-        else if (b.hasAttribute('data-p')) { var x = TCS[+b.getAttribute('data-p')]; st.m = x[1]; st.inc = x[2]; }
-        else if (b.hasAttribute('data-d')) st.d = +b.getAttribute('data-d');
-        else if (b.hasAttribute('data-c')) st.col = b.getAttribute('data-c'); else return; ap(); };
-      document.getElementById('goB').onclick = function () { lsSet('ukc_y2eng', st); var w = st.col === 'r' ? Math.random() < 0.5 : st.col === 'w', lv = DIFF[st.d]; play(-1, 0, st.timed ? ['', st.m, st.inc] : null, { n: 'Компьютер', full: 'Компьютер, сложность ' + (st.d + 1), age: '', c: '', rt: ratOf(lv), t: 0, i: 0, lv: lv, meW: w }); };
-      ap();
-    }
-    var POS = [['Король и пешка против короля', 'Оппозиция, правило квадрата, ключевые поля'], ['Ладейные окончания: позиции Филидора и Лусены', 'Теоретические позиции для разыгрывания'], ['Король, ферзь и пешка', 'Выигрыш и ничья'], ['Мат двумя ладьями, ферзём, ладьёй', 'Техника матования'], ['Слон и конь против короля', 'Матовая сеть'], ['Слон и пешка, конь и пешка', 'Окончания с лёгкими фигурами']];
-    function positions() {
-      var h = POS.map(function (x, i) { return '<div class="y2row soonrow"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + x[0] + '</b><small>' + x[1] + '</small></span><span class="y2st">скоро</span></div>'; }).join('');
-      view.innerHTML = crumbs('Практические позиции', '#y2/practice') + '<p class="y2lead">Выберите тему, получите позицию и доведите её до результата против компьютера. Можно начать заново и попробовать другой план.</p><div class="y2list">' + h + '</div><p class="y2note">Макет списка тем.</p>';
-    }
-    function avgT(L) { var r = rec(L.id), n = 0, t = 0; for (var k in r) if (r[k].t != null) { n++; t += r[k].t; } return n ? Math.round(t / n) : 0; }
-    function progressPage() {
-      var g = gst(), sp = spGet(), tot = g.w + g.d + g.l;
-      var les = Y2.map(function (L) {
-        var mx = maxPts(L), gt = got(L), c = counts(L), N = L.bank.length, dn = doneCount(L), pc = mx ? Math.round(gt * 100 / mx) : 0;
-        return '<a class="y2row" href="#y2/' + L.id + '"><span class="y2no"></span><span class="y2tt"><b>' + esc(L.t) + '</b><small>Задач: ' + dn + ' из ' + N + ' · без ошибок ' + c.ok + ' · с ошибками ' + c.half + ' · не решено ' + c.bad + (avgT(L) ? ' · среднее время ' + fmtT(avgT(L)) : '') + '</small><span class="y2bar"><i style="width:' + pc + '%"></i></span></span><span class="y2st">' + pc + '% · ' + gt + ' из ' + mx + '</span></a>';
-      }).join('');
-      var tr = TIERS.map(function (t, i) {
-        var w = tierWins(g, i), d = 0, l = 0; for (var k = 0; k < 100; k++) { var x = g.done[i + ':' + k]; if (x === 0.5) d++; else if (x === 0) l++; }
-        var op = tierOpen(g, i);
-        return '<div class="y2row"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + t[0] + '</b><small>' + (op ? 'Побеждено соперников: ' + w + ' из 100 · ничьих ' + d + ' · поражений ' + l : 'уровень закрыт') + '</small></span><span class="y2st">' + (op ? '<a href="#y2/games/' + i + '">играть</a>' : '—') + '</span></div>';
-      }).join('');
-      var rk = sp.rec || {}, rkl = Object.keys(rk).map(function (k) { var m = k.match(/^sp(\d+)_(\d)$/); return m ? '<li>Спринт, ' + m[1] + ' мин, ' + ['', 'лёгкий', 'средний', 'сложный'][+m[2]] + ' уровень: <b>' + rk[k] + '</b></li>' : ''; }).join('');
-      var bm = lsGet('ukc_y2bm', {}), bl = Object.keys(bm || {}).map(function (k) { var x = bm[k]; return '<li><a href="' + esc(x.h || '#y2/' + k.split(':')[0]) + '">' + esc(x.t || k) + '</a></li>'; }).join('');
-      view.innerHTML = crumbs('Мой прогресс', '#y2') + '<div class="y2me"><span>Рейтинг<b>' + g.r + '</b></span><span>Победы<b>' + g.w + '</b></span><span>Ничьи<b>' + g.d + '</b></span><span>Поражения<b>' + g.l + '</b></span></div>' +
-        '<p class="y2note">Всего партий: ' + tot + (tot ? ' · результативность ' + Math.round((g.w + g.d / 2) * 100 / tot) + '%' : '') + '</p>' +
-        '<h3 class="y2h3">Уроки и задачи</h3><div class="y2list">' + les + '</div>' +
-        '<h3 class="y2h3">Партии по уровням</h3><div class="y2list">' + tr + '</div>' +
-        '<h3 class="y2h3">Скорость</h3><ul class="y2ul">' + (rkl || '<li>Спринт: рекордов пока нет</li>') + '<li>Футбол: лучшее место ' + (sp.race ? sp.race + ' из 10' : '—') + ', сыграно матчей ' + (sp.races || 0) + '</li><li>Координаты: рекорд <b>' + (sp.coords || 0) + '</b></li></ul>' +
-        '<h3 class="y2h3">Закладки</h3><ul class="y2ul">' + (bl || '<li>Закладок пока нет. Добавляйте их кнопкой ☆ в уроках и в меню задачи.</li>') + '</ul>' +
-        '<h3 class="y2h3">Практические позиции</h3><p class="y2note">Раздел готовится: здесь появится статистика по разыгранным позициям.</p>';
-    }
-    var CARS = [['#b3382c', 'Алый'], ['#1e3a5f', 'Синий'], ['#1b7f6b', 'Изумруд'], ['#a9792b', 'Золото'], ['#6b4c9a', 'Аметист'], ['#2f7de1', 'Лазурь'], ['#555d66', 'Графит'], ['#d9772b', 'Медь'], ['#8a2a5b', 'Гранат'], ['#3c8d2f', 'Нефрит']];
-    function car(c) { return '<svg class="y2car" viewBox="0 0 64 28" aria-hidden="true"><path d="M3 20 L6 12 Q8 9 13 9 L22 9 L28 3 L44 3 L52 9 L58 11 Q62 12 62 17 L62 20 Z" fill="' + c + '"/><path d="M26 9 L30 5 L42 5 L48 9 Z" fill="#fff" opacity=".85"/><circle cx="16" cy="21" r="5" fill="#1d2733"/><circle cx="48" cy="21" r="5" fill="#1d2733"/><circle cx="16" cy="21" r="2" fill="#cfd8e3"/><circle cx="48" cy="21" r="2" fill="#cfd8e3"/></svg>'; }
-    function boardPage() {
-      var S = { pos: E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
-      view.innerHTML = '<div class="y2head"><h2>Доска для анализа</h2></div><div class="y2task">' + boardHTML() + '<div class="row"><input id="fenIn" class="y2fen" placeholder="Вставьте позицию в формате FEN" aria-label="FEN"><button class="btn alt" id="fenB">Загрузить позицию</button><button class="btn alt" id="fenS">Начальная позиция</button></div><div id="anP"></div></div>';
-      var START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-      function open(f) { var ok = true; try { ok = !!E.fromFEN(f); } catch (e) { ok = false; } if (!ok) { document.getElementById('fenIn').value = ''; document.getElementById('fenIn').placeholder = 'Не удалось прочитать позицию, проверьте FEN'; return; } S.flip = false; analysis(f, document.getElementById('anP'), S, function () { open(f); }); }
-      document.getElementById('fenB').onclick = function () { var f = document.getElementById('fenIn').value.trim(); if (f) open(f); };
-      document.getElementById('fenS').onclick = function () { open(START); };
-      open(START);
-    }
-
-
-    /* ---------- скорость: свои режимы «Спринт» и «Гонка» ---------- */
-    function spGet() { var o = lsGet('ukc_y2sp', null); if (!o || typeof o !== 'object') o = { sprint: 0, race: 0, races: 0 }; return o; }
-    function pool(lv) {
-      var out = [], ST = null; try { ST = STREAM_BANK; } catch (e) { ST = null; } var LL = { mate: true, id: 'stream' };
-      lv = lv || 2;
-      if (ST) { if (lv <= 2) ST.m1.forEach(function (it) { out.push({ it: it, L: LL }); }); if (lv >= 2) ST.m2.forEach(function (it) { out.push({ it: it, L: LL }); }); }
-      if (lv >= 3 || !out.length) Y2.forEach(function (L) { L.bank.forEach(function (it) { if (plen(it) <= 3 && (lv < 3 || plen(it) >= 2 || !L.mate)) out.push({ it: it, L: L }); }); });
-      return out;
-    }
-    var LVN = ['', 'Лёгкий: мат в 1 ход', 'Средний: мат в 1–2 хода', 'Сложный: мат в 2–3 хода и темы уроков'];
-    function cfgHTML(st, mins, extra) { return '<div class="y2row y2opts"><span>Время</span>' + mins.map(function (m) { return '<button class="btn alt" data-m="' + m + '">' + m + ' мин</button>'; }).join('') + '</div><div class="y2row y2opts"><span>Уровень</span>' + [1, 2, 3].map(function (l) { return '<button class="btn alt" data-l="' + l + '">' + LVN[l] + '</button>'; }).join('') + '</div>' + (extra || ''); }
-    function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-    /* мини-решатель: одна задача на доске, итог в колбэк */
-    function mini(S, it, L, cb) {
-      var pos = E.fromFEN(it[0]), sol = it[1].split(' '), step = 0, busy = false, dead = false, tg = [], mateOk = (L.mate || /^Мат/.test(it[3] || ''));
-      var black = pos.turn === -1; S.pos = pos; S.flip = black; S.sel = null; S.last = null; S.badge = null; S.hint = null; S.hl = null; S.anim = null;
-      function draw() { S.targets = []; drawBoard(S, click); }
-      function end(ok) { dead = true; busy = true; cb(ok); }
-      function click(sq) {
-        if (busy || dead) return; var v = S.pos.b[sq];
-        if (S.sel != null && tg.indexOf(sq) >= 0) {
-          var c = movesFrom(S.pos, S.sel).filter(function (x) { return x.t === sq; }); var m = c.filter(function (x) { return x.p === 5; })[0] || c[0]; tg = [];
-          var before = S.pos, np = E.make(before, m), want = toMove(before, sol[step]), good = want && want.f === m.f && want.t === m.t && (want.p || 0) === (m.p || 0), mates = E.status(np) === 'mate';
-          moveSound(before, m, np); S.anim = animOf(before, m); S.last = { f: m.f, t: m.t }; S.sel = null;
-          if (good || (mateOk && mates)) { S.pos = np; step++; draw(); if (mates || step >= sol.length) { sfx('good'); end(true); return; } busy = true; later(function () { var r = toMove(S.pos, sol[step]), b0 = S.pos; S.pos = E.make(b0, r); S.last = { f: r.f, t: r.t }; S.anim = animOf(b0, r); moveSound(b0, r, S.pos); step++; busy = false; draw(); }, 350); return; }
-          sfx('bad'); S.pos = np; S.badge = { sq: m.t, cls: 'blunder', s: '✕' }; draw(); busy = true; later(function () { end(false); }, 500); return;
-        }
-        if (v && (black ? v < 0 : v > 0)) { S.sel = sq; tg = movesFrom(S.pos, sq).map(function (x) { return x.t; }); } else { S.sel = null; tg = []; }
-        draw();
-      }
-      draw();
-    }
-    function speed() {
-      var sp = spGet();
-      view.innerHTML = crumbs('Скорость', '#y2') + '<div class="y2cells two"><a class="y2cell" href="#y2/storm"><i>А</i><b>Спринт</b><p>Три минуты. Верные ответы идут серией: за каждые пять подряд добавляется время, ошибка его отнимает.</p><span>рекорд: ' + sp.sprint + '</span></a><a class="y2cell" href="#y2/race"><i>Б</i><b>Футбол: забей гол</b><p>Вы и девять футболистов бежите к воротам. Каждая верная задача — шаг вперёд, ошибка — подкат. Кто первым добежит, забивает гол.</p><span>лучшее место: ' + (sp.race || '—') + '</span></a></div>';
-    }
-    function storm() {
-      var sp = spGet(), cf = lsGet('ukc_y2spc', { min: 3, lv: 2 }), L0 = cf.min * 60, T = L0 * 1000, PEN = { 1: 3, 3: 5, 5: 6, 8: 8, 10: 8 }[cf.min] || 5, run = false, ended = false, iv = null, ls = Date.now(), solved = 0, err = 0, combo = 0, score = 0, best = 0, q = shuffle(pool(cf.lv)), qi = 0, flash = '', rkey = 'sp' + cf.min + '_' + cf.lv;
-      var S = { pos: E.start ? E.start() : E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
-      view.innerHTML = crumbs('Спринт', '#y2/speed') + '<div class="y2task"><div id="cfg">' + cfgHTML(cf, [1, 3, 5, 8, 10]) + '</div><div class="y2clk"><span id="spT">' + fmt(T) + '</span><span id="spS">Серия 0 · Верно 0 · Ошибки 0</span></div>' + boardHTML() + '<div class="msg" id="msg" role="status"></div><div class="row"><button class="btn go" id="spGo">Начать</button></div><p class="y2fair">Правила: за каждые 5 верных ответов подряд — +5 секунд. Ошибка: минус ' + PEN + ' с и серия сброшена. Очки: 10 за каждую верную и +1 за каждый шаг серии. Подсказок нет.</p><div id="after"></div></div>';
-      var msg = document.getElementById('msg'); function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
-      function stat() { var t = document.getElementById('spT'), st = document.getElementById('spS'); if (!t) return false; t.textContent = fmt(T); st.textContent = 'Серия ' + combo + ' · Верно ' + solved + ' · Ошибки ' + err + ' · Очки ' + score; return true; }
-      function next() { if (ended) return; var x = q[qi % q.length]; qi++; sm(kind(x.it, x.L) + '. ' + (E.fromFEN(x.it[0]).turn === 1 ? 'Ход белых.' : 'Ход чёрных.')); mini(S, x.it, x.L, function (ok) {
-        if (ended) return;
-        if (ok) { solved++; combo++; score += 10 + combo; if (combo % 5 === 0) { T += 5000; flash = '+5 с'; } } else { err++; combo = 0; T -= PEN * 1000; flash = '−' + PEN + ' с'; }
-        stat(); if (T <= 0) { fin(); return; } later(next, 250); }); }
-      function fin() { ended = true; clearInterval(iv); T = 0; stat(); var o = spGet(); o.rec = o.rec || {}; var rec = score > (o.rec[rkey] || 0); if (rec) { o.rec[rkey] = score; o.sprint = Math.max(o.sprint || 0, score); lsSet('ukc_y2sp', o); } sm('Время вышло. Очки: ' + score + (rec ? ' — новый рекорд для этого режима!' : ' (рекорд режима ' + o.rec[rkey] + ')'), rec ? 'good' : ''); document.getElementById('after').innerHTML = '<div class="row"><a class="btn go" href="#y2/storm" id="spAg">Ещё раз</a><a class="btn alt" href="#y2/speed">К разделу «Скорость»</a></div>'; document.getElementById('spAg').onclick = function (e) { e.preventDefault(); storm(); }; }
-      function cfgAp() { view.querySelectorAll('[data-m]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-m') === cf.min)); }); view.querySelectorAll('[data-l]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-l') === cf.lv)); }); }
-      cfgAp(); document.getElementById('cfg').onclick = function (e) { var b = e.target.closest('button'); if (!b || run) return; if (b.hasAttribute('data-m')) cf.min = +b.getAttribute('data-m'); else cf.lv = +b.getAttribute('data-l'); lsSet('ukc_y2spc', cf); storm(); };
-      document.getElementById('spGo').onclick = function () { if (run) return; run = true; this.style.display = 'none'; ls = Date.now(); iv = setInterval(function () { var now = Date.now(); T -= now - ls; ls = now; if (!stat()) { clearInterval(iv); return; } if (T <= 0 && !ended) fin(); }, 200); next(); };
-      window.__y2redraw = function () { drawBoard(S, function () {}); }; mini(S, E.fromFEN ? ['rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', 'e2e4', 0] : null, { mate: false }, function () {}); S.pos = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'); drawBoard(S, function () {}); stat();
-    }
-
-    /* ---------- координаты: найди клетку ---------- */
-    function coordsPage() {
-      var sp = spGet(), st = lsGet('ukc_y2co', { side: 'w', lab: true, sec: 60 });
-      var S = { pos: E.fromFEN('8/8/8/8/8/8/8/8 w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
-      function nm(i) { return 'abcdefgh'[i % 8] + (8 - (i >> 3)); }
-      view.innerHTML = crumbs('Координаты', '#y2/practice') + '<div class="y2task"><p class="y2lead">Найдите на доске клетку, которую назвал компьютер. Чем быстрее и точнее, тем больше очков.</p><div class="y2row y2opts"><span>Сторона</span><button class="btn alt" data-s="w">Белые</button><button class="btn alt" data-s="r">Случайно</button><button class="btn alt" data-s="b">Чёрные</button></div><div class="y2row y2opts"><span>Подписи на доске</span><button class="btn alt" data-l="1">Есть</button><button class="btn alt" data-l="0">Нет</button></div><div class="y2row y2opts"><span>Время</span><button class="btn alt" data-t="30">30 с</button><button class="btn alt" data-t="60">60 с</button><button class="btn alt" data-t="120">120 с</button></div><div class="y2clk"><span id="coT">—</span><span id="coS">Верно 0 · Ошибки 0</span></div><div class="y2coT" id="coQ">?</div>' + boardHTML() + '<div class="msg" id="msg" role="status"></div><div class="row"><button class="btn go" id="coGo">Начать</button></div><p class="y2note">Рекорд: ' + (sp.coords || 0) + '</p><div id="after"></div></div>';
-      function ap() {
-        view.querySelectorAll('[data-s]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-s') === st.side)); });
-        view.querySelectorAll('[data-l]').forEach(function (b) { b.setAttribute('aria-pressed', String((b.getAttribute('data-l') === '1') === st.lab)); });
-        view.querySelectorAll('[data-t]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-t') === st.sec)); });
-        S.coords = st.lab; S.flip = st.side === 'b'; drawBoard(S, click);
-      }
-      var run = false, left = 0, tgt = -1, ok = 0, er = 0, iv = null, ls = 0, shown = 0;
-      function ask() { var n; do { n = Math.floor(Math.random() * 64); } while (n === tgt); tgt = n; document.getElementById('coQ').textContent = nm(n); S.mark = {}; }
-      function stat() { var t = document.getElementById('coT'); if (!t) return false; t.textContent = run ? Math.ceil(left / 1000) + ' с' : '—'; document.getElementById('coS').textContent = 'Верно ' + ok + ' · Ошибки ' + er; return true; }
-      function click(i) {
-        if (!run) return;
-        if (i === tgt) { ok++; sfx('good'); S.mark = {}; S.hl = {}; S.hl[i] = true; ask(); } else { er++; sfx('bad'); S.hl = {}; S.hl[i] = true; document.getElementById('msg').textContent = 'Это ' + nm(i) + '. Ищем ' + nm(tgt) + '.'; document.getElementById('msg').className = 'msg bad'; }
-        stat(); drawBoard(S, click); later(function () { S.hl = null; drawBoard(S, click); }, 250);
-      }
-      function fin() {
-        run = false; clearInterval(iv); var sc = Math.max(0, ok * 2 - er), o = spGet(), rec = sc > (o.coords || 0); if (rec) { o.coords = sc; lsSet('ukc_y2sp', o); }
-        document.getElementById('coQ').textContent = '?'; stat(); var m = document.getElementById('msg'); m.className = 'msg' + (rec ? ' good' : ''); m.textContent = 'Время вышло. Верно: ' + ok + ', ошибок: ' + er + ', очки: ' + sc + (rec ? ' — новый рекорд!' : '');
-        document.getElementById('coGo').style.display = ''; document.getElementById('coGo').textContent = 'Ещё раз';
-      }
-      view.onclick = function (e) { var b = e.target.closest('.y2opts button'); if (!b || run) return; if (b.hasAttribute('data-s')) st.side = b.getAttribute('data-s'); else if (b.hasAttribute('data-l')) st.lab = b.getAttribute('data-l') === '1'; else st.sec = +b.getAttribute('data-t'); lsSet('ukc_y2co', st); ap(); };
-      document.getElementById('coGo').onclick = function () { if (st.side === 'r') S.flip = Math.random() < 0.5; ok = 0; er = 0; run = true; left = st.sec * 1000; ls = Date.now(); this.style.display = 'none'; document.getElementById('msg').textContent = ''; ask(); stat(); drawBoard(S, click); iv = setInterval(function () { var n = Date.now(); left -= n - ls; ls = n; if (!stat()) { clearInterval(iv); return; } if (left <= 0) fin(); }, 200); };
-      ap();
-    }
-    function player(c) { return '<svg class="y2car y2pl2" viewBox="0 0 56 32" aria-hidden="true"><circle cx="20" cy="6" r="4.5" fill="#f1c9a5"/><path d="M13 12 L27 12 L29 22 L11 22 Z" fill="' + c + '"/><path d="M13 12 L8 18" stroke="' + c + '" stroke-width="3" stroke-linecap="round"/><path d="M27 12 L33 16" stroke="' + c + '" stroke-width="3" stroke-linecap="round"/><path d="M15 22 L11 30 M25 22 L31 28" stroke="#222" stroke-width="3.5" stroke-linecap="round"/><circle cx="43" cy="27" r="4.5" fill="#fff" stroke="#222" stroke-width="1.3"/><path d="M41 25.5 L44 25 L45.5 27.5 L43 29.5 L40.5 28Z" fill="#222"/></svg>'; }
-    var BOT = [['Лёва', 55], ['Зарина', 70], ['Тимур', 85], ['Нигяр', 100], ['Артём', 120], ['Ли', 145], ['Мехмет', 170], ['Софи', 200], ['Рауф', 240], ['Эмма', 290]];
-    function race() {
-      var rcf = lsGet('ukc_y2rc', { n: 12, lv: 2 }), N = rcf.n, S = { pos: E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
-      var prog = [0].concat(BOT.map(function () { return 0; })), t0 = 0, iv = null, run = false, ended = false, me = 0, q = shuffle(pool(rcf.lv)), qi = 0, stall = 0, tNow = 0, KF = rcf.lv === 1 ? 0.8 : rcf.lv === 3 ? 1.35 : 1;
-      var names = ['Вы'].concat(BOT.map(function (b) { return b[0]; }));
-      view.innerHTML = crumbs('Футбол: кто первый забьёт гол', '#y2/speed') + '<div class="y2task"><div id="cfg"><div class="y2row y2opts"><span>Дистанция</span>' + [8, 12, 20].map(function (m) { return '<button class="btn alt" data-n="' + m + '">' + m + ' задач</button>'; }).join('') + '</div><div class="y2row y2opts"><span>Уровень</span>' + [1, 2, 3].map(function (l) { return '<button class="btn alt" data-l="' + l + '">' + LVN[l] + '</button>'; }).join('') + '</div></div><p class="y2lead">Нужно решить ' + N + ' задач, чтобы добежать до ворот. Каждая верная задача — ваш игрок ведёт мяч вперёд, ошибка — «подкат», вы стоите 3 секунды. Девять соперников бегут сами, у каждого свой темп. Кто первым добежит до ворот, тот забивает гол!</p><div class="y2race" id="rc"></div><div class="y2clk"><span id="rT">0:00</span><span id="rS">Решено 0 из ' + N + '</span></div>' + boardHTML() + '<div class="msg" id="msg" role="status"></div><div class="row"><button class="btn go" id="rGo">Вперёд, к воротам!</button></div><div id="after"></div></div>';
-      var msg = document.getElementById('msg'); function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
-      function lanes() {
-        var rc = document.getElementById('rc'); if (!rc) return false;
-        var order = names.map(function (n, i) { return i; }).sort(function (a, b) { return prog[b] - prog[a]; });
-        rc.innerHTML = order.map(function (i) { var c = CARS[i % CARS.length]; return '<div class="y2lane' + (i === 0 ? ' me' : '') + '"><span class="y2ln">' + names[i] + '</span><div class="y2track"><span class="y2goal" aria-hidden="true"></span><div class="y2cr" style="left:' + Math.min(88, 2 + prog[i] / N * 84) + '%">' + player(c[0]) + '</div></div></div>'; }).join('');
-        document.getElementById('rT').textContent = fmt2(tNow); document.getElementById('rS').textContent = 'Решено ' + me + ' из ' + N + (stall > 0 ? ' · подкат' : ''); return true;
-      }
-      function fmt2(ms) { var s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60); }
-      function place() { var p = 1; for (var i = 1; i < prog.length; i++) if (prog[i] >= N && fin[i] < tNow) p++; return p; }
-      var fin = BOT.map(function () { return Infinity; }); fin.unshift(Infinity);
-      function done() {
-        ended = true; clearInterval(iv); var pl = 1; BOT.forEach(function (b, k) { var ft = b[1] * 1000 * KF * N / 12; if (ft < tNow) pl++; });
-        var o = spGet(); o.races = (o.races || 0) + 1; if (!o.race || pl < o.race) o.race = pl; lsSet('ukc_y2sp', o);
-        sm((pl === 1 ? 'ГОЛ! Вы забили первым! ' : 'Мяч в воротах. ') + 'Время ' + fmt2(tNow) + '. Ваше место: ' + pl + ' из 10.', pl <= 3 ? 'good' : ''); document.getElementById('after').innerHTML = '<div class="row"><a class="btn go" href="#y2/race" id="rAg">Ещё матч</a><a class="btn alt" href="#y2/speed">К разделу «Скорость»</a></div>'; document.getElementById('rAg').onclick = function (e) { e.preventDefault(); race(); };
-      }
-      function next() { if (ended) return; if (me >= N) { done(); return; } var x = q[qi % q.length]; qi++; sm(kind(x.it, x.L) + '. ' + (E.fromFEN(x.it[0]).turn === 1 ? 'Ход белых.' : 'Ход чёрных.')); mini(S, x.it, x.L, function (ok) { if (ended) return; if (ok) { me++; prog[0] = me; lanes(); if (me >= N) { done(); return; } later(next, 250); } else { stall = 3000; sm('Подкат! Мяч потерян, подождите 3 секунды.', 'bad'); lanes(); later(function () { stall = 0; next(); }, 3000); } }); }
-      function cfgAp() { view.querySelectorAll('[data-n]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-n') === rcf.n)); }); view.querySelectorAll('[data-l]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-l') === rcf.lv)); }); }
-      cfgAp(); document.getElementById('cfg').onclick = function (e) { var b = e.target.closest('button'); if (!b || run) return; if (b.hasAttribute('data-n')) rcf.n = +b.getAttribute('data-n'); else rcf.lv = +b.getAttribute('data-l'); lsSet('ukc_y2rc', rcf); race(); };
-      document.getElementById('rGo').onclick = function () { if (run) return; run = true; this.style.display = 'none'; t0 = Date.now(); iv = setInterval(function () { if (ended) return; tNow = Date.now() - t0; BOT.forEach(function (b, k) { prog[k + 1] = Math.min(N, tNow / (b[1] * 1000 * KF * N / 12) * N); }); var wn = -1; BOT.forEach(function (b, k) { if (wn < 0 && prog[k + 1] >= N) wn = k; }); if (wn >= 0 && !ended) { ended = true; clearInterval(iv); lanes(); var pl2 = 1 + prog.slice(1).filter(function (v) { return v > prog[0]; }).length; sm('ГОЛ! ' + BOT[wn][0] + ' первым добежал до ворот и забил. Игра окончена, вы на ' + pl2 + ' месте.', 'bad'); sfx('bad'); document.getElementById('after').innerHTML = '<div class="row"><a class="btn go" href="#y2/race" id="rAg">Ещё матч</a><a class="btn alt" href="#y2/speed">К разделу «Скорость»</a></div>'; document.getElementById('rAg').onclick = function (e) { e.preventDefault(); race(); }; return; } if (!lanes()) clearInterval(iv); }, 200); next(); };
-      drawBoard(S, function () {}); lanes();
-    }
-    function list() { landing(); }
-
-    /* ---------- заголовок урока ---------- */
-
-    /* ---------- настройки (подсветка, доска, фигуры, голос, звук, анимация) ---------- */
-    var BTH = [['bw', 'Классическая'], ['green', 'Зелёная'], ['brown', 'Коричневая'], ['blue', 'Синяя'], ['grey', 'Серая']];
-    var PST = [['classic', 'Классические'], ['warm', 'Тёплые'], ['blue', 'Синие'], ['red', 'Красные'], ['bold', 'С контуром']];
-    function settings() {
-      var old = document.getElementById('y2ov'); if (old) old.remove();
-      var ov = document.createElement('div'); ov.id = 'y2ov', armed = '';
-      function tgl(k, name, on) { return '<div class="y2row"><span>' + name + '</span><button class="btn alt" data-k="' + k + '" aria-pressed="' + on + '">' + (on ? 'вкл' : 'выкл') + '</button></div>'; }
-      function sel(k, name, list, cur) { return '<div class="y2row"><span>' + name + '</span>' + list.map(function (x) { return '<button class="btn alt" data-s="' + k + '" data-v="' + x[0] + '" aria-pressed="' + (x[0] === cur) + '">' + x[1] + '</button>'; }).join('') + '</div>'; }
-      function render() {
-        ov.innerHTML = '<div class="y2pop y2set" role="dialog" aria-label="Настройки"><h3>Настройки</h3>' + (document.body.classList.contains('y2') ? tgl('hl', 'Подсветка ходов', !!opt.hl) + tgl('threat', 'Показывать угрозу', !!opt.threat) + tgl('voice', 'Голос', voiceOn()) : '') + tgl('snd', 'Звуки', !muted) + tgl('anim', 'Анимация', !lsGet('ukc_noanim', false)) + sel('board', 'Цвет доски', BTH, boardTheme) + sel('pset', 'Фигуры', PST, lsGet('ukc_pset', 'classic')) + '<div class="y2row"><span>Сбросить прогресс</span></div><div class="row">' + [['r1', 'Первый год'], ['r2', 'Второй год'], ['ra', 'Всё']].map(function (x) { return '<button class="btn alt" data-k="' + x[0] + '">' + (armed === x[0] ? 'Точно сбросить? Нажми ещё раз' : x[1]) + '</button>'; }).join('') + '</div><div class="row"><button class="btn" data-k="x">Закрыть</button></div></div>';
-      }
-      render(); document.body.appendChild(ov);
-      ov.onclick = function (e) {
-        if (e.target === ov) { ov.remove(); return; }
-        var b = e.target.closest('button'); if (!b) return;
-        var k = b.getAttribute('data-k'), sk = b.getAttribute('data-s');
-        if (k === 'x') { ov.remove(); return; }
-        if (k === 'r1' || k === 'r2' || k === 'ra') {
-          if (armed !== k) { armed = k; render(); return; }
-          var K1 = ['ukc_les', 'ukc_pts', 'ukc_solved', 'ukc_pz', 'ukc_w2', 'ukc_live'], K2 = ['ukc_y2', 'ukc_y2g', 'ukc_y2sp', 'ukc_y2bm'];
-          (k === 'r1' ? K1 : k === 'r2' ? K2 : K1.concat(K2)).forEach(function (n) { try { localStorage.removeItem(n); } catch (er) {} });
-          location.reload(); return;
-        }
-        armed = '';
-        if (k === 'hl') { opt.hl = !opt.hl; saveOpt(); }
-        else if (k === 'threat') { opt.threat = !opt.threat; saveOpt(); }
-        else if (k === 'voice') { opt.voice = !voiceOn(); saveOpt(); if (!opt.voice) try { window.speechSynthesis.cancel(); } catch (er) {} }
-        else if (k === 'snd') { muted = !muted; lsSet('ukc_mute', muted); if (!muted) sfx('good'); }
-        else if (k === 'anim') { lsSet('ukc_noanim', !lsGet('ukc_noanim', false)); }
-        else if (sk === 'board') { boardTheme = b.getAttribute('data-v'); lsSet('ukc_board', boardTheme); }
-        else if (sk === 'pset') { lsSet('ukc_pset', b.getAttribute('data-v')); }
-        render(); applyTheme(); if (window.__y2redraw) try { window.__y2redraw(); } catch (er) {}
-      };
-    }
-    window.__y2settings = settings;
-    document.addEventListener('click', function (e) { if (e.target.closest && (e.target.closest('#y2set') || e.target.closest('#setK'))) settings(); });
-
-    var PV = { 1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 100 };
-    function threatSq(p) {
-      var out = {}, q;
-      try { q = {}; for (var kk in p) q[kk] = p[kk]; q.b = p.b.slice(); q.turn = -p.turn; if (q.ep != null) q.ep = -1; } catch (e) { return out; }
-      E.legal(q).forEach(function (m) {
-        var v = p.b[m.t]; if (!v) return; var np = E.make(q, m);
-        var att = PV[Math.abs(q.b[m.f])] || 0, vic = PV[Math.abs(v)] || 0;
-        if (Math.abs(v) === 6) return;
-        var rec = E.legal(np).some(function (x) { return x.t === m.t; });
-        if (!rec || vic > att) out[m.t] = true;
-      });
-      E.legal(q).forEach(function (m) { if (E.status(E.make(q, m)) === 'mate') out[E.kingSq(p.b, p.turn)] = true; });
-      return out;
-    }
-    function head(L, where) {
-      return '<div class="y2head"><a class="btn alt" href="#y2/theory">← К темам</a><h2>' + esc(L.t) + '</h2><span class="y2tabs"><a class="' + (where === 'ex' ? 'cur' : '') + '" href="#y2/' + L.id + '">Теория</a><a class="' + (where === 'tk' ? 'cur' : '') + '" href="#y2/' + L.id + '/t">Практика</a></span></div>';
-    }
-
-    function foot(L) {
-      var mx = maxPts(L), g = got(L), pc = Math.round(g * 100 / mx), c = counts(L);
-      return '<div class="y2foot"><div class="y2fb"><i style="width:' + pc + '%"></i></div><span><b>Успех: ' + pc + '%</b> · баллов ' + g + ' из ' + mx + '</span><span class="y2cnt"><i class="ok"></i>' + c.ok + ' <i class="half"></i>' + c.half + ' <i class="bad"></i>' + c.bad + '</span></div>';
-    }
-
-    /* ---------- задачи ---------- */
-    function fmtT(sec) { var m = Math.floor(sec / 60), s2 = sec % 60; return m + ':' + (s2 < 10 ? '0' : '') + s2; }
-    function task(L, n) {
-      var N = L.bank.length;
-      if (!N) { view.innerHTML = head(L, 'tk') + '<div class="y2sum"><h3>Задачи готовятся</h3><p>Задачи для этого урока появятся в ближайшее время.</p></div>'; return; }
-      if (!n) n = nextN(L, 1);
-      if (!n) { summary(L); return; }
-      var it = L.bank[n - 1], pos = E.fromFEN(it[0]), sol = it[1].split(' '), step = 0, mist = 0, busy = false, done = false, cur = pos, tg = [], tries = [];
-      var black = pos.turn === -1, B = base(it), already = rec(L.id)[n];
-      var S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: black, coords: true, mark: {}, hl: null };
-      var d0 = doneCount(L);
-      view.innerHTML = head(L, 'tk') +
-        '<div class="y2task"><div class="y2cap"><b>' + kind(it, L) + '</b><span>' + B + ' баллов · ' + (black ? 'ход чёрных' : 'ход белых') + '</span><button class="y2gear y2gd" id="gdB" aria-label="Список задач" title="Список задач">▦</button><button class="y2gear" id="mnB" aria-label="Меню задачи" title="Меню задачи">⚙</button></div>' + boardHTML() +
-        '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
-        '<div class="row"><button class="btn alt" id="resB">Сначала</button><button class="btn alt" id="flB">⇅ Перевернуть доску</button><button class="btn alt" id="hlB" aria-pressed="false">Подсветка ходов: выкл</button><button class="btn alt" id="vcB" aria-pressed="true">Голос: вкл</button><button class="btn alt" id="prgB">Прогресс за урок</button></div><div class="y2time">⏱ Время на задачу: <b id="tmV">0:00</b></div><div id="after"></div></div>' + foot(L);
-      var tStart = Date.now(), tmIv = setInterval(function () { var e = document.getElementById('tmV'); if (!e) { clearInterval(tmIv); return; } if (!done) e.textContent = fmtT(Math.round((Date.now() - tStart) / 1000)); }, 500);
-      var msg = document.getElementById('msg');
       function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
       function draw() { S.targets = opt.hl ? tg : []; if (!opt.hl && !S.lead) S.last = null; if ((opt.threat || S.thr) && !S.hint && !done) { var th = threatSq(cur === S.pos ? cur : S.pos); S.hl = th; } else if (!S.hint && S.hl && S.thrOn) S.hl = null; S.thrOn = !!(opt.threat || S.thr); drawBoard(S, click); if (S.leadArrow) leadArrowDraw(); }
       function leadArrowDraw() {
@@ -6318,13 +6158,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
         draw();
       }
       document.getElementById('resB').onclick = function () { task(L, n); };
-      document.getElementById('pvB').onclick = function () { if (n > 1) location.hash = '#y2/' + L.id + '/t/' + (n - 1); };
-      document.getElementById('nxN').onclick = function () { if (n < N) location.hash = '#y2/' + L.id + '/t/' + (n + 1); };
-      document.getElementById('rpB').onclick = function () { try { var ss = window.speechSynthesis; ss.cancel(); var u = new SpeechSynthesisUtterance(document.getElementById('insT').textContent); u.lang = 'ru-RU'; u.rate = 0.95; var vv = ss.getVoices().filter(function (v) { return /^ru/i.test(v.lang); }); if (vv.length) u.voice = vv[0]; ss.speak(u); } catch (e) {} };
-      document.getElementById('prgB').onclick = function () { progress(L, n); };
+      var _pvB = document.getElementById('pvB'); if (_pvB) _pvB.onclick = function () { if (n > 1) location.hash = '#y2/' + L.id + '/t/' + (n - 1); };
+      var _nxN = document.getElementById('nxN'); if (_nxN) _nxN.onclick = function () { if (n < N) location.hash = '#y2/' + L.id + '/t/' + (n + 1); };
+      var _rpB = document.getElementById('rpB'); if (_rpB) _rpB.onclick = function () { try { var ss = window.speechSynthesis; ss.cancel(); var u = new SpeechSynthesisUtterance(document.getElementById('insT').textContent); u.lang = 'ru-RU'; u.rate = 0.95; var vv = ss.getVoices().filter(function (v) { return /^ru/i.test(v.lang); }); if (vv.length) u.voice = vv[0]; ss.speak(u); } catch (e) {} };
+      var _pg = document.getElementById('prgB'); if (_pg) _pg.onclick = function () { progress(L, n); };
       document.getElementById('gdB').onclick = function () { progress(L, n); };
       var hlB = document.getElementById('hlB');
-      function hlLabel() { hlB.textContent = 'Подсветка ходов: ' + (opt.hl ? 'вкл' : 'выкл'); hlB.setAttribute('aria-pressed', String(opt.hl)); }
+      function hlLabel() { hlB.textContent = 'Подсветка ходов: ' + (opt.hl ? 'вкл' : 'выкл'); hlB.setAttribute('aria-pressed', String(opt.hl)); var hb2 = document.getElementById('hlBtn'); if (hb2) { hb2.textContent = '💡 Подсветка ходов: ' + (opt.hl ? 'вкл' : 'выкл'); hb2.setAttribute('aria-pressed', String(!!opt.hl)); } }
       hlB.onclick = function () { opt.hl = !opt.hl; saveOpt(); hlLabel(); draw(); }; hlLabel();
       var vcB = document.getElementById('vcB');
       function vcLabel() { vcB.textContent = 'Голос: ' + (voiceOn() ? 'вкл' : 'выкл'); vcB.setAttribute('aria-pressed', String(voiceOn())); }
@@ -6979,6 +6819,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     sObs.observe(document.body, { childList: true, subtree: true });
     document.addEventListener('click', function (e) {
       var hb = e.target.closest && e.target.closest('#hlBtn');
+      if (hb && document.getElementById('hlB') && document.getElementById('hlB').onclick) { document.getElementById('hlB').onclick(); return; }
       if (hb) { G.hl = !G.hl; save(); document.querySelectorAll('#hlBtn').forEach(function (x) { x.textContent = '💡 Подсветка ходов: ' + (G.hl ? 'вкл' : 'выкл'); x.setAttribute('aria-pressed', String(!!G.hl)); }); if (window.__curDraw) try { window.__curDraw(); } catch (er) {} return; }
       var b = e.target.closest && e.target.closest('[data-gk]'); if (!b) return;
       e.stopPropagation();
