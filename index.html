@@ -104,6 +104,8 @@ a.card:hover { border-color: var(--red); }
 .sq.last::after { content: ''; position: absolute; inset: 0; background: rgba(255, 194, 26, .38); }
 .sq.tg { background-image: linear-gradient(rgba(255, 205, 40, .66), rgba(255, 205, 40, .66)); box-shadow: inset 0 0 0 3px rgba(255, 160, 0, .95); }
 .sq.tg.cap { background-image: linear-gradient(rgba(255, 90, 60, .45), rgba(255, 90, 60, .45)); box-shadow: inset 0 0 0 4px rgba(230, 40, 20, .95); }
+.board[data-tg="soft"] .sq.tg { background-image: linear-gradient(rgba(255, 205, 40, .22), rgba(255, 205, 40, .22)); box-shadow: inset 0 0 0 2px rgba(255, 170, 0, .35); }
+.board[data-tg="soft"] .sq.tg.cap { background-image: linear-gradient(rgba(255, 90, 60, .18), rgba(255, 90, 60, .18)); box-shadow: inset 0 0 0 2px rgba(230, 40, 20, .4); }
 .sq.chk { background: radial-gradient(circle, #ff3b30 0 55%, transparent 75%), var(--sq-dark); }
 .sq.l.chk { background: radial-gradient(circle, #ff3b30 0 55%, transparent 75%), var(--sq-light); }
 @keyframes pulse { 50% { box-shadow: inset 0 0 0 5px var(--yellow); } }
@@ -754,6 +756,12 @@ a.y2tier,a.y2pl{text-decoration:none;color:inherit}.y2pl{position:relative}.y2pl
 .mit.found { outline: 4px solid #2e9e4f; border-radius: 50%; background: rgba(255,255,255,.5); }
 .mit.wrong { outline: 4px solid #d63a2f; border-radius: 50%; }
 .mpbig { display: block; }
+.tray { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; padding: 10px; background: #fff8dc; border: 3px solid #e7c76a; border-radius: 14px; max-width: 560px; }
+.tcell { position: relative; width: 62px; height: 62px; background: #fff; border: 3px solid #d9c27a; border-radius: 12px; cursor: pointer; padding: 2px; }
+.tcell .pcs { width: 100%; height: 100%; }
+.tcell i { position: absolute; right: 2px; bottom: 0; font-style: normal; font-weight: 800; font-size: 14px; background: #ffd34d; border-radius: 8px; padding: 0 6px; }
+.tcell.sel { border-color: #2e9e4f; background: #e6f8ec; box-shadow: 0 0 0 3px rgba(46,158,79,.4); }
+.tcell.empty { opacity: .3; cursor: default; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -1759,7 +1767,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
   function boardHTML() {
     return '<div class="seg boardtheme" id="bt" role="group" aria-label="Цвет доски"><button data-t="bw">Классическая</button><button data-t="green">Зелёная</button><button data-t="brown">Коричневая</button></div>' +
-      '<div class="bsize" role="group" aria-label="Размер доски"><span>Размер доски:</span><button class="btn alt" data-bsz="-" aria-label="Меньше">−</button><button class="btn alt" data-bsz="+" aria-label="Больше">+</button><button class="btn alt" data-bsz="auto">Авто</button><button class="btn alt" data-bsz="flip" aria-label="Перевернуть доску">⇅ Перевернуть</button><small>или потяни за уголок</small></div>' +
+      '<div class="bsize" role="group" aria-label="Размер доски"><span>Размер доски:</span><button class="btn alt" data-bsz="-" aria-label="Меньше">−</button><button class="btn alt" data-bsz="+" aria-label="Больше">+</button><button class="btn alt" data-bsz="auto">Авто</button><button class="btn alt" data-bsz="flip" aria-label="Перевернуть доску">⇅ Перевернуть</button>' + '<button class="btn alt" id="hlBtn" type="button" aria-pressed="' + !!lsGet('ukc_g', {}).hl + '">💡 Подсветка ходов: ' + (lsGet('ukc_g', {}).hl ? 'вкл' : 'выкл') + '</button><small>или потяни за уголок</small></div>' +
       '<div class="boardbox"><div class="board" id="board" role="grid" aria-label="Шахматная доска"></div></div>';
   }
   function applyTheme() {
@@ -1791,6 +1799,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var bt = document.getElementById('bt');
     if (bt && !bt.onclick) bt.onclick = function (e) { var b = e.target.closest('button'); if (!b) return; boardTheme = b.dataset.t; lsSet('ukc_board', boardTheme); applyTheme(); };
     applyTheme();
+    var hh = location.hash || '', hlOn = !!lsGet('ukc_g', {}).hl, tgMode = document.body.classList.contains('y2') ? 'soft' : (!hlOn ? 'none' : (S.teach ? 'bright' : 'soft'));
+    el.dataset.tg = tgMode;
     var checkSq = E.inCheck(S.pos) ? E.kingSq(S.pos.b, S.pos.turn) : -1;
     var html = '';
     for (var k = 0; k < 64; k++) {
@@ -1801,7 +1811,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (S.last && (S.last.f === i || S.last.t === i)) cls += ' last';
       if (S.best && (S.best.f === i || S.best.t === i)) cls += ' bestm';
       var bdg = S.badge && S.badge.sq === i ? S.badge : null; if (bdg) cls += ' bg-' + bdg.cls;
-      if (S.targets && S.targets.indexOf(i) >= 0) cls += ' tg' + (v ? ' cap' : '');
+      if (tgMode !== 'none' && S.targets && S.targets.indexOf(i) >= 0) cls += ' tg' + (v ? ' cap' : '');
       if (checkSq === i) cls += ' chk';
       var mk = S.mark && S.mark[i], co = '';
       if (S.hl && S.hl[i]) cls += ' hl';
@@ -2379,7 +2389,22 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function solveEx(ex) {
     if (ex.code === 'P') return pawnSolve(ex, ex.start, ex.tg);
     if (ex.type === 'maze') { var r = bfs(ex.code, ex.start, ex.st); return r.d[ex.flag] === undefined ? null : { len: r.d[ex.flag], path: pathTo(r, ex.flag).slice(1) }; }
+    if (ex.type === 'collect' && ex.st.enemies && Object.keys(ex.st.enemies).length) return solveHunt(ex);
     return solveCollect(ex);
+  }
+  function solveHunt(ex) {
+    var en = Object.keys(ex.st.enemies).map(Number), stars = ex.stars || [], tg = en.concat(stars), full = (1 << tg.length) - 1;
+    var seen = {}, q = [{ p: ex.start, m: 0, path: [] }]; seen[ex.start + ':0'] = 1;
+    for (var h = 0; h < q.length; h++) {
+      var cur = q[h];
+      if (cur.m === full) return { len: cur.path.length, path: cur.path };
+      var enm = {}; en.forEach(function (e, i) { if (!(cur.m & (1 << i))) enm[e] = ex.st.enemies[e]; });
+      lone(ex.code, cur.p, { walls: ex.st.walls, enemies: enm }).forEach(function (t) {
+        var m = cur.m, i = tg.indexOf(t); if (i >= 0) m |= (1 << i);
+        var key = t + ':' + m; if (seen[key]) return; seen[key] = 1; q.push({ p: t, m: m, path: cur.path.concat([t]) });
+      });
+    }
+    return null;
   }
 
   /* --- создание уровней для фигур (всегда одинаковые для одного номера) --- */
@@ -2466,7 +2491,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
     while (ex.stars.length < th.cnt) { var z = pick(r, reach); if (!used[z]) { used[z] = 1; ex.stars.push(z); } }
     ex.tg = ex.stars.slice(); return ex;
   }
-  function genPiece(code, lv, seedx) {
+  function fixEdge(ex) { if (ex && ex.st && ex.st.enemies) for (var q in ex.st.enemies) { var v = ex.st.enemies[q], y = q >> 3; if ((y === 0 || y === 7) && Math.abs(v) === 1) ex.st.enemies[q] = v * 2; } return ex; }
+  function genPiece(code, lv, seedx) { return fixEdge(genPiece0(code, lv, seedx)); }
+  function genPiece0(code, lv, seedx) {
     if (code !== 'P' && lv > 30) {
       for (var a0 = 0; a0 < 600; a0++) {
         var rr = mkRng(hstr('rth' + code + lv + '_' + (seedx || 0)) + a0 * 733), T0 = RTH[lv - 31], th0 = { kind: T0.kind, type: T0.type, cnt: T0.cnt, walls: T0.walls, wall: T0.wall, star: T0.star, flag: T0.flag, text: thTxt(T0.text, code) };
@@ -2478,8 +2505,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     for (var attempt = 0; attempt < 300; attempt++) {
       var r = mkRng(hstr('pc' + code + lv + '_' + (seedx || 0)) + attempt * 977), maze = lv > 15, k = maze ? Math.ceil((lv - 15) * 2 / 3) : Math.ceil(lv * 2 / 3), ex;
-      if (code === 'P') ex = genPawn(r, maze, k); else ex = genLone(code, r, maze, k);
-      if (ex && solveEx(ex)) { ex.code = code; ex.lv = lv; ex.opt = solveEx(ex).len; if (code !== 'P') ex.theme = lvTheme(code, lv, ex); return ex; }
+      var hunt = code !== 'P' && lv % 4 === 0;
+      if (code === 'P') ex = genPawn(r, maze, k); else if (hunt) ex = genHunt(code, r, k); else ex = genLone(code, r, maze, k);
+      if (ex && solveEx(ex)) { var th0 = ex.theme; ex.code = code; ex.lv = lv; ex.opt = solveEx(ex).len; if (hunt) ex.theme = th0; else if (code !== 'P') ex.theme = lvTheme(code, lv, ex); return ex; }
     }
     return null;
   }
@@ -2510,6 +2538,22 @@ if (typeof module !== 'undefined') module.exports = Eng;
     for (q in res.d) if (res.d[q] >= need && +q !== start) cand.push(+q);
     if (!cand.length) return null;
     ex.flag = pick(r, cand);
+    return ex;
+  }
+  function genHunt(code, r, k) {
+    var st = { walls: {}, enemies: {} }, start = Math.floor(r() * 64), ex = { type: 'collect', code: code, st: st, start: start, stars: [], tg: [], flag: -1 }, n = Math.min(4, 1 + Math.floor((k + 1) / 4)), used = {}; used[start] = 1;
+    function col(q) { return ((q & 7) + (q >> 3)) & 1; }
+    var nw = Math.min(8, k), i, t;
+    for (t = 0; t < 300 && Object.keys(st.walls).length < nw; t++) { var w = Math.floor(r() * 64); if (!used[w]) { st.walls[w] = true; used[w] = 1; } }
+    for (t = 0; t < 600 && ex.tg.length < n; t++) {
+      var e = Math.floor(r() * 64); if (used[e]) continue;
+      if (code === 'B' && col(e) !== col(start)) continue;
+      if (code === 'K' && Math.max(Math.abs((e & 7) - (start & 7)), Math.abs((e >> 3) - (start >> 3))) > 3) continue;
+      used[e] = 1; st.enemies[e] = -(2 + Math.floor(r() * 3) % 3 + (r() < .3 ? 1 : 0)); if (Math.abs(st.enemies[e]) > 5) st.enemies[e] = -3; ex.tg.push(e);
+    }
+    if (ex.tg.length < n) return null;
+    var names = { R: 'ладьёй', B: 'слоном', Q: 'ферзём', N: 'конём', K: 'королём' };
+    ex.theme = { text: 'Охота! Съешь ' + (n === 1 ? 'чёрную фигуру' : 'все чёрные фигуры (' + n + ')') + ' ' + names[code] + ' за как можно меньше ходов. Стены обходи.', star: null, flag: null, wall: null };
     return ex;
   }
   function genPawn(r, maze, k) {
@@ -2838,7 +2882,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
   /* --- показ слайдов --- */
   function showSlides(host, L, idx) {
-    var s = L.slides[idx], n = L.slides.length, S = { pos: E.fromFEN('8/8/8/8/8/8/8/8 w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: s.mark || {}, hl: null };
+    var s = L.slides[idx], n = L.slides.length, S = { teach: true, pos: E.fromFEN('8/8/8/8/8/8/8/8 w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: s.mark || {}, hl: null };
     var body = '<div class="slide"><h3>' + esc(s.h) + '</h3>' + (s.p || []).map(function (x) { return '<p>' + x + '</p>'; }).join('') + (s.v || '') + '</div>';
     var hasBoard = !!(s.fen || s.free || s.demo || s.show || s.try);
     var step = 0, cap = '';
@@ -2907,7 +2951,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
     if (s.show) {
       var sh = s.show, code2 = sh.code, pv2 = PN[code2], cur2 = sqIdx(sh.at), idx2 = 0, en2 = {}, got = {};
-      (sh.enemies || []).forEach(function (e) { en2[sqIdx(e)] = -1 * (sh.ev || 1); });
+      (sh.enemies || []).forEach(function (e) { var z0 = sqIdx(e), y0 = z0 >> 3, ev0 = sh.ev || 1; if (ev0 === 1 && (y0 === 0 || y0 === 7)) ev0 = 2; en2[z0] = -1 * ev0; });
       var seq = sh.seq.map(function (x) { var a = x.split('|'); return { sq: sqIdx(a[0]), c: a[1] || '' }; });
       var rdr = function (silent, from) {
         var b = new Int8Array(64), q; for (q in en2) if (!got[q]) b[q] = en2[q]; b[cur2] = pv2;
@@ -2975,7 +3019,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function reset(quiet) {
       clearTimers(); cur = ex.start; left = ex.stars.concat(ex.tg.filter(function (t) { return ex.st.enemies[t]; })); enemies = {}; for (var q in ex.st.enemies) enemies[q] = ex.st.enemies[q];
       moves = 0; busy = false; over = false; S.last = null; S.hint = null;
-      if (!quiet) setMsg('Твой ход. Нажми на подсвеченную клетку.');
+      if (!quiet) setMsg('Твой ход. Нажми на клетку, куда хочешь пойти.');
       draw();
     }
     function draw() {
@@ -3018,7 +3062,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     document.getElementById('hintB').onclick = function () {
       if (busy || over) return;
       var sol = solveEx(exNow()); if (!sol || !sol.path.length) return;
-      S.targets = [sol.path[0]]; setMsg('Подсказка: попробуй сходить сюда (подсвеченная клетка).'); drawBoard(S, click);
+      S.hint = sol.path[0]; setMsg('Подсказка: попробуй сходить на отмеченную клетку.'); drawBoard(S, click);
     };
     document.getElementById('ansB').onclick = function () {
       if (busy) return; helped = true; reset(true); busy = true;
@@ -3831,19 +3875,100 @@ if (typeof module !== 'undefined') module.exports = Eng;
       return { pcs: p, star: b, text: 'Белый слон стоит на этой клетке. Может ли он когда-нибудь попасть на клетку со звёздочкой (за несколько ходов)?', opts: ['Да', 'Нет'], ans: same ? 'Да' : 'Нет', why: 'Слон ходит всегда по клеткам одного цвета. Сравни цвет его клетки и клетки со звёздочкой.' };
     };
 
+
+    /* --- повторение по доске и расстановке --- */
+    var START_B = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+    function startPcs() { var o = {}, rows = START_B.split('/'); rows.forEach(function (row, y) { var x = 0; row.split('').forEach(function (c) { if (/\d/.test(c)) x += +c; else { o[y * 8 + x] = c; x++; } }); }); return o; }
+    var PNAME = { r: 'ладья', n: 'конь', b: 'слон', q: 'ферзь', k: 'король', p: 'пешка' };
+    function cellsWhere(f) { var a = []; for (var i = 0; i < 64; i++) if (f(i & 7, 8 - (i >> 3), i)) a.push(i); return a; }
+    function multi(r, text, cells, why, extra) { var w = {}; cells.forEach(function (c) { w[c] = 1; }); var o = { pcs: {}, want: w, text: text, why: why || 'Посмотри внимательнее.' }; if (extra) for (var k in extra) o[k] = extra[k]; return o; }
+    var YN = ['Да', 'Нет'];
+    T.bcount = function (r) {
+      var k = rnd(r, 0, 5), t = [['Сколько всего клеток на шахматной доске?', 64, [32, 64, 100, 81]], ['Сколько на доске светлых клеток?', 32, [16, 32, 64, 30]], ['Сколько на доске тёмных клеток?', 32, [16, 32, 64, 36]], ['Сколько на доске вертикалей?', 8, [6, 8, 9, 10]], ['Сколько клеток в одной горизонтали?', 8, [6, 8, 10, 12]], ['Сколько углов у шахматной доски?', 4, [2, 4, 6, 8]]][k];
+      return { pcs: {}, text: t[0], opts: t[2].map(String), ans: String(t[1]), why: '8 вертикалей по 8 клеток дают 64 клетки: половина светлые, половина тёмные.' };
+    };
+    T.showcolor = function (r) {
+      var light = r() < .5, kind = pickOne(r, ['file', 'rank', 'all']), f = rnd(r, 0, 7), rk = rnd(r, 1, 8);
+      var isL = function (x, y) { return (x + y) % 2 === 1; };
+      var col = light ? 'светлые' : 'тёмные';
+      if (kind === 'all') return multi(r, 'Отметь все ' + col + ' клетки на самой нижней горизонтали (первой).', cellsWhere(function (x, y) { return y === 1 && isL(x, y) === light; }), 'Клетки на линии чередуются.', { coords: true });
+      if (kind === 'file') return multi(r, 'Отметь все ' + col + ' клетки вертикали «' + FL[f] + '».', cellsWhere(function (x, y) { return x === f && isL(x, y) === light; }), 'Цвета на линии чередуются, считай через одну клетку.', { coords: true });
+      return multi(r, 'Отметь все ' + col + ' клетки горизонтали ' + rk + '.', cellsWhere(function (x, y) { return y === rk && isL(x, y) === light; }), 'Цвета на линии чередуются, считай через одну клетку.', { coords: true });
+    };
+    T.corners = function (r) {
+      if (r() < .5) return multi(r, 'Отметь все четыре угла доски.', [0, 7, 56, 63], 'Углы: a1, h1, a8, h8.', { coords: true });
+      var c = pickOne(r, [0, 7, 56, 63]); return { pcs: {}, coords: true, text: 'Нажми на угол доски, который называется ' + SQN(c) + '.', ok: function (i) { return i === c; }, why: 'Углы: a1 внизу слева, h1 внизу справа, a8 вверху слева, h8 вверху справа.' };
+    };
+    T.center = function (r) {
+      if (r() < .5) return multi(r, 'Отметь четыре клетки в центре доски.', cellsWhere(function (x, y) { return (x === 3 || x === 4) && (y === 4 || y === 5); }), 'Центр: d4, e4, d5, e5.', { coords: r() < .5 });
+      return { pcs: {}, coords: true, text: 'Нажми на любую из четырёх центральных клеток.', ok: function (i) { var x = i & 7, y = 8 - (i >> 3); return (x === 3 || x === 4) && (y === 4 || y === 5); }, why: 'Центр: d4, e4, d5, e5.' };
+    };
+    T.rightboard = function (r) {
+      var k = rnd(r, 0, 3), pcs = startPcs(), bad = true, why = '', fl = false;
+      if (k === 0) { var t = pcs[3]; pcs[3] = pcs[4]; pcs[4] = t; why = 'Король и ферзь поменяны местами: ферзь стоит на своём цвете, король рядом.'; }
+      else if (k === 1) { var t2 = pcs[58]; pcs[58] = pcs[56]; pcs[56] = t2; why = 'Слон и ладья перепутаны: ладьи стоят в углах.'; }
+      else if (k === 2) { delete pcs[49]; why = 'Не хватает пешки.'; }
+      else { bad = false; }
+      if (r() < .35) { fl = true; bad = true; why = 'Доска повёрнута неправильно: белые должны стоять снизу.'; }
+      return { pcs: pcs, flip: fl, coords: true, text: 'Правильно ли расставлены фигуры и повёрнута доска для начала партии?', opts: YN, ans: bad ? 'Нет' : 'Да', why: bad ? why : 'Всё верно: белые снизу, ладьи в углах, король рядом с ферзём.' };
+    };
+    T.wherestart = function (r) {
+      var pcs = startPcs(), cells = Object.keys(pcs).map(Number), c = pickOne(r, [0, 1, 2, 3, 4, 56, 57, 58, 59, 60]), code = pcs[c], white = code === code.toUpperCase();
+      var want = cells.filter(function (i) { return pcs[i] === code; });
+      return multi(r, 'Покажи на пустой доске, где в начале партии стоят ' + (white ? 'белые ' : 'чёрные ') + { r: 'ладьи', n: 'кони', b: 'слоны', q: 'ферзь', k: 'король' }[code.toLowerCase()] + '. Нажми на все нужные клетки и «Проверить».', want, 'Ладьи в углах, рядом кони, потом слоны. Ферзь любит свой цвет, король рядом.', { coords: true });
+    };
+    T.whatsq = function (r) {
+      var pcs = startPcs(), sq = pickOne(r, [0, 1, 2, 3, 4, 5, 6, 7, 56, 57, 58, 59, 60, 61, 62, 63]), code = pcs[sq].toLowerCase(), ans = PNAME[code], pool = ['ладья', 'конь', 'слон', 'ферзь', 'король'], o = [ans];
+      pool.forEach(function (x) { if (x !== ans && o.length < 4) o.push(x); });
+      o = o.sort(function (a, b) { return hstr(a + sq) - hstr(b + sq); });
+      var q = { pcs: pcs, coords: true, text: 'Какая фигура стоит на поле ' + SQN(sq) + ' в начале партии?', opts: o, ans: ans, why: 'Вспомни ряд: ладья, конь, слон, ферзь, король, слон, конь, ладья.' };
+      return q;
+    };
+    T.pawnrank = function (r) {
+      var white = r() < .5, k = rnd(r, 0, 2);
+      if (k === 0) return { pcs: {}, text: 'На какой горизонтали в начале партии стоят ' + (white ? 'белые' : 'чёрные') + ' пешки?', opts: ['2', '3', '7', '1'].sort(), ans: white ? '2' : '7', why: 'Белые пешки на второй горизонтали, чёрные на седьмой.' };
+      if (k === 1) return { pcs: {}, text: 'На каких горизонталях в начале партии стоят ' + (white ? 'белые' : 'чёрные') + ' фигуры (не пешки)?', opts: ['1', '2', '7', '8'].sort(), ans: white ? '1' : '8', why: 'Белые фигуры на первой горизонтали, чёрные на восьмой.' };
+      var rk = white ? 2 : 7; return multi(r, 'Отметь все клетки, где в начале партии стоят ' + (white ? 'белые' : 'чёрные') + ' пешки.', cellsWhere(function (x, y) { return y === rk; }), 'Пешки занимают всю ' + rk + '-ю горизонталь.', { coords: true });
+    };
+    T.territory = function (r) {
+      var k = rnd(r, 0, 3);
+      if (k === 0) return multi(r, 'Отметь территорию белых: горизонтали с 1 по 4.', cellsWhere(function (x, y) { return y <= 4; }), 'У белых нижняя половина доски: горизонтали 1, 2, 3, 4.', { coords: true });
+      if (k === 1) return multi(r, 'Отметь территорию чёрных: горизонтали с 5 по 8.', cellsWhere(function (x, y) { return y >= 5; }), 'У чёрных верхняя половина доски: горизонтали 5, 6, 7, 8.', { coords: true });
+      if (k === 2) return { pcs: {}, text: 'Между какими горизонталями проходит граница, которая делит доску пополам?', opts: ['между 4 и 5', 'между 3 и 4', 'между 2 и 3', 'между 5 и 6'], ans: 'между 4 и 5', why: 'Нижние четыре горизонтали принадлежат белым, верхние четыре чёрным.' };
+      var w = r() < .5; return { pcs: {}, coords: true, text: 'Нажми на любую клетку на территории ' + (w ? 'белых.' : 'чёрных.'), ok: function (i) { var y = 8 - (i >> 3); return w ? y <= 4 : y >= 5; }, why: 'Белые: горизонтали 1–4. Чёрные: 5–8.' };
+    };
+    T.flank = function (r) {
+      var k = rnd(r, 0, 3);
+      if (k === 0) return multi(r, 'Отметь ферзевый фланг: вертикали a, b, c, d.', cellsWhere(function (x) { return x <= 3; }), 'Ферзевый фланг слева (a–d), там стоит ферзь.', { coords: true });
+      if (k === 1) return multi(r, 'Отметь королевский фланг: вертикали e, f, g, h.', cellsWhere(function (x) { return x >= 4; }), 'Королевский фланг справа (e–h), там стоит король.', { coords: true });
+      var q = r() < .5; if (k === 2) return { pcs: {}, coords: true, text: 'Нажми на любую клетку ' + (q ? 'ферзевого' : 'королевского') + ' фланга.', ok: function (i) { return q ? (i & 7) <= 3 : (i & 7) >= 4; }, why: 'Ферзевый фланг: a–d. Королевский фланг: e–h.' };
+      return { pcs: startPcs(), coords: true, text: 'На каком фланге в начале партии стоит белый король?', opts: ['на королевском', 'на ферзевом'], ans: 'на королевском', why: 'Король стоит на e1, это королевский фланг (e–h).' };
+    };
+    T.firstq = function (r) {
+      var k = rnd(r, 0, 4), t = [['Кто ходит первым в шахматной партии?', ['белые', 'чёрные'], 'белые', 'Всегда первыми ходят белые.'], ['Сколько фигур у одной стороны в начале партии (с пешками)?', ['8', '12', '16', '32'], '16', '8 фигур и 8 пешек: 16.'], ['Сколько всего фигур на доске в начале партии?', ['16', '24', '32', '64'], '32', 'По 16 у белых и у чёрных.'], ['Сколько пешек у каждой стороны?', ['6', '8', '10', '16'], '8', 'Восемь пешек.'], ['Какой цвет клетки, на которой стоит белый ферзь в начале партии?', ['светлый', 'тёмный'], 'светлый', 'Ферзь любит свой цвет: белый ферзь d1 на светлой клетке.']][k];
+      return { pcs: k === 4 ? startPcs() : {}, coords: true, text: t[0], opts: t[1], ans: t[2], why: t[3] };
+    };
+
     function runLogic(host, L, lv, finish) {
       var r = mkRng(hstr(L.id + lv + '_fx')), types = L.types, key = types[(lv - 1) % types.length], d = Math.min(4, Math.ceil(lv / types.length));
-      var q = T[key](r, d), S = { pos: E.fromFEN(fenOf(q.pcs)), sel: null, targets: [], last: null, hint: null, flip: false, coords: q.coords !== false && (lv <= 12 || q.coords), mark: {}, hl: q.hl || null };
+      var q = T[key](r, d), S = { pos: E.fromFEN(fenOf(q.pcs)), sel: null, targets: [], last: null, hint: null, flip: !!q.flip, coords: q.coords !== false && (lv <= 12 || q.coords), mark: {}, hl: q.hl || null };
       if (q.star != null) { S.hl = S.hl || {}; S.hl[q.star] = true; S.mark[q.star] = 'star'; }
       if (q.marks) for (var mk in q.marks) S.mark[mk] = q.marks[mk];
       if (q.stars) q.stars.forEach(function (z) { S.hl = S.hl || {}; S.hl[z] = true; S.mark[z] = 'star'; });
       var mistakes = 0, done = false;
       host.innerHTML = say(av('prof'), 'Профессор', q.text, 'логика ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
-        (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
+        (q.want ? '<div class="row"><button class="btn" id="chk">Проверить</button><button class="btn alt" id="clr">Сбросить</button></div>' : '') + (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
       var msg = document.getElementById('msg');
       function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
       function win() { done = true; sfx('good'); setMsg('Верно!', 'good'); finish(mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1); }
       function bad(t) { mistakes++; sfx('bad'); setMsg(t, 'bad'); }
+      if (q.want) {
+        var pick = {}, cl = function (i) { if (done) return; if (pick[i]) delete pick[i]; else pick[i] = 1; S.hl = {}; for (var z in pick) S.hl[z] = true; drawBoard(S, cl); };
+        drawBoard(S, cl);
+        document.getElementById('clr').onclick = function () { if (done) return; pick = {}; S.hl = {}; drawBoard(S, cl); };
+        document.getElementById('chk').onclick = function () { if (done) return; var miss = 0, extra = 0, z; for (z in q.want) if (!pick[z]) miss++; for (z in pick) if (!q.want[z]) extra++; if (!miss && !extra) win(); else bad((miss ? 'Не хватает клеток: ' + miss + '. ' : '') + (extra ? 'Лишних клеток: ' + extra + '. ' : '') + q.why); };
+        return;
+      }
       drawBoard(S, function (i) {
         if (done || q.opts) return;
         if (q.ok(i)) { S.mark = {}; S.mark[i] = 'star'; drawBoard(S, function () {}); win(); } else bad('Не совсем. ' + q.why);
@@ -3856,12 +3981,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     var N = 40;
     var DEF = [
-      { id: 'lg_board', t: 'Логика: доска', d: 'Клетки, цвета, линии и диагонали: 24 задачи на внимание. Фигуры здесь не ходят.', types: ['cross', 'samecolor', 'line', 'twostars', 'between', 'colorq', 'whichline', 'opposite'], g: 0 },
+      { id: 'lg_board', t: 'Логика: доска', d: 'Закрепляем доску и расстановку: клетки, цвета, углы, центр, начальная позиция, территории, фланги. 60 задач.', types: ['bcount', 'showcolor', 'corners', 'center', 'rightboard', 'wherestart', 'whatsq', 'pawnrank', 'territory', 'flank', 'firstq', 'cross', 'samecolor', 'line', 'twostars', 'between', 'colorq', 'whichline', 'opposite', 'rightboard'], g: 0, n: 60 },
       { id: 'lg_pieces', t: 'Логика: ходы фигур', d: 'Сколько ходов у фигуры, кого она съест, как пройти лабиринт, кто атакует. 40 разных задач.', types: ['count', 'clickreach', 'capture', 'minmoves', 'blockedcount', 'which', 'bestcap', 'minwall', 'danger', 'safestep', 'knightcolor', 'bishopyn'], g: 1 },
       { id: 'lg_pawn', t: 'Логика: пешки и ценность', d: 'Путь пешки, гонка пешек, ценность фигур, подсчёт.', types: ['pawnsteps', 'value', 'race', 'countp', 'which', 'danger'], g: 2 }
     ];
     DEF.forEach(function (o) {
-      LESS[o.id] = { id: o.id, t: o.t, d: o.d, levels: N, types: o.types, run: runLogic };
+      LESS[o.id] = { id: o.id, t: o.t, d: o.d, levels: o.n || N, types: o.types, run: runLogic };
       GROUPS[o.g].ids.push(o.id);
     });
   })();
@@ -4105,40 +4230,58 @@ if (typeof module !== 'undefined') module.exports = Eng;
         t.mode = 'opts'; t.text = 'Где в начале партии стоит ' + (q[1] > 0 ? 'белый ' : 'чёрный ') + NM[q[0]][0] + '?'; t.opts = sh(r, names); t.ans = ans; t.board = true;
         t.expl = q[0] === 5 ? 'Ферзь любит свой цвет: белый ферзь на светлой клетке d1, чёрный на тёмной d8.' : 'Король стоит рядом с ферзём: белый на e1, чёрный на e8.'; return t;
       }
-      var steps = [[[4, 0], [4, 7]], [[2, 1], [2, 6]], [[3, 2], [3, 5]], [[5, 3], [6, 4]]][lv - 27], col3 = lv % 2 ? 1 : -1, row = col3 > 0 ? 7 : 0; /* расстановка */
-      var ST = { 4: [0, 7], 2: [1, 6], 3: [2, 5], 5: [3], 6: [4] };
-      var seq = lv === 27 ? [4, 2, 3] : lv === 28 ? [3, 5, 6] : lv === 29 ? [4, 5, 6, 2] : [4, 2, 3, 5, 6];
-      t.mode = 'setup'; t.col = col3; t.row = row; t.seq = seq; t.need = {}; seq.forEach(function (c) { ST[c].forEach(function (f) { t.need[row * 8 + f] = c; }); });
-      t.text = 'Расставь ' + (col3 > 0 ? 'белые' : 'чёрные') + ' фигуры, как в начале партии: ' + seq.map(function (c) { return NM[c][2]; }).join(', ') + '. Нажимай на клетки нижней линии. Ферзь любит свой цвет!'; t.expl = 'Ладьи в углах, рядом кони, потом слоны, ферзь на своём цвете, король рядом.'; return t;
+      var BACK = [4, 2, 3, 5, 6, 3, 2, 4], need = {}, col3 = lv === 28 ? -1 : 1, both = lv === 30, pawns = lv >= 29, backs = lv !== 29 || true;
+      function addSide(c) { var row = c > 0 ? 7 : 0, prow = c > 0 ? 6 : 1; for (var f = 0; f < 8; f++) { need[row * 8 + f] = c * BACK[f]; if (pawns) need[prow * 8 + f] = c; } }
+      if (both) { addSide(1); addSide(-1); } else addSide(col3);
+      var cnt = {}; Object.keys(need).forEach(function (q) { cnt[need[q]] = (cnt[need[q]] || 0) + 1; });
+      t.mode = 'setup'; t.need = need; t.tray = Object.keys(cnt).map(Number).sort(function (x, y) { return (y > 0) - (x > 0) || Math.abs(x) - Math.abs(y); }).map(function (v) { return { v: v, n: cnt[v] }; });
+      t.text = lv === 27 ? 'Расставь белые фигуры на первой горизонтали, как в начале партии. Выбери фигуру внизу, потом нажми на клетку. Ферзь любит свой цвет!' : lv === 28 ? 'Расставь чёрные фигуры на восьмой горизонтали, как в начале партии. Ферзь любит свой цвет!' : lv === 29 ? 'Расставь всю белую армию: фигуры и восемь пешек перед ними.' : 'Расставь все фигуры на доске, как в начале партии: и белые, и чёрные.';
+      t.expl = 'Ладьи в углах, рядом кони, потом слоны, ферзь на своём цвете, король рядом, впереди пешки.'; return t;
     }
     function run(host, L, lv, finish) {
       var r = mkRng(hstr(L.id + 'mx' + lv)), t = mk(lv, r), mist = 0, done = false;
+      function bad(b) { var ps = { b: Int8Array.from(b), turn: 1, castle: 0, ep: -1, half: 0 }, wk = E.kingSq(ps.b, 1), bk = E.kingSq(ps.b, -1); if (wk >= 0 && bk >= 0 && Math.max(Math.abs((wk & 7) - (bk & 7)), Math.abs((wk >> 3) - (bk >> 3))) < 2) return true; if (wk >= 0 && E.inCheck(ps)) return true; ps.turn = -1; return bk >= 0 && E.inCheck(ps); }
+      for (var gg = 0; t.mode === 'board' && bad(t.b) && gg < 100; gg++) t = mk(lv, r);
       var S = { pos: E.fromFEN('8/8/8/8/8/8/8/8 w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: t.mode !== 'setup' || true, mark: {}, hl: null };
       var body = '';
       if (t.mode === 'who') body = '<div class="mscene who" style="background:linear-gradient(160deg,' + t.bg[0] + ',' + t.bg[1] + ')">' + big(t.v, 170) + '</div><div class="opts" id="opts">' + t.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>';
       else if (t.mode === 'scene') body = scene(r, t.items, t.tc) + '<div class="small" id="cnt"></div>';
       else if (t.mode === 'opts') body = boardHTML() + '<div class="opts" id="opts">' + t.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>';
+      else if (t.mode === 'setup') body = boardHTML() + '<div class="tray" id="tray"></div>';
       else body = boardHTML();
       host.innerHTML = say(av('prof'), 'Задание ' + lv, t.text, 'задание ' + lv + ' из 30') + body + '<div class="msg" id="msg" role="status" aria-live="polite"></div>';
       var msg = document.getElementById('msg');
       function sm(x, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = x; }
       function win() { done = true; sfx('good'); sm(t.expl, 'good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); }
-      function bad(x) { mist++; sfx('bad'); sm(x, 'bad'); }
+      function badMsg(x) { mist++; sfx('bad'); sm(x, 'bad'); }
       if (t.mode === 'who' || t.mode === 'opts') {
         if (t.mode === 'opts') { S.pos.b = [0, 0, 0, 0, 0, 0, 0, 0].concat(new Array(48).fill(0), [0, 0, 0, 0, 0, 0, 0, 0]); drawBoard(S, function () {}); }
-        document.getElementById('opts').onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; if (b.dataset.o === t.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; bad('Нет, посмотри ещё раз.'); } };
+        document.getElementById('opts').onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; if (b.dataset.o === t.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; badMsg('Нет, посмотри ещё раз.'); } };
       } else if (t.mode === 'scene') {
         var need = t.items.filter(function (x) { return x.tg; }).length, got = 0, cnt = document.getElementById('cnt');
         function upd() { cnt.textContent = 'Найдено: ' + got + ' из ' + need; } upd();
-        document.getElementById('scn').onclick = function (e) { var b = e.target.closest('.mit'); if (!b || done) return; var it = t.items[+b.dataset.i]; if (b.classList.contains('found')) return; if (it.tg) { b.classList.add('found'); got++; sfx('move'); upd(); if (got === need) win(); } else { b.classList.add('wrong'); setTimeout(function () { b.classList.remove('wrong'); }, 600); bad('Это не ' + NM[t.tc][0] + '. Ищем ' + NM[t.tc][2] + '.'); } };
+        document.getElementById('scn').onclick = function (e) { var b = e.target.closest('.mit'); if (!b || done) return; var it = t.items[+b.dataset.i]; if (b.classList.contains('found')) return; if (it.tg) { b.classList.add('found'); got++; sfx('move'); upd(); if (got === need) win(); } else { b.classList.add('wrong'); setTimeout(function () { b.classList.remove('wrong'); }, 600); badMsg('Это не ' + NM[t.tc][0] + '. Ищем ' + NM[t.tc][2] + '.'); } };
       } else if (t.mode === 'board') {
         S.pos.b = t.b.slice(); var need2 = Object.keys(t.want).length, got2 = 0, hit = {};
-        var cl = function (i) { if (done || hit[i]) return; if (t.want[i]) { hit[i] = 1; got2++; S.hl = S.hl || {}; S.hl[i] = 1; sfx('move'); drawBoard(S, cl); sm('Найдено: ' + got2 + ' из ' + need2); if (got2 === need2) win(); } else bad(t.b[i] ? 'Здесь другая фигура.' : 'Здесь пусто.'); };
+        var cl = function (i) { if (done || hit[i]) return; if (t.want[i]) { hit[i] = 1; got2++; S.hl = S.hl || {}; S.hl[i] = 1; sfx('move'); drawBoard(S, cl); sm('Найдено: ' + got2 + ' из ' + need2); if (got2 === need2) win(); } else badMsg(t.b[i] ? 'Здесь другая фигура.' : 'Здесь пусто.'); };
         drawBoard(S, cl);
       } else if (t.mode === 'setup') {
-        var placed = {}, total = Object.keys(t.need).length, cnt2 = 0;
-        var cl2 = function (i) { if (done || placed[i]) return; if (t.need[i]) { placed[i] = 1; S.pos.b[i] = t.col * t.need[i]; cnt2++; sfx('move'); drawBoard(S, cl2); sm('Поставлено: ' + cnt2 + ' из ' + total); if (cnt2 === total) win(); } else bad('Здесь по правилам другая фигура или пусто. Вспомни расстановку.'); };
-        drawBoard(S, cl2);
+        var left = {}, selV = null, total = Object.keys(t.need).length, put = 0;
+        t.tray.forEach(function (x) { left[x.v] = x.n; });
+        function tray() {
+          document.getElementById('tray').innerHTML = t.tray.map(function (x) { return '<button class="tcell' + (selV === x.v ? ' sel' : '') + (left[x.v] ? '' : ' empty') + '" data-v="' + x.v + '" aria-label="' + (x.v > 0 ? 'белая ' : 'чёрная ') + PN[Math.abs(x.v)] + ', осталось ' + left[x.v] + '">' + pcHTML(x.v) + '<i>' + left[x.v] + '</i></button>'; }).join('');
+        }
+        var PN = { 1: 'пешка', 2: 'конь', 3: 'слон', 4: 'ладья', 5: 'ферзь', 6: 'король' };
+        var clS = function (i) {
+          if (done) return;
+          if (S.pos.b[i]) { return; }
+          if (selV === null) { sm('Сначала выбери фигуру внизу.', 'bad'); return; }
+          if (t.need[i] === selV) { S.pos.b[i] = selV; left[selV]--; put++; sfx('move'); if (!left[selV]) selV = null; drawBoard(S, clS); tray(); sm('Поставлено: ' + put + ' из ' + total); if (put === total) win(); }
+          else badMsg('Здесь стоит другая фигура. Вспомни расстановку: ладьи в углах, ферзь любит свой цвет.');
+        };
+        document.getElementById('tray').onclick = function (e) { var b = e.target.closest('.tcell'); if (!b || done) return; var v = +b.dataset.v; if (!left[v]) return; selV = v; tray(); sm('Теперь нажми на клетку для этой фигуры.'); };
+        var bx = document.querySelector('.boardbox'), tr0 = document.getElementById('tray'); if (bx && tr0) bx.appendChild(tr0);
+        drawBoard(S, clS); tray();
       }
     }
     LESS.meet = { id: 'meet', t: 'Фигуры и их расстановка', d: 'Как зовут фигуры, найди их на картинке и на доске, расстановка. 30 заданий.', levels: 30, run: run,
@@ -4403,7 +4546,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     /* --- общий исполнитель: вопросы с доской, варианты или клик --- */
     function runQ(host, L, lv, finish) {
       var r = mkRng(hstr(L.id + lv + '_fx')), q = null, tries = 0;
-      while (!q && tries++ < 60) q = L.gen(r, lv);
+      function badKings(b) { try { var ps = E.fromFEN(fenOfB(b) + ' w - - 0 1'), wk = E.kingSq(ps.b, 1), bk = E.kingSq(ps.b, -1); if (wk >= 0 && bk >= 0 && Math.max(Math.abs((wk & 7) - (bk & 7)), Math.abs((wk >> 3) - (bk >> 3))) < 2) return true; if (wk >= 0 && E.inCheck(ps)) return true; ps.turn = -1; return bk >= 0 && E.inCheck(ps); } catch (e) { return false; } }
+      while ((!q || (L.id !== 'kingrules' && badKings(q.b))) && tries++ < 150) q = L.gen(r, lv);
       var S = { pos: E.fromFEN(fenOfB(q.b) + ' w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: q.hl || null }, mist = 0, done = false;
       if (q.star != null) { S.mark[q.star] = 'star'; S.hl = S.hl || {}; S.hl[q.star] = true; }
       host.innerHTML = say(av('prof'), 'Профессор', q.text, L.t + ' · ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' + (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
@@ -5378,7 +5522,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function lvOf(rt) { return Math.max(1, Math.min(30, Math.round(rt < 1000 ? 1 + (rt - 600) / 100 : rt < 1400 ? 5 + (rt - 1000) / 45 : rt < 1800 ? 14 + (rt - 1400) / 100 : rt < 2300 ? 18 + (rt - 1800) / 100 : 23 + (rt - 2300) / 50))); }
     function gst() { var g = lsGet('ukc_y2g', null); if (!g || typeof g !== 'object') g = { r: 1000, w: 0, d: 0, l: 0, done: {} }; if (!g.done) g.done = {}; return g; }
     function tierWins(g, t) { var n = 0; for (var i = 0; i < 100; i++) if (g.done[t + ':' + i] === 1) n++; return n; }
-    function tierOpen(g, t) { return t === 0 || tierWins(g, t - 1) >= 10; }
+    function tierOpen(g, t) { return openAll || t === 0 || tierWins(g, t - 1) >= 10; }
     function ava2(o) { return '<span class="y2ava" style="background:hsl(' + ((o.i * 37 + o.t * 61 + 200) % 360) + ' 35% 42%)">' + esc(o.n[0]) + '</span>'; }
     function games() {
       var g = gst();
@@ -6774,6 +6918,78 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     new MutationObserver(arrange).observe(view, { childList: true, subtree: true });
     arrange();
+  })();
+
+  /* ===== Общие настройки: голос, подсветка ходов, открыть все уровни ===== */
+  (function () {
+    var G = lsGet('ukc_g', {});
+    function save() { lsSet('ukc_g', G); }
+    function isY2() { return document.body.classList.contains('y2'); }
+    function voiceOnG() { return !!G.voice && typeof window.speechSynthesis !== 'undefined'; }
+    var lastSpoken = '';
+    function speakG(t, force) {
+      if (!t || (!force && !voiceOnG())) return;
+      t = t.replace(/\s+/g, ' ').trim(); if (!t) return;
+      try {
+        var ss = window.speechSynthesis; ss.cancel();
+        var u = new SpeechSynthesisUtterance(t); u.lang = 'ru-RU'; u.rate = 0.92;
+        var vs = ss.getVoices().filter(function (v) { return /^ru/i.test(v.lang); }); if (vs[0]) u.voice = vs[0];
+        ss.speak(u);
+      } catch (e) {}
+    }
+    function textOf(el) { return el ? (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim() : ''; }
+    function currentText() {
+      var sl = document.querySelector('.slide'); if (sl) return textOf(sl);
+      var sy = document.querySelector('.say'); return textOf(sy);
+    }
+    /* --- автоматическое чтение --- */
+    var timer = null, lastMsg = '';
+    var obs = new MutationObserver(function (muts) {
+      if (!voiceOnG() || isY2()) return;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var m = document.getElementById('msg') || document.getElementById('sm');
+        var mt = textOf(m);
+        var ct = currentText();
+        if (ct && ct !== lastSpoken) { lastSpoken = ct; lastMsg = mt; speakG(ct); return; }
+        if (mt && mt !== lastMsg && /шах|мат|ничь|пат|верно|нет|ошиб|молодец/i.test(mt)) { lastMsg = mt; speakG(mt); }
+      }, 450);
+    });
+    obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+    window.addEventListener('hashchange', function () { lastSpoken = ''; lastMsg = ''; try { window.speechSynthesis.cancel(); } catch (e) {} });
+
+    /* --- кнопка «Прочитать вслух» --- */
+    var rb = document.createElement('button'); rb.type = 'button'; rb.id = 'readAloud'; rb.className = 'btn alt'; rb.textContent = '🔊 Прочитать'; rb.setAttribute('aria-label', 'Прочитать задание вслух');
+    rb.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:50;display:none';
+    document.body.appendChild(rb);
+    rb.onclick = function () { var t = currentText(); if (t) speakG(t, true); };
+    function showRb() { var h = location.hash || ''; rb.style.display = (!isY2() && /^#(lesson|play|puzzle|live|review)/.test(h) && typeof window.speechSynthesis !== 'undefined') ? 'block' : 'none'; }
+    window.addEventListener('hashchange', showRb); setTimeout(showRb, 500);
+
+    /* --- настройки --- */
+    function tgl(k, name, on, hint) { return '<div class="y2row"><span>' + name + (hint ? '<br><small>' + hint + '</small>' : '') + '</span><button class="btn alt" data-gk="' + k + '" aria-pressed="' + on + '">' + (on ? 'вкл' : 'выкл') + '</button></div>'; }
+    function section() {
+      return '<div id="gsec">' + (isY2() ? '' : tgl('voice', 'Голосовое чтение заданий и уроков', !!G.voice, 'Сообщения «шах», «мат», «ничья» тоже читаются вслух.') + tgl('hl', 'Подсветка ходов в заданиях', !!G.hl, 'В играх подсветка слабая, в заданиях по умолчанию её нет.')) +
+        tgl('all', 'Открыть все уровни (для тренера)', !!openAll, 'Все миры и ступени открыты, можно проверить любое задание и любую игру.') + '</div>';
+    }
+    var sObs = new MutationObserver(function () {
+      var pop = document.querySelector('#y2ov .y2set'); if (!pop || pop.querySelector('#gsec')) return;
+      var h = pop.querySelector('h3'); if (h) h.insertAdjacentHTML('afterend', section());
+    });
+    sObs.observe(document.body, { childList: true, subtree: true });
+    document.addEventListener('click', function (e) {
+      var hb = e.target.closest && e.target.closest('#hlBtn');
+      if (hb) { G.hl = !G.hl; save(); document.querySelectorAll('#hlBtn').forEach(function (x) { x.textContent = '💡 Подсветка ходов: ' + (G.hl ? 'вкл' : 'выкл'); x.setAttribute('aria-pressed', String(!!G.hl)); }); if (window.__curDraw) try { window.__curDraw(); } catch (er) {} return; }
+      var b = e.target.closest && e.target.closest('[data-gk]'); if (!b) return;
+      e.stopPropagation();
+      var k = b.getAttribute('data-gk');
+      if (k === 'voice') { G.voice = !G.voice; save(); if (!G.voice) try { window.speechSynthesis.cancel(); } catch (er) {} else speakG('Голос включён.', true); }
+      else if (k === 'hl') { G.hl = !G.hl; save(); }
+      else if (k === 'all') { openAll = !openAll; lsSet('ukc_all', openAll); save(); location.reload(); return; }
+      var sec = document.getElementById('gsec'); if (sec) sec.outerHTML = section();
+      if (window.__curDraw) try { window.__curDraw(); } catch (er) {}
+    }, true);
+    window.__gopt = G;
   })();
 
 
