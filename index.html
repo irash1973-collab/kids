@@ -4991,6 +4991,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
     GROUPS.push({ n: 'Повторение', ids: ['review'] });
     GROUPS.push({ n: 'Шахматная нотация', ids: ['notation'] });
   })();
+  /* «Правила игры» не в начале: переносим к правилам и приёмам */
+  (function () {
+    GROUPS.forEach(function (g) { var k = g.ids.indexOf('rules'); if (k >= 0) g.ids.splice(k, 1); });
+    var G = GROUPS.filter(function (g) { return g.n === 'Правила и приёмы'; })[0];
+    if (G) G.ids.unshift('rules'); else GROUPS.push({ n: 'Правила игры', ids: ['rules'] });
+  })();
 
   /* ===== Рокировка и взятие на проходе: много позиций, «попробуй сам» ===== */
   (function () {
