@@ -7956,6 +7956,64 @@ if (typeof module !== 'undefined') module.exports = Eng;
     window.__gopt = G;
   })();
 
+/* ===== «Оцени нас» и счётчик визитов (записи попадают в Google-таблицу клуба) ===== */
+(function () {
+  var URL = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSc8_h-Fsu-1xdW9hYWmFKF7zbd6OPf4e5-qqbaZCwQnLJdvhA/formResponse';
+  var F = { type: 'entry.628244719', stars: 'entry.1108282063', name: 'entry.272232630', country: 'entry.814965841', comment: 'entry.33728230' };
+  function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} return null; }
+  function send(o) {
+    if (!/^https?:$/.test(location.protocol) || /^(localhost|127\.)/.test(location.hostname)) return null;
+    var p = new URLSearchParams(); for (var k in o) p.append(F[k], o[k]);
+    try { return fetch(URL, { method: 'POST', mode: 'no-cors', body: p }); } catch (e) { return null; }
+  }
+  /* счётчик визитов: одна запись в день с одного браузера, без cookie и без личных данных */
+  (function visit() {
+    var d = new Date().toISOString().slice(0, 10);
+    if (ls('ukc_visit') === d) return;
+    ls('ukc_visit', d);
+    var first = !ls('ukc_seen'); ls('ukc_seen', '1');
+    send({ type: first ? 'визит (новый)' : 'визит (повторный)', stars: '', name: '', country: '', comment: '' });
+  })();
+  function css() {
+    if (document.getElementById('fbkCss')) return;
+    var s = document.createElement('style'); s.id = 'fbkCss';
+    s.textContent = '.fbk-open{margin:10px auto;display:block}.fbk-ov{position:fixed;inset:0;background:rgba(20,15,50,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px}' +
+      '.fbk{background:#fff;border-radius:18px;max-width:440px;width:100%;padding:18px 18px 14px;box-shadow:0 10px 40px rgba(0,0,0,.35);max-height:92vh;overflow:auto;font-size:16px;color:#22204a}' +
+      '.fbk h2{margin:0 0 6px;font-size:22px}.fbk .st{font-size:40px;letter-spacing:4px;cursor:pointer;user-select:none;line-height:1.1;margin:6px 0}.fbk .st span{opacity:.3}.fbk .st span.on{opacity:1}' +
+      '.fbk input,.fbk textarea{width:100%;box-sizing:border-box;font:inherit;padding:9px 10px;border:2px solid #c9c4ee;border-radius:10px;margin:4px 0 8px}.fbk .nt{font-size:14px;color:#5a5680;background:#fff7d6;border-radius:10px;padding:8px 10px;margin:8px 0}.fbk .rw{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}';
+    document.head.appendChild(s);
+  }
+  function open() {
+    css(); var done = ls('ukc_rated'), n = 0;
+    var ov = document.createElement('div'); ov.className = 'fbk-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true');
+    ov.innerHTML = '<div class="fbk"><h2>Оцени «Шахматную страну»</h2><div>Нажми на звёздочки: сколько тебе понравилось?</div><div class="st" id="fbS" aria-label="Оценка"></div>' +
+      '<label>Твоё имя (только имя, без фамилии)<input id="fbN" maxlength="30" autocomplete="off"></label><label>Страна<input id="fbC" maxlength="40" autocomplete="off"></label>' +
+      '<label>Что понравилось или что исправить? (можно не писать)<textarea id="fbT" rows="3" maxlength="300"></textarea></label>' +
+      '<div class="nt">Попроси разрешения у взрослых. Не пиши фамилию, адрес, телефон и электронную почту. Видит ответы только администратор сайта.</div><div id="fbM" role="status"></div>' +
+      '<div class="rw"><button class="btn alt" id="fbX" type="button">Закрыть</button><button class="btn" id="fbG" type="button">Отправить</button></div></div>';
+    document.body.appendChild(ov);
+    var S = ov.querySelector('#fbS'), M = ov.querySelector('#fbM');
+    function paint() { S.innerHTML = [1, 2, 3, 4, 5].map(function (i) { return '<span data-n="' + i + '" class="' + (i <= n ? 'on' : '') + '">★</span>'; }).join(''); }
+    paint(); S.onclick = function (e) { var t = e.target.closest('span'); if (!t) return; n = +t.dataset.n; paint(); };
+    function close() { ov.remove(); }
+    ov.querySelector('#fbX').onclick = close; ov.onclick = function (e) { if (e.target === ov) close(); };
+    ov.querySelector('#fbG').onclick = function () {
+      if (!n) { M.textContent = 'Сначала выбери звёздочки.'; return; }
+      var name = ov.querySelector('#fbN').value.trim(), c = ov.querySelector('#fbC').value.trim(), t = ov.querySelector('#fbT').value.trim();
+      send({ type: 'оценка', stars: String(n), name: name, country: c, comment: t });
+      ls('ukc_rated', String(n)); M.textContent = 'Спасибо! Твой отзыв отправлен.'; M.style.fontWeight = '700';
+      ov.querySelector('#fbG').disabled = true; setTimeout(close, 1800);
+    };
+    if (done) M.textContent = 'Ты уже ставил оценку ' + done + ' ★. Можно поставить новую.';
+  }
+  function mount() {
+    if (document.getElementById('fbkBtn')) return; var sl = document.querySelector('.site-link'); if (!sl || !sl.parentNode) return;
+    var b = document.createElement('button'); b.id = 'fbkBtn'; b.type = 'button'; b.className = 'btn alt fbk-open'; b.textContent = '⭐ Оцени нас'; b.onclick = open;
+    sl.parentNode.insertBefore(b, sl);
+  }
+  mount();
+})();
+
 
   /* ---------- Разбор партии ---------- */
   var CLS = {
