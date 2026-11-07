@@ -6425,6 +6425,123 @@ if (typeof module !== 'undefined') module.exports = Eng;
   ];
 })();
 
+/* ===== Превращение пешки: новый урок. 10 тем на досках, 4 игры и 40 разных заданий ===== */
+(function () {
+  var L = LESS.promo; if (!L) return;
+  var RED = '<b style="color:#d6202a">';
+  var P = {"m3": ["1k6/3K2P1/2B5/8/8/8/5B2/8 w - - 0 1", "4k3/P5R1/8/8/8/8/2R5/3K4 w - - 0 1", "1k6/3R1P2/8/8/8/8/8/6K1 w - - 0 1", "8/R2P1k2/8/5K2/8/8/8/8 w - - 0 1"], "mr": [["1k6/6P1/1K6/8/5n2/8/8/8 w - - 0 1", "g7g8"], ["7k/2PB4/6K1/8/8/8/5P2/5b2 w - - 0 1", "c7c8"], ["1k6/3P4/K7/B7/8/8/8/8 w - - 0 1", "d7d8"], ["6k1/2P5/6K1/N7/8/3N4/8/8 w - - 0 1", "c7c8"], ["1B6/4p2P/8/8/5K1k/8/6p1/8 w - - 0 1", "h7h8"], ["5k2/P7/1p3K2/8/8/8/B7/1r6 w - - 0 1", "a7a8"], ["7k/1R1P4/2N5/8/8/2p5/6K1/8 w - - 0 1", "d7d8"], ["7k/P7/1R4K1/8/8/8/6p1/8 w - - 0 1", "a7a8"]], "mq": [["8/3kPK2/8/8/8/6B1/3r4/2R5 w - - 0 1", "e7e8"], ["k7/2P4K/8/8/8/4B3/8/3N4 w - - 0 1", "c7c8"], ["3K1k2/7P/6P1/6P1/8/8/8/8 w - - 0 1", "h7h8"]], "ch": [["8/4Pk2/K7/B2R4/8/N7/8/8 w - - 0 1", "e7e8"], ["8/P7/5K2/3k4/8/4P3/8/8 w - - 0 1", "a7a8"], ["b4b1K/2kP4/8/8/8/8/6n1/8 w - - 0 1", "d7d8"], ["7k/1r2P3/8/3K4/8/8/8/8 w - - 0 1", "e7e8"], ["8/2Pk4/8/2K5/8/8/8/3n4 w - - 0 1", "c7c8"], ["8/2P5/8/1p3k2/8/8/K3B1B1/8 w - - 0 1", "c7c8"], ["1n4k1/2P5/7K/b7/8/8/8/8 w - - 0 1", "c7b8"], ["8/5P2/3p4/8/1B6/8/2K5/5k2 w - - 0 1", "f7f8"]], "kn": [["8/K2P4/2N1k3/n7/8/8/p7/8 w - - 0 1", "d7d8"], ["8/1P6/k7/4N3/8/8/4K3/8 w - - 0 1", "b7b8"], ["8/P7/1k5K/b7/8/1n6/1P6/8 w - - 0 1", "a7a8"], ["8/P1k3P1/8/8/8/8/8/4K3 w - - 0 1", "a7a8"], ["8/krP5/5p2/K1n5/8/8/8/8 w - - 0 1", "c7c8"], ["8/3P1k2/8/1K6/P4n2/8/8/8 w - - 0 1", "d7d8"]], "st": [["8/4NP1k/8/8/8/8/2K5/8 w - - 0 1", "f7f8"], ["8/4PP1k/8/5K2/8/5N2/8/8 w - - 0 1", "f7f8"], ["8/6P1/7k/6R1/8/8/3K4/8 w - - 0 1", "g7g8"], ["8/k1P5/8/K7/8/8/8/8 w - - 0 1", "c7c8"]], "cp": [["n5nk/7P/8/8/8/8/8/6K1 w - - 0 1", "h7g8"], ["5b2/6P1/8/8/7K/8/5k2/8 w - - 0 1", "g7f8"], ["6b1/KN5P/8/8/8/8/k7/4b3 w - - 0 1", "h7g8"], ["6b1/3K1P2/8/4R3/2k5/2B5/8/8 w - - 0 1", "f7g8"], ["3r1k2/K1P5/8/8/7R/8/8/8 w - - 0 1", "c7d8"]]};
+  var PN2 = { 5: 'ферзём', 4: 'ладьёй', 3: 'слоном', 2: 'конём' }, PNN = { 5: 'ферзь', 4: 'ладья', 3: 'слон', 2: 'конь' };
+  function sqn(x) { return 'abcdefgh'[x & 7] + (8 - (x >> 3)); }
+  function st(np) { return E.status(np); }
+  function pawnHL(fen) { var h = {}, pos = E.fromFEN(fen); E.legal(pos).forEach(function (m) { if (m.p) h[m.f] = 1; }); return h; }
+  function task(fen, kind) {
+    var pos = E.fromFEN(fen), pm = null; E.legal(pos).forEach(function (m) { if (m.p && !pm) pm = m; });
+    var base = { pos: pos, hl: pawnHL(fen) };
+    function who(m) { return PN2[m.p] || 'фигурой'; }
+    function notPromo(m) { return 'Пешка ещё не дошла. Нужно ходить пешкой на последнюю линию и выбрать фигуру.'; }
+    if (kind === 'mate') { base.say = 'Превратись так, чтобы получился мат!'; base.ok = function (m, p) { return !!m.p && st(E.make(p, m)) === 'mate'; }; base.good = function (m) { return 'Мат! Пешка стала ' + PNN[m.p] + 'ем… ' .replace('ем… ', m.p === 4 ? 'ой. Мат!' : 'ом. Мат!').replace('ь' + (m.p === 4 ? 'ой' : 'ом'), 'ь'); }; base.bad = function (m, p, np) { return m.p ? (st(np) === 'check' ? 'Шах есть, но король защитится. Нужен мат: выбери другую фигуру.' : 'Это не мат. Выбери другую фигуру.') : notPromo(); }; base.good = function (m, p, np) { return 'Верно! Пешка стала ' + { 5: 'ферзём', 4: 'ладьёй', 3: 'слоном', 2: 'конём' }[m.p] + ': это мат.'; }; }
+    else if (kind === 'check') { base.say = 'Превратись так, чтобы получился шах чёрному королю.'; base.ok = function (m, p) { var s = st(E.make(p, m)); return !!m.p && (s === 'check' || s === 'mate'); }; base.good = function (m, p, np) { return 'Шах! Пешка стала ' + PN2[m.p] + ' и атакует короля.'; }; base.bad = function (m, p, np) { return m.p ? 'Здесь нет шаха. Подумай, какая фигура будет бить короля.' : notPromo(); }; }
+    else if (kind === 'knight') { base.say = 'Ферзь тут не поможет. Какая фигура даст шах после превращения?'; base.ok = function (m, p) { var s = st(E.make(p, m)); return !!m.p && (s === 'check' || s === 'mate'); }; base.good = function (m) { return 'Конь! Он ходит буквой «Г» и бьёт короля там, где ферзь не может.'; }; base.bad = function (m, p, np) { return m.p ? (m.p === 5 ? 'Ферзём шаха нет. Попробуй другую фигуру: конь ходит буквой «Г».' : 'Шаха нет. Подумай про коня.') : notPromo(); }; }
+    else if (kind === 'stale') { base.say = 'Осторожно: если сыграть ферзём, будет пат (ничья). Выбери ладью!'; base.ok = function (m, p) { return !!m.p && m.p === 4; }; base.good = function () { return 'Верно! Ладья не даёт пата: у короля есть ход, партия продолжается и ты выигрываешь.'; }; base.bad = function (m) { return m.p === 5 ? 'Пат! У чёрных нет хода и шаха нет: ничья. Выбери ладью.' : m.p ? 'Так не победить. Здесь нужна ладья.' : notPromo(); }; }
+    else if (kind === 'cap') { base.say = 'Пешка может превратиться, съедая фигуру по диагонали. Съешь фигуру, превратись и дай шах!'; base.ok = function (m, p) { var s = st(E.make(p, m)); return !!m.p && p.b[m.t] !== 0 && (s === 'check' || s === 'mate'); }; base.good = function (m) { return 'Пешка съела фигуру и стала ' + PNN[m.p] + 'ом' .replace('ь', '') + ' с шахом!'; }; base.good = function (m) { return 'Пешка съела фигуру, превратилась и дала шах!'; }; base.bad = function (m, p) { return m.p && p.b[m.t] === 0 ? 'Тут пешка идёт вперёд. Нужно съесть фигуру по диагонали.' : m.p ? 'Шаха нет. Выбери другую фигуру.' : notPromo(); }; }
+    return base;
+  }
+  var ORD = ['any', 'mateR', 'chk', 'kn', 'cap', 'q', 'stale', 'mateR', 'kn', 'chk', 'cap', 'mateQ', 'q', 'mateR', 'chk', 'kn', 'stale', 'cap', 'mateR', 'chk', 'q', 'kn', 'mateR', 'chk', 'cap', 'mateR', 'stale', 'kn', 'chk', 'mateQ', 'q', 'cap', 'mateR', 'kn', 'chk', 'any', 'mateQ', 'q', 'mateR', 'stale'];
+  var cnt = {}, MAP = ORD.map(function (t) { cnt[t] = (cnt[t] || 0); return [t, cnt[t]++]; });
+  var ANY = ['8/4P3/8/8/8/8/8/k1K5 w - - 0 1', '8/6P1/8/8/8/k7/8/4K3 w - - 0 1'];
+  var QS = [
+    { fen: '8/3P4/8/8/8/8/8/k1K5 w - - 0 1', q: 'В какие фигуры может превратиться пешка, дойдя до последней линии?', opts: ['Только в ферзя', 'В ферзя, ладью, слона или коня', 'В любую фигуру, даже в короля', 'В ту фигуру, которую съели'], right: 1, expl: 'Пешка выбирает: ферзь, ладья, слон или конь. Короля и пешку выбирать нельзя.', hint: 'Король в игре один, пешкой тоже стать нельзя.' },
+    { fen: '8/5P2/8/8/8/8/8/k1K5 w - - 0 1', q: 'Может ли пешка превратиться в короля?', ans: false, expl: 'Король у каждого игрока один, поэтому превратиться в него нельзя.', hint: 'Сколько королей у каждого игрока?' }
+  ];
+  L.levels = 44;
+  L.d = 'Как пешка превращается, когда лучше конь или ладья, как не попасть в пат. 4 игры с компьютером и 40 заданий.';
+  var GM = [
+    { t: 'Беги к краю', fen: '7k/8/8/8/1P6/8/8/4K3 w - - 0 1', lim: 8, tip: 'Просто веди пешку вперёд: король чёрных далеко.' },
+    { t: 'Гонка пешек', fen: '7k/8/8/P6p/8/8/8/4K3 w - - 0 1', lim: 6, tip: 'У чёрных тоже есть пешка! Успей раньше.' },
+    { t: 'Съешь и стань ферзём', fen: '2r1k3/3P4/8/8/8/8/8/4K3 w - - 0 1', lim: 3, tip: 'Пешка d7 может съесть ладью c8 и превратиться.' },
+    { t: 'Две пешки', fen: '7k/8/8/2P5/6p1/8/8/4K3 w - - 0 1', lim: 6, tip: 'Твоя пешка ближе к цели. Не медли!' }
+  ];
+  function runGame(host, Lx, lv, finish) {
+    var g = GM[lv - 1], pos0 = E.fromFEN(g.fen), S = { pos: pos0, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, cur = pos0, mv = 0, busy = false, done = false, hh = [];
+    host.innerHTML = say(av('prof'), 'Игра ' + lv + ': ' + g.t, 'Ты играешь белыми. Доведи пешку до конца и превратись, быстрее компьютера (не больше ' + g.lim + ' ходов).', 'гонка') + boardHTML() +
+      '<div class="msg" id="msg" role="status" aria-live="polite"></div><div id="promo" class="promo" hidden></div><div class="row"><button class="btn alt" id="hintB">Подсказка</button><button class="btn alt" id="resB">Заново</button></div>';
+    var msg = document.getElementById('msg');
+    function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+    function draw() { drawBoard(S, click); }
+    function lose(t) { done = true; draw(); sm(t + ' Нажми «Заново».', 'bad'); sfx('bad'); }
+    function comp() {
+      busy = true; sm('Компьютер думает…');
+      later(function () {
+        var m = null; try { m = E.bestMove(cur, 3, hh); } catch (e) { m = null; } if (!m) { busy = false; return; }
+        var b0 = cur; cur = E.make(cur, m); S.pos = cur; S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); hh.push(E.hashOf(cur)); moveSound(b0, m, cur); busy = false; draw();
+        var s = E.status(cur);
+        if (m.p) { lose('Чёрные превратили пешку первыми.'); return; }
+        if (s === 'mate') { lose('Тебе поставили мат.'); return; }
+        if (s === 'stalemate') { lose('Пат: ничья.'); return; }
+        var wp = 0; for (var i = 0; i < 64; i++) if (cur.b[i] === 1) wp++;
+        if (!wp) { lose('Твою пешку съели.'); return; }
+        sm('Твой ход.');
+      }, 450);
+    }
+    function pick(ms, cb) {
+      var el = document.getElementById('promo'); el.hidden = false; el.innerHTML = '<span>Выбери фигуру:</span> ' + [5, 4, 3, 2].map(function (c) { return '<button data-p="' + c + '">' + { 5: 'Ферзь', 4: 'Ладья', 3: 'Слон', 2: 'Конь' }[c] + '</button>'; }).join('');
+      el.onclick = function (e) { var b = e.target.closest('button'); if (!b) return; el.hidden = true; cb(ms.filter(function (x) { return x.p === +b.dataset.p; })[0]); };
+    }
+    function after(m) {
+      var b0 = cur; cur = E.make(cur, m); mv++; S.pos = cur; S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); S.sel = null; S.targets = []; hh.push(E.hashOf(cur)); moveSound(b0, m, cur); draw();
+      if (m.p) { var s = E.status(cur); if (s === 'stalemate') { lose('Это пат: ничья! Выбери другую фигуру.'); return; } done = true; sm('Пешка превратилась! Ты победил!', 'good'); sfx('good'); finish(3); return; }
+      if (E.status(cur) === 'stalemate') { lose('Пат: ничья.'); return; }
+      if (mv >= g.lim) { lose('Не успел за ' + g.lim + ' ходов.'); return; }
+      comp();
+    }
+    function click(i) {
+      if (busy || done) return; var v = cur.b[i];
+      if (S.sel != null && S.targets.indexOf(i) >= 0) {
+        var cs = movesFrom(cur, S.sel).filter(function (x) { return x.t === i; });
+        if (cs.length > 1 && cs[0].p) { pick(cs, after); return; } after(cs[0]); return;
+      }
+      if (v && v > 0) { S.sel = i; S.targets = movesFrom(cur, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
+      draw();
+    }
+    document.getElementById('hintB').onclick = function () { sm('Подсказка: ' + g.tip); };
+    document.getElementById('resB').onclick = function () { lessonPage(Lx.id, lv); };
+    sm('Твой ход. ' + g.tip); draw();
+  }
+  L.run = function (host, Lx, lv, finish) { if (lv <= 4) runGame(host, Lx, lv, finish); else runTask(host, Lx, lv - 4, finish); };
+  L.gen = function (k) {
+    var mp = MAP[(k - 1) % 40], t = mp[0], j = mp[1], o;
+    if (t === 'any') return { pos: E.fromFEN(ANY[j % ANY.length]), hl: pawnHL(ANY[j % ANY.length]), say: 'Доведи пешку до последней линии и выбери фигуру.', ok: function (m) { return !!m.p; }, good: function (m) { return 'Пешка стала ' + (PN2[m.p] || 'фигурой') + '.'; }, bad: function () { return 'Сначала доведи пешку до последней линии.'; } };
+    if (t === 'mateR') return task(P.mr[j % P.mr.length][0], 'mate');
+    if (t === 'mateQ') return task(P.mq[j % P.mq.length][0], 'mate');
+    if (t === 'chk') return task(P.ch[j % P.ch.length][0], 'check');
+    if (t === 'kn') return task(P.kn[j % P.kn.length][0], 'knight');
+    if (t === 'stale') return task(P.st[j % P.st.length][0], 'stale');
+    if (t === 'cap') return task(P.cp[j % P.cp.length][0], 'cap');
+    var q = j < 2 ? QS[j] : { fen: P.m3[(j - 2) % 4], q: 'Какой фигурой надо превратить пешку, чтобы поставить мат?', opts: ['Ферзь', 'Ладья', 'Слон', 'Конь'], right: -1, expl: '', hint: '' };
+    if (j >= 2) {
+      var pos = E.fromFEN(q.fen), good = [];
+      E.legal(pos).forEach(function (m) { if (m.p && st(E.make(pos, m)) === 'mate' && good.indexOf(m.p) < 0) good.push(m.p); });
+      var map = { 5: 0, 4: 1, 3: 2, 2: 3 };
+      if (j === 2 || j === 3) { q.q = 'Какая из этих фигур НЕ даёт мата при превращении?'; var bad = []; [5, 4, 3, 2].forEach(function (c) { if (good.indexOf(c) < 0) bad.push(c); }); q.right = map[bad[0]]; q.expl = 'Мат дают ' + good.map(function (c) { return PN2[c]; }).join(' и ') + '. Остальные фигуры мата не ставят.'; }
+      else { q.q = 'Какой фигурой можно поставить мат превращением?'; q.right = map[good[good.length - 1]]; q.opts = ['Ферзь', 'Ладья', 'Слон', 'Конь']; q.expl = 'Мат даёт эта фигура. Проверь, куда смотрит каждая.'; }
+      q.hint = 'Представь каждую фигуру на последней линии: куда она бьёт?';
+    }
+    return { pos: E.fromFEN(q.fen), hl: pawnHL(q.fen), q: q.q, opts: q.opts, right: q.right, ans: q.ans, expl: q.expl, hint: q.hint };
+  };
+  L.slides = [
+    { h: '1. Что такое превращение', p: ['Если пешка дошла до последней горизонтали, она <b>превращается</b>: ты меняешь её на другую фигуру. Нажми «Показать»: пешка на e7 идёт на e8 и становится ферзём.'], demo: { fen: '8/4P3/8/8/8/8/8/k1K5 w - - 0 1', steps: ['e7e8q|Пешка стала ферзём.'] } },
+    { h: '2. Во что можно превратиться', p: ['Можно выбрать <b>ферзя, ладью, слона или коня</b>. Короля нельзя: он один. Пешкой остаться нельзя: пешка обязана превратиться. Выбирай тем, что полезнее.'], fen: '4k3/3P4/8/8/8/8/8/4K3 w - - 0 1' },
+    { h: '3. Обычно выбирают ферзя', p: ['Ферзь — самая сильная фигура. Обычно пешку превращают в ферзя: он и ходит как ладья, и как слон. Но не всегда!'] },
+    { h: '4. Превращение со взятием', p: ['Пешка ходит вперёд, а бьёт по диагонали. Поэтому она может съесть фигуру на последней линии и сразу превратиться. Нажми «Показать»: пешка d7 берёт коня c8.'], demo: { fen: '2n3k1/3P4/8/8/8/4K3/8/8 w - - 0 1', steps: ['d7c8q|Пешка съела коня, стала ферзём и дала шах.'] } },
+    { h: '5. Превращение с шахом', p: ['Новая фигура может сразу напасть на короля. Ладья на последней линии бьёт по горизонтали. Нажми «Показать».'], demo: { fen: '7k/1r2P3/8/3K4/8/8/8/8 w - - 0 1', steps: ['e7e8r|Ладья e8 даёт шах чёрному королю по горизонтали.'] } },
+    { h: '6. Превращение с матом', p: ['Иногда превращение сразу ставит мат: король не может ни убежать, ни закрыться. Здесь ладья и слон закрывают все клетки. Нажми «Показать».'], demo: { fen: '1k6/3P4/K7/B7/8/8/8/8 w - - 0 1', steps: ['d7d8r|Ладья d8 ставит мат: королю b8 некуда идти.'] } },
+    { h: '7. Конь иногда лучше ферзя', p: ['Конь ходит буквой «Г» и может дать шах и напасть на другую фигуру сразу (это называется вилка). Здесь ферзь на e8 не даёт шаха, а конь да, и ещё бьёт ладью c7. Нажми «Показать».'], demo: { fen: '8/2r1P1k1/8/8/8/8/8/K7 w - - 0 1', steps: ['e7e8n|Конь даёт шах и бьёт ладью. Ладья пропала!'] } },
+    { h: '8. Осторожно: пат!', p: ['Если у чёрного короля нет ходов и шаха нет — это <b>пат</b>, ничья. Часто пат бывает после превращения в ферзя. Нажми «Показать»: ферзь c8 запирает короля — пат.'], demo: { fen: '8/k1P5/8/K7/8/8/8/8 w - - 0 1', steps: ['c7c8q|Пат! Чёрный король не может ходить, но шаха нет. Ничья.'] } },
+    { h: '9. Как избежать пата', p: ['Выбери другую фигуру! Ладья c8 не запирает короля: у него остаётся поле b7. Игра продолжается и белые выигрывают. Нажми «Показать».'], demo: { fen: '8/k1P5/8/K7/8/8/8/8 w - - 0 1', steps: ['c7c8r|Ладья: пата нет, король может ходить. Белые выигрывают.'] } },
+    { h: '10. Дальше игры и задания', p: ['Сначала 4 игры с компьютером: пешка бежит к краю, иногда есть чужая пешка. Потом 40 разных заданий: превратись с шахом, с матом, конём, избегая пата, со взятием, и вопросы «да / нет».'] }
+  ];
+})();
+
 /* ===== Урок «Шахматная доска»: 30 разных заданий (свои формулировки) ===== */
 (function () {
   var L = LESS.board; if (!L) return;
