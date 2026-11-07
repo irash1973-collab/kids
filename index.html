@@ -1887,7 +1887,44 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var q = el.querySelector('.sq[data-i="' + g.sq + '"]'); if (q && g.v) q.insertAdjacentHTML('beforeend', pcHTML(g.v).replace('class="pcs ', 'class="pcs ghost '));
     });
   }
+  /* ---------- Голос: шах, мат, пат, ничья (во всех играх) ---------- */
+  var INS = { 1: 'пешкой', 2: 'конём', 3: 'слоном', 4: 'ладьёй', 5: 'ферзём', 6: 'королём' };
+  var lastEv = '', lastEvT = 0;
+  function speakEvent(txt) {
+    if (muted || !txt || typeof window.speechSynthesis === 'undefined') return;
+    if (document.body.classList.contains('y2') && lsGet('ukc_y2opt', {}).voice === false) return;
+    var now = Date.now(); if (txt === lastEv && now - lastEvT < 2500) return; lastEv = txt; lastEvT = now;
+    try { var ss = window.speechSynthesis; ss.cancel(); var u = new SpeechSynthesisUtterance(txt); u.lang = 'ru-RU'; u.rate = 0.92; var vs = ss.getVoices().filter(function (v) { return /^ru/i.test(v.lang); }); if (vs[0]) u.voice = vs[0]; ss.speak(u); } catch (e) {}
+  }
+  function movedGivesCheck(b, t, ksq) {
+    var v = b[t], a = Math.abs(v), tx = t % 8, ty = (t / 8) | 0, kx = ksq % 8, ky = (ksq / 8) | 0, dx = kx - tx, dy = ky - ty;
+    if (a === 2) return (Math.abs(dx) === 1 && Math.abs(dy) === 2) || (Math.abs(dx) === 2 && Math.abs(dy) === 1);
+    if (a === 1) return Math.abs(dx) === 1 && dy === (v > 0 ? -1 : 1);
+    var diag = Math.abs(dx) === Math.abs(dy) && dx !== 0, line = (dx === 0) !== (dy === 0);
+    if (!((a === 3 && diag) || (a === 4 && line) || (a === 5 && (diag || line)))) return false;
+    var sx = Math.sign(dx), sy = Math.sign(dy), x = tx + sx, y = ty + sy;
+    while (x !== kx || y !== ky) { if (b[y * 8 + x]) return false; x += sx; y += sy; }
+    return true;
+  }
+  var lastAnn = '';
+  function announceStatus(S) {
+    try {
+      var pos = S.pos, st = E.status(pos), k = E.key(pos) + '|' + st;
+      if (k === lastAnn) return; lastAnn = k;
+      var by = '';
+      if ((st === 'check' || st === 'mate') && S.last && pos.b[S.last.t]) {
+        var ks = E.kingSq(pos.b, pos.turn);
+        if (ks >= 0 && movedGivesCheck(pos.b, S.last.t, ks)) by = ' ' + INS[Math.abs(pos.b[S.last.t])];
+      }
+      if (st === 'mate') speakEvent('Мат' + by + '!');
+      else if (st === 'check') speakEvent('Шах' + by + '!');
+      else if (st === 'stalemate') speakEvent('Пат. Ходить некуда, но шаха нет. Это ничья.');
+      else if (E.insufficient(pos) && Math.abs(pos.b.reduce(function (s, x) { return s + (x ? 1 : 0); }, 0)) <= 4) speakEvent('Ничья. У обоих слишком мало фигур для мата.');
+      else if (pos.half >= 100) speakEvent('Ничья по правилу пятидесяти ходов.');
+    } catch (e) { window.__annErr = String(e.message); }
+  }
   function drawBoard(S, onClick) {
+    announceStatus(S);
     window.__curS = S; window.__curDraw = function () { drawBoard(S, onClick); };
     var el = document.getElementById('board');
     if (!el) return;
@@ -6977,6 +7014,17 @@ if (typeof module !== 'undefined') module.exports = Eng;
     obs.observe(document.body, { childList: true, subtree: true, characterData: true });
     window.addEventListener('hashchange', function () { lastSpoken = ''; lastMsg = ''; try { window.speechSynthesis.cancel(); } catch (e) {} });
 
+    /* --- ничья по повторению, по согласию, по времени и победа по времени: озвучиваем сообщение партии --- */
+    var mObs = new MutationObserver(function (muts) {
+      muts.forEach(function (m) {
+        var n = m.target.nodeType === 3 ? m.target.parentNode : m.target;
+        if (!n || !n.classList || !n.classList.contains('msg')) return;
+        var tx = textOf(n);
+        if (/ничь/i.test(tx) && /(повтор|трижды|три раза|соглас|договор|50|пятидесят|время|флаг)/i.test(tx)) speakEvent(tx.length > 140 ? tx.slice(0, 140) : tx);
+      });
+    });
+    mObs.observe(document.body, { childList: true, subtree: true, characterData: true });
+
     /* --- кнопка «Прочитать вслух» --- */
     var rb = document.createElement('button'); rb.type = 'button'; rb.id = 'readAloud'; rb.className = 'btn alt'; rb.textContent = '🔊 Прочитать'; rb.setAttribute('aria-label', 'Прочитать задание вслух');
     rb.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:50;display:none';
@@ -7583,7 +7631,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     sb.onclick = function () { muted = !muted; lsSet('ukc_mute', muted); upd(); if (!muted) sfx('good'); };
     upd();
   }
-  window.__T = { LESS: LESS, GROUPS: GROUPS, genPiece: genPiece, solveEx: solveEx, uciMove: uciMove, buildBook: buildBook, bad: function () { return BOOKBAD; }, E: E, mkRng: mkRng, lone: lone, PN: PN, SQN: SQN, notation: notation };
+  window.__T = { LESS: LESS, GROUPS: GROUPS, genPiece: genPiece, solveEx: solveEx, uciMove: uciMove, buildBook: buildBook, bad: function () { return BOOKBAD; }, E: E, drawBoard: drawBoard, mkRng: mkRng, lone: lone, PN: PN, SQN: SQN, notation: notation };
   updPts();
   route();
 })();
