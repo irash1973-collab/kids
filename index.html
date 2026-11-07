@@ -5793,9 +5793,22 @@ if (typeof module !== 'undefined') module.exports = Eng;
       view.innerHTML = h;
     }
     var TIERS = [['4 разряд', '0–1400'], ['3 разряд', '1400–1600'], ['2 разряд', '1600–1800'], ['1 разряд', '1800–2000'], ['Кандидат в мастера', '2000–2100'], ['Мастер ФИДЕ', '2100–2300'], ['Международный мастер', '2300–2500'], ['Гроссмейстер', '2500 и выше']];
+    function reviewPage() {
+      var h = crumbs('Повторение первого года', '#y2/practice') + '<p class="y2lead">Темы первого года обучения с упражнениями. Выберите тему, решайте задачи и возвращайтесь сюда.</p>';
+      GROUPS.forEach(function (g) {
+        h += '<h3 class="y2gh">' + esc(g.n) + '</h3><div class="y2list">';
+        g.ids.forEach(function (id, i) {
+          var L = LESS[id]; if (!L) return;
+          h += '<a class="y2row" href="#lesson/' + id + '/' + (L.levels ? 1 : 0) + '"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + esc(L.t) + '</b><small>' + esc(L.d || '') + '</small></span><span class="y2st">' + (L.levels ? L.levels + ' упр.' : 'урок') + '</span></a>';
+        });
+        h += '</div>';
+      });
+      view.innerHTML = h;
+    }
     function practice() {
       view.innerHTML = crumbs('Практика', '#y2') + '<div class="y2cells two">' +
         '<a class="y2cell" href="#y2/games"><i>А</i><b>Игры с соперниками</b><p>Виртуальные шахматисты разных стран и возрастов, от 4 разряда до гроссмейстера. Следующий уровень открывается после завершения предыдущего.</p><span>8 уровней по 100 игроков</span></a>' +
+        '<a class="y2cell" href="#y2/review"><i>Б</i><b>Повторение первого года</b><p>Темы и задачи первого года обучения: фигуры, правила, мат, двойной удар, ничья. Освежите основы перед сложными темами.</p><span>' + (function () { var n = 0; GROUPS.forEach(function (g) { n += g.ids.length; }); return n; })() + ' тем</span></a>' +
         '<a class="y2cell" href="#y2/engine"><i>В</i><b>Игра с компьютером</b><p>Выберите силу, цвет и контроль времени: от пули до классики.</p><span>тренировка</span></a>' +
         '<a class="y2cell" href="#y2/speed"><i>Д</i><b>Скорость</b><p>Спринт на три минуты и футбол: кто первым решит задачи и добежит до ворот.</p><span>на время</span></a>' +
         '<a class="y2cell" href="#y2/board"><i>Е</i><b>Доска и анализ партий</b><p>Играйте по уровням и с часами, расставляйте позиции, загружайте любые партии и разбирайте их с движком Stockfish.</p><span>доска</span></a>' +
@@ -5830,6 +5843,15 @@ if (typeof module !== 'undefined') module.exports = Eng;
       return (OPP[key] = { n: name, full: fn + ' ' + sn, age: age, c: c[0], rt: rt, fem: fem, t: t, i: i });
     }
     function lvOf(rt) { return Math.max(1, Math.min(30, Math.round(rt < 1000 ? 1 + (rt - 600) / 100 : rt < 1400 ? 5 + (rt - 1000) / 45 : rt < 1800 ? 14 + (rt - 1400) / 100 : rt < 2300 ? 18 + (rt - 1800) / 100 : 23 + (rt - 2300) / 50))); }
+    /* сила соперника: 4 разряд начинает слабо, но не подставляет всё подряд, к концу играет уверенно; 3, 2, 1 разряды играют нормально */
+    function yLv(o) {
+      var base = lvOf(o.rt), m = base, k = o.i / 99;
+      if (o.t === 0) m = 9 + Math.round(k * 6);
+      else if (o.t === 1) m = 16 + Math.round(k * 3);
+      else if (o.t === 2) m = 19 + Math.round(k * 2);
+      else if (o.t === 3) m = 21 + Math.round(k * 2);
+      return Math.max(base, Math.min(30, m));
+    }
     function gst() { var g = lsGet('ukc_y2g', null); if (!g || typeof g !== 'object') g = { r: 1000, w: 0, d: 0, l: 0, done: {} }; if (!g.done) g.done = {}; return g; }
     function tierWins(g, t) { var n = 0; for (var i = 0; i < 100; i++) if (g.done[t + ':' + i] === 1) n++; return n; }
     function tierOpen(g, t) { return openAll || t === 0 || tierWins(g, t - 1) >= 10; }
@@ -5868,7 +5890,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function fmt(ms) { ms = Math.max(0, ms); var sec = Math.ceil(ms / 1000), m = Math.floor(sec / 60), ss = sec % 60; return m + ':' + (ss < 10 ? '0' : '') + ss; }
     function play(t, i, tc, cu, colOv) {
       var g0 = gst(); t = +t; i = +i; if (!cu && (!TIERS[t] || !tierOpen(g0, t) || i < 0 || i > 99)) { location.hash = '#y2/games'; return; }
-      var o = cu || opp(t, i), meW = cu ? cu.meW : (colOv != null ? colOv : i % 2 === 0), lv = cu ? cu.lv : lvOf(o.rt);
+      var o = cu || opp(t, i), meW = cu ? cu.meW : (colOv != null ? colOv : i % 2 === 0), lv = cu ? cu.lv : yLv(o);
       var pos = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: !meW, coords: true, mark: {}, hl: null }, tg = [], keys = {}, hm = 0, mv = [], over = false, busy = false, resigned = false, gen = Math.random();
       keys[E.key(pos)] = 1;
       var timed = tc && tc[1] > 0, T = { me: timed ? tc[1] * 60000 : 0, op: timed ? tc[1] * 60000 : 0 }, inc = timed ? tc[2] * 1000 : 0, turnMe = meW, lastTs = Date.now(), clkIv = null;
@@ -5917,7 +5939,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
             if (!m) { after(); return; }
             go2(m);
           }
-          var bk = rtv >= 1000 && mv.length < 20 && Math.random() < 0.92 ? bookPick(S.pos) : null;
+          var bk = ((rtv >= 1000 && mv.length < 20 && Math.random() < 0.92) || (rtv >= 600 && mv.length < 8 && Math.random() < 0.85)) ? bookPick(S.pos) : null;
           if (bk && bk.m) { return mv2(bk.m); }
           if (rtv >= 1500 && !SF.failed()) {
             var pos0 = S.pos, elo = rtv >= 2500 ? 0 : Math.max(1320, rtv), ms = rtv < 2000 ? 450 : rtv < 2300 ? 800 : 1300;
@@ -6441,8 +6463,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
     /* ---------- маршрут ---------- */
     window.__y2 = function (parts) {
-      (function () { var pg0 = parts[1] || 'theory'; if (pg0 === 'storm' || pg0 === 'race') pg0 = 'speed'; if (pg0 === 'games' || pg0 === 'pos' || pg0 === 'play' || pg0 === 'engine' || pg0 === 'coords') pg0 = 'practice'; if (!/^(theory|practice|progress|speed|board)$/.test(pg0)) pg0 = 'theory'; document.querySelectorAll('.y2nav a[data-y2]').forEach(function (a) { a.classList.toggle('on', a.dataset.y2 === pg0); }); })();
-      var pg = { theory: theory, practice: practice, engine: enginePage, coords: coordsPage, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: positions, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race };
+      (function () { var pg0 = parts[1] || 'theory'; if (pg0 === 'storm' || pg0 === 'race') pg0 = 'speed'; if (pg0 === 'games' || pg0 === 'pos' || pg0 === 'play' || pg0 === 'engine' || pg0 === 'coords' || pg0 === 'review') pg0 = 'practice'; if (!/^(theory|practice|progress|speed|board)$/.test(pg0)) pg0 = 'theory'; document.querySelectorAll('.y2nav a[data-y2]').forEach(function (a) { a.classList.toggle('on', a.dataset.y2 === pg0); }); })();
+      var pg = { theory: theory, practice: practice, review: reviewPage, engine: enginePage, coords: coordsPage, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: positions, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race };
       if (pg[parts[1]]) { pg[parts[1]](); return; }
       var L = Y2.filter(function (x) { return x.id === parts[1]; })[0];
       if (!L) { landing(); return; }
