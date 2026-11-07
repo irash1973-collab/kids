@@ -6148,6 +6148,131 @@ if (typeof module !== 'undefined') module.exports = Eng;
   ];
 })();
 
+/* ===== Детский мат: новый урок. Разные партии, защита, 10 мини-игр и 40 заданий ===== */
+(function () {
+  var L = LESS.baby; if (!L) return;
+  var RED = '<b style="color:#d6202a">';
+  var START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  var MW = ["e2e4 e7e5 f1c4 a7a6 d1h5 c7c5", "e2e4 e7e5 f1c4 h7h6 d1f3 b8a6", "e2e4 e7e5 f1c4 c7c5 d1f3 b8c6", "e2e4 e7e5 f1c4 g8f6 d1h5 c7c5", "e2e4 e7e5 f1c4 a7a6 d1f3 b7b6", "e2e4 e7e5 f1c4 a7a6 d1h5 f8b4", "e2e4 e7e5 f1c4 h7h6 d1f3 b7b6", "e2e4 e7e5 f1c4 b7b6 d1h5 f8b4", "e2e4 e7e5 f1c4 g7g6 d1f3 c7c5", "e2e4 e7e5 f1c4 h7h6 d1f3 c7c6", "e2e4 e7e5 f1c4 f8c5 d1h5 b8a6", "e2e4 e7e5 f1c4 f8b4 d1f3 d7d6"], MY = ["e2e4 e7e5 f1c4 c7c6 d1h5 d7d6", "e2e4 e7e5 f1c4 b7b6 d1h5 a7a5", "e2e4 e7e5 f1c4 g8f6 d1h5 a7a5", "e2e4 e7e5 f1c4 h7h6 d1h5 f8c5"], MB = ["b2b3 e7e5 g1f3 f8c5 b1c3 d8h4 a2a4", "a2a3 e7e5 g2g3 f8c5 h2h4 d8f6 c2c4", "g1f3 e7e5 a2a4 f8c5 h2h4 d8h4 b2b4", "b2b3 e7e5 c2c3 f8c5 h2h4 d8h4 a2a4"], DB = ["e2e4 e7e5 f1c4 b8a6 d1h5", "e2e4 e7e5 f1c4 c7c5 d1f3", "e2e4 e7e5 f1c4 a7a6 d1h5", "e2e4 e7e5 f1c4 h7h6 d1f3", "e2e4 e7e5 f1c4 g8f6 d1h5", "e2e4 e7e5 f1c4 d7d6 d1h5", "e2e4 e7e5 f1c4 b7b6 d1h5", "e2e4 e7e5 f1c4 f8b4 d1h5"], DW = ["a2a3 e7e5 b1c3 f8c5 h2h4 d8h4", "a2a3 e7e5 b2b3 f8c5 g2g3 d8f6", "b2b3 e7e5 a2a4 f8c5 h2h4 d8h4", "b2b3 e7e5 h2h4 f8c5 c2c4 d8f6", "a2a4 e7e5 h2h4 f8c5 b2b4 d8f6", "b2b3 e7e5 c2c3 f8c5 g2g3 d8f6", "h2h3 e7e5 a2a4 f8c5 c2c4 d8h4", "b2b3 e7e5 c2c3 f8c5 h2h4 d8h4"];
+  function sqn(x) { return 'abcdefgh'[x & 7] + (8 - (x >> 3)); }
+  function line(str) {
+    var pos = E.fromFEN(START); if (!str) return pos;
+    var a = str.split(' ');
+    for (var i = 0; i < a.length; i++) { var m = E.legal(pos).filter(function (x) { return sqn(x.f) + sqn(x.t) === a[i] && !x.p; })[0]; if (!m) return null; pos = E.make(pos, m); }
+    return pos;
+  }
+  function swapT(pos) { return E.fromFEN(E.toFEN(pos).replace(/ [wb] /, pos.turn === 1 ? ' b ' : ' w ')); }
+  function mates(pos) { return E.legal(pos).filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; }); }
+  var CR = ['e2e4 e7e5 f1c4 b8c6', 'e2e4 e7e5 d1h5 b8c6', 'e2e4 e7e5 d1f3 b8c6', 'e2e4 e7e5 f1c4 f8c5', 'e2e4 e7e5 f1c4 a7a6', 'e2e4 e7e5 d1h5 a7a6', 'e2e4 e7e5 f1c4 h7h6', 'e2e4 e7e5 d1f3 g8f6'];
+  var PAT = ['mW', 'dB', 'mB', 'yn', 'dW', 'mW', 'cr', 'dB', 'mW', 'dW'];
+  var cnt = {}; var MAP = [];
+  for (var i = 0; i < 40; i++) { var t = PAT[i % 10]; cnt[t] = (cnt[t] || 0); MAP.push([t, cnt[t]++]); }
+  function mateTask(str, black) {
+    var pos = line(str);
+    return { pos: pos, say: black ? 'Ты играешь чёрными. Поставь мат в один ход!' : 'Поставь мат в один ход. Подсказка: слабое место — поле f7.',
+      ok: function (m, p) { return E.status(E.make(p, m)) === 'mate'; },
+      good: function () { return black ? 'Мат на f2! Белый король заперт своими фигурами.' : 'Мат на f7! Ферзь защищён слоном, король не может его съесть.'; },
+      bad: function (m, p, np) { return E.status(np) === 'check' ? 'Шах есть, но король защитится. Ищи мат: бей по слабому полю.' : 'Это не мат. Какая фигура может бить f7 (или f2) вместе с помощником?'; } };
+  }
+  function defTask(str, black) {
+    var pos = line(str);
+    return { pos: pos, say: black ? 'Белые угрожают детским матом на f7. Защитись!' : 'Чёрные угрожают матом на f2. Защитись за белых!',
+      ok: function (m, p) { return mates(E.make(p, m)).length === 0; },
+      good: function () { return 'Угроза отбита! Мата больше нет.'; },
+      bad: function () { return 'Мат на ' + (black ? 'f7' : 'f2') + ' всё ещё возможен. Закрой поле, прогони ферзя или атакуй его.'; } };
+  }
+  L.levels = 50;
+  L.d = 'Как ставят детский мат, как от него защититься, 10 мини-игр с компьютером и 40 разных заданий.';
+  var G = [
+    { t: 'Первая партия', c: 'w', s: 'e2e4 e7e5', lim: 6, d: 1, a: true, tip: 'Выведи слона на c4 и ферзя на h5 (или f3). Бей по слабому полю f7.' },
+    { t: 'Слон уже на c4', c: 'w', s: 'e2e4 e7e5 f1c4 b8c6', lim: 4, d: 1, a: true, tip: 'Слон смотрит на f7. Ферзь, иди на h5 или f3!' },
+    { t: 'Ферзь уже на h5', c: 'w', s: 'e2e4 e7e5 d1h5 b8c6 f1c4 g8f6', lim: 3, d: 1, a: true, tip: 'Чёрные не защитили f7. Бей ферзём!' },
+    { t: 'С самого начала', c: 'w', s: '', lim: 6, d: 1, a: true, tip: 'Ходи e4, потом слон c4, потом ферзь h5. Следи за ответами!' },
+    { t: 'Против слона c5', c: 'w', s: 'e2e4 e7e5 f1c4 f8c5', lim: 5, d: 1, a: true, tip: 'Чёрный слон тоже смотрит на f2. Но ты успеешь первым: ферзь на h5!' },
+    { t: 'Чёрные атакуют', c: 'b', s: 'a2a3 e7e5 h2h3', lim: 5, d: 1, a: true, tip: 'Выведи слона на c5 и ферзя на h4 или f6. Цель — белое поле f2.' },
+    { t: 'Чёрные: мат на f2', c: 'b', s: 'a2a3 e7e5 b2b3 f8c5 h2h3', lim: 4, d: 1, a: true, tip: 'Слон уже на c5. Ферзь на h4 или f6!' },
+    { t: 'Защищайся чёрными', c: 'b', s: 'e2e4 e7e5 f1c4 b8c6 d1h5', lim: 5, d: 3, a: false, tip: 'Угроза: Фxf7#. Сыграй g6, Кf6 или Фe7.' },
+    { t: 'Защищайся ещё раз', c: 'b', s: 'e2e4 e7e5 d1h5 b8c6 f1c4', lim: 5, d: 3, a: false, tip: 'Белые целятся в f7. Защити его или прогони ферзя.' },
+    { t: 'Защищайся белыми', c: 'w', s: 'a2a3 e7e5 h2h3 f8c5 b2b3 d8h4', lim: 5, d: 3, a: false, tip: 'Угроза: Фxf2#. Прогони ферзя или защити f2.' }
+  ];
+  function runGame(host, Lx, lv, finish) {
+    var g = G[lv - 1], pos0 = line(g.s), mine = g.c === 'w' ? 1 : -1;
+    var S = { pos: pos0, sel: null, targets: [], last: null, hint: null, flip: mine === -1, coords: true, mark: {}, hl: null }, cur = pos0, mv = 0, busy = false, done = false, hh = [];
+    host.innerHTML = say(av('prof'), 'Мини-игра ' + lv + ': ' + g.t, g.a ? 'Поставь мат за ' + g.lim + ' ходов. Ты играешь ' + (mine === 1 ? 'белыми' : 'чёрными') + '.' : 'Продержись ' + g.lim + ' ходов и не дай поставить мат. Ты играешь ' + (mine === 1 ? 'белыми' : 'чёрными') + '.', g.a ? 'атака' : 'защита') + boardHTML() +
+      '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="row"><button class="btn alt" id="hintB">Подсказка</button><button class="btn alt" id="resB">Заново</button></div>';
+    var msg = document.getElementById('msg');
+    function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+    function draw() { drawBoard(S, click); }
+    function over(st, who) {
+      if (st === 'mate') { done = true; draw(); if (who === 'me') { sm('Мат! Ты выиграл!', 'good'); sfx('good'); finish(3); } else { sm('Тебе поставили мат. Нажми «Заново» и защищайся внимательнее.', 'bad'); sfx('bad'); } return true; }
+      if (st === 'stalemate') { done = true; draw(); sm('Пат: ничья. Нажми «Заново».', 'bad'); sfx('bad'); return true; }
+      return false;
+    }
+    function comp() {
+      busy = true; sm('Соперник думает…');
+      later(function () {
+        var m = null; try { m = E.bestMove(cur, g.d, hh); } catch (e) { m = null; } if (!m) { busy = false; return; }
+        var b0 = cur; cur = E.make(cur, m); S.pos = cur; S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); hh.push(E.hashOf(cur)); moveSound(b0, m, cur); busy = false; draw();
+        if (over(E.status(cur), 'cp')) return;
+        if (!g.a && mv >= g.lim) { done = true; sm('Ты продержался и не дал поставить мат. Молодец!', 'good'); sfx('good'); finish(3); return; }
+        sm(E.inCheck(cur) ? 'Тебе шах!' : 'Твой ход.', E.inCheck(cur) ? 'bad' : '');
+      }, 450);
+    }
+    function click(i) {
+      if (busy || done) return; var v = cur.b[i];
+      if (S.sel != null && S.targets.indexOf(i) >= 0) {
+        var cs = movesFrom(cur, S.sel).filter(function (x) { return x.t === i; }), m = cs.filter(function (x) { return x.p === 5; })[0] || cs[0], b0 = cur;
+        cur = E.make(cur, m); mv++; S.pos = cur; S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); S.sel = null; S.targets = []; hh.push(E.hashOf(cur)); moveSound(b0, m, cur); draw();
+        if (over(E.status(cur), 'me')) return;
+        if (g.a && mv >= g.lim) { done = true; sm('Не успел за ' + g.lim + ' ходов. Нажми «Заново».', 'bad'); sfx('bad'); return; }
+        comp(); return;
+      }
+      if (v && v * mine > 0) { S.sel = i; S.targets = movesFrom(cur, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
+      draw();
+    }
+    document.getElementById('hintB').onclick = function () { sm('Подсказка: ' + g.tip); };
+    document.getElementById('resB').onclick = function () { lessonPage(Lx.id, lv); };
+    if (cur.turn !== mine) comp(); else sm('Твой ход. ' + g.tip);
+    draw();
+  }
+  L.run = function (host, Lx, lv, finish) { if (lv <= 10) runGame(host, Lx, lv, finish); else runTask(host, Lx, lv - 10, finish); };
+  L.gen = function (k) {
+    var mp = MAP[(k - 1) % 40], t = mp[0], j = mp[1];
+    if (t === 'mW') return mateTask(MW[j % MW.length], false);
+    if (t === 'mB') return mateTask(MB[j % MB.length], true);
+    if (t === 'dB') return defTask(DB[j % DB.length], true);
+    if (t === 'dW') return defTask(DW[j % DW.length], false);
+    if (t === 'yn') {
+      var thr = j % 2 === 0, pos = line(MY[j % MY.length]);
+      if (thr) return { pos: pos, q: 'Белые ходят. Есть ли у них мат в один ход?', ans: true, expl: 'Ферзь берёт f7, и король заперт.', hint: 'Посмотри на поле f7: его бьют ферзь и слон?' };
+      var pos2 = line(DB[(j * 2) % DB.length]); var bm = E.legal(pos2).filter(function (m) { return mates(E.make(pos2, m)).length === 0; })[0]; var np = E.make(pos2, bm);
+      return { pos: np, q: 'Белые ходят. Есть ли у них мат в один ход?', ans: mates(np).length > 0, expl: mates(np).length ? 'Да, мат есть.' : 'Чёрные защитились: мата на f7 больше нет.', hint: 'Проверь, кто защищает f7.' };
+    }
+    var pos3 = line(CR[(j * 2) % CR.length]);
+    return { pos: pos3, say: 'Сделай ход, после которого белые угрожают поставить мат на f7.',
+      ok: function (m, p) { var np = E.make(p, m); return mates(swapT(np)).length > 0; },
+      good: function () { return 'Угроза создана: на f7 смотрят ферзь и слон. Если соперник не заметит, будет мат.'; },
+      bad: function () { return 'Угрозы мата пока нет. Нужно, чтобы на f7 смотрели и слон, и ферзь.'; } };
+  };
+  L.slides = [
+    { h: '1. Классический детский мат', p: ['Это самая быстрая ловушка для новичков. Белые слон c4 и ферзь h5 вместе бьют слабое поле <b>f7</b> рядом с королём. Нажимай «Показать».'], demo: { fen: START, steps: ['e2e4|', 'e7e5|', 'f1c4|Слон смотрит на f7.', 'b8c6|', 'd1h5|Ферзь тоже смотрит на f7.', 'g8f6|Чёрные не заметили угрозы!', 'h5f7|' + 'Мат за четыре хода!'] } },
+    { h: '2. Почему f7 — слабое поле', p: ['В начале партии f7 защищает только король. Если по f7 бьют две фигуры соперника, король не может её защитить. На доске слон c4 и ферзь h5 оба смотрят на пешку f7.'], fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 4' },
+    { h: '3. Ферзь сначала, слон потом', p: ['Порядок ходов можно менять. Сначала ферзь h5, потом слон c4 — результат тот же. Смотри.'], demo: { fen: START, steps: ['e2e4|', 'e7e5|', 'd1h5|Ферзь нападает на e5 и смотрит на f7.', 'b8c6|', 'f1c4|Теперь на f7 смотрят двое.', 'g8f6|Ошибка!', 'h5f7|Мат!'] } },
+    { h: '4. Ферзь на f3', p: ['Ферзь может идти на f3, а не на h5. Он тоже бьёт f7 по прямой. Так его труднее прогнать.'], demo: { fen: START, steps: ['e2e4|', 'e7e5|', 'f1c4|', 'b8c6|', 'd1f3|Ферзь на f3 тоже смотрит на f7.', 'a7a6|', 'f3f7|Мат!'] } },
+    { h: '5. Мат с другим ответом чёрных', p: ['Чёрные могут ответить по-разному: Кс6, Сc5, а6… Если f7 не защищён, мат всё равно будет. Главное — не защитили поле f7.'], demo: { fen: START, steps: ['e2e4|', 'e7e5|', 'f1c4|', 'f8c5|Слон c5 тоже смотрит на f2, но не защищает f7.', 'd1h5|', 'a7a6|Опять не защитили.', 'h5f7|Мат!'] } },
+    { h: '6. Чёрные тоже могут', p: ['Детский мат бывает и у чёрных: цель — слабое поле f2. Слон c5 и ферзь h4 бьют f2. Нужно, чтобы белые не заметили угрозу.'], demo: { fen: START, steps: ['a2a3|', 'e7e5|', 'h2h3|', 'f8c5|Слон смотрит на f2.', 'b2b3|', 'd8h4|Ферзь тоже смотрит на f2.', 'c2c3|Белые не заметили.', 'h4f2|Мат ферзём!'] } },
+    { h: '7. Самый быстрый мат', p: ['Самый быстрый мат вообще — «дурацкий мат» за два хода чёрных. Белые сами открыли короля.'], demo: { fen: START, steps: ['f2f3|', 'e7e5|', 'g2g4|', 'd8h4|Мат!'] } },
+    { h: '8. Как защититься: пешка g6', p: ['Если ферзь напал на f7 (после Фh5), сыграй <b>g6</b>: пешка прогоняет ферзя. Ферзь берёт на e5, ничего страшного.'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 3', steps: ['g7g6|Пешка нападает на ферзя.', 'h5f3|Ферзь отступил. Мата нет.'] } },
+    { h: '9. Как защититься: конь f6', p: ['Конь f6 нападает на ферзя h5 и сам закрывает поле для ферзя. После Кf6 надо следить, чтобы ферзя нельзя было взять без размена — но это лучше мата.'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 3', steps: ['g8f6|Конь нападает на ферзя.', 'h5h4|Ферзь ушёл.'] } },
+    { h: '10. Как защититься: ферзь e7 и конь h6', p: ['Можно просто защитить f7 ещё одной фигурой: ферзь e7 или конь h6. Тогда Фxf7 не мат.'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 3', steps: ['d8e7|Ферзь защитил f7.', 'd2d3|Белые ничего не выиграли.'] } },
+    { h: '11. Не защита: ходы в сторону', p: ['Ходы вроде a6 или h6 не защищают f7. Ферзь берёт f7 — и это мат. Всегда спрашивай себя: «Что теперь бьёт соперник? Кто защищает это поле?»'], fen: 'r1bqkbnr/1ppp1ppp/p1n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 4' },
+    { h: '12. Ты играешь белыми: не попадись', p: ['Иногда ловушка срабатывает против белых. Если слон c5 и ферзь h4 смотрят на f2, прогони ферзя пешкой g3 или защити f2 ферзём (Фe2 тоже годится).'], fen: 'rnb1k1nr/pppp1ppp/8/2b1p3/7q/PPP4P/3PPPP1/RNBQKBNR w KQkq - 0 4' },
+    { h: '13. Как сделать угрозу', p: ['Чтобы угрожать матом, поставь вторую фигуру на f7. Если слон уже на c4, поставь ферзя на h5 или f3. Если ферзь на h5, поставь слона на c4.'], fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 0 3' },
+    { h: '14. Главное правило', p: ['Не бегай ферзём в начале партии без плана: его могут прогнать. А если соперник так сделал, смотри, какое поле он атакует, и защити его.'] },
+    { h: '15. Мини-игры', p: ['Теперь 10 мини-игр с компьютером: 7 раз ты ставишь мат, 3 раза защищаешься. Потом 40 разных заданий: поставь мат, защитись, создай угрозу и ответь «да» или «нет».'] }
+  ];
+})();
+
 /* ===== Урок «Шахматная доска»: 30 разных заданий (свои формулировки) ===== */
 (function () {
   var L = LESS.board; if (!L) return;
