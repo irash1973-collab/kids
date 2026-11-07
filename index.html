@@ -3343,7 +3343,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var r = mkRng(hstr(L.id + lv)), T = uniqTask(L.id, lv, function (k, rr) { return L.gen(k, rr); });
     if (!T) { host.innerHTML = '<div class="slide"><p>Не получилось создать упражнение. Открой его ещё раз.</p></div>'; return; }
     if (T.q) { runYN(host, L, lv, T, finish); return; }
-    var side = T.pos.turn, S = { pos: T.pos, sel: null, targets: [], last: T.last || null, hint: null, flip: side === -1, coords: true, mark: {}, hl: null };
+    var side = T.pos.turn, S = { pos: T.pos, sel: null, targets: [], last: T.last || null, hint: null, flip: side === -1, coords: true, mark: {}, hl: T.hl || null };
     var mistakes = 0, busy = false, done = false, helped = false, before = T.pos;
     var okf = T.ok || function () { return true; };
     host.innerHTML = say(av('simba'), 'Задание ' + lv, T.say || L.say, T.sub || '') + boardHTML() + '<div id="promo" class="promo" hidden></div><div class="msg" id="msg" role="status" aria-live="polite"></div>' +
@@ -3392,7 +3392,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     draw();
   }
   function runYN(host, L, lv, T, finish) {
-    var S = { pos: T.pos, sel: null, targets: [], last: T.last || null, hint: null, flip: false, coords: true, mark: {}, hl: null }, mistakes = 0, done = false;
+    var S = { pos: T.pos, sel: null, targets: [], last: T.last || null, hint: null, flip: false, coords: true, mark: {}, hl: T.hl || null }, mistakes = 0, done = false;
     var obt = T.opts ? T.opts.map(function (o, i) { return '<button data-o="' + i + '">' + o + '</button>'; }).join('') : '<button data-o="1">Да</button><button data-o="0">Нет</button>';
     host.innerHTML = say(av('prof'), 'Вопрос ' + lv, T.q, T.opts ? 'выбери ответ' : 'ответь «Да» или «Нет»') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + obt + '</div>';
     var msg = document.getElementById('msg');
@@ -6270,6 +6270,158 @@ if (typeof module !== 'undefined') module.exports = Eng;
     { h: '13. Как сделать угрозу', p: ['Чтобы угрожать матом, поставь вторую фигуру на f7. Если слон уже на c4, поставь ферзя на h5 или f3. Если ферзь на h5, поставь слона на c4.'], fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 0 3' },
     { h: '14. Главное правило', p: ['Не бегай ферзём в начале партии без плана: его могут прогнать. А если соперник так сделал, смотри, какое поле он атакует, и защити его.'] },
     { h: '15. Мини-игры', p: ['Теперь 10 мини-игр с компьютером: 7 раз ты ставишь мат, 3 раза защищаешься. Потом 40 разных заданий: поставь мат, защитись, создай угрозу и ответь «да» или «нет».'] }
+  ];
+})();
+
+/* ===== Нападение и защита: новый урок. 40 заданий на ходы + объяснения на досках ===== */
+(function () {
+  var L = LESS.attdef; if (!L) return;
+  var VAL = { 1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 100 }, NAMEN = { 1: 'пешка', 2: 'конь', 3: 'слон', 4: 'ладья', 5: 'ферзь', 6: 'король' };
+  var BLK = { 3: 'Чёрный слон', 4: 'Чёрная ладья', 5: 'Чёрный ферзь' }, NAMEA = { 1: 'пешку', 2: 'коня', 3: 'слона', 4: 'ладью', 5: 'ферзя', 6: 'короля' };
+  var NAMEI = { 1: 'пешкой', 2: 'конём', 3: 'слоном', 4: 'ладьёй', 5: 'ферзём' };
+  function rn(r, n) { return Math.floor(r() * n); }
+  function cheb(a, c) { return Math.max(Math.abs((a & 7) - (c & 7)), Math.abs((a >> 3) - (c >> 3))); }
+  function sqn(x) { return 'abcdefgh'[x & 7] + (8 - (x >> 3)); }
+  function defenders(b, sq) { return attackers(b, sq, b[sq] > 0 ? 1 : -1).filter(function (s) { return s !== sq; }); }
+  function atkrs(b, sq) { return attackers(b, sq, b[sq] > 0 ? -1 : 1); }
+  var POOL = [1, 1, 2, 2, 3, 3, 4, 4, 5];
+  function mkBoard(r, nw, nb) {
+    var b = new Int8Array(64), i, tries = 0;
+    function put(v) {
+      for (var k = 0; k < 80; k++) { var s = rn(r, 64); if (b[s]) continue; if (Math.abs(v) === 1 && ((s >> 3) === 0 || (s >> 3) === 7)) continue; b[s] = v; return s; }
+      return -1;
+    }
+    var wk = put(6), bk = put(-6); if (wk < 0 || bk < 0 || cheb(wk, bk) < 3) return null;
+    var cnt = {};
+    function add(sign, n) { for (var j = 0; j < n; j++) { var t = POOL[rn(r, POOL.length)], key = sign * t; var lim = { 5: 1, 4: 2, 3: 2, 2: 2, 1: 3 }[t]; if ((cnt[key] || 0) >= lim) { j--; if (++tries > 80) return false; continue; } if (put(sign * t) < 0) return false; cnt[key] = (cnt[key] || 0) + 1; } return true; }
+    if (add(1, nw) === false || add(-1, nb) === false) return null;
+    if (attackers(b, wk, -1).length || attackers(b, bk, 1).length) return null;
+    return b;
+  }
+  function legalPos(b) { return mkPos(b, 1, -1); }
+  /* найти вариант, где хорошо работает проверка */
+  function build(r, fn) { for (var t = 0; t < 6000; t++) { var o = fn(); if (o) return o; } return null; }
+  function okSet(pos, ok) { return E.legal(pos).filter(function (m) { return ok(m, pos); }); }
+  function safeSq(np, sq) { return atkrs(np.b, sq).length === 0; }
+
+  /* A: съешь фигуру без защиты */
+  function genA(r, code) {
+    return build(r, function () {
+      var b = mkBoard(r, 3 + rn(r, 2), 3 + rn(r, 2)); if (!b) return null; var pos = legalPos(b);
+      var caps = E.legal(pos).filter(function (m) { return b[m.t] < 0 && Math.abs(b[m.t]) !== 6; });
+      var free = caps.filter(function (m) { return defenders(b, m.t).length === 0; });
+      var bad = caps.filter(function (m) { return defenders(b, m.t).length > 0 && VAL[Math.abs(b[m.f])] > VAL[Math.abs(b[m.t])]; });
+      if (free.length !== 1 || bad.length < 1 || Math.abs(b[free[0].f]) !== code) return null;
+      if (VAL[Math.abs(b[free[0].t])] < 3) return null;
+      var f = free[0];
+      return { pos: pos, ok: function (m) { return m.f === f.f && m.t === f.t; }, say: 'Съешь фигуру, которую никто не защищает. Не бери защищённые: их вернут!', good: function () { return 'Верно! Фигуру никто не защищал, ты выиграл ' + NAMEA[Math.abs(b[f.t])] + ' бесплатно.'; }, bad: function (m, p, np) { return b[m.t] < 0 ? 'Эту фигуру защищают: если её съесть, тебя съедят в ответ. Ищи фигуру без защиты.' : 'Тут нужно съесть чужую фигуру, у которой нет защитников.'; } };
+    });
+  }
+  /* B: уйди из-под удара */
+  function genB(r, code) {
+    return build(r, function () {
+      var b = mkBoard(r, 3 + rn(r, 2), 2 + rn(r, 3)); if (!b) return null;
+      var pos = legalPos(b), T = -1, A = -1;
+      for (var s = 0; s < 64; s++) if (b[s] > 0 && b[s] === code) { var at = atkrs(b, s); if (at.length && VAL[Math.abs(b[at[0]])] <= VAL[code] + 0 && (defenders(b, s).length === 0 || VAL[Math.abs(b[at[0]])] < VAL[code])) { T = s; A = at[0]; } }
+      if (T < 0) return null;
+      var oks = okSet(pos, function (m, p) { var np = E.make(p, m); return m.f === T && safeSq(np, m.t); });
+      if (oks.length < 2 || oks.length > 7) return null;
+      return { pos: pos, hl: (function () { var h = {}; h[T] = 1; return h; })(), ok: function (m, p) { var np = E.make(p, m); return m.f === T && safeSq(np, m.t); }, say: 'Выделенную фигуру атакуют! Уведи её на клетку, где её никто не съест.', good: function () { return 'Фигура в безопасности: на новой клетке её никто не бьёт.'; }, bad: function (m, p, np) { return m.f !== T ? 'Ходить надо выделенной фигурой, она под ударом.' : 'Туда ходить нельзя: на этой клетке её тоже бьют. Ищи безопасную клетку.'; } };
+    });
+  }
+  /* C: защити друга */
+  function genC(r, code) {
+    return build(r, function () {
+      var b = mkBoard(r, 4 + rn(r, 2), 2 + rn(r, 3)); if (!b) return null;
+      var pos = legalPos(b), T = -1, A = -1;
+      for (var s = 0; s < 64; s++) if (b[s] > 0 && Math.abs(b[s]) !== 6 && Math.abs(b[s]) === code && !defenders(b, s).length) { var at = atkrs(b, s); if (at.length === 1 && VAL[Math.abs(b[at[0]])] >= VAL[code] && Math.abs(b[at[0]]) !== 6) { T = s; A = at[0]; } }
+      if (T < 0) return null;
+      var fn = function (m, p) { if (m.f === T || m.t === A) return false; var np = E.make(p, m); return defenders(np.b, T).length > 0 && atkrs(np.b, m.t).length === 0 && np.b[T] > 0 && atkrs(np.b, T).length >= 1; };
+      var oks = okSet(pos, fn); if (oks.length < 1 || oks.length > 4) return null;
+      var h = {}; h[T] = 1;
+      return { pos: pos, hl: h, ok: fn, say: 'Выделенную фигуру могут съесть, а защитников у неё нет. Подведи другую фигуру, которая её защитит!', good: function () { return 'Теперь у фигуры есть защитник: если её съедят, ты съешь в ответ.'; }, bad: function (m, p, np) { return m.f === T ? 'Эту фигуру двигать не нужно: пусть её защитит друг.' : 'Так друг не защищает выделенную фигуру. Он должен стоять так, чтобы бить её клетку.'; } };
+    });
+  }
+  /* D: перекрой линию */
+  function genD(r, code) {
+    return build(r, function () {
+      var b = mkBoard(r, 4 + rn(r, 3), 2 + rn(r, 2)); if (!b) return null;
+      var pos = legalPos(b), cand = [];
+      for (var s = 0; s < 64; s++) if (b[s] < 0 && Math.abs(b[s]) === code) for (var t = 0; t < 64; t++) if (b[t] > 0 && Math.abs(b[t]) !== 6 && VAL[b[t]] >= 3 && cheb(s, t) >= 3 && attacksSq(b, s, t) && (VAL[Math.abs(b[s])] >= VAL[b[t]] || !defenders(b, t).length)) cand.push([s, t]);
+      if (!cand.length) return null;
+      var c = cand[rn(r, cand.length)], A = c[0], T = c[1];
+      var fn = function (m, p) { if (m.f === T || m.t === A) return false; var np = E.make(p, m); return !attacksSq(np.b, A, T) && np.b[T] > 0 && atkrs(np.b, T).length === 0 && (atkrs(np.b, m.t).length === 0 || defenders(np.b, m.t).length > 0 && VAL[Math.abs(np.b[atkrs(np.b, m.t)[0]])] >= VAL[Math.abs(np.b[m.t])]); };
+      var oks = okSet(pos, fn); if (oks.length < 1 || oks.length > 5) return null;
+      var h = {}; h[T] = 1;
+      return { pos: pos, hl: h, ok: fn, say: BLK[Math.abs(b[A])] + ' бьёт выделенную фигуру по линии. Не уводи её, а перекрой линию другой фигурой!', good: function () { return 'Линия перекрыта: теперь ' + NAMEN[Math.abs(b[A])] + ' не достаёт до фигуры.'; }, bad: function (m, p, np) { return m.f === T ? 'Эту фигуру двигать не нужно. Поставь другую фигуру между ней и нападающей.' : 'Линия всё ещё открыта (или твоя фигура встала под удар). Закрой путь между фигурами.'; } };
+    });
+  }
+  /* E: встань под защиту друга */
+  function genE(r, code) {
+    return build(r, function () {
+      var b = mkBoard(r, 4 + rn(r, 2), 2 + rn(r, 3)); if (!b) return null;
+      var pos = legalPos(b), T = -1;
+      for (var s = 0; s < 64; s++) if (b[s] > 0 && Math.abs(b[s]) === code && code > 1 && atkrs(b, s).length >= 1 && VAL[Math.abs(b[atkrs(b, s)[0]])] <= VAL[code] + 2 && !defenders(b, s).length && Math.abs(b[atkrs(b, s)[0]]) !== 6) T = s;
+      if (T < 0) return null;
+      var fn = function (m, p) { if (m.f !== T) return false; var np = E.make(p, m); return defenders(np.b, m.t).length > 0 && atkrs(np.b, m.t).length === 0; };
+      var oks = okSet(pos, fn); if (oks.length < 1 || oks.length > 4) return null;
+      var safeNo = okSet(pos, function (m, p) { return m.f === T && safeSq(E.make(p, m), m.t); }).length;
+      if (safeNo < oks.length + 1) return null;
+      var h = {}; h[T] = 1;
+      return { pos: pos, hl: h, ok: fn, say: 'Выделенная фигура под ударом. Иди на клетку, где её защищает друг и где её никто не бьёт.', good: function () { return 'Отлично: теперь рядом друг, который защитит.'; }, bad: function (m, p, np) { return m.f !== T ? 'Ходить надо выделенной фигурой.' : (atkrs(np.b, m.t).length ? 'Туда тоже бьют. Выбери клетку, куда никто не достаёт.' : 'Здесь безопасно, но друг тебя не защищает. Нужна клетка под защитой друга.'); } };
+    });
+  }
+  /* F: съешь нападающую фигуру */
+  function genF(r, code) {
+    return build(r, function () {
+      var b = mkBoard(r, 4 + rn(r, 2), 3 + rn(r, 2)); if (!b) return null;
+      var pos = legalPos(b), A = -1;
+      for (var s = 0; s < 64; s++) if (b[s] < 0 && Math.abs(b[s]) >= 2 && Math.abs(b[s]) <= 5) { var tg = []; for (var t = 0; t < 64; t++) if (b[t] > 0 && Math.abs(b[t]) !== 6 && attacksSq(b, s, t)) tg.push(t); if (tg.length) { var ms = E.legal(pos).filter(function (m) { return m.t === s; }); var safe = ms.filter(function (m) { return defenders(b, s).length === 0 || VAL[Math.abs(b[m.f])] < VAL[Math.abs(b[s])]; }); if (safe.length === 1 && Math.abs(b[safe[0].f]) === code) A = s; } }
+      if (A < 0) return null;
+      var fn = function (m, p) { return m.t === A && (defenders(p.b, A).length === 0 || VAL[Math.abs(p.b[m.f])] < VAL[Math.abs(p.b[A])]); };
+      var h = {}; h[A] = 1;
+      return { pos: pos, hl: h, ok: fn, say: 'Выделенная чёрная фигура нападает на твои фигуры. Съешь её так, чтобы тебя не съели в ответ!', good: function () { return 'Нападающая съедена — угроза исчезла.'; }, bad: function (m) { return m.t === A ? 'Эту фигуру защищают: съешь её более дешёвой фигурой или найди другой способ.' : 'Нужно съесть выделенную фигуру.'; } };
+    });
+  }
+  /* G: счёт нападающих и защитников */
+  function genG(r, j) {
+    return build(r, function () {
+      var b = mkBoard(r, 4 + rn(r, 2), 3 + rn(r, 2)); if (!b) return null; var pos = legalPos(b), c = null;
+      var mode = j % 4; /* 0: сколько защитников у белой, 1: у чёрной, 2: сколько нападают на белую, 3: на чёрную */
+      for (var s = 0; s < 64; s++) if (b[s] && Math.abs(b[s]) !== 6 && ((mode % 2 === 0) === (b[s] > 0))) { var n = mode < 2 ? defenders(b, s).length : atkrs(b, s).length; if (n >= 1 && n <= 3) c = { s: s, n: n }; }
+      if (!c) return null;
+      var h = {}; h[c.s] = 1; var side = b[c.s] > 0 ? 'белую' : 'чёрную', what = mode < 2 ? 'защищают' : 'нападают на';
+      return { pos: pos, hl: h, q: 'Сколько ' + (b[c.s] > 0 ? (mode < 2 ? 'белых' : 'чёрных') : (mode < 2 ? 'чёрных' : 'белых')) + ' фигур ' + what + ' выделенную фигуру?', opts: ['0', '1', '2', '3'], right: c.n, expl: 'Считай каждую фигуру, которая бьёт эту клетку: их ' + c.n + '.', hint: 'Проверь по очереди: пешки (по диагонали), кони, слоны, ладьи, ферзя и короля.' };
+    });
+  }
+  var ORDER = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'A', 'D', 'A', 'C', 'E', 'A', 'B', 'A', 'C', 'A'];
+  var CODEA = [2, 3, 4, 5, 1, 3, 2, 4, 5, 3], CODEBC = [2, 3, 4, 5, 3, 4], CODED = [3, 4, 5, 3, 4], CODEE = [2, 3, 4, 5, 3], CODEF = [3, 4, 2, 5];
+  L.levels = 40;
+  L.d = 'Кто кого атакует, кто защищён, как спасти фигуру и выиграть чужую. 40 заданий на ходы.';
+  L.gen = function (lv, r) {
+    var t = ORDER[(lv - 1) % 40], j = 0; for (var i = 0; i < (lv - 1) % 40; i++) if (ORDER[i] === t) j++;
+    var g = null;
+    if (t === 'A') g = genA(r, CODEA[j % CODEA.length]);
+    else if (t === 'B') g = genB(r, CODEBC[j % CODEBC.length]);
+    else if (t === 'C') g = genC(r, CODEBC[(j + 1) % CODEBC.length]);
+    else if (t === 'D') g = genD(r, CODED[j % CODED.length]);
+    else if (t === 'E') g = genE(r, CODEE[j % CODEE.length]);
+    else if (t === 'F') g = genF(r, CODEF[j % CODEF.length]);
+    else g = genG(r, j);
+    return g;
+  };
+  L.run = function (host, Lx, lv, fin) { runTask(host, Lx, lv, fin); };
+  L.slides = [
+    { h: 'Что такое «напасть»', p: ['Фигура <b>нападает</b> на другую, если может съесть её следующим ходом. Белый ферзь d2 нападает на чёрную ладью d5. Нажми «Показать».'], demo: { fen: '4k3/8/8/3r4/8/8/3Q4/4K3 w - - 0 1', steps: ['d2d5|Ферзь съел ладью: её никто не защищал.'] } },
+    { h: 'Что такое «защитить»', p: ['Фигуру <b>защищает</b> друг, если после того, как её съедят, друг может съесть съевшего. Белого коня e5 защищает пешка d4: пешка бьёт по диагонали вперёд на e5. Нажми «Показать»: если пешка уйдёт, защиты не будет.'], demo: { fen: '4k3/8/8/4N3/3P4/8/8/4K3 w - - 0 1', steps: ['d4d5|Пешка ушла, и коня больше никто не защищает.'] } },
+    { h: 'Как считать нападающих и защитников', p: ['Посчитай фигуры, которые могут съесть нашу, и фигуры, которые её защищают. Белого коня e5 бьют чёрные слон b8 и ладья e8: нападающих <b>двое</b>. Защищает коня только пешка d4: защитник <b>один</b>. Значит, коня могут выиграть.'], fen: '1b2r1k1/8/8/4N3/3P4/8/8/4K3 w - - 0 1' },
+    { h: 'Съешь незащищённую фигуру', p: ['Бери только тех, кого никто не защищает. Слон d4 может взять коня b6 (его защищает пешка a7: потом пешка съест слона) или ладью g7 (у неё нет защиты). Нажми «Показать».'], demo: { fen: '4k3/p5r1/1n6/8/3B4/8/8/4K3 w - - 0 1', steps: ['d4g7|Слон взял ладью бесплатно.'] } },
+    { h: 'Что делать, если напали на твою фигуру', p: ['Есть четыре пути: <b>1.</b> уйти из-под удара; <b>2.</b> позвать друга-защитника; <b>3.</b> закрыть линию другой фигурой; <b>4.</b> съесть нападающую фигуру. Посмотрим каждый на досках.'] },
+    { h: 'Способ 1: уйти', p: ['Чёрная ладья a4 нападает на белого коня e4. Конь уходит на клетку, где его никто не бьёт. Нажми «Показать».'], demo: { fen: '4k3/8/8/8/r3N3/8/8/4K3 w - - 0 1', steps: ['e4g5|Конь ушёл на g5: ладья его больше не бьёт.'] } },
+    { h: 'Способ 2: позвать защитника', p: ['Чёрный слон a5 нападает на белого коня c3, а защитников нет. Ладья встаёт на a3 и защищает коня: если слон съест коня, ладья съест слона. Нажми «Показать».'], demo: { fen: '4k3/8/8/b7/8/2N5/8/R6K w - - 0 1', steps: ['a1a3|Теперь коня защищает ладья.'] } },
+    { h: 'Способ 3: закрыть линию', p: ['Когда напал слон, ладья или ферзь, можно поставить между ними другую фигуру. Здесь чёрная ладья c8 нападала на белого слона c1. Конь c4 встал на линию: ладья теперь бьёт коня, а коня защищает пешка b3.'], fen: '2r1k3/8/8/8/2N5/1P6/8/2B1K3 w - - 0 1' },
+    { h: 'Способ 4: съесть нападающего', p: ['Чёрный конь d6 нападает на белого слона c4, но самого коня никто не защищает. Ладья d1 съедает коня. Нажми «Показать».'], demo: { fen: '4k3/8/3n4/8/2B5/8/8/3RK3 w - - 0 1', steps: ['d1d6|Ладья съела нападающего коня: угрозы больше нет.'] } },
+    { h: 'Дальше упражнения', p: ['Теперь 40 заданий на ходы: съешь незащищённую фигуру, уйди из-под удара, позови друга, перекрой линию, встань под защиту, съешь нападающую, посчитай защитников. Нужная фигура на доске подсвечена.'] }
   ];
 })();
 
