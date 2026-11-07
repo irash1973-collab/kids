@@ -850,6 +850,22 @@ body.y2 #prof { display: none; }
 .gact .btn:disabled{opacity:.45}
 #ctl .btn:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:700px){.bside{flex:1 1 100%}}
+
+/* ценность фигур: яркие карточки, без прокрутки */
+.tbl .pcs{width:40px;height:40px;display:block}
+.vals{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:10px 0 4px}
+.vc{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:16px;background:#fff;border:3px solid var(--c,#999);box-shadow:0 3px 0 var(--c,#999)}
+.vc .vi{width:46px;height:46px;display:block}.vc .vi svg{width:100%;height:100%}
+.vc .vn{font-weight:800;font-size:13px}
+.vc .vp{font:800 34px/1 'Fredoka','Nunito',system-ui,sans-serif;color:var(--c)}
+.vc.vk{--c:#555;background:#f4f4f4}.vc.vk .vp{font-size:30px}
+.vsub{margin:2px 0 0;text-align:center}
+.eqt{font-weight:800;margin:6px 0}
+.eqr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 10px;margin:6px 0;border-radius:14px;background:#fff;border:2px solid #ffd36b}
+.eqr .eqi{display:flex;align-items:center;gap:4px}.eqr .eqi i{font-style:normal;font-weight:800;color:#888}
+.eqr .vi.s{width:34px;height:34px;display:block}.eqr .vi.s svg{width:100%;height:100%}
+.eqs{font-weight:700}.eqs b{font:800 26px/1 'Fredoka','Nunito',system-ui,sans-serif}.eqs i{font-style:normal;color:#888}
+@media(max-width:520px){.vals{grid-template-columns:repeat(3,1fr)}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -3904,7 +3920,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     T.which = function (r, d) {
       for (var k = 0; k < 300; k++) {
         var used = {}, star = freeSq(r, used), pcs = {}, list = [], codes = ['N', 'B', 'R', 'Q'];
-        for (var i = 0; i < (d >= 3 ? 4 : 3); i++) { var c = pickOne(r, codes), s = freeSq(r, used); pcs[s] = c; list.push({ c: c, s: s }); }
+        for (var i = 0; i < (d >= 3 ? 4 : 3); i++) { var c = codes.splice(Math.floor(r() * codes.length), 1)[0], s = freeSq(r, used); pcs[s] = c; list.push({ c: c, s: s }); }
         var occ = {}; list.forEach(function (o) { occ[o.s] = 1; }); occ[star] = 0;
         var att = list.filter(function (o) { return attacks(o.c, o.s, occ).indexOf(star) >= 0; });
         if (att.length !== 1) continue;
@@ -4760,7 +4776,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function badKings(b) { try { var ps = E.fromFEN(fenOfB(b) + ' w - - 0 1'), wk = E.kingSq(ps.b, 1), bk = E.kingSq(ps.b, -1); if (wk >= 0 && bk >= 0 && Math.max(Math.abs((wk & 7) - (bk & 7)), Math.abs((wk >> 3) - (bk >> 3))) < 2) return true; if (wk >= 0 && E.inCheck(ps)) return true; ps.turn = -1; return bk >= 0 && E.inCheck(ps); } catch (e) { return false; } }
       q = uniqTask(L.id, lv, function (k, rr) { var qq = null, tr = 0; while ((!qq || (L.id !== 'kingrules' && badKings(qq.b))) && tr++ < 150) qq = L.gen(rr, k); return qq; });
       var S = { pos: E.fromFEN(fenOfB(q.b) + ' w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: q.hl || null }, mist = 0, done = false;
-      if (q.star != null) { S.mark[q.star] = 'star'; S.hl = S.hl || {}; S.hl[q.star] = true; }
+      if (q.star != null) { if (!q.ring) S.mark[q.star] = 'star'; S.hl = S.hl || {}; S.hl[q.star] = true; }
       host.innerHTML = say(av('prof'), 'Профессор', q.text, L.t + ' · ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' + (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
       var msg = document.getElementById('msg');
       function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
@@ -4879,9 +4895,24 @@ if (typeof module !== 'undefined') module.exports = Eng;
       else { o = [ans[k]]; var rest = all.filter(function (x) { return x !== ans[k]; }).sort(function () { return r() - .5; }); o = o.concat(rest.slice(0, 3)).sort(function () { return r() - .5; }); }
       return { b: boardArr(), text: 'На кого можно разменять ' + map[k] + ' так, чтобы размен был равным: «один на одного»?', opts: o, ans: k === 'K' ? 'Никого: короля не меняют' : ans[k], expl: k === 'K' ? 'Короля нельзя ни взять, ни разменять.' : 'Равные по цене фигуры меняют один на одного.', why: 'Равный размен: одинаковая цена. Ферзь 9, ладья 5, слон и конь по 3, пешка 1. Король не меняется.' };
     }
+    var VCOL = { 1: '#2e9e4f', 2: '#2b7de0', 3: '#7a4fd1', 4: '#e8590c', 5: '#d6246e' };
+    function valCards() {
+      var h = '<div class="vals">';
+      [[1, 'Пешка', 1], [2, 'Конь', 3], [3, 'Слон', 3], [4, 'Ладья', 5], [5, 'Ферзь', 9]].forEach(function (x) {
+        h += '<div class="vc" style="--c:' + VCOL[x[0]] + '"><span class="vi">' + pcHTML(x[0]) + '</span><span class="vn">' + x[1] + '</span><b class="vp">' + x[2] + '</b></div>';
+      });
+      return h + '<div class="vc vk"><span class="vi">' + pcHTML(6) + '</span><span class="vn">Король</span><b class="vp">∞</b></div></div><p class="note vsub">Король бесценен: его нельзя разменять.</p>';
+    }
+    function eqRows(title, tn, rows) {
+      var h = '<div class="eqt">' + title + '</div>';
+      rows.forEach(function (r) {
+        h += '<div class="eqr"><span class="eqi">' + r[0].map(function (c) { return '<span class="vi s">' + pcHTML(c) + '</span>'; }).join('<i>+</i>') + '</span><span class="eqs"><i>=</i> <b style="color:' + (r[1] === tn ? '#2e9e4f' : r[1] > tn ? '#e8590c' : '#d6246e') + '">' + r[1] + '</b> ' + (r[2] || '') + '</span></div>';
+      });
+      return h;
+    }
     var VT = [
       { h: 'Ценность фигур', p: ['Фигуры отличаются по силе, и у каждой есть <b>цена в очках</b>. Это помогает понять, выгоден ли размен.'],
-        v: '<table class="tbl"><tr><th></th><th>Фигура</th><th>Очки</th></tr>' + [[1, 'Пешка', 1], [2, 'Конь', 3], [3, 'Слон', 3], [4, 'Ладья', 5], [5, 'Ферзь', 9]].map(function (x) { return '<tr><td style="width:60px">' + pcHTML(x[0]) + '</td><td>' + x[1] + '</td><td><b>' + x[2] + '</b></td></tr>'; }).join('') + '<tr><td style="width:60px">' + pcHTML(6) + '</td><td>Король</td><td>бесценен</td></tr></table>' },
+        v: valCards() },
       { h: 'Считаем вместе', p: ['У белых ладья (5) и пешка (1) — всего 6 очков. У чёрных конь (3) и слон (3) — тоже 6. Значит, силы равны. Считай всегда обе стороны!'], fen: '4k3/2n2b2/8/8/8/8/4P3/4K2R w - - 0 1' },
       { h: 'Ладья или две лёгкие фигуры?', p: ['Конь и слон вместе (6) чуть сильнее ладьи (5). Ладья против слона — выигрыш «качества» (2 очка). Ладья против коня и пешки — почти равенство.'], fen: '4k3/8/8/8/8/3n1b2/8/R3K3 w - - 0 1' },
       { h: 'Выгодный размен', p: ['Белая ладья берёт чёрную ладью — размен равный (5 за 5). А если взять <b>незащищённого</b> коня, это бесплатный выигрыш. Нажми «Показать».'], demo: { fen: '4k3/8/8/3n4/8/8/8/3RK3 w - - 0 1', steps: ['d1d5|Ладья берёт коня. Никто не защищал коня, мы выиграли 3 очка!'] } },
@@ -4897,8 +4928,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
       { h: 'Равный размен: одинаковые фигуры', p: ['Самый простой размен: <b>ферзь на ферзя, ладья на ладью, слон на слона, конь на коня, пешка на пешку</b>. Цена одинаковая, никто ничего не теряет. Нажми «Показать» и посмотри ладью на ладью.'], demo: { fen: '3rk3/8/8/8/8/8/8/3RK3 w - - 0 1', steps: ['d1d8|Белая ладья берёт ладью.', 'e8d8|Чёрный король берёт ладью. Ладья на ладью: размен равный.'] } },
       { h: 'Слон на слона, конь на коня', p: ['Слон на слон: берём и сразу получаем фигуру обратно. Каждый потерял по 3 очка. Нажми «Показать».'], demo: { fen: '4k3/6p1/5b2/8/3B4/8/8/4K3 w - - 0 1', steps: ['d4f6|Слон берёт слона.', 'g7f6|Пешка берёт слона. Слон на слона: равный размен.'] } },
       { h: 'Конь на коня, пешка на пешку', p: ['Конь на коня и пешка на пешку: тоже равные размены. Но запомни: <b>разменивать нужно с умом</b>, когда это тебе выгодно или помогает защите.'], demo: { fen: '4k3/1p6/2n5/8/3N4/8/8/4K3 w - - 0 1', steps: ['d4c6|Конь берёт коня.', 'b7c6|Пешка берёт коня. Конь на коня: размен равный.'] } },
-      { h: 'Чем можно заменить ферзя', p: ['Ферзь стоит 9. По силе ему равны: <b>ферзь</b>; <b>три лёгкие фигуры</b> (3+3+3); <b>ладья + конь + пешка</b> (5+3+1); <b>ладья + слон + пешка</b>. Две ладьи (10) чуть сильнее ферзя, поэтому «ферзь на две ладьи» хорош для того, кто получает ладьи.'], v: '<table class="tbl"><tr><th>Ферзь (9)</th><th>Равно</th></tr><tr><td>Ферзь</td><td>9</td></tr><tr><td>Конь + слон + конь</td><td>3+3+3 = 9</td></tr><tr><td>Ладья + конь + пешка</td><td>5+3+1 = 9</td></tr><tr><td>Две ладьи</td><td>5+5 = 10</td></tr></table>' },
-      { h: 'Чем можно заменить ладью', p: ['Ладья стоит 5. Ей равны: <b>ладья</b>; <b>конь или слон + две пешки</b> (3+1+1); Ладья за одного слона или коня без пешек — плохой размен: отдаёшь 5, получаешь 3. Это называется «проиграть качество».'], v: '<table class="tbl"><tr><th>Ладья (5)</th><th>Равно</th></tr><tr><td>Ладья</td><td>5</td></tr><tr><td>Слон + 2 пешки</td><td>3+1+1 = 5</td></tr><tr><td>Конь + 2 пешки</td><td>3+1+1 = 5</td></tr><tr><td>Слон</td><td>3 (проигрыш)</td></tr></table>' },
+      { h: 'Чем можно заменить ферзя', p: ['Ферзь стоит 9. По силе ему равны: <b>ферзь</b>; <b>три лёгкие фигуры</b> (3+3+3); <b>ладья + конь + пешка</b> (5+3+1); <b>ладья + слон + пешка</b>. Две ладьи (10) чуть сильнее ферзя, поэтому «ферзь на две ладьи» хорош для того, кто получает ладьи.'], v: eqRows('Ферзь (9) стоит столько же, как:', 9, [[[3, 2, 3], 9, '3+3+3'], [[4, 2, 1], 9, '5+3+1'], [[4, 3, 1], 9, '5+3+1'], [[4, 4], 10, 'две ладьи чуть сильнее']]) },
+      { h: 'Чем можно заменить ладью', p: ['Ладья стоит 5. Ей равны: <b>ладья</b>; <b>конь или слон + две пешки</b> (3+1+1); Ладья за одного слона или коня без пешек — плохой размен: отдаёшь 5, получаешь 3. Это называется «проиграть качество».'], v: eqRows('Ладья (5) стоит столько же, как:', 5, [[[3, 1, 1], 5, '3+1+1'], [[2, 1, 1], 5, '3+1+1'], [[3], 3, 'слон: 5 за 3 — плохо'], [[2, 3], 6, 'две лёгкие фигуры чуть сильнее']]) },
       { h: 'Короля не меняют', p: ['Короля нельзя ни съесть, ни разменять. Он самый главный: все остальные фигуры могут исчезнуть, но игра продолжается, пока король на доске. Поэтому у короля нет цены в очках.'] },
       { h: 'Как решать задачи', p: ['<b>1.</b> Посчитай очки обеих сторон. <b>2.</b> Что дороже? <b>3.</b> Размен «один на одного» одинаковых фигур — равный. <b>4.</b> Отдаёшь дорогую фигуру за дешёвую — плохо. Берёшь дорогую за дешёвую — хорошо. Впереди <b>30 разных заданий</b>: сравнить силы, посчитать очки, найти равные наборы, оценить размен.'] }
     ];
@@ -5040,7 +5071,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       for (var k = 0; k < 800; k++) {
         var b = boardArr(), tc = pk(r, ['N', 'B', 'R', 'Q', 'P', 'N', 'B']), ts = putFree(r, b, tc, function (s) { return tc !== 'P' || ((s >> 3) >= 2 && (s >> 3) <= 5); });
         if (ts < 0) continue;
-        var want = defMode ? rr(r, 0, d === 1 ? 1 : 2) : rr(r, 0, d === 1 ? 2 : 3), other = defMode ? rr(r, 0, 1) : rr(r, 0, 1);
+        var want = defMode ? rr(r, 1, d === 1 ? 2 : 3) : rr(r, 1, d === 1 ? 2 : 3), other = defMode ? rr(r, 0, 1) : rr(r, 0, 1);
         var okp = true, i;
         for (i = 0; i < want && okp; i++) if (putAttacker(r, b, defMode ? pk(r, ['P', 'N', 'B', 'R']) : pk(r, ['p', 'n', 'b', 'r', 'q']), ts, defMode) < 0) okp = false;
         for (i = 0; i < other && okp; i++) putAttacker(r, b, defMode ? pk(r, ['p', 'n', 'b', 'r']) : pk(r, ['P', 'N', 'B', 'R']), ts, !defMode);
@@ -5056,7 +5087,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function genAdCnt(r, d, lv, defMode) {
       var sc = adCount(r, d, defMode); if (!sc) return null;
       var o = []; for (var v = 0; v <= (d === 1 ? 3 : 4); v++) o.push(String(v));
-      return { b: sc.b, star: sc.ts, text: defMode ? 'Сколько белых фигур защищают белую фигуру со звёздочкой? Защита значит, что если фигуру возьмут, её можно взять обратно.' : 'Сколько чёрных фигур атакуют белую фигуру со звёздочкой?', opts: o, ans: String(sc.n), why: defMode ? 'Найди белые фигуры (кроме самой), которые могли бы взять на клетке со звёздочкой. Помни: пешка берёт по диагонали вперёд, а фигуры не перепрыгивают через другие.' : 'Найди чёрные фигуры, которые могли бы взять на клетке со звёздочкой. Пешка берёт по диагонали вперёд, а фигуры не перепрыгивают через другие.', expl: 'Ответ: ' + sc.n + '.' };
+      return { b: sc.b, star: sc.ts, ring: true, text: defMode ? 'Сколько белых фигур защищают выделенную белую фигуру? Защита значит, что если фигуру возьмут, её можно взять обратно.' : 'Сколько чёрных фигур атакуют выделенную белую фигуру?', opts: o, ans: String(sc.n), why: defMode ? 'Найди белые фигуры (кроме самой), которые могли бы взять на клетке со звёздочкой. Помни: пешка берёт по диагонали вперёд, а фигуры не перепрыгивают через другие.' : 'Найди чёрные фигуры, которые могли бы взять на клетке со звёздочкой. Пешка берёт по диагонали вперёд, а фигуры не перепрыгивают через другие.', expl: 'Ответ: ' + sc.n + '.' };
     }
     function genAdHang(r, d, lv) {
       for (var k = 0; k < 800; k++) {
@@ -5110,16 +5141,43 @@ if (typeof module !== 'undefined') module.exports = Eng;
         if (safe.length < 1 || safe.length > 12 || unsafe.length < 2) continue;
         if (attackers(b, P, false).some(function (s) { return b[s].toLowerCase() === 'k'; })) continue;
         var sset = {}; safe.forEach(function (s) { sset[s] = 1; });
-        return { b: b, star: P, text: 'Белую фигуру со звёздочкой атакуют, и защитить её нечем. Нажми на клетку, куда её можно увести, чтобы она была в безопасности.', ok: function (i) { return !!sset[i]; }, why: 'Выбирай клетку, куда фигура ходит и где её не атакует ни одна чёрная фигура. Проверь пешки: они берут по диагонали вперёд.', expl: 'Здесь фигуре ничего не угрожает.' };
+        return { b: b, star: P, ring: true, text: 'Выделенную белую фигуру атакуют, и защитить её нечем. Нажми на клетку, куда её можно увести, чтобы она была в безопасности.', ok: function (i) { return !!sset[i]; }, why: 'Выбирай клетку, куда фигура ходит и где её не атакует ни одна чёрная фигура. Проверь пешки: они берут по диагонали вперёд.', expl: 'Здесь фигуре ничего не угрожает.' };
+      }
+      return null;
+    }
+    function plausible(b) {
+      var cnt = {}, bs = { B: [0, 0], b: [0, 0] };
+      b.forEach(function (c, i) { if (!c) return; cnt[c] = (cnt[c] || 0) + 1; if (c === 'B' || c === 'b') bs[c][(((i >> 3) + (i & 7)) & 1)]++; });
+      var lim = { Q: 1, R: 2, N: 2, B: 2 };
+      for (var c in lim) { if ((cnt[c] || 0) > lim[c] || (cnt[c.toLowerCase()] || 0) > lim[c]) return false; }
+      return bs.B[0] <= 1 && bs.B[1] <= 1 && bs.b[0] <= 1 && bs.b[1] <= 1;
+    }
+    function genAdStat(r, d, lv) {
+      var cls = (lv - 1) % 3;
+      for (var k = 0; k < 600; k++) {
+        var b = boardArr(), tc = pk(r, ['N', 'B', 'R', 'Q', 'P', 'N', 'B']), ts = putFree(r, b, tc, function (s) { return tc !== 'P' || ((s >> 3) >= 2 && (s >> 3) <= 5); });
+        if (ts < 0) continue;
+        if (cls < 2 && putAttacker(r, b, pk(r, ['p', 'n', 'b', 'r', 'q']), ts, false) < 0) continue;
+        if (cls === 1 && putAttacker(r, b, pk(r, ['P', 'N', 'B', 'R']), ts, true) < 0) continue;
+        if (d >= 2) nearDecoy(r, b, rr(r, 0, 1));
+        if (cntPieces(b) > 6 || !addKings(r, b)) continue;
+        var na = attackers(b, ts, false).length, nd = attackers(b, ts, true).length, real = na === 0 ? 2 : (nd > 0 ? 1 : 0);
+        if (real !== cls) continue;
+        var O = ['Под боем и не защищена: ей грозит опасность', 'Под боем, но защищена', 'Её никто не атакует'];
+        return { b: b, star: ts, ring: true, text: 'Что можно сказать о выделенной белой фигуре?', opts: O, ans: O[cls],
+          expl: cls === 0 ? 'Её атакуют, а защитить некому: соперник возьмёт её бесплатно.' : cls === 1 ? 'Её атакуют, но если возьмут, белые заберут обратно.' : 'Ни одна чёрная фигура её не атакует.',
+          why: 'Сначала проверь: есть ли чёрная фигура, которая может её взять? Потом: есть ли белая фигура, которая возьмёт обратно?' };
       }
       return null;
     }
     function genAttDef(r, lv) {
-      var d = lv <= 12 ? 1 : 2, kind = (lv - 1) % 6;
-      return [function () { return genAdCnt(r, d, lv, false); }, function () { return genAdCnt(r, d, lv, true); }, function () { return genAdHang(r, d, lv); }, function () { return genAdProt(r, d, lv); }, function () { return genAdSafe(r, d, lv); }, function () { return genAdHang(r, d, lv); }][kind]();
+      var d = lv <= 15 ? 1 : 2, kind = Math.floor((lv - 1) / 6) % 5, tries = 0, g = null;
+      var f = [function () { return genAdCnt(r, d, lv, false); }, function () { return genAdCnt(r, d, lv, true); }, function () { return genAdHang(r, d, lv); }, function () { return genAdStat(r, d, lv); }, function () { return genAdSafe(r, d, lv); }][kind];
+      while (tries++ < 80) { g = f(); if (g && plausible(g.b)) return g; }
+      return g;
     }
     LESS.trades = { id: 'trades', t: 'Размены: выгодно или нет', d: 'Берём фигуры с умом: защищена ли она, что мы получим и что потеряем. 30 заданий.', levels: 30, slides: VT.slice(3, 7).concat([{ h: 'Дальше упражнения', p: ['В каждом задании белые могут что-то взять. Сначала посмотри, защищена ли чёрная фигура. Потом сравни: сколько очков ты получишь и сколько потеряешь. Задания меняются: то нужно оценить размен, то посчитать очки, то выбрать самую выгодную фигуру для взятия.'] }]), run: runQ, gen: function (r, lv) { return genTrades(r, lv); } };
-    LESS.attdef = { id: 'attdef', t: 'Нападение и защита', d: 'Кто кого атакует, кто защищён, как спасти фигуру. 30 заданий.', levels: 30, slides: ADS.slice(0, 4).concat([{ h: 'Дальше упражнения', p: ['Сколько фигур атакуют и защищают, какая фигура висит без защиты, какая защищена и куда увести фигуру из-под удара. Задания чередуются, читай условие внимательно.'] }]), run: runQ, gen: function (r, lv) { return genAttDef(r, lv); } };
+    LESS.attdef = { id: 'attdef', t: 'Нападение и защита', d: 'Кто кого атакует, кто защищён, как спасти фигуру. 30 заданий.', levels: 30, slides: ADS.slice(0, 4).concat([{ h: 'Дальше упражнения', p: ['Упражнения 1–6: сколько фигур атакуют. 7–12: сколько защищают. 13–18: найди фигуру, которая висит без защиты. 19–24: что с выделенной фигурой — опасность, защита или всё спокойно. 25–30: куда увести фигуру из-под удара.'] }]), run: runQ, gen: function (r, lv) { return genAttDef(r, lv); } };
 
     /* ===== Король: правила (что можно и нельзя) ===== */
     function bFromFen(f) { var b = boardArr(), rows = f.split(' ')[0].split('/'); rows.forEach(function (row, y) { var x = 0; row.split('').forEach(function (c) { if (/\d/.test(c)) x += +c; else b[y * 8 + x++] = c; }); }); return b; }
@@ -5831,7 +5889,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
 /* ===== Рокировка: настоящие позиции (из партий), проверены движком; пояснения строятся автоматически ===== */
 (function () {
   var L = LESS.castle; if (!L) return;
-  var CI = [["r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQK2R w KQkq - 0 6", "move", "short", ""], ["r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 6", "move", "short", ""], ["r2qk2r/ppp2ppp/2np1n2/2b1p1B1/2B1P1b1/2NP1N2/PPPQ1PPP/R3K2R w KQkq - 0 8", "move", "long", ""], ["r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1RK1 b kq - 0 6", "move", "short", ""], ["r3kb1r/pppqpppp/2n2n2/3p1b2/3P1B2/2N2N2/PPP1PPPP/R2QKB1R b KQkq - 0 6", "move", "long", ""], ["r1bqkb1r/ppp2ppp/2n2n2/3pp3/3P1B2/2N5/PPPQPPPP/R3KBNR w KQkq - 0 6", "move", "long", ""], ["r1bqkb1r/ppp1pppp/5n2/8/2BP4/5N2/PPP2PPP/RNBQK2R w KQkq - 0 5", "move", "short", ""], ["rnbqk2r/ppp1ppbp/3p1np1/8/2PPP3/2N2N2/PP3PPP/R1BQKB1R b KQkq - 0 5", "move", "short", ""], ["rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 0 5", "yn", "short", ""], ["r1bqkb1r/pp2pppp/2n2n2/2pp4/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 0 5", "yn", "long", ""], ["r1bqkb1r/pp2pppp/2np1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6", "yn", "long", ""], ["rn1qkb1r/ppp2ppp/4bn2/3p4/1b1P4/5N2/PPP1PPPP/RNBQK2R w KQkq - 0 5", "yn", "short", ""], ["rnbqk2r/ppp1pppp/5n2/1B1p4/3P4/4BN2/PPP2PPP/RN1QKB1R b KQkq - 0 5", "yn", "long", ""], ["r2qkb1r/pp3ppp/2n1bn2/2pp4/2b1P3/2N2N2/PPP2PPP/R1BQK2R w KQkq - 0 7", "yn", "short", ""], ["r1bqk2r/ppp2pp1/2n2n1p/3pp1q1/3PP3/2N2N2/PPP1BP1P/R1BQK2R w KQkq - 0 7", "yn", "short", ""], ["r1bqk2r/ppp1bp1p/2n2n2/3pp3/3PP1Q1/2N2N1P/PPP2PP1/R1BQK2R b KQkq - 0 7", "yn", "short", ""], ["r1bqkb1r/ppp2ppp/2n2n2/3pp3/b2P4/2N1PN2/PP2BPPP/R3K2R w KQkq - 0 7", "ask", "", ""], ["r3k2r/pp2bppp/2n1pn2/B2p4/3PP3/2N2N2/PPP2PPP/R1BQKB1R b KQkq - 0 7", "ask", "", ""], ["r3k2r/p1pq1ppp/2n1pn2/1r1p4/3P4/2N1PN2/P1PBBPPP/R3K2R w KQkq - 0 8", "yn", "long", ""], ["r3k2r/p1pbbppp/2n1pn2/3p4/1R1P4/2N1PN2/P1PQ1PPP/R3K2R b KQkq - 0 8", "yn", "long", ""], ["r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQK2R w kq - 0 6", "yn", "short", "Белый король раньше уже ходил: Ке2, потом обратно Ке1."], ["r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R b KQ - 0 6", "yn", "short", "Чёрный король раньше уже ходил: Ке7, потом обратно Ке8."], ["r2qk2r/ppp2ppp/2np1n2/2b1p1B1/2B1P1b1/2NP1N2/PPPQ1PPP/R3K2R w Qkq - 0 8", "ask", "", "Белая ладья h1 раньше уже ходила: Лg1, потом обратно Лh1."], ["r2qk2r/ppp2ppp/2np1n2/2b1p1B1/2B1P1b1/2NP1N2/PPPQ1PPP/R3K2R w KQkq - 0 8", "ask", "", ""], ["r3k2r/pppq1ppp/2np1n2/2b1p1B1/2B1P1b1/2NP1N2/PPP2PPP/R2QK2R b KQkq - 0 8", "ask", "", ""], ["r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQK2R w KQkq - 0 6", "ask", "", ""], ["rnbqk2r/pppp1ppp/5n2/b3p3/4P3/P1N2N2/1PPPBPPP/R1BQK2R b KQkq - 4 6", "ask", "", ""], ["r1bqkb1r/ppp2ppp/2n2n2/3pp3/3P1B2/2N5/PPPQPPPP/R3KBNR w KQkq - 0 6", "ask", "", ""], ["r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R b KQkq - 0 6", "ask", "", ""], ["rnbqk2r/ppp2ppp/5n2/2bp4/8/5N2/PPP1PPPP/R1BQKB1R b KQkq - 0 5", "yn", "short", ""]];
+  var CI = [["r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQK2R w KQkq - 0 6", "move", "short", ""], ["r3k2r/ppp2ppp/8/8/8/8/PPP2PPP/R3K2R w KQkq - 0 1", "move", "long", ""], ["r2qk2r/ppp2ppp/2np1n2/2b1p1B1/2B1P1b1/2NP1N2/PPPQ1PPP/R3K2R w KQkq - 0 8", "move", "long", ""], ["rnbqk2r/ppp1bppp/4pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R b KQkq - 0 5", "move", "short", ""], ["rn1qkb1r/ppp1pppp/5n2/3p1b2/3P1B2/2N5/PPPQPPPP/R3KBNR w KQkq - 0 5", "ask", "", ""], ["r3kbnr/ppp1pppp/2n5/3q1b2/3P4/2N1BN2/PPP1BPPP/R2QK2R b KQkq - 0 7", "move", "long", ""], ["rnbq1rk1/ppp1ppbp/3p1np1/8/2PPP3/2N2N2/PP2BPPP/R1BQK2R w KQ - 0 7", "move", "short", ""], ["rnbqkb1r/pp2pppp/3p1n2/2p5/4P3/2N2N2/PPPP1PPP/R1BQKB1R w KQkq - 0 4", "yn", "long", ""], ["rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 0 5", "yn", "short", ""], ["r1bqkb1r/pp2pppp/2n2n2/2pp4/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 0 5", "yn", "long", ""], ["r1bqkb1r/pp2pppp/2np1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6", "yn", "long", ""], ["rn1qkb1r/ppp2ppp/4bn2/3p4/1b1P4/5N2/PPP1PPPP/RNBQK2R w KQkq - 0 5", "yn", "short", ""], ["rnbqk2r/ppp1pppp/5n2/1B1p4/3P4/4BN2/PPP2PPP/RN1QKB1R b KQkq - 0 5", "yn", "long", ""], ["r2qkb1r/pp3ppp/2n1bn2/2pp4/2b1P3/2N2N2/PPP2PPP/R1BQK2R w KQkq - 0 7", "yn", "short", ""], ["r1bqk2r/ppp2pp1/2n2n1p/3pp1q1/3PP3/2N2N2/PPP1BP1P/R1BQK2R w KQkq - 0 7", "yn", "short", ""], ["r1bqk2r/ppp1bp1p/2n2n2/3pp3/3PP1Q1/2N2N1P/PPP2PP1/R1BQK2R b KQkq - 0 7", "yn", "short", ""], ["r1bqkb1r/ppp2ppp/2n2n2/3pp3/b2P4/2N1PN2/PP2BPPP/R3K2R w KQkq - 0 7", "ask", "", ""], ["r3k2r/pp2bppp/2n1pn2/B2p4/3PP3/2N2N2/PPP2PPP/R1BQKB1R b KQkq - 0 7", "ask", "", ""], ["r3k2r/p1pq1ppp/2n1pn2/1r1p4/3P4/2N1PN2/P1PBBPPP/R3K2R w KQkq - 0 8", "yn", "long", ""], ["r3k2r/p1pbbppp/2n1pn2/3p4/1R1P4/2N1PN2/P1PQ1PPP/R3K2R b KQkq - 0 8", "yn", "long", ""], ["r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQK2R w kq - 0 6", "yn", "short", "Белый король раньше уже ходил: Ке2, потом обратно Ке1."], ["r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R b KQ - 0 6", "yn", "short", "Чёрный король раньше уже ходил: Ке7, потом обратно Ке8."], ["r2qk2r/ppp2ppp/2np1n2/2b1p1B1/2B1P1b1/2NP1N2/PPPQ1PPP/R3K2R w Qkq - 0 8", "ask", "", "Белая ладья h1 раньше уже ходила: Лg1, потом обратно Лh1."], ["r3k2r/ppp2ppp/2n2n2/2bqp3/8/2NP1N2/PPP1BPPP/R1BQK2R w KQkq - 0 8", "ask", "", ""], ["r3k2r/pppq1ppp/2np1n2/2b1p1B1/2B1P1b1/2NP1N2/PPP2PPP/R2QK2R b KQkq - 0 8", "ask", "", ""], ["r3k2r/pppq1ppp/2n1bn2/3p4/3P4/2NBBN2/PPPQ1PPP/R3K2R w KQkq - 0 9", "ask", "", ""], ["rnbqk2r/pppp1ppp/5n2/b3p3/4P3/P1N2N2/1PPPBPPP/R1BQK2R b KQkq - 4 6", "ask", "", ""], ["r1bqkb1r/ppp2ppp/2n2n2/3pp3/3P1B2/2N5/PPPQPPPP/R3KBNR w KQkq - 0 6", "ask", "", ""], ["rnbqk2r/ppp2ppp/3p1n2/2b1p3/4P3/2NP1N2/PPP1BPPP/R1BQK2R b KQkq - 0 6", "ask", "", ""], ["rnbqk2r/ppp2ppp/5n2/2bp4/8/5N2/PPP1PPPP/R1BQKB1R b KQkq - 0 5", "yn", "short", ""]];
   var NM = { 1: 'пешка', 2: 'конь', 3: 'слон', 4: 'ладья', 5: 'ферзь', 6: 'король' };
   function sqn(i) { return 'abcdefgh'.charAt(i & 7) + (8 - (i >> 3)); }
   function analyse(fen, side, note) {
