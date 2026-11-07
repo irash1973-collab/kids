@@ -3,7 +3,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap">
 <style>
 /* Layout: one column, big rounded game cards on white; club red and yellow carry the page, the board is the hero. */
 :root {
@@ -104,8 +104,9 @@ a.card:hover { border-color: var(--red); }
 .sq.last::after { content: ''; position: absolute; inset: 0; background: rgba(255, 194, 26, .38); }
 .sq.tg { background-image: linear-gradient(rgba(255, 205, 40, .66), rgba(255, 205, 40, .66)); box-shadow: inset 0 0 0 3px rgba(255, 160, 0, .95); }
 .sq.tg.cap { background-image: linear-gradient(rgba(255, 90, 60, .45), rgba(255, 90, 60, .45)); box-shadow: inset 0 0 0 4px rgba(230, 40, 20, .95); }
-.board[data-tg="soft"] .sq.tg { background-image: linear-gradient(rgba(255, 205, 40, .22), rgba(255, 205, 40, .22)); box-shadow: inset 0 0 0 2px rgba(255, 170, 0, .35); }
-.board[data-tg="soft"] .sq.tg.cap { background-image: linear-gradient(rgba(255, 90, 60, .18), rgba(255, 90, 60, .18)); box-shadow: inset 0 0 0 2px rgba(230, 40, 20, .4); }
+.board[data-tg="soft"] .sq.tg { background-image: radial-gradient(circle, rgba(40, 80, 50, .42) 0 16%, transparent 18%); box-shadow: none; }
+.board[data-tg="soft"] .sq.tg.cap { background-image: radial-gradient(circle, transparent 0 60%, rgba(40, 80, 50, .42) 62% 80%, transparent 82%); box-shadow: none; }
+.board[data-tg="soft"] .sq.sel { background-image: linear-gradient(rgba(40, 80, 50, .45), rgba(40, 80, 50, .45)); box-shadow: none; }
 .sq.chk { background: radial-gradient(circle, #ff3b30 0 55%, transparent 75%), var(--sq-dark); }
 .sq.l.chk { background: radial-gradient(circle, #ff3b30 0 55%, transparent 75%), var(--sq-light); }
 @keyframes pulse { 50% { box-shadow: inset 0 0 0 5px var(--yellow); } }
@@ -207,6 +208,7 @@ a.card:hover { border-color: var(--red); }
 .mitem { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100px; font-size: 14px; font-weight: 800; line-height: 1.2; }
 .mitem small { color: var(--muted); font-weight: 600; }
 .medal .mpc { --pf: #fff; --ps: #1b1a19; --lnc: #1b1a19; }
+.medal { filter: drop-shadow(0 3px 3px rgba(60, 40, 0, .3)); }
 .medal.off { opacity: .45; filter: grayscale(1); }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
 .stats div { background: var(--card); border-radius: 18px; padding: 12px; display: flex; flex-direction: column; align-items: center; }
@@ -765,6 +767,73 @@ a.y2tier,a.y2pl{text-decoration:none;color:inherit}.y2pl{position:relative}.y2pl
 .gscore{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
 .gs{background:#fff;border-radius:12px;padding:6px 12px;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .gs.you{background:#d9f7e4}.gs.cpu{background:#ffe1e1}
+
+/* ===== Дизайн «Закат в шахматной стране» (кроме второго года, body.y2) ===== */
+html { min-height: 100%; }
+body:not(.y2) { background: #fff6e6; }
+body:not(.y2)::before { display: none; }
+body:not(.y2) #sky span { color: rgba(255, 255, 255, .8); }
+body:not(.y2) h1, body:not(.y2) h2, body:not(.y2) h3, body:not(.y2) .big { font-weight: 700; }
+body:not(.y2) h2 { background: none; margin-left: 0; padding: 0 0 8px; color: #231a5e; font-size: 30px; position: relative; }
+body:not(.y2) h2::after { content: ""; position: absolute; left: 0; bottom: 0; width: 64px; height: 6px; border-radius: 6px; background: linear-gradient(90deg, #ff8f6b, #ffc21a); }
+body:not(.y2) .top { background: #231a5e; border: 0; border-radius: 22px; padding: 10px 18px; box-shadow: 0 6px 0 #140f3a; }
+body:not(.y2) .brand, body:not(.y2) .brand span { color: #fff; font-size: 22px; font-weight: 700; }
+body:not(.y2) .brand b { color: #ffc21a; }
+body:not(.y2) .nav a, body:not(.y2) .nav a:nth-child(n) { background: rgba(255,255,255,.13); color: #fff; font-weight: 800; border-radius: 12px; padding: 9px 15px; border: 0; }
+body:not(.y2) .nav a:hover { background: rgba(255,255,255,.26); }
+body:not(.y2) .nav a[aria-current="page"], body:not(.y2) .nav a:nth-child(n)[aria-current="page"] { background: #ffc21a; color: #231a5e; }
+body:not(.y2) .btn { background: linear-gradient(180deg, #ff6a3d, #e8341c); color: #fff; border: 0; border-radius: 16px; font-family: var(--font-display); font-weight: 600; box-shadow: 0 6px 0 #a6200f; }
+body:not(.y2) .btn:active:not([disabled]) { transform: translateY(5px); box-shadow: 0 1px 0 #a6200f; }
+body:not(.y2) .btn.alt { background: #fff; color: #231a5e; border: 3px solid #231a5e; box-shadow: 0 6px 0 #231a5e; }
+body.home .wrap { max-width: 1080px; }
+body.home .hero { padding: 44px 40px 150px; border-radius: 30px; min-height: 470px; justify-content: flex-start; border: 0; margin-bottom: 14px;
+  background: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 520' preserveAspectRatio='xMidYMax slice'%3E%0A%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%231b66d8'/%3E%3Cstop offset='.5' stop-color='%233f9cf5'/%3E%3Cstop offset='.8' stop-color='%238fd3ff'/%3E%3Cstop offset='1' stop-color='%23d6f3ff'/%3E%3C/linearGradient%3E%0A%3CradialGradient id='s'%3E%3Cstop offset='0' stop-color='%23fff7b0'/%3E%3Cstop offset='1' stop-color='%23ffd34d'/%3E%3C/radialGradient%3E%3C/defs%3E%0A%3Crect width='1200' height='520' fill='url(%23g)'/%3E%0A%3Cg stroke='%23ffe88a' stroke-width='5' stroke-linecap='round' opacity='.7'%3E%3Cpath d='M960 105v-26M960 325v26M845 215h-26M1075 215h26M879 134l-18 -18M1041 296l18 18M879 296l-18 18M1041 134l18 -18'/%3E%3C/g%3E%0A%3Ccircle cx='960' cy='215' r='80' fill='%23fff7b0' opacity='.35'/%3E%3Ccircle cx='960' cy='215' r='54' fill='url(%23s)'/%3E%0A%3Cg fill='%23fff'%3E%3Cellipse cx='600' cy='60' rx='100' ry='20' opacity='.92'/%3E%3Cellipse cx='660' cy='46' rx='62' ry='19' opacity='.92'/%3E%3Cellipse cx='555' cy='50' rx='50' ry='15' opacity='.92'/%3E%0A%3Cellipse cx='720' cy='150' rx='80' ry='15' opacity='.9'/%3E%3Cellipse cx='770' cy='140' rx='46' ry='13' opacity='.9'/%3E%3Cellipse cx='1000' cy='400' rx='70' ry='13' opacity='.8'/%3E%3Cellipse cx='1110' cy='330' rx='60' ry='12' opacity='.8'/%3E%3C/g%3E%0A%3Cpath d='M0 372 L120 285 L230 360 L360 262 L500 355 L640 292 L780 368 L900 305 L1040 362 L1200 296 V520 H0Z' fill='%237fb4e8'/%3E%0A%3Cpath d='M0 395 L150 330 L300 392 L470 322 L640 395 L820 335 L1000 398 L1200 340 V520 H0Z' fill='%235f9fd8' opacity='.85'/%3E%0A%3Cg transform='translate(540 -4) scale(1.12)'%3E%3Cg fill='%23f6efe2'%3E%3Crect x='150' y='250' width='20' height='120'/%3E%3Crect x='185' y='282' width='84' height='90'/%3E%3Crect x='260' y='240' width='24' height='132'/%3E%3Crect x='100' y='290' width='50' height='80'/%3E%0A%3Cpath d='M185 282 h8 v-12 h10 v12 h10 v-12 h10 v12 h10 v-12 h10 v12 h10 v-12 h10 v12 h6 z'/%3E%3C/g%3E%0A%3Cg fill='%23d7261e'%3E%3Cpath d='M146 252 L160 220 L174 252Z'/%3E%3Cpath d='M255 242 L272 204 L289 242Z'/%3E%3Cpath d='M96 292 L125 258 L154 292Z'/%3E%3C/g%3E%0A%3Cg fill='%23ffc21a'%3E%3Cpath d='M160 220 V194 l30 9 -30 9'/%3E%3Cpath d='M272 204 V178 l30 9 -30 9'/%3E%3C/g%3E%0A%3Cg fill='%238a6a3a'%3E%3Crect x='156' y='290' width='8' height='14' rx='4'/%3E%3Crect x='268' y='280' width='8' height='14' rx='4'/%3E%3Crect x='215' y='312' width='16' height='30' rx='8'/%3E%3C/g%3E%3C/g%3E%0A%3Cpath d='M0 420 Q200 345 430 405 T860 392 T1200 372 V520 H0Z' fill='%237bd36b'/%3E%0A%3Cpath d='M0 458 Q260 405 520 455 T1200 436 V520 H0Z' fill='%234cbf5a'/%3E%0A%3Cpath d='M0 494 Q300 458 620 490 T1200 478 V520 H0Z' fill='%232fa84a'/%3E%0A%3Cg%3E%3Ccircle cx='120' cy='470' r='4' fill='%23ffd34d'/%3E%3Ccircle cx='360' cy='486' r='4' fill='%23fff'/%3E%3Ccircle cx='520' cy='470' r='4' fill='%23ff7a8a'/%3E%3Ccircle cx='900' cy='480' r='4' fill='%23ffd34d'/%3E%3Ccircle cx='1100' cy='466' r='4' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E") center bottom / cover no-repeat, #3f9cf5; box-shadow: 0 10px 0 #231a5e, 0 22px 40px rgba(35,26,94,.3); }
+body.home .hero::after { display: none; }
+body.home .hero h1 { font-size: clamp(34px, 5.2vw, 60px); max-width: 10.5em; text-shadow: 0 4px 0 rgba(20,10,70,.4); }
+body.home .hero p { font-size: 19px; max-width: 28em; text-shadow: 0 2px 0 rgba(20,10,70,.35); }
+body.home .hero p.motto { font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 3vw, 30px); color: #ffd34d; max-width: 20em; line-height: 1.2; }
+body.home .hero .tag { color: #fff; font-size: 15px; text-transform: uppercase; letter-spacing: 2px; opacity: .92; }
+body.home .hero .stage { right: 44px; bottom: 26px; z-index: 3; }
+body.home .hero .stage img { width: 170px; height: 170px; margin-left: -36px; border-color: #fff; box-shadow: 0 8px 0 rgba(20,10,70,.35); }
+body.home .hero .stage img:nth-child(2) { width: 146px; height: 146px; }
+body.home .hero .stage img:nth-child(3) { width: 124px; height: 124px; }
+body.home .hero .spark { display: none; }
+.namebox { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.namebox .btn { background: #ffc21a; color: #231a5e; box-shadow: 0 6px 0 #b88a00; }
+.path { background: rgba(255,255,255,.96); color: #231a5e; border-radius: 18px; padding: 12px 16px 10px; max-width: 560px; align-self: flex-start; width: 100%; box-shadow: 0 5px 0 rgba(20,10,70,.3); }
+.pathh { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-weight: 800; font-size: 15px; }
+.pathh span { color: #c0261c; }
+.pathbar { height: 14px; border-radius: 9px; background: #e9e4f6; margin: 8px 0 6px; overflow: hidden; }
+.pathbar i { display: block; height: 100%; background: linear-gradient(90deg, #ff8f6b, #ffc21a); border-radius: 9px; }
+.pathr { display: flex; justify-content: space-between; gap: 4px; font-size: 11.5px; font-weight: 800; color: #a9a3c4; } .pathr .on { color: #231a5e; }
+.praise { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: #c0261c; }
+body.home .yrdoors { gap: 18px; margin-bottom: 8px; }
+body.home .say { margin: 6px 0 4px; }
+body.home .cards { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; margin-top: 12px; }
+body.home .card { min-height: 0; border: 0 !important; border-radius: 26px; background: #fff !important; box-shadow: 0 8px 0 var(--sh), 0 16px 26px rgba(35,26,94,.14); display: grid; grid-template-columns: 92px 1fr; column-gap: 16px; padding: 20px 20px 22px 18px; align-items: start; position: relative; overflow: hidden; }
+body.home .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--bd); }
+body.home .card .ch { position: static; grid-row: 1 / 4; width: 92px; height: 92px; border: 4px solid var(--bd); box-shadow: 0 4px 0 rgba(0,0,0,.12); }
+body.home .card .big { padding: 0; font-size: 25px; grid-column: 2; color: var(--tt); }
+body.home .card p { grid-column: 2; margin: 4px 0 8px; font-size: 15.5px; color: #3d3935; }
+body.home .card .pill { grid-column: 2; background: var(--bd); color: #fff; }
+body.home .cards .card:nth-child(3) .pill { color: #3a2a00; }
+a.card:hover { transform: translateY(-5px); }
+body.home .heroes figure { width: 108px; border-radius: 24px; border: 0; box-shadow: 0 6px 0 rgba(35,26,94,.18); }
+@media (max-width: 700px) {
+  body.home .hero { padding: 26px 20px 250px; min-height: 0; }
+  body.home .hero .stage { right: 50%; transform: translateX(50%); bottom: 22px; }
+  body.home .hero .stage img { width: 104px; height: 104px; margin-left: -22px; } body.home .hero .stage img:nth-child(2) { width: 90px; height: 90px; } body.home .hero .stage img:nth-child(3) { width: 78px; height: 78px; }
+  body.home .card { grid-template-columns: 72px 1fr; } body.home .card .ch { width: 72px; height: 72px; }
+}
+
+body.y2 #prof { display: none; }
+#prof { background: #fff; color: #151515; font-weight: 800; }
+.profov { position: fixed; inset: 0; z-index: 9000; background: rgba(15,15,15,.6); display: flex; align-items: center; justify-content: center; padding: 16px; overflow: auto; }
+.profbox { position: relative; background: #fff; border-radius: 24px; border: 4px solid #151515; box-shadow: 0 8px 0 #d7261e; max-width: 560px; width: 100%; max-height: 92vh; overflow: auto; padding: 22px 20px; display: flex; flex-direction: column; gap: 12px; }
+.profbox .row { display: flex; gap: 10px; flex-wrap: wrap; } .profbox .savebox { margin: 0; } .profbox textarea { width: 100%; }
+.profbox input { font: inherit; font-weight: 800; font-size: 18px; padding: 10px 14px; border-radius: 14px; border: 3px solid #151515; flex: 1; min-width: 160px; }
+.proflb { font-weight: 800; }
+.profx { position: absolute; top: 10px; right: 12px; border: 0; background: #151515; color: #fff; border-radius: 50%; width: 34px; height: 34px; font-size: 16px; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -804,6 +873,7 @@ a.y2tier,a.y2pl{text-decoration:none;color:inherit}.y2pl{position:relative}.y2pl
       <a href="#y2/board" data-y2="board">Доска</a>
       <button type="button" class="y2setbtn" id="y2set" aria-label="Настройки" title="Настройки">⚙ Настройки</button>
     </nav>
+    <button class="sndbtn" id="prof" type="button" aria-label="Мой профиль">👤 Профиль</button>
     <a class="ptsbadge" id="pts" href="#awards" aria-label="Твои баллы">⭐ 0</a>
     <button class="sndbtn" id="snd" aria-pressed="true">Звук вкл</button>
     <button class="sndbtn" id="setK" type="button" aria-label="Настройки">⚙ Настройки</button>
@@ -1392,12 +1462,12 @@ var Eng = (function () {
     L = Math.max(1, Math.min(30, L));
     if (L > 20) return { strong: true, depth: 2 + (L - 20) , ms: [0, 120, 200, 320, 480, 700, 950, 1250, 1600, 2000, 2500][L - 20], noise: 0 };
     var table = [
-      [1, 9999], [1, 700], [1, 520], [1, 400], [1, 300], [1, 220],
-      [2, 420], [2, 330], [2, 260], [2, 200], [2, 150], [2, 110], [2, 80],
-      [3, 280], [3, 220], [3, 170], [3, 130], [3, 95], [3, 70], [3, 45]
+      [1, 9999], [1, 650], [1, 480], [1, 360], [1, 270], [1, 200],
+      [2, 330], [2, 250], [2, 190], [2, 140], [2, 100], [2, 70], [2, 48],
+      [3, 130], [3, 100], [3, 75], [3, 55], [3, 38], [3, 24], [3, 12]
     ];
     var e = table[L - 1];
-    return { depth: e[0], noise: e[1], q: L >= 14, ms: 1200 };
+    return { depth: e[0], noise: e[1], q: L >= 10, ms: 1200 };
   }
 
   function bestMove(pos, level, hist) {
@@ -1591,6 +1661,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
   function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  /* имя ребёнка и похвала */
+  function kidName() { var n = lsGet('ukc_name', ''); return typeof n === 'string' ? n.slice(0, 20) : ''; }
+  var PRAISE = ['Ты настоящий шахматист!', 'Мы очень верим в твой успех!', 'Отличная работа!', 'Так держать, чемпион!', 'Ты становишься сильнее с каждым днём!', 'Вот это мысль! Молодец!', 'Умно сыграно!', 'Горжусь тобой!', 'Ещё шаг к званию чемпиона!', 'Ты можешь всё. Продолжай!'];
+  function praise() { var c = lsGet('ukc_pr', 0) + 1; lsSet('ukc_pr', c); var nm = kidName(), s = PRAISE[c % PRAISE.length]; return nm && c % 3 === 0 ? nm + ', ' + s.charAt(0).toLowerCase() + s.slice(1) : s; }
   var solved = lsGet('ukc_solved', {});          /* классические задачи */
   var pz = lsGet('ukc_pz', { R: 0, Q: 0, B: 0, N: 0, P: 0, X: 0 }); /* решено бесконечных задач по видам */
   var wins = lsGet('ukc_w2', {});                /* номер уровня (1..200) -> звёзды 1..3 */
@@ -1730,12 +1804,30 @@ if (typeof module !== 'undefined') module.exports = Eng;
     return L;
   }
   function earnedIds() { var o = {}; medalList().forEach(function (m) { if (m.ok) o[m.id] = m; }); return o; }
+  var MID = 0;
+  function shade(hex, amt) {
+    var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, bl = n & 255;
+    function f(v) { return Math.max(0, Math.min(255, Math.round(amt >= 0 ? v + (255 - v) * amt : v * (1 + amt)))); }
+    return '#' + ((1 << 24) + (f(r) << 16) + (f(g) << 8) + f(bl)).toString(16).slice(1);
+  }
   function medalSvg(m, size) {
-    var s = size || 56, c = m.ok ? m.c : '#cfc9c3';
-    return '<svg class="medal' + (m.ok ? '' : ' off') + '" width="' + s + '" height="' + s + '" viewBox="0 0 56 56" aria-hidden="true">' +
-      '<path d="M16 2h9l5 14h-9z" fill="#d7261e"/><path d="M40 2h-9l-5 14h9z" fill="#ffc21a"/>' +
-      '<circle cx="28" cy="34" r="19" fill="' + c + '" stroke="#1b1a19" stroke-width="2"/><circle cx="28" cy="34" r="14" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="2"/>' +
-      '<g transform="translate(14 20) scale(.62)"><use href="#pw' + m.pc + '" class="mpc"/></g></svg>';
+    var s = size || 56, c = m.ok ? m.c : '#cfc9c3', id = 'mg' + (++MID), t = Math.min(3, m.tier || 0);
+    var lt = shade(c, .55), md = c, dk = shade(c, -.4), stars = '', i;
+    for (i = 0; i <= Math.min(t, 2); i++) {
+      var sx = 32 + (i - Math.min(t, 2) / 2) * 8;
+      stars += '<path transform="translate(' + (sx - 3.5) + ' 55.500) scale(.30)" d="M12 1l3.4 7 7.6 1.1-5.5 5.4 1.3 7.6L12 18.4 5.2 22.1l1.3-7.6L1 9.1 8.600 8z" fill="#fff" stroke="' + dk + '" stroke-width="1.6" stroke-linejoin="round"/>';
+    }
+    var crown = t === 3 ? '<path d="M22 24l3 5 4-7 3 7 4-7 3 7 3-5-2 9H24z" transform="translate(0 -5)" fill="#ffe066" stroke="' + dk + '" stroke-width="1.4" stroke-linejoin="round"/>' : '';
+    return '<svg class="medal' + (m.ok ? '' : ' off') + '" width="' + s + '" height="' + s * 1.12 + '" viewBox="0 0 64 72" aria-hidden="true">' +
+      '<defs><linearGradient id="' + id + 'r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + lt + '"/><stop offset=".5" stop-color="' + md + '"/><stop offset="1" stop-color="' + dk + '"/></linearGradient>' +
+      '<radialGradient id="' + id + 'd" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="' + shade(c, .75) + '"/><stop offset=".55" stop-color="' + shade(c, .15) + '"/><stop offset="1" stop-color="' + shade(c, -.15) + '"/></radialGradient></defs>' +
+      '<path d="M14 1h13l7 22-9 6z" fill="#e53935"/><path d="M50 1H37l-7 22 9 6z" fill="#1e88e5"/><path d="M27 1h10l-1.500 8h-7z" fill="#ffd54f" opacity=".0"/>' +
+      '<path d="M14 1h6l8 25-3 3z" fill="#ff8a80" opacity=".55"/><path d="M50 1h-6l-8 25 3 3z" fill="#82b1ff" opacity=".55"/>' +
+      '<circle cx="32" cy="44" r="25" fill="url(#' + id + 'r)" stroke="' + dk + '" stroke-width="1.5"/>' +
+      '<circle cx="32" cy="44" r="20.500" fill="url(#' + id + 'd)" stroke="' + dk + '" stroke-width="1"/>' +
+      '<circle cx="32" cy="44" r="23" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1" stroke-dasharray="1.500 2.500"/>' +
+      '<g transform="translate(18.500 24.500) scale(.64)"><use href="#pw' + m.pc + '" width="45" height="45" class="mpc"/></g>' + crown + stars +
+      '<ellipse cx="22" cy="30" rx="9" ry="4.500" transform="rotate(-35 22 30)" fill="#fff" opacity=".38"/></svg>';
   }
   /* показывает новые награды; вызывать с набором «до» */
   function newMedals(before) {
@@ -1746,7 +1838,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function medalsHTML(list) {
     if (!list.length) return '';
     var h = '<div class="newm"><b>Новые награды!</b><div class="mrow">';
-    list.forEach(function (m) { h += '<div class="mitem">' + medalSvg(m, 64) + '<span>' + esc(m.name) + '</span><small>' + esc(m.grp) + '</small></div>'; });
+    list.forEach(function (m) { h += '<div class="mitem">' + medalSvg(m, 92) + '<span>' + esc(m.name) + '</span><small>' + esc(m.grp) + '</small></div>'; });
     return h + '</div></div>';
   }
 
@@ -1851,9 +1943,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var hh = '';
     Object.keys(HEROES).forEach(function (k) { hh += '<figure data-h="' + k + '">' + av(k) + '<span>' + esc(HEROES[k].n) + '</span></figure>'; });
     view.innerHTML =
-      '<div class="hero"><span class="tag">Шахматная страна · UpGrade Chess Club</span><h1>Добро пожаловать в шахматную страну!</h1>' +
+      '<div class="hero"><span class="tag">Шахматная страна · UpGrade Chess Club</span><h1>' + (kidName() ? 'Привет, ' + esc(kidName()) + '!' : 'Добро пожаловать в шахматную страну!') + '</h1>' +
+      '<p class="motto">Мы очень верим в твой успех. Каждый ход делает тебя сильнее!</p>' +
       '<p>Учись по урокам, решай задачи, играй с роботами и с друзьями, собирай награды. Всё бесплатно, прямо на телефоне или компьютере.</p>' +
-      '<p class="note"><b>⭐ ' + pts + ' баллов · звание «' + rk + '»</b>' + (nx ? ' · до звания «' + nx[1] + '» ещё ' + (nx[0] - pts) : '') + '</p>' +
+      (kidName() ? '' : '<div class="namebox"><button class="btn" id="knb">👤 Создать профиль: как тебя зовут?</button></div>') +
+      pathRibbon(pts) +
       '<div class="stage"><img src="' + IMG.yasmin + '" alt=""><img src="' + IMG.tima + '" alt=""><img src="' + IMG.simba + '" alt=""></div>' +
       '<span class="spark" style="top:14px;right:22px">⭐</span><span class="spark" style="top:60px;right:150px;animation-delay:-.7s">✨</span><span class="spark" style="top:110px;right:14px;animation-delay:-1.3s">♟</span></div>' +
       '<section class="yrdoors"><a class="yrd y1" href="#lessons"><span class="yrk">Первый год обучения</span><b>Знакомство с шахматами</b><p>Доска, фигуры, правила, шах и мат, первые задачи и игра с героями книги.</p><span class="yrgo">Начать ▶</span></a><a class="yrd y2" href="#y2"><span class="yrk">Второй год обучения</span><b>Тактика, дебюты, практика</b><p>Партии мастеров, задачи профессионального уровня, анализ движком, игры с сильными соперниками.</p><span class="yrgo">Перейти ▶</span></a></section>' +
@@ -1867,6 +1961,28 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '</div>' +
       '<section><h2>Наши герои</h2><div class="heroes" style="margin-top:12px">' + hh + '</div>' +
       '<p class="note" style="margin-top:10px">Герои из книги «Шахматная страна».</p></section>' + clubPromo();
+    var knb = document.getElementById('knb'); if (knb) knb.onclick = openProfile;
+  }
+  /* ---------- Профиль: имя и сохранение прогресса ---------- */
+  function profLabel() { var b = document.getElementById('prof'); if (b) b.textContent = '👤 ' + (kidName() || 'Профиль'); }
+  function openProfile() {
+    var ov = document.createElement('div'); ov.className = 'profov';
+    ov.innerHTML = '<div class="profbox" role="dialog" aria-label="Мой профиль"><button class="profx" aria-label="Закрыть">✕</button><h2>Мой профиль</h2>' +
+      '<label class="proflb" for="pn">Как тебя зовут?</label><div class="row"><input id="pn" maxlength="20" value="' + esc(kidName()) + '" placeholder="Твоё имя" autocomplete="off"><button class="btn" id="pnS">Сохранить имя</button></div>' + saveBox() + '</div>';
+    document.body.appendChild(ov);
+    function close() { ov.remove(); }
+    ov.querySelector('.profx').onclick = close;
+    ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
+    document.addEventListener('keydown', function esc1(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc1); } });
+    document.getElementById('pnS').onclick = function () { var v = (document.getElementById('pn').value || '').replace(/[<>&"]/g, '').trim().slice(0, 20); lsSet('ukc_name', v); profLabel(); close(); if ((location.hash || '#home') === '#home' || location.hash === '') home(); };
+    wireSave();
+  }
+  (function () { var b = document.getElementById('prof'); if (b) { b.onclick = openProfile; profLabel(); } })();
+  function pathRibbon(p) {
+    var R = RANKS, cur = 0, i;
+    for (i = 0; i < R.length; i++) if (p >= R[i][0]) cur = i;
+    var nx = R[cur + 1], lo = R[cur][0], pc = nx ? Math.min(100, Math.round((p - lo) / (nx[0] - lo) * 100)) : 100;
+    return '<div class="path" aria-label="Путь к званию"><div class="pathh"><b>⭐ ' + p + ' баллов</b><span>' + (nx ? 'до звания «' + nx[1] + '» ещё ' + (nx[0] - p) : 'Ты чемпион страны!') + '</span></div><div class="pathbar"><i style="width:' + Math.max(4, pc) + '%"></i></div><div class="pathr">' + R.map(function (x, j) { return '<span class="' + (j <= cur ? 'on' : '') + '">' + x[1] + '</span>'; }).join('') + '</div></div>';
   }
   function clubPromo() {
     var logo = '<svg class="uplogo" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fff" stroke="#d7261e" stroke-width="3"/><use href="#pb1" x="10" y="12" width="34" height="34"/><path d="M48 44V18M40 26l8-9 8 9" fill="none" stroke="#d7261e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -1889,7 +2005,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var grp = '';
     mm.forEach(function (m) {
       if (m.grp !== grp) { if (grp) h += '</div></section>'; grp = m.grp; h += '<section class="mgroup"><h3>' + esc(grp) + '</h3><div class="mgrid">'; }
-      h += '<div class="mcell' + (m.ok ? ' ok' : '') + '" title="' + esc(m.desc) + '">' + medalSvg(m, 52) + '<span>' + esc(m.name) + '</span><small>' + (m.ok ? 'получена' : esc(m.desc)) + '</small></div>';
+      h += '<div class="mcell' + (m.ok ? ' ok' : '') + '" title="' + esc(m.desc) + '">' + medalSvg(m, 84) + '<span>' + esc(m.name) + '</span><small>' + (m.ok ? 'получена' : esc(m.desc)) + '</small></div>';
     });
     h += '</div></section>';
     view.innerHTML = '<h2>Награды</h2>' +
@@ -2194,7 +2310,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       document.getElementById('hintBtn').disabled = true;
     }
     function win() {
-      var was = earnedIds(), diff = matDiff(G.pos, you), stars = diff >= 2 ? 3 : diff >= 0 ? 2 : 1;
+      var was = earnedIds(), diff = matDiff(G.pos, you), stars = 3;
       var firstTime = !wins[n];
       wins[n] = Math.max(wins[n] || 0, stars); lsSet('ukc_w2', wins);
       var nm = newMedals(was), worldDone = (worldWins(wi) === SUB) && firstTime;
@@ -2206,7 +2322,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       later(function () {
         var h = '<h2>' + (n === TOTAL ? 'Ты чемпион!' : worldDone ? 'Мир пройден!' : 'Победа!') + '</h2>' +
           '<div class="bigstars" aria-label="' + stars + ' из 3 звёзд">' + [1, 2, 3].map(function (i) { return '<span style="animation-delay:' + (i * 0.25) + 's">' + starSvg(i <= stars) + '</span>'; }).join('') + '</div>' +
-          '<p>' + (worldDone ? 'Ты прошёл все 20 уровней: «' + esc(world.n) + '». Получай кубок!' : 'Ты обыграл робота ' + esc(name) + '.') + '</p>' +
+          '<p class="praise">' + esc(praise()) + '</p><p>' + (worldDone ? 'Ты прошёл все 20 уровней: «' + esc(world.n) + '». Получай кубок!' : 'Ты обыграл робота ' + esc(name) + '.') + '</p>' +
           (stars < 3 ? '<p class="note">Три звезды даёт победа с запасом фигур. Попробуй сыграть ещё!</p>' : '') +
           medalsHTML(nm) +
           '<div class="row">' + (n < TOTAL ? '<button class="btn" data-act="next">Следующий уровень</button>' : '') + '<button class="btn alt" data-act="an">Разобрать партию</button><button class="btn alt" data-act="back">К уровням</button></div>';
@@ -2821,11 +2937,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
     ['4k3/8/8/8/8/8/3r4/R3K2R w KQ - 0 1', 'long', 'Нет. Король проходит через d1, а это поле бьёт ладья d2.'],
     ['4k3/pppppppp/8/8/8/8/8/R3K2R w KQ - 0 1', 'long', 'Да! Все условия соблюдены: фигур между королём и ладьёй нет, шаха нет, поля не под боем.']
   ];
-  var BABY_W = [['d1h5', ['a7a6', 'd7d6', 'h7h6', 'b7b6', 'f8c5']], ['d1f3', ['a7a6', 'd7d6', 'h7h6', 'b7b6', 'f8c5']]];
+  var BABY_W = [['d1h5', ['a7a6', 'd7d6', 'h7h6', 'b7b6', 'f8c5', 'c7c6', 'h7h5', 'a7a5', 'b7b5']], ['d1f3', ['a7a6', 'd7d6', 'h7h6', 'b7b6', 'f8c5', 'c7c6', 'h7h5', 'a7a5', 'b7b5']]];
   function playUci(list) { var pos = E.start(); list.forEach(function (u) { pos = E.make(pos, uciMove(pos, u)); }); return pos; }
   function genBaby(r, def) {
-    for (var t = 0; t < 100; t++) {
-      var w = pick(r, BABY_W), second = pick(r, ['a7a6', 'd7d6', 'h7h6', 'b7b6', 'g8e7']), first = 'b8c6';
+    for (var t = 0; t < 300; t++) { try {
+      var w = pick(r, BABY_W), second = pick(r, ['a7a6', 'd7d6', 'h7h6', 'b7b6', 'g8e7', 'c7c6', 'h7h5', 'a7a5']), first = pick(r, ['b8c6', 'd7d6', 'a7a6', 'h7h6', 'b7b6', 'c7c6', 'g8e7', 'a7a5']);
       if (def) {
         var pos = playUci(['e2e4', 'e7e5', 'f1c4', first, w[0]]);
         var sols = E.legal(pos).filter(function (m) { return !E.legal(E.make(pos, m)).some(function (x) { return isMate(E.make(pos, m), x); }); });
@@ -2835,7 +2951,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         var s2 = E.legal(p2).filter(function (m) { return isMate(p2, m); });
         if (s2.length) return { pos: p2, sols: s2 };
       }
-    }
+    } catch (e) {} }
     return null;
   }
 
@@ -2892,7 +3008,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       sfx('win'); confetti(60 + stars * 30);
       if (r.gain) addPts(r.gain, 'за упражнение');
       var nm = r.full ? lessonMedal() : [];
-      box.innerHTML = '<h3>Молодец!</h3><div class="bigstars" aria-label="' + stars + ' из 3 звёзд">' + [1, 2, 3].map(function (i) { return '<span style="animation-delay:' + (i * 0.2) + 's">' + starSvg(i <= stars) + '</span>'; }).join('') + '</div>' +
+      box.innerHTML = '<h3>' + esc(praise()) + '</h3><div class="bigstars" aria-label="' + stars + ' из 3 звёзд">' + [1, 2, 3].map(function (i) { return '<span style="animation-delay:' + (i * 0.2) + 's">' + starSvg(i <= stars) + '</span>'; }).join('') + '</div>' +
         (r.full ? '<p><b>Урок пройден! +30 баллов</b></p>' : '') +
         '<div class="row">' + (lv < L.levels ? '<a class="btn" href="#lesson/' + id + '/' + (lv + 1) + '">Дальше</a>' : '<a class="btn" href="#lessons">К урокам</a>') + '<a class="btn alt" href="#lesson/' + id + '/' + lv + '" id="again">Ещё раз</a></div>';
       var anc = host.querySelector('#msg'); if (anc) anc.parentNode.insertBefore(box, anc.nextSibling); else host.appendChild(box); box.scrollIntoView({ block: 'nearest' });
@@ -3102,7 +3218,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var mistakes = 0, done = false, q = null, mode = L.kind;
     var sub = mode === 'board' ? (lv <= 4 ? 'find' : lv <= 8 ? (lv % 2 ? 'file' : 'rank') : lv <= 12 ? 'diag' : lv <= 16 ? 'name' : 'color') : mode === 'diags' ? 'diag' : mode === 'lines' ? (lv % 2 ? 'file' : 'rank') : mode === 'squares' ? (lv <= 10 ? 'find' : 'name') : 'color';
     if (mode === 'lines') S.coords = lv <= 12;
-    var sq = Math.floor(r() * 64), x = sq & 7, y = sq >> 3;
+    function subOf(k) { return mode === 'board' ? (k <= 4 ? 'find' : k <= 8 ? (k % 2 ? 'file' : 'rank') : k <= 12 ? 'diag' : k <= 16 ? 'name' : 'color') : mode === 'diags' ? 'diag' : mode === 'lines' ? (k % 2 ? 'file' : 'rank') : mode === 'squares' ? (k <= 10 ? 'find' : 'name') : 'color'; }
+    var sq = uniqTask(L.id + '_nm', lv, function (k, rr) { var s0 = Math.floor(rr() * 64), sb = subOf(k); return { sq: s0, key: sb + (sb === 'file' ? (s0 & 7) : sb === 'rank' ? (s0 >> 3) : s0) }; }).sq, x = sq & 7, y = sq >> 3;
     var text, opts = null, ok;
     if (sub === 'file') { text = 'Нажми на любую клетку вертикали «' + FILES[x] + '».'; ok = function (i) { return (i & 7) === x; }; }
     else if (sub === 'rank') { text = 'Нажми на любую клетку горизонтали ' + (8 - y) + '.'; ok = function (i) { return (i >> 3) === y; }; }
@@ -3135,8 +3252,23 @@ if (typeof module !== 'undefined') module.exports = Eng;
   }
 
   /* --- упражнения «найди ход» на позициях --- */
+  var UQ = {};
+  function uniqSig(t) { try { return JSON.stringify(t, function (k, v) { return typeof v === 'function' ? undefined : v; }); } catch (e) { return String(Math.random()); } }
+  /* делает задания одного урока разными: для уровня lv повторяет генерацию, пока задание не отличится от всех прежних */
+  function uniqTask(id, lv, gen1) {
+    var st = UQ[id] || (UQ[id] = { seen: {}, n: [] });
+    for (var k = st.n.length ? st.n.length : 1; k <= lv; k++) {
+      if (st.n[k] != null) continue;
+      var r = mkRng(hstr(id + k + '_u')), t = null, tries = 0;
+      do { t = gen1(k, r); tries++; var sg = uniqSig(t); if (!t || !st.seen[sg]) break; } while (tries < 60);
+      st.seen[uniqSig(t)] = 1; st.n[k] = tries;
+    }
+    var r2 = mkRng(hstr(id + lv + '_u')), t2 = null;
+    for (var j = 0; j < st.n[lv]; j++) t2 = gen1(lv, r2);
+    return t2;
+  }
   function runTask(host, L, lv, finish) {
-    var r = mkRng(hstr(L.id + lv)), T = L.gen(lv, r);
+    var r = mkRng(hstr(L.id + lv)), T = uniqTask(L.id, lv, function (k, rr) { return L.gen(k, rr); });
     if (!T) { host.innerHTML = '<div class="slide"><p>Не получилось создать упражнение. Открой его ещё раз.</p></div>'; return; }
     if (T.q) { runYN(host, L, lv, T, finish); return; }
     var side = T.pos.turn, S = { pos: T.pos, sel: null, targets: [], last: T.last || null, hint: null, flip: side === -1, coords: true, mark: {}, hl: null };
@@ -3974,7 +4106,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
     function runLogic(host, L, lv, finish) {
       var r = mkRng(hstr(L.id + lv + '_fx')), types = L.types, key = types[(lv - 1) % types.length], d = Math.min(4, Math.ceil(lv / types.length));
-      var q = T[key](r, d), S = { pos: E.fromFEN(fenOf(q.pcs)), sel: null, targets: [], last: null, hint: null, flip: !!q.flip, coords: q.coords !== false && (lv <= 12 || q.coords), mark: {}, hl: q.hl || null };
+      var q = uniqTask(L.id, lv, function (k, rr) { return T[types[(k - 1) % types.length]](rr, Math.min(4, Math.ceil(k / types.length))); }), S = { pos: E.fromFEN(fenOf(q.pcs)), sel: null, targets: [], last: null, hint: null, flip: !!q.flip, coords: q.coords !== false && (lv <= 12 || q.coords), mark: {}, hl: q.hl || null };
       if (q.star != null) { S.hl = S.hl || {}; S.hl[q.star] = true; S.mark[q.star] = 'star'; }
       if (q.marks) for (var mk in q.marks) S.mark[mk] = q.marks[mk];
       if (q.stars) q.stars.forEach(function (z) { S.hl = S.hl || {}; S.hl[z] = true; S.mark[z] = 'star'; });
@@ -4570,7 +4702,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function runQ(host, L, lv, finish) {
       var r = mkRng(hstr(L.id + lv + '_fx')), q = null, tries = 0;
       function badKings(b) { try { var ps = E.fromFEN(fenOfB(b) + ' w - - 0 1'), wk = E.kingSq(ps.b, 1), bk = E.kingSq(ps.b, -1); if (wk >= 0 && bk >= 0 && Math.max(Math.abs((wk & 7) - (bk & 7)), Math.abs((wk >> 3) - (bk >> 3))) < 2) return true; if (wk >= 0 && E.inCheck(ps)) return true; ps.turn = -1; return bk >= 0 && E.inCheck(ps); } catch (e) { return false; } }
-      while ((!q || (L.id !== 'kingrules' && badKings(q.b))) && tries++ < 150) q = L.gen(r, lv);
+      q = uniqTask(L.id, lv, function (k, rr) { var qq = null, tr = 0; while ((!qq || (L.id !== 'kingrules' && badKings(qq.b))) && tr++ < 150) qq = L.gen(rr, k); return qq; });
       var S = { pos: E.fromFEN(fenOfB(q.b) + ' w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: q.hl || null }, mist = 0, done = false;
       if (q.star != null) { S.mark[q.star] = 'star'; S.hl = S.hl || {}; S.hl[q.star] = true; }
       host.innerHTML = say(av('prof'), 'Профессор', q.text, L.t + ' · ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' + (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
@@ -4890,7 +5022,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function draw() { document.getElementById('cnt').textContent = 'Ходов: ' + moves; drawBoard(S, click); }
       function check(who) {
         var st = E.status(cur);
-        if (st === 'mate') { done = true; draw(); var stars = moves <= c.lim * 0.6 ? 3 : moves <= c.lim * 0.85 ? 2 : 1; sm('Мат! Ты поставил мат за ' + moves + ' ходов.', 'good'); finish(stars); return true; }
+        if (st === 'mate') { done = true; draw(); var stars = 3; sm('Мат! Ты поставил мат за ' + moves + ' ходов.', 'good'); finish(stars); return true; }
         if (st === 'stalemate') { done = true; draw(); sfx('bad'); sm('Пат! Это ничья. Нажми «Заново» и будь внимательнее.', 'bad'); return true; }
         if (E.insufficient(cur)) { done = true; draw(); sfx('bad'); sm('Ты потерял фигуру, мат уже не поставить. Нажми «Заново».', 'bad'); return true; }
         if (moves >= c.lim && who === 'b') { done = true; draw(); sfx('bad'); sm('Слишком много ходов. Нажми «Заново» и попробуй короче.', 'bad'); return true; }
@@ -4964,8 +5096,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
       for (var i = 0; i < k && i < ln.length - 1; i++) p = E.make(p, bookStep(p, ln[i]));
       return { pos: p, m: bookStep(p, ln[Math.min(k, ln.length - 1)]), line: ln, k: k };
     }
-    function runNote(host, L, lv, finish) {
-      var r = mkRng(hstr('nt' + lv)), bp = bookPos(r, 0, lv > 20 ? 8 : 5), pos = bp.pos, ms = E.legal(pos);
+    function runNote(host, L, lv, finish, sd) {
+      var r = mkRng(hstr('nt' + (sd != null ? sd : lv))), bp = bookPos(r, 0, lv > 20 ? 8 : 5), pos = bp.pos, ms = E.legal(pos);
       var S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, mist = 0, done = false, choose = lv % 2 === 1, m0 = bp.m, txt = notation(m0, pos);
       if (choose) {
         var all = [txt], seen = {}; seen[txt] = 1; var g = 0; while (all.length < 4 && g++ < 60) { var o = notation(ms[Math.floor(r() * ms.length)], pos); if (!seen[o]) { seen[o] = 1; all.push(o); } }
@@ -5027,11 +5159,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     function runNote2(host, Lx, lv, finish) {
       var kind = (lv - 1) % 5;
-      if (kind === 0) return runNote(host, Lx, 1 + 20 * (lv > 15 ? 1 : 0), finish);
-      if (kind === 1) return runNote(host, Lx, 2 + 20 * (lv > 15 ? 1 : 0), finish);
+      if (kind === 0) return runNote(host, Lx, 1 + 20 * (lv > 15 ? 1 : 0), finish, 'a' + lv);
+      if (kind === 1) return runNote(host, Lx, 2 + 20 * (lv > 15 ? 1 : 0), finish, 'b' + lv);
       var r = mkRng(hstr('nt2' + lv)), mist = 0, done = false;
       if (kind === 2) {  /* найди клетку, куда пошла фигура */
-        var bp2 = bookPos(r, 0, lv > 15 ? 8 : 5), pos = bp2.pos, m0 = bp2.m, txt = notation(m0, pos), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: {} };
+        var bp2 = uniqTask('nt2k2', lv, function (k, rr) { return (k - 1) % 5 !== 2 ? { k: k } : bookPos(rr, 0, k > 15 ? 8 : 5); }), pos = bp2.pos, m0 = bp2.m, txt = notation(m0, pos), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: {} };
         S.hl[m0.f] = true; S.mark[m0.f] = 'star';
         host.innerHTML = say(av('prof'), 'Запись хода ' + lv, 'Записан ход ' + txt + '. Нажми на клетку, куда пошла фигура.', 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>';
         var msg = document.getElementById('msg');
@@ -5039,7 +5171,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         drawBoard(S, click); return;
       }
       if (kind === 3) {  /* нужный знак */
-        var B = signBank(), q = B[(lv * 3 + Math.floor(r() * 5)) % B.length], p2 = E.fromFEN(q[0]), mv = E.legal(p2).filter(function (m) { return (SQN(m.f) + SQN(m.t)) === q[1].slice(0, 4) && (!m.p || m.p === 5); })[0];
+        var B = signBank(), q = B[Math.floor((lv - 4) / 5) % B.length], p2 = E.fromFEN(q[0]), mv = E.legal(p2).filter(function (m) { return (SQN(m.f) + SQN(m.t)) === q[1].slice(0, 4) && (!m.p || m.p === 5); })[0];
         if (!mv) { return runNote(host, Lx, 1, finish); }
         var S2 = { pos: p2, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: {} }; S2.hl[mv.f] = true; S2.hl[mv.t] = true;
         var opts = ['×', '+', '#', 'O-O', '=', 'нет знака'];
@@ -5049,7 +5181,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         return;
       }
       /* kind 4: сыграй по записи три хода подряд */
-      var bp4 = bookPos(r, 0, 2), p0 = bp4.pos, seq = [], cur = p0, k;
+      var bp4 = uniqTask('nt2k4', lv, function (k, rr) { return (k - 1) % 5 !== 4 ? { k: k } : bookPos(rr, 0, 2); }), p0 = bp4.pos, seq = [], cur = p0, k;
       for (k = 0; k < 3; k++) { var mm = bookStep(cur, bp4.line[bp4.k + k]); if (!mm) break; seq.push({ m: mm, pos: cur, t: notation(mm, cur) }); cur = E.make(cur, mm); }
       if (seq.length < 3) return runNote(host, Lx, 2, finish);
       var S3 = { pos: p0, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, idx = 0;
@@ -5214,7 +5346,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       }
       function result() {
         over = true; draw();
-        if (sc > sk) { sfx('good'); setMsg('Ты победил со счётом ' + sc + ' : ' + sk + '! Молодец!', 'good'); finish(sc - sk >= 4 ? 3 : sc - sk >= 2 ? 2 : 1); }
+        if (sc > sk) { sfx('good'); setMsg('Ты победил со счётом ' + sc + ' : ' + sk + '! Молодец!', 'good'); finish(3); }
         else if (sc === sk) { sfx('bad'); setMsg('Ничья ' + sc + ' : ' + sk + '. Нажми «Заново» и попробуй ещё раз.', 'bad'); }
         else { sfx('bad'); setMsg('Компьютер собрал больше: ' + sk + ' : ' + sc + '. Нажми «Заново» — у тебя получится!', 'bad'); }
       }
@@ -5284,7 +5416,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         drawBoard(S, click);
       }
       function lose() { over = true; draw(); sfx('bad'); setMsg('Пешка дошла до конца и стала ферзём. Нажми «Заново» — попробуй ещё!', 'bad'); }
-      function win() { over = true; draw(); sfx('good'); setMsg('Все пешки взяты за ' + mv + ' ' + (mv < 5 ? 'хода' : 'ходов') + '! Молодец!', 'good'); finish(mv <= n0 + 2 ? 3 : mv <= n0 + 5 ? 2 : 1); }
+      function win() { over = true; draw(); sfx('good'); setMsg('Все пешки взяты за ' + mv + ' ' + (mv < 5 ? 'хода' : 'ходов') + '! Молодец!', 'good'); finish(3); }
       function click(i) {
         if (over || busy) return;
         if (S.targets.indexOf(i) < 0) { sfx('bad'); setMsg('Сюда ходить нельзя. Выбери другую клетку.', 'bad'); return; }
@@ -5424,7 +5556,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var oldEp = LESS.ep.gen;
     LESS.ep.gen = function (lv, r) {
       if (lv <= 10) return oldEp(lv, r);
-      var c = EQ[(lv - 11) % EQ.length], pos = E.fromFEN(c[0]), can = E.legal(pos).some(function (m) { return m.fl === 1; });
+      var ei = Math.floor((lv - 11) / 2);
+      if ((lv - 11) % 2 === 1 || ei >= EQ.length) { var og = oldEp(lv, r); if (og) return og; }
+      var c = EQ[ei % EQ.length], pos = E.fromFEN(c[0]), can = E.legal(pos).some(function (m) { return m.fl === 1; });
       return { pos: pos, q: 'Можно ли сейчас взять пешку на проходе?', ans: can, expl: c[2], hint: 'проверь: пешка только что прыгнула, соседняя пешка рядом, и после взятия нет шаха своему королю.' };
     };
   })();
@@ -5776,10 +5910,33 @@ if (typeof module !== 'undefined') module.exports = Eng;
         if (over) return; busy = true; sm(esc(o.n) + ' думает…'); var my = gen;
         later(function () {
           if (over || my !== gen) return;
+          var rtv = cu ? (lv < 5 ? 600 + (lv - 1) * 100 : lv < 14 ? 1000 + Math.round((lv - 5) * 45 / 5) * 5 : lv < 18 ? 1400 + (lv - 14) * 100 : lv < 23 ? 1800 + (lv - 18) * 100 : 2300 + (lv - 23) * 50) : o.rt;
+          function mv2(m) {
+            if (over || my !== gen) return;
+            if (!m) { var L = E.legal(S.pos); m = L[Math.floor(Math.random() * L.length)]; }
+            if (!m) { after(); return; }
+            go2(m);
+          }
+          var bk = rtv >= 1000 && mv.length < 20 && Math.random() < 0.92 ? bookPick(S.pos) : null;
+          if (bk && bk.m) { return mv2(bk.m); }
+          if (rtv >= 1500 && !SF.failed()) {
+            var pos0 = S.pos, elo = rtv >= 2500 ? 0 : Math.max(1320, rtv), ms = rtv < 2000 ? 450 : rtv < 2300 ? 800 : 1300;
+            SF.load().then(function (ok) {
+              if (over || my !== gen) return;
+              if (!ok) { var m0 = null; try { m0 = E.bestMove(pos0, lv); } catch (e) {} return mv2(m0); }
+              SF.move(E.toFEN(pos0), ms, elo).then(function (r) {
+                var m1 = r && r.best ? uciMove(pos0, r.best) : null;
+                if (!m1) { try { m1 = E.bestMove(pos0, lv); } catch (e) {} }
+                mv2(m1);
+              });
+            });
+            return;
+          }
           var m = null; try { m = E.bestMove(S.pos, lv); } catch (e) { m = null; }
-          if (!m) { var L = E.legal(S.pos); m = L[Math.floor(Math.random() * L.length)]; }
-          if (!m) { after(); return; }
+          mv2(m);
+          function go2(m) {
           apply(m); clkSwitch('op'); busy = false; if (after()) return; sm(E.inCheck(S.pos) ? 'Вам шах. Ваш ход.' : 'Ваш ход.'); if (mv.length >= 40 && mv.length - lastOffer >= 20 && matMe() >= 0 && !E.inCheck(S.pos) && Math.random() < 0.2) offerFromOpp();
+          }
         }, 450);
       }
       function click(sq) {
@@ -6660,7 +6817,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function end(text, kind, won) {
         G.over = true; setMsg(text + ' ' + (won ? talk(HERO[(n - 1) % HERO.length], 'win') : (kind === 'bad' ? talk(HERO[(n - 1) % HERO.length], 'lose') : '')), kind);
         if (!won) { sfx(kind === 'bad' ? 'bad' : 'move'); return; }
-        var first = !liveWins[n], stars = Math.max(1, Math.min(3, matDiff(G.pos, you) >= 2 ? 3 : matDiff(G.pos, you) >= 0 ? 2 : 1));
+        var first = !liveWins[n], stars = 3;
         liveWins[n] = Math.max(liveWins[n] || 0, stars); lsSet('ukc_live', liveWins);
         addPts(first ? 20 + stars * 10 : stars * 3, first ? 'за победу' : 'за повтор'); sfx('win'); confetti(130);
         if (n < 20) document.getElementById('nextLv').hidden = false;
@@ -7383,7 +7540,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     clearTimers(); view.onclick = null;
     var parts = (location.hash || '#home').slice(1).split('/'), r = parts[0];
     if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards'].indexOf(r) < 0) r = 'home';
-    document.body.classList.toggle('y2', r === 'y2');
+    document.body.classList.toggle('y2', r === 'y2'); document.body.classList.toggle('home', r === 'home');
     var m = document.getElementById('modal'); if (m) m.remove();
     setActive(r === 'lesson' ? 'lessons' : r);
     if (r === 'puzzles') puzzles();
