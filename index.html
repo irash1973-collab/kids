@@ -1906,10 +1906,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
     while (x !== kx || y !== ky) { if (b[y * 8 + x]) return false; x += sx; y += sy; }
     return true;
   }
+  function gameRoute() { var h = location.hash || ''; return /^#(play|live|board)/.test(h) || /^#y2\/(play|engine|board|pos|games)/.test(h) || /^#lesson\/(mq|mr|mrr|mqr)\//.test(h); }
   var lastAnn = '';
   function announceStatus(S) {
     try {
-      var pos = S.pos, st = E.status(pos), k = E.key(pos) + '|' + st;
+      var pos = S.pos; if (!S.last || E.kingSq(pos.b, 1) < 0 || E.kingSq(pos.b, -1) < 0) return;
+      var st = E.status(pos), k = E.key(pos) + '|' + st;
       if (k === lastAnn) return; lastAnn = k;
       var by = '';
       if ((st === 'check' || st === 'mate') && S.last && pos.b[S.last.t]) {
@@ -1918,6 +1920,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       }
       if (st === 'mate') speakEvent('Мат' + by + '!');
       else if (st === 'check') speakEvent('Шах' + by + '!');
+      else if (!gameRoute()) return;
       else if (st === 'stalemate') speakEvent('Пат. Ходить некуда, но шаха нет. Это ничья.');
       else if (E.insufficient(pos) && Math.abs(pos.b.reduce(function (s, x) { return s + (x ? 1 : 0); }, 0)) <= 4) speakEvent('Ничья. У обоих слишком мало фигур для мата.');
       else if (pos.half >= 100) speakEvent('Ничья по правилу пятидесяти ходов.');
@@ -4895,6 +4898,213 @@ if (typeof module !== 'undefined') module.exports = Eng;
     ];
     LESS.attdef = { id: 'attdef', t: 'Нападение и защита', d: 'Кто кого атакует, кто защищён, как не терять фигуры.', levels: 24, slides: ADS, run: runQ, gen: function (r, lv) { return genAD(r, lv, lv <= 8 ? 'att' : lv <= 16 ? 'def' : 'hang'); } };
 
+    /* ===== Новые упражнения: «Размены» и «Нападение и защита». Позиции строятся по схеме и проверяются ===== */
+    function cheb2(a, c) { return Math.max(Math.abs((a & 7) - (c & 7)), Math.abs((a >> 3) - (c >> 3))); }
+    var PCW = ['N', 'B', 'R', 'Q'];
+    function emptyAt(b, s) { return s >= 0 && s < 64 && !b[s]; }
+    function okPawnSq(ch, s) { return !((ch === 'P' || ch === 'p') && ((s >> 3) === 0 || (s >> 3) === 7)); }
+    /* поставить фигуру ch (символ) так, чтобы она атаковала клетку target (для белых white=true) */
+    function putAttacker(r, b, ch, target, white) {
+      var code = ch.toUpperCase(), occ = {}, i, sqs = [];
+      for (i = 0; i < 64; i++) if (b[i]) occ[i] = 1;
+      if (code === 'P') {
+        var x = target & 7, y = target >> 3, py = white ? y + 1 : y - 1;
+        [-1, 1].forEach(function (dx) { var s = py * 8 + x + dx; if (x + dx >= 0 && x + dx < 8 && py >= 1 && py <= 6 && emptyAt(b, s)) sqs.push(s); });
+      } else {
+        att(code, target, occ, white).forEach(function (s) { if (emptyAt(b, s) && cheb2(s, target) >= 1) sqs.push(s); });
+      }
+      if (!sqs.length) return -1;
+      for (var k = 0; k < 20; k++) {
+        var s = pk(r, sqs); b[s] = ch;
+        if (attackers(b, target, white).indexOf(s) >= 0) return s;
+        b[s] = '';
+      }
+      return -1;
+    }
+    function putFree(r, b, ch, ok) { for (var k = 0; k < 80; k++) { var s = rr(r, 0, 63); if (b[s] || !okPawnSq(ch, s)) continue; if (ok && !ok(s)) continue; b[s] = ch; return s; } return -1; }
+    function addKings(r, b) {
+      var others = []; b.forEach(function (c, i) { if (c) others.push(i); });
+      for (var k = 0; k < 200; k++) {
+        var wk = rr(r, 0, 63), bk = rr(r, 0, 63);
+        if (b[wk] || b[bk] || wk === bk || cheb2(wk, bk) < 3) continue;
+        if (others.some(function (o) { return cheb2(o, wk) < 2 || cheb2(o, bk) < 2; })) continue;
+        b[wk] = 'K'; b[bk] = 'k';
+        if (attackers(b, wk, false).length || attackers(b, bk, true).length) { b[wk] = ''; b[bk] = ''; continue; }
+        return true;
+      }
+      return false;
+    }
+    function cntPieces(b) { var n = 0; b.forEach(function (c) { if (c && c.toLowerCase() !== 'k') n++; }); return n; }
+    function nearDecoy(r, b, n, noAttack) {
+      /* лишние фигуры для разнообразия: не должны менять ответ (проверяется снаружи) */
+      for (var i = 0; i < n; i++) { var w = r() < .5, c = pk(r, ['P', 'N', 'B', 'R']); putFree(r, b, w ? c : c.toLowerCase()); }
+    }
+
+    /* ---- Размены ---- */
+    function tradeScene(r, d, want) {
+      for (var k = 0; k < 800; k++) {
+        var b = boardArr(), xc = pk(r, d === 1 ? ['N', 'B', 'R'] : ['P', 'N', 'B', 'R', 'Q']), xs = putFree(r, b, xc);
+        if (xs < 0) continue;
+        var occ = {}; b.forEach(function (c, i) { if (c) occ[i] = 1; });
+        var cand = att(xc, xs, occ, true).filter(function (s) { return emptyAt(b, s) && okPawnSq('p', s); });
+        if (!cand.length) continue;
+        var ys = pk(r, cand), yc = pk(r, d === 1 ? ['P', 'N', 'B', 'R'] : ['P', 'N', 'B', 'R', 'Q']); b[ys] = yc.toLowerCase();
+        var defended = r() < .6, ds = -1;
+        if (defended) { ds = putAttacker(r, b, pk(r, d === 1 ? ['p', 'n', 'b', 'r'] : ['p', 'n', 'b', 'r', 'q']), ys, false); if (ds < 0) continue; }
+        if (d >= 2) nearDecoy(r, b, rr(r, 0, 2));
+        if (attackers(b, ys, true).length !== 1 || attackers(b, ys, true)[0] !== xs) continue;
+        if (attackers(b, ys, false).length !== (defended ? 1 : 0)) continue;
+        if (cntPieces(b) > 6 || !addKings(r, b)) continue;
+        var gain = VAL[CH[yc]] - (defended ? VAL[CH[xc]] : 0), cls = gain > 0 ? 'Выгодно' : gain === 0 ? 'Равный размен' : 'Невыгодно';
+        if (want && cls !== want) continue;
+        return { b: b, xs: xs, ys: ys, xc: xc, yc: yc, defended: defended, gain: gain, cls: cls };
+      }
+      return null;
+    }
+    var SCL = ['Выгодно', 'Равный размен', 'Невыгодно'];
+    function trWhy(sc) { return sc.defended ? 'Чёрная фигура защищена: после взятия её вернут обратно. Сравни цены: ты получаешь ' + VAL[CH[sc.yc]] + ', а теряешь ' + VAL[CH[sc.xc]] + '.' : 'Чёрная фигура ничем не защищена: её можно взять бесплатно.'; }
+    function trExpl(sc) { return sc.defended ? 'Берём ' + VAL[CH[sc.yc]] + ', теряем ' + VAL[CH[sc.xc]] + '.' : 'Фигура не защищена, мы ничего не теряем.'; }
+    function genTrCls(r, d, lv) {
+      var sc = tradeScene(r, d, SCL[(lv - 1) % 3]) || tradeScene(r, d, null); if (!sc) return null;
+      return { b: sc.b, star: sc.ys, text: 'Белые могут взять чёрную фигуру со звёздочкой фигурой «' + NM[CH[sc.xc]] + '». Что получится: размен выгоден, равный или невыгоден?', opts: SCL, ans: sc.cls, why: trWhy(sc), expl: trExpl(sc) };
+    }
+    function sgn(g) { return g > 0 ? '+' + g : g < 0 ? '−' + (-g) : '0'; }
+    function genTrPts(r, d, lv) {
+      var sc = tradeScene(r, d, null); if (!sc) return null;
+      var set = {}, o = [sgn(sc.gain)]; set[o[0]] = 1;
+      for (var g = 0; g < 60 && o.length < 4; g++) { var v = sc.gain + rr(r, -4, 4); var t = sgn(v); if (set[t]) continue; set[t] = 1; o.push(t); }
+      o.sort(function () { return r() - .5; });
+      return { b: sc.b, star: sc.ys, text: 'Белые берут фигуру со звёздочкой. Сколько очков выиграют белые? Минус значит, что потеряют. (Пешка 1, конь 3, слон 3, ладья 5, ферзь 9.)', opts: o, ans: sgn(sc.gain), why: trWhy(sc), expl: trExpl(sc) };
+    }
+    function genTrSafe(r, d, lv) {
+      for (var k = 0; k < 40; k++) { var sc = tradeScene(r, d, k % 2 ? 'Выгодно' : 'Невыгодно'); if (!sc) continue;
+        return { b: sc.b, star: sc.ys, text: 'Белые хотят взять фигуру со звёздочкой. Это принесёт им пользу?', opts: ['Да, это выгодно', 'Нет, это невыгодно'], ans: sc.gain > 0 ? 'Да, это выгодно' : 'Нет, это невыгодно', why: trWhy(sc), expl: trExpl(sc) }; }
+      return null;
+    }
+    function genTrBest(r, d, lv) {
+      for (var k = 0; k < 800; k++) {
+        var b = boardArr(), xc = pk(r, ['B', 'R', 'Q']), xs = putFree(r, b, xc); if (xs < 0) continue;
+        var tg = [], nT = d === 1 ? 2 : 3;
+        for (var i = 0; i < nT; i++) {
+          var occ = {}; b.forEach(function (c, j) { if (c) occ[j] = 1; });
+          var cand = att(xc, xs, occ, true).filter(function (s) { return emptyAt(b, s) && !tg.some(function (t) { return cheb2(t, s) < 1; }); });
+          if (!cand.length) break;
+          var ts = pk(r, cand), tc = pk(r, ['p', 'n', 'b', 'r', 'q']); b[ts] = tc; tg.push(ts);
+        }
+        if (tg.length < 2) continue;
+        var ok = true, gains = [];
+        tg.forEach(function (ts) {
+          var occ2 = {}; b.forEach(function (c, j) { if (c) occ2[j] = 1; });
+          if (att(xc, xs, occ2, true).indexOf(ts) < 0) { ok = false; return; }
+          if (Math.random() < 2 && r() < .6) { putAttacker(r, b, pk(r, ['p', 'n', 'b', 'r']), ts, false); }
+        });
+        if (!ok) continue;
+        tg.forEach(function (ts) {
+          if (attackers(b, ts, true).length !== 1 || attackers(b, ts, true)[0] !== xs) ok = false;
+          if (attackers(b, ts, false).length > 1) ok = false;
+        });
+        if (!ok) continue;
+        tg.forEach(function (ts) { var def = attackers(b, ts, false).length > 0; gains.push(VAL[CH[b[ts].toUpperCase()]] - (def ? VAL[CH[xc]] : 0)); });
+        var mx = Math.max.apply(null, gains), idx = gains.indexOf(mx);
+        if (gains.filter(function (g) { return g === mx; }).length !== 1 || mx < 1) continue;
+        if (cntPieces(b) > 7 || !addKings(r, b)) continue;
+        /* после добавления королей атаки не менялись (короли далеко) */
+        var bestSq = tg[idx];
+        return { b: b, text: 'Белая ' + NM[CH[xc]] + ' может взять любую из чёрных фигур. Нажми на ту фигуру, которую взять выгоднее всего.', ok: function (i) { return i === bestSq; }, why: 'Для каждой фигуры проверь, защищена ли она. Если защищена, ты потеряешь свою ' + NM[CH[xc]] + '. Выбери ту, где выигрыш самый большой.', expl: 'Это самый выгодный размен: выигрыш ' + mx + ' ' + (mx === 1 ? 'очко' : mx < 5 ? 'очка' : 'очков') + '.' };
+      }
+      return null;
+    }
+    function genTrades(r, lv) {
+      var d = lv <= 10 ? 1 : 2, kind = (lv - 1) % 6;
+      return [genTrCls, genTrPts, genTrBest, genTrSafe, genTrCls, genTrBest][kind](r, d, lv);
+    }
+
+    /* ---- Нападение и защита ---- */
+    function adCount(r, d, defMode) {
+      for (var k = 0; k < 800; k++) {
+        var b = boardArr(), tc = pk(r, ['N', 'B', 'R', 'Q', 'P', 'N', 'B']), ts = putFree(r, b, tc, function (s) { return tc !== 'P' || ((s >> 3) >= 2 && (s >> 3) <= 5); });
+        if (ts < 0) continue;
+        var want = defMode ? rr(r, 0, d === 1 ? 1 : 2) : rr(r, 0, d === 1 ? 2 : 3), other = defMode ? rr(r, 0, 1) : rr(r, 0, 1);
+        var okp = true, i;
+        for (i = 0; i < want && okp; i++) if (putAttacker(r, b, defMode ? pk(r, ['P', 'N', 'B', 'R']) : pk(r, ['p', 'n', 'b', 'r', 'q']), ts, defMode) < 0) okp = false;
+        for (i = 0; i < other && okp; i++) putAttacker(r, b, defMode ? pk(r, ['p', 'n', 'b', 'r']) : pk(r, ['P', 'N', 'B', 'R']), ts, !defMode);
+        if (!okp) continue;
+        if (attackers(b, ts, defMode).length !== want) continue;
+        if (cntPieces(b) > 6 || !addKings(r, b)) continue;
+        if (attackers(b, ts, defMode).length !== want) continue;
+        return { b: b, ts: ts, n: want, tc: tc };
+      }
+      return null;
+    }
+    function nWord(n) { return n === 0 ? 'ни одной' : n === 1 ? 'одна' : n === 2 ? 'две' : 'три'; }
+    function genAdCnt(r, d, lv, defMode) {
+      var sc = adCount(r, d, defMode); if (!sc) return null;
+      var o = []; for (var v = 0; v <= (d === 1 ? 3 : 4); v++) o.push(String(v));
+      return { b: sc.b, star: sc.ts, text: defMode ? 'Сколько белых фигур защищают белую фигуру со звёздочкой? Защита значит, что если фигуру возьмут, её можно взять обратно.' : 'Сколько чёрных фигур атакуют белую фигуру со звёздочкой?', opts: o, ans: String(sc.n), why: defMode ? 'Найди белые фигуры (кроме самой), которые могли бы взять на клетке со звёздочкой. Помни: пешка берёт по диагонали вперёд, а фигуры не перепрыгивают через другие.' : 'Найди чёрные фигуры, которые могли бы взять на клетке со звёздочкой. Пешка берёт по диагонали вперёд, а фигуры не перепрыгивают через другие.', expl: 'Ответ: ' + sc.n + '.' };
+    }
+    function genAdHang(r, d, lv) {
+      for (var k = 0; k < 800; k++) {
+        var b = boardArr(), A = putFree(r, b, pk(r, PCW)), B2 = putFree(r, b, pk(r, PCW)), C = putFree(r, b, pk(r, ['N', 'B', 'R', 'P']), function (s) { return true; });
+        if (A < 0 || B2 < 0 || C < 0) continue;
+        if (putAttacker(r, b, pk(r, ['p', 'n', 'b', 'r', 'q']), A, false) < 0) continue;
+        if (putAttacker(r, b, pk(r, ['p', 'n', 'b', 'r']), B2, false) < 0) continue;
+        if (putAttacker(r, b, pk(r, ['N', 'B', 'R']), B2, true) < 0) continue;
+        if (d >= 2) nearDecoy(r, b, rr(r, 0, 1));
+        var wh = []; b.forEach(function (c, i) { if (c && c !== 'K' && c === c.toUpperCase()) wh.push(i); });
+        var hang = wh.filter(function (s) { return attackers(b, s, false).length > 0 && attackers(b, s, true).length === 0; });
+        if (hang.length !== 1) continue;
+        if (cntPieces(b) > 7 || !addKings(r, b)) continue;
+        wh = []; b.forEach(function (c, i) { if (c && c === c.toUpperCase()) wh.push(i); });
+        hang = wh.filter(function (s) { return attackers(b, s, false).length > 0 && attackers(b, s, true).length === 0; });
+        if (hang.length !== 1) continue;
+        var hs = hang[0];
+        return { b: b, text: 'Одна белая фигура стоит под боем, и её никто не защищает. Нажми на неё.', ok: function (i) { return i === hs; }, why: 'Ищи белую фигуру, которую может взять чёрная, и которой не помогает ни одна белая. Защищённую фигуру можно взять только с потерей.', expl: 'Эта фигура атакована и не защищена: её возьмут бесплатно.' };
+      }
+      return null;
+    }
+    function genAdProt(r, d, lv) {
+      for (var k = 0; k < 800; k++) {
+        var b = boardArr(), A = putFree(r, b, pk(r, PCW)); if (A < 0) continue;
+        var Dd = putAttacker(r, b, pk(r, ['N', 'B', 'R', 'Q']), A, true); if (Dd < 0) continue;
+        var extra = rr(r, 2, 3), i; for (i = 0; i < extra; i++) putFree(r, b, pk(r, ['N', 'B', 'R', 'P']), function (s) { return true; });
+        for (i = 0; i < rr(r, 1, 2); i++) putFree(r, b, pk(r, ['p', 'n', 'b', 'r']));
+        var wh = []; b.forEach(function (c, i2) { if (c && c !== 'K' && c === c.toUpperCase()) wh.push(i2); });
+        var pr = wh.filter(function (s) { return attackers(b, s, true).length > 0; });
+        if (pr.length !== 1 || pr[0] !== A) continue;
+        if (cntPieces(b) > 7 || !addKings(r, b)) continue;
+        wh = []; b.forEach(function (c, i2) { if (c && c === c.toUpperCase()) wh.push(i2); });
+        pr = wh.filter(function (s) { return attackers(b, s, true).length > 0; });
+        if (pr.length !== 1) continue;
+        var as = pr[0];
+        return { b: b, text: 'Одна из белых фигур защищена другой белой фигурой. Нажми на защищённую фигуру.', ok: function (i3) { return i3 === as; }, why: 'Проверь каждую белую фигуру: может ли другая белая фигура взять на её клетке, если соперник её возьмёт?', expl: 'Эту фигуру защищает другая белая: если её возьмут, можно взять обратно.' };
+      }
+      return null;
+    }
+    function genAdSafe(r, d, lv) {
+      for (var k = 0; k < 800; k++) {
+        var b = boardArr(), pcc = pk(r, ['N', 'B', 'R', 'Q']), P = putFree(r, b, pcc); if (P < 0) continue;
+        if (putAttacker(r, b, pk(r, ['p', 'n', 'b', 'r']), P, false) < 0) continue;
+        if (d >= 2) nearDecoy(r, b, rr(r, 0, 1));
+        if (attackers(b, P, true).length !== 0 || attackers(b, P, false).length < 1) continue;
+        if (cntPieces(b) > 5 || !addKings(r, b)) continue;
+        var occ = {}; b.forEach(function (c, i) { if (c) occ[i] = 1; });
+        var mv = att(pcc, P, occ, true).filter(function (s) { return !b[s] || b[s] !== b[s].toUpperCase(); });
+        var safe = mv.filter(function (s) { if (b[s]) return false; var b2 = b.slice(); b2[P] = ''; b2[s] = pcc; return attackers(b2, s, false).length === 0; });
+        var unsafe = mv.filter(function (s) { return !b[s] && safe.indexOf(s) < 0; });
+        if (safe.length < 1 || safe.length > 12 || unsafe.length < 2) continue;
+        if (attackers(b, P, false).some(function (s) { return b[s].toLowerCase() === 'k'; })) continue;
+        var sset = {}; safe.forEach(function (s) { sset[s] = 1; });
+        return { b: b, star: P, text: 'Белую фигуру со звёздочкой атакуют, и защитить её нечем. Нажми на клетку, куда её можно увести, чтобы она была в безопасности.', ok: function (i) { return !!sset[i]; }, why: 'Выбирай клетку, куда фигура ходит и где её не атакует ни одна чёрная фигура. Проверь пешки: они берут по диагонали вперёд.', expl: 'Здесь фигуре ничего не угрожает.' };
+      }
+      return null;
+    }
+    function genAttDef(r, lv) {
+      var d = lv <= 12 ? 1 : 2, kind = (lv - 1) % 6;
+      return [function () { return genAdCnt(r, d, lv, false); }, function () { return genAdCnt(r, d, lv, true); }, function () { return genAdHang(r, d, lv); }, function () { return genAdProt(r, d, lv); }, function () { return genAdSafe(r, d, lv); }, function () { return genAdHang(r, d, lv); }][kind]();
+    }
+    LESS.trades = { id: 'trades', t: 'Размены: выгодно или нет', d: 'Берём фигуры с умом: защищена ли она, что мы получим и что потеряем. 30 заданий.', levels: 30, slides: VT.slice(3, 7).concat([{ h: 'Дальше упражнения', p: ['В каждом задании белые могут что-то взять. Сначала посмотри, защищена ли чёрная фигура. Потом сравни: сколько очков ты получишь и сколько потеряешь. Задания меняются: то нужно оценить размен, то посчитать очки, то выбрать самую выгодную фигуру для взятия.'] }]), run: runQ, gen: function (r, lv) { return genTrades(r, lv); } };
+    LESS.attdef = { id: 'attdef', t: 'Нападение и защита', d: 'Кто кого атакует, кто защищён, как спасти фигуру. 30 заданий.', levels: 30, slides: ADS.slice(0, 4).concat([{ h: 'Дальше упражнения', p: ['Сколько фигур атакуют и защищают, какая фигура висит без защиты, какая защищена и куда увести фигуру из-под удара. Задания чередуются, читай условие внимательно.'] }]), run: runQ, gen: function (r, lv) { return genAttDef(r, lv); } };
+
     /* ===== Король: правила (что можно и нельзя) ===== */
     function bFromFen(f) { var b = boardArr(), rows = f.split(' ')[0].split('/'); rows.forEach(function (row, y) { var x = 0; row.split('').forEach(function (c) { if (/\d/.test(c)) x += +c; else b[y * 8 + x++] = c; }); }); return b; }
     function posOf(b) { return E.fromFEN(fenOfB(b) + ' w - - 0 1'); }
@@ -7021,6 +7231,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       muts.forEach(function (m) {
         var n = m.target.nodeType === 3 ? m.target.parentNode : m.target;
         if (!n || !n.classList || !n.classList.contains('msg')) return;
+        if (!gameRoute()) return;
         var tx = textOf(n);
         if (/ничь/i.test(tx) && /(повтор|трижды|три раза|соглас|договор|50|пятидесят|время|флаг)/i.test(tx)) speakEvent(tx.length > 140 ? tx.slice(0, 140) : tx);
       });
