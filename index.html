@@ -3765,14 +3765,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
       ['a2 b2 c2 d2 e2 f2 g2 h2', 'a7 b7 c7 d7 e7 f7 g7 h7'], ['a2 b2 c2 d2 e2 f2 g2 h2', 'a7 b7 c7 d7 e7 f7 g7 h7']
     ], DEPTH = [1, 2, 2, 3, 3, 4, 4, 4, 5, 6];
     function sq(n) { return (8 - +n[1]) * 8 + (n.charCodeAt(0) - 97); }
-    function moves(b, s) {
+    function moves(b, s, ep) {
       var out = [], dir = s === 1 ? -8 : 8, home = s === 1 ? 6 : 1;
       for (var i = 0; i < 64; i++) {
         if (b[i] !== s) continue;
         var y = i >> 3, x = i & 7, f = i + dir;
         if (f < 0 || f > 63) continue;
         if (!b[f]) { out.push({ f: i, t: f }); if (y === home && !b[f + dir]) out.push({ f: i, t: f + dir }); }
-        [-1, 1].forEach(function (dx) { if (x + dx >= 0 && x + dx < 8 && b[f + dx] === -s) out.push({ f: i, t: f + dx }); });
+        [-1, 1].forEach(function (dx) { if (x + dx >= 0 && x + dx < 8 && b[f + dx] === -s) out.push({ f: i, t: f + dx }); else if (x + dx >= 0 && x + dx < 8 && ep >= 0 && f + dx === ep && !b[ep]) out.push({ f: i, t: ep, e: true }); });
       }
       return out;
     }
@@ -3781,27 +3781,29 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var v = 0; for (var i = 0; i < 64; i++) { if (b[i] === 1) { var a = 7 - (i >> 3); v += a * a + 20; } else if (b[i] === -1) { var c = i >> 3; v -= c * c + 20; } }
       return v;
     }
-    function search(b, s, d, al, be) {  /* оценка для белых */
+    function search(b, s, d, al, be, ep) {  /* оценка для белых */
       if (reached(b, 1)) return 100000 + d; if (reached(b, -1)) return -100000 - d;
-      var ms = moves(b, s); if (!ms.length) return s === 1 ? -90000 - d : 90000 + d;
+      var ms = moves(b, s, ep); if (!ms.length) return s === 1 ? -90000 - d : 90000 + d;
       if (d === 0) return score(b);
       var best = s === 1 ? -1e9 : 1e9;
       for (var k = 0; k < ms.length; k++) {
-        var m = ms[k], c = b[m.t]; b[m.t] = s; b[m.f] = 0;
-        var v = search(b, -s, d - 1, al, be);
-        b[m.f] = s; b[m.t] = c;
+        var m = ms[k], c = b[m.t], cp = m.e ? m.t - (s === 1 ? -8 : 8) : -1, cpv = cp >= 0 ? b[cp] : 0;
+        b[m.t] = s; b[m.f] = 0; if (cp >= 0) b[cp] = 0;
+        var v = search(b, -s, d - 1, al, be, Math.abs(m.t - m.f) === 16 ? (m.f + m.t) / 2 : -1);
+        b[m.f] = s; b[m.t] = c; if (cp >= 0) b[cp] = cpv;
         if (s === 1) { if (v > best) best = v; if (best > al) al = best; } else { if (v < best) best = v; if (best < be) be = best; }
         if (al >= be) break;
       }
       return best;
     }
-    function compMove(b, depth) {
-      var ms = moves(b, -1), best = null, bv = 1e9;
+    function compMove(b, depth, ep) {
+      var ms = moves(b, -1, ep), best = null, bv = 1e9;
       ms.sort(function () { return Math.random() - .5; });
       ms.forEach(function (m) {
-        var c = b[m.t]; b[m.t] = -1; b[m.f] = 0;
-        var v = search(b, 1, depth - 1, -1e9, 1e9);
-        b[m.f] = -1; b[m.t] = c;
+        var c = b[m.t], cp = m.e ? m.t - 8 : -1; var cpv = cp >= 0 ? b[cp] : 0;
+        b[m.t] = -1; b[m.f] = 0; if (cp >= 0) b[cp] = 0;
+        var v = search(b, 1, depth - 1, -1e9, 1e9, Math.abs(m.t - m.f) === 16 ? (m.f + m.t) / 2 : -1);
+        b[m.f] = -1; b[m.t] = c; if (cp >= 0) b[cp] = cpv;
         if (v < bv) { bv = v; best = m; }
       });
       return best;
@@ -3810,19 +3812,19 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var cfg = LV[Math.min(lv, LV.length) - 1], b = new Int8Array(64);
       cfg[0].split(' ').forEach(function (n) { b[sq(n)] = 1; }); cfg[1].split(' ').forEach(function (n) { b[sq(n)] = -1; });
       var S = { pos: { b: b, turn: 1, castle: 0, ep: -1, half: 0 }, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
-      var done = false, busy = false, lost = 0, n0 = cfg[0].split(' ').length;
+      var ep = -1, done = false, busy = false, lost = 0, n0 = cfg[0].split(' ').length;
       host.innerHTML = say(av('arni'), 'Пешечный бой ' + lv, 'Доведи свою белую пешку до последней горизонтали (8-й). Пешки ходят вперёд и бьют по диагонали. Кто не может ходить, тот проигрывает!', 'без королей') + boardHTML() +
         '<div class="msg" id="msg" role="status" aria-live="polite">Твой ход.</div><div class="row"><button class="btn alt" id="again">Начать заново</button></div>';
       var msg = document.getElementById('msg');
       function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
       function draw() { drawBoard(S, click); }
       function count(s) { var c = 0; for (var i = 0; i < 64; i++) if (b[i] === s) c++; return c; }
-      function mv(m, s) { var before = { b: b }; S.anim = { moves: [{ f: m.f, t: m.t }], ghost: b[m.t] ? [{ sq: m.t, v: b[m.t] }] : [] }; sfx(b[m.t] ? 'cap' : 'move'); b[m.t] = s; b[m.f] = 0; S.last = { f: m.f, t: m.t }; S.sel = null; S.targets = []; }
+      function mv(m, s) { var before = { b: b }, cp = m.e ? (s === 1 ? m.t + 8 : m.t - 8) : -1; S.anim = { moves: [{ f: m.f, t: m.t }], ghost: b[m.t] ? [{ sq: m.t, v: b[m.t] }] : (cp >= 0 ? [{ sq: cp, v: b[cp] }] : []) }; sfx(b[m.t] || cp >= 0 ? 'cap' : 'move'); b[m.t] = s; b[m.f] = 0; if (cp >= 0) b[cp] = 0; ep = Math.abs(m.t - m.f) === 16 ? (m.f + m.t) / 2 : -1; S.last = { f: m.f, t: m.t }; S.sel = null; S.targets = []; }
       function end() {
         if (reached(b, 1)) { win(); return true; }
         if (reached(b, -1)) { lose('Пешка соперника дошла до края.'); return true; }
-        if (!moves(b, 1).length) { lose('У тебя не осталось ходов.'); return true; }
-        if (!moves(b, -1).length) { win(); return true; }
+        if (!moves(b, 1, ep).length) { lose('У тебя не осталось ходов.'); return true; }
+        if (!moves(b, -1, ep).length) { win(); return true; }
         return false;
       }
       function win() { done = true; draw(); setMsg('Победа!', 'good'); var st = n0 - count(1) === 0 ? 3 : n0 - count(1) <= 1 ? 2 : 1; finish(st); }
@@ -3831,11 +3833,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
         if (busy || done) return;
         var v = b[i];
         if (S.sel != null && S.targets.indexOf(i) >= 0) {
-          mv({ f: S.sel, t: i }, 1); draw();
+          mv({ f: S.sel, t: i, e: !b[i] && (S.sel & 7) !== (i & 7) }, 1); draw();
           if (end()) return;
           busy = true; setMsg('Соперник думает…');
           setTimeout(function () {
-            var m = compMove(b, DEPTH[Math.min(lv, 10) - 1]);
+            var m = compMove(b, DEPTH[Math.min(lv, 10) - 1], ep);
             if (m) { mv(m, -1); }
             busy = false; draw();
             if (end()) return;
@@ -3843,7 +3845,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
           }, 500);
           return;
         }
-        if (v === 1) { S.sel = i; S.targets = moves(b, 1).filter(function (m) { return m.f === i; }).map(function (m) { return m.t; }); }
+        if (v === 1) { S.sel = i; S.targets = moves(b, 1, ep).filter(function (m) { return m.f === i; }).map(function (m) { return m.t; }); }
         else { S.sel = null; S.targets = []; }
         draw();
       }
