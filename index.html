@@ -3135,7 +3135,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     if (s.demo) {
       var fen0 = s.demo.fen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', steps = s.demo.steps.map(function (x) { var a = x.split('|'); return { u: a[0], c: a[1] || '', k: a[2] || '' }; });
       var scoreEl = null, seqN = [];
-      if (L.y2) {
+      if (true) {
         var sp = E.fromFEN(fen0), cn = 0;
         steps.forEach(function (st0, ii) { var mm = uciMove(sp, st0.u); if (!mm) { seqN.push({ t: st0.u, w: sp.turn === 1 }); return; } seqN.push({ t: notation(mm, sp), w: sp.turn === 1 }); sp = E.make(sp, mm); });
         scoreEl = document.createElement('div'); scoreEl.className = 'y2score'; var smEl = document.getElementById('sm'); if (smEl && smEl.parentNode) smEl.parentNode.insertBefore(scoreEl, smEl.nextSibling);
@@ -3149,7 +3149,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
           h += '<button class="y2mv' + (ii === step - 1 ? ' cur' : '') + (st0.k ? ' k' + st0.k.replace(/[^!?#]/g, '').replace(/\?/g, 'q').replace(/!/g, 'e') : '') + '" data-i="' + ii + '">' + esc(seqN[ii].t) + (st0.k ? '<sup>' + esc(st0.k) + '</sup>' : '') + '</button>';
           if (!seqN[ii].w) no++;
         });
-        h += '</div><p class="y2leg"><b>!</b> сильный ход · <b>!?</b> интересный ход · <b>?!</b> сомнительный ход · <b>?</b> ошибка · <b>??</b> грубая ошибка</p>';
+        h += '</div>' + (steps.some(function (q) { return q.k; }) ? '<p class="y2leg"><b>!</b> сильный ход · <b>!?</b> интересный ход · <b>?!</b> сомнительный ход · <b>?</b> ошибка · <b>??</b> грубая ошибка</p>' : '');
         scoreEl.innerHTML = h;
         scoreEl.onclick = function (ev) { var b = ev.target.closest('.y2mv'); if (!b) return; clearTimers(); step = +b.dataset.i + 1; render(false); };
       };
@@ -8404,28 +8404,57 @@ if (typeof module !== 'undefined') module.exports = Eng;
   });
 })();
 
-/* ===== Анализ на компьютере в уроках первого года: кнопка под доской, ход назад / вперёд, вся партия ===== */
+/* ===== Анализ на компьютере в уроках первого года: запись всей партии, ход назад / вперёд, кнопка анализа ===== */
 (function () {
   var gh = [], ghS = null, ghKey = '', inAnl = false, db = drawBoard;
   function kings(b) { var w = 0, k = 0; for (var i = 0; i < 64; i++) { if (b[i] === 6) w++; else if (b[i] === -6) k++; } return w === 1 && k === 1; }
+  function findMove(prev, key) { var ms = E.legal(prev); for (var i = 0; i < ms.length; i++) { if (E.key(E.make(prev, ms[i])) === key) return ms[i]; } return null; }
+  function track(S) {
+    var key = E.key(S.pos);
+    if (S !== ghS) { ghS = S; gh = [{ pos: S.pos, m: null }]; ghKey = key; return; }
+    if (key === ghKey) return;
+    for (var i = 0; i < gh.length; i++) if (E.key(gh[i].pos) === key) { gh.length = i + 1; ghKey = key; return; }
+    var prev = gh[gh.length - 1].pos, m = findMove(prev, key);
+    if (m) gh.push({ pos: S.pos, m: m }); else gh = [{ pos: S.pos, m: null }];
+    ghKey = key; if (gh.length > 400) gh.shift();
+  }
+  function recHTML(cur) {
+    if (gh.length < 2) return '';
+    var std = E.key(gh[0].pos) === E.key(E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')), h = '<div class="y2sc">', no = 1, first = true;
+    for (var i = 1; i < gh.length; i++) {
+      var pv = gh[i - 1].pos, white = pv.turn === 1;
+      if (std) { if (white) h += '<span class="y2mn">' + no + '.</span>'; else if (first) h += '<span class="y2mn">' + no + '…</span>'; }
+      else h += '<span class="y2mn">' + (white ? '⚪' : '⚫') + '</span>';
+      first = false;
+      h += '<button class="y2mv' + (i === cur ? ' cur' : '') + '" data-i="' + i + '">' + esc(notation(gh[i].m, pv)) + '</button>';
+      if (!white) no++;
+    }
+    return h + '</div>';
+  }
   function hook(S) {
     if (inAnl || !S || !S.pos || !S.pos.b || !/^#lesson\//.test(location.hash) || !kings(S.pos.b)) return;
-    var key = E.key(S.pos);
-    if (S !== ghS) { ghS = S; gh = [S.pos]; ghKey = key; } else if (key !== ghKey) { gh.push(S.pos); ghKey = key; if (gh.length > 400) gh.shift(); }
-    var bd = document.getElementById('board'); if (!bd || document.getElementById('anlRow')) return;
-    var row = document.createElement('div'); row.id = 'anlRow'; row.innerHTML = '<div class="row"><button class="btn alt" id="anlBtn">🔍 Анализ на компьютере</button></div><div id="anlP"></div>';
-    var anchor = document.getElementById('msg') || document.getElementById('sm') || bd;
-    if (anchor.parentNode) anchor.parentNode.insertBefore(row, anchor.nextSibling);
-    document.getElementById('anlBtn').onclick = function () {
-      var P = document.getElementById('anlP'), saved = { pos: S.pos, last: S.last, sel: S.sel, targets: S.targets, flip: S.flip, hl: S.hl, hint: S.hint, badge: S.badge, mark: S.mark };
-      var hist = gh.slice(0, gh.length - 1); if (hist.length && E.key(hist[hist.length - 1]) === E.key(S.pos)) hist.pop();
-      var redraw = window.__curDraw;
-      inAnl = true;
-      window.__y2analysis(E.toFEN(S.pos), P, S, function () {}, hist);
-      var cl = document.createElement('div'); cl.className = 'row'; cl.innerHTML = '<button class="btn" id="anlX">✕ Закрыть анализ и вернуться</button>';
-      P.firstChild.appendChild(cl);
-      document.getElementById('anlX').onclick = function () { inAnl = false; try { var e = window.__SFMOCK || SF; e.stop && e.stop(); } catch (er) {} P.innerHTML = ''; for (var k in saved) S[k] = saved[k]; S.targets = []; S.sel = null; if (redraw) redraw(); };
-    };
+    track(S);
+    var bd = document.getElementById('board'); if (!bd) return;
+    var row = document.getElementById('anlRow');
+    if (!row) {
+      row = document.createElement('div'); row.id = 'anlRow'; row.innerHTML = '<div class="row"><button class="btn alt" id="anlBtn">🔍 Анализ на компьютере</button></div><div id="anlRec" class="y2score"></div><div id="anlP"></div>';
+      var anchor = document.getElementById('msg') || document.getElementById('sm') || bd;
+      if (anchor.parentNode) anchor.parentNode.insertBefore(row, anchor.nextSibling);
+      document.getElementById('anlBtn').onclick = function () { open(null); };
+      document.getElementById('anlRec').onclick = function (ev) { var b = ev.target.closest('.y2mv'); if (b) open(+b.dataset.i); };
+    }
+    var rec = document.getElementById('anlRec'); if (rec) { rec.innerHTML = gh.length > 1 ? recHTML(gh.length - 1) : ''; rec.style.display = S.teach ? 'none' : ''; }
+    window.__anlS = S;
+  }
+  function open(idx) {
+    var S = window.__anlS, P = document.getElementById('anlP'); if (!S || !P) return;
+    var saved = { pos: S.pos, last: S.last, sel: S.sel, targets: S.targets, flip: S.flip, hl: S.hl, hint: S.hint, badge: S.badge, mark: S.mark };
+    var at = idx == null ? gh.length - 1 : idx, hist = gh.slice(0, at).map(function (x) { return x.pos; }), redraw = window.__curDraw, keepGh = gh.slice();
+    inAnl = true;
+    window.__y2analysis(E.toFEN(gh[at].pos), P, S, function () {}, hist);
+    var cl = document.createElement('div'); cl.className = 'row'; cl.innerHTML = '<button class="btn" id="anlX">✕ Закрыть анализ и вернуться</button>';
+    P.firstChild.appendChild(cl); P.scrollIntoView({ block: 'nearest' });
+    document.getElementById('anlX').onclick = function () { inAnl = false; try { var e = window.__SFMOCK || SF; e.stop && e.stop(); } catch (er) {} P.innerHTML = ''; for (var k in saved) S[k] = saved[k]; S.targets = []; S.sel = null; gh = keepGh; if (redraw) redraw(); };
   }
   drawBoard = function (S, onClick) { db(S, onClick); try { hook(S); } catch (e) {} };
 })();
