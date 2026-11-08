@@ -6661,6 +6661,151 @@ if (typeof module !== 'undefined') module.exports = Eng;
   };
 })();
 
+/* ===== Мат ферзём и мат ладьёй: объяснение способов, оппозиция, план, упражнения и игры ===== */
+(function () {
+  var BQ = ["Q7/7k/8/5K2/8/8/8/8 w - - 0 1", "8/8/8/8/8/3Q3K/8/6k1 w - - 0 1", "4k3/8/8/5K2/8/3Q4/8/8 w - - 0 1", "5K2/8/7k/4Q3/8/8/8/8 w - - 0 1", "7k/8/8/7K/8/3Q4/8/8 w - - 0 1", "6k1/2Q5/8/6K1/8/8/8/8 w - - 0 1", "3Q4/8/8/8/8/2K5/8/2k5 w - - 0 1", "6k1/8/7K/5Q2/8/8/8/8 w - - 0 1", "2k5/8/1K5Q/8/8/8/8/8 w - - 0 1", "6k1/8/5K2/8/8/8/8/4Q3 w - - 0 1", "4k3/8/2K5/6Q1/8/8/8/8 w - - 0 1", "8/Q7/8/8/1K6/8/8/1k6 w - - 0 1", "3k4/8/4K3/8/8/8/2Q5/8 w - - 0 1", "8/8/8/4Q3/8/3K4/k7/8 w - - 0 1", "8/8/8/k2K4/3Q4/8/8/8 w - - 0 1", "8/8/3Q4/8/8/4K3/8/4k3 w - - 0 1", "1Q6/8/8/8/k7/3K4/8/8 w - - 0 1", "5k2/8/4K3/8/8/8/8/1Q6 w - - 0 1", "8/8/6K1/8/7k/4Q3/8/8 w - - 0 1", "6k1/8/5K2/8/8/7Q/8/8 w - - 0 1", "8/8/8/2Q5/7k/8/6K1/8 w - - 0 1", "8/8/8/8/6K1/8/1Q6/5k2 w - - 0 1", "4k3/8/2K5/8/3Q4/8/8/8 w - - 0 1", "8/8/2Q5/8/2K5/8/8/1k6 w - - 0 1", "8/2Q5/8/8/8/5K2/8/3k4 w - - 0 1", "8/8/5Q2/k7/2K5/8/8/8 w - - 0 1", "1Q6/3K4/k7/8/8/8/8/8 w - - 0 1", "8/8/6K1/8/7k/3Q4/8/8 w - - 0 1", "8/8/8/2Q5/4K2k/8/8/8 w - - 0 1", "8/6Q1/8/8/4K2k/8/8/8 w - - 0 1", "7k/3Q4/4K3/8/8/8/8/8 w - - 0 1", "8/8/3Q4/k7/8/2K5/8/8 w - - 0 1", "8/8/8/2Q5/K7/8/8/1k6 w - - 0 1", "4Q3/8/8/8/2K5/8/8/3k4 w - - 0 1", "k7/8/8/K7/8/4Q3/8/8 w - - 0 1", "3K4/8/k7/6Q1/8/8/8/8 w - - 0 1", "6Q1/8/8/8/5K2/8/8/5k2 w - - 0 1", "k7/8/3K4/8/8/8/8/3Q4 w - - 0 1", "8/8/8/8/6Q1/4K3/8/7k w - - 0 1", "8/8/8/8/5K2/8/1Q6/4k3 w - - 0 1", "4k3/8/6K1/Q7/8/8/8/8 w - - 0 1", "6k1/2Q5/4K3/8/8/8/8/8 w - - 0 1", "8/8/3Q4/8/8/7K/8/5k2 w - - 0 1", "8/8/8/2K5/k7/8/8/6Q1 w - - 0 1", "7k/8/5K2/8/2Q5/8/8/8 w - - 0 1"];
+  var BR = ["7k/3R4/8/7K/8/8/8/8 w - - 0 1", "8/2R5/8/8/8/5K2/8/4k3 w - - 0 1", "8/8/8/6K1/8/7k/1R6/8 w - - 0 1", "5K2/8/7k/5R2/8/8/8/8 w - - 0 1", "2k5/8/1K6/5R2/8/8/8/8 w - - 0 1", "8/8/1K6/8/k7/4R3/8/8 w - - 0 1", "8/8/3R4/k7/8/2K5/8/8 w - - 0 1", "6k1/8/1R5K/8/8/8/8/8 w - - 0 1", "2k5/8/2K5/8/1R6/8/8/8 w - - 0 1", "8/8/5K2/7k/8/4R3/8/8 w - - 0 1", "k7/8/3K4/8/8/8/1R6/8 w - - 0 1", "8/8/8/1R6/8/7K/8/6k1 w - - 0 1", "6k1/8/4K3/8/7R/8/8/8 w - - 0 1", "7R/8/8/8/8/2K5/8/k7 w - - 0 1", "8/8/8/4K3/8/7k/2R5/8 w - - 0 1", "8/8/8/8/8/1R2K3/7k/8 w - - 0 1", "8/8/8/4R3/8/3K4/8/k7 w - - 0 1", "8/8/4K3/7k/R7/8/8/8 w - - 0 1", "5k2/8/6K1/7R/8/8/8/8 w - - 0 1", "8/8/5K1k/5R2/8/8/8/8 w - - 0 1", "4R3/8/8/8/8/7k/5K2/8 w - - 0 1", "1R6/8/8/8/5K2/8/8/7k w - - 0 1", "3R4/8/2K5/k7/8/8/8/8 w - - 0 1", "8/3R4/k7/8/1K6/8/8/8 w - - 0 1", "8/8/8/8/R7/5K1k/8/8 w - - 0 1", "R7/8/8/8/1K6/8/8/1k6 w - - 0 1", "8/k2K4/6R1/8/8/8/8/8 w - - 0 1", "5k2/8/6K1/6R1/8/8/8/8 w - - 0 1", "8/3R4/k7/8/3K4/8/8/8 w - - 0 1", "8/8/8/R7/4K2k/8/8/8 w - - 0 1", "6k1/8/5K2/8/8/8/4R3/8 w - - 0 1", "8/8/8/8/5R2/2K5/8/k7 w - - 0 1", "8/8/8/8/8/6K1/6R1/7k w - - 0 1", "8/8/8/8/2K5/8/7R/k7 w - - 0 1", "1k6/8/8/K7/2R5/8/8/8 w - - 0 1", "k2K4/8/8/8/3R4/8/8/8 w - - 0 1", "8/4R3/8/8/5K2/8/8/5k2 w - - 0 1", "4k3/8/3K4/8/3R4/8/8/8 w - - 0 1", "1R6/8/8/8/8/3K4/8/k7 w - - 0 1", "8/6R1/8/8/4K3/8/8/5k2 w - - 0 1", "5k2/4R3/6K1/8/8/8/8/8 w - - 0 1", "8/8/5K2/7k/8/8/4R3/8 w - - 0 1", "8/4R3/8/8/7k/5K2/8/8 w - - 0 1", "8/8/8/2K5/k7/8/7R/8 w - - 0 1", "7k/8/R4K2/8/8/8/8/8 w - - 0 1"];
+  var QLINE = ['a1a6','d5e4','a6d6','e4f5','e1d1','f5e4','d1e2','e4f5','e2f3','f5g5','d6e6','g5h5','f3f4','h5h4','e6h6'];
+  var RLINE = ['e5d6','b7b6','d3b3','b6a5','d6c5','a5a6','b3b4','a6a5','b4d4','a5a6','d4d7','a6a5','d7a7'];
+  function rn(r, n) { return Math.floor(r() * n); }
+  function cheb(a, c) { return Math.max(Math.abs((a & 7) - (c & 7)), Math.abs((a >> 3) - (c >> 3))); }
+  function sqOf(u) { return (u.charCodeAt(0) - 97) + 8 * (8 - +u[1]); }
+  function findSq(b, v) { for (var i = 0; i < 64; i++) if (b[i] === v) return i; return -1; }
+  function kn(a, c) { var dx = Math.abs((a & 7) - (c & 7)), dy = Math.abs((a >> 3) - (c >> 3)); return (dx === 1 && dy === 2) || (dx === 2 && dy === 1); }
+  function opp(a, c) { return ((a & 7) === (c & 7) && Math.abs((a >> 3) - (c >> 3)) === 2) || ((a >> 3) === (c >> 3) && Math.abs((a & 7) - (c & 7)) === 2); }
+  function lineSteps(fen, line, P) {
+    var pos = E.fromFEN(fen), st = [];
+    line.forEach(function (u) {
+      var f = sqOf(u.slice(0, 2)), t = sqOf(u.slice(2, 4)), ms = E.legal(pos), m = null, i;
+      for (i = 0; i < ms.length; i++) if (ms[i].f === f && ms[i].t === t) { m = ms[i]; break; }
+      if (!m) throw new Error('bad line ' + u);
+      var v = pos.b[f], white = v > 0, np = E.make(pos, m), tx;
+      if (E.status(np) === 'mate') tx = 'Мат!';
+      else if (!white) tx = 'Чёрный король отступает.';
+      else if (Math.abs(v) === 6) { var bk = findSq(np.b, -6); tx = opp(t, bk) ? 'Король встал в оппозицию: напротив чёрного короля через клетку.' : 'Свой король подходит ближе: он должен помогать.'; }
+      else { var bk2 = findSq(np.b, -6); tx = (P === 5 && kn(t, bk2)) ? 'Ферзь на расстоянии хода коня от короля: король зажат, шаха нет.' : (P === 5 ? 'Ферзь отрезает чёрному королю часть доски.' : 'Ладья отрезает чёрному королю целую линию.'); }
+      st.push(u + '|' + tx); pos = np;
+    });
+    return st;
+  }
+  function ST(fen, steps) { return { fen: fen, steps: steps }; }
+  var QS = [
+    { h: 'Цель: поставить мат', p: ['Ферзь и король против одного короля — это <b>всегда выигрыш</b>. Нужно загнать чужого короля на край доски и поставить мат. Важно: <b>один ферзь без своего короля мат не поставит</b>. Король обязан помогать!', 'Главная ловушка — <b>пат</b>. Если у чёрного короля нет ходов, а шаха нет, партия заканчивается вничью.'], fen: '8/8/4k3/8/8/8/8/Q3K3 w - - 0 1' },
+    { h: 'Способ 1: ферзь рядом, король защищает', p: ['Ферзь встаёт <b>рядом</b> с чужим королём, а твой король защищает ферзя. Тогда чёрный король не может съесть ферзя, и ему некуда уйти. Нажми «Показать».'], demo: ST('4k3/Q7/4K3/8/8/8/8/8 w - - 0 1', ['a7e7|Мат! Ферзь на e7 защищён королём e6, а все поля вокруг короля e8 закрыты.']) },
+    { h: 'Способ 2: мат в углу', p: ['В углу королю ещё теснее. Ферзь стоит рядом, а король его защищает. Нажми «Показать».'], demo: ST('7k/8/5K2/8/8/8/8/6Q1 w - - 0 1', ['g1g7|Мат! Ферзь на g7 защищён королём f6, а у короля h8 нет ни одного хода.']) },
+    { h: 'Способ 3: шах по краю', p: ['Мат можно поставить и издалека: ферзь шахует по линии края, а свой король закрывает остальные поля. Нажми «Показать».'], demo: ST('k7/8/1K6/8/8/8/8/6Q1 w - - 0 1', ['g1g8|Мат! Ферзь шахует по 8-й горизонтали, а король b6 закрывает поля a7 и b7.']) },
+    { h: 'Оппозиция: через одну клетку', p: ['<b>Оппозиция</b> — это когда два короля стоят друг напротив друга на одной линии, а между ними нечётное число свободных клеток. Самая главная оппозиция — <b>через одну клетку</b>: e3 и e5 (между ними e4).', 'Тот, кто <b>должен ходить</b>, вынужден отступить: ему нельзя подойти ближе. Для постановки мата оппозиция нужна обязательно!'], fen: '8/8/8/4k3/8/4K3/8/7Q w - - 0 1' },
+    { h: 'Оппозиция: через три клетки', p: ['Оппозиция бывает и издалека. Здесь короли на одной вертикали, между ними <b>три</b> клетки: e4, e5, e6. Это тоже оппозиция: подойдёт ближе тот, кто сходит первым, но потом его уступят.'], fen: '8/4k3/8/8/8/4K3/8/7Q w - - 0 1' },
+    { h: 'Оппозиция: через пять клеток', p: ['А здесь между королями <b>пять</b> клеток: e2, e3, e4, e5, e6. Закон простой: если между королями нечётное число клеток (1, 3, 5), короли в оппозиции. Запомни: <b>1, 3, 5</b>.'], fen: '8/4k3/8/8/8/8/8/4K2Q w - - 0 1' },
+    { h: 'Как оппозиция помогает', p: ['Белый король встаёт напротив чёрного. Теперь чёрному королю нельзя идти вперёд, он должен отступить. Нажми «Показать».'], demo: ST('8/8/4k3/8/8/4K3/8/7Q w - - 0 1', ['e3e4|Белый король встал в оппозицию.', 'e6d6|Чёрному королю пришлось отойти вбок: вперёд идти нельзя.']) },
+    { h: 'Метод: ход коня', p: ['Ферзь лучше всего запирает короля, когда стоит <b>на расстоянии хода коня</b> от него (буква «Г»). Такой ферзь закрывает почти все поля вокруг, но не даёт шаха, и пата ещё нет. Здесь ферзь на d6, а король на e8: у короля только поля e8 и f7.'], fen: '4k3/8/3Q4/8/8/8/8/4K3 w - - 0 1' },
+    { h: 'Вся партия: смотри внимательно', p: ['Это настоящая партия с точной игрой. Ферзь отрезает короля, белый король подходит, потом оппозиция и мат. Нажимай «Показать» ход за ходом.'], demo: ST('8/8/8/3k4/8/8/8/Q3K3 w - - 0 1', lineSteps('8/8/8/3k4/8/8/8/Q3K3 w - - 0 1', QLINE, 5)) },
+    { h: 'План мата ферзём', p: ['<b>1.</b> Ферзём отрежь короля от центра: ставь ферзя на расстоянии хода коня.', '<b>2.</b> Подводи свой король, пока не встанешь в оппозицию.', '<b>3.</b> Перед каждым ходом проверь: <b>у чёрного короля есть ход?</b> Если ходов нет, а шаха нет, это пат.', '<b>4.</b> Когда король у края, а твой король напротив через клетку, ставь мат: ферзь рядом или шах по краю.'], fen: '8/8/8/8/8/8/8/Q3K3 w - - 0 1' },
+    { h: 'Осторожно: пат!', p: ['Самая частая ошибка: ферзь закрыл все поля, а шаха нет. Это пат, ничья. Нажми «Показать»: так делать нельзя!'], demo: ST('k7/8/1K6/8/8/8/8/2Q5 w - - 0 1', ['c1c7|Пат! У чёрного короля нет ходов, а шаха нет. Это ничья. Надо было поставить мат: Qg8.']) },
+    { h: 'Теперь сам', p: ['В упражнениях ты будешь ставить мат в 1 ход, искать мат в 2 хода, вставать в оппозицию, ставить ферзя на расстояние хода коня и проверять, будет ли пат. В конце — игры против компьютера из разных позиций.'] }
+  ];
+  var RS = [
+    { h: 'Цель: мат ладьёй', p: ['Ладья и король против короля — тоже выигрыш, но ходов нужно больше. Ладья ставит мат <b>только на краю доски</b> и только вместе со своим королём. Поэтому чужого короля сначала надо выгнать на край.'], fen: '8/8/4k3/8/8/8/8/R3K3 w - - 0 1' },
+    { h: 'Схема мата: оппозиция и шах по краю', p: ['Король стоит напротив чужого короля через одну клетку (оппозиция) и закрывает три поля. Ладья шахует по краю и закрывает остальные. Нажми «Показать».'], demo: ST('4k3/8/4K3/8/8/8/8/7R w - - 0 1', ['h1h8|Мат! Король e6 закрывает d7, e7, f7, а ладья h8 шахует и закрывает d8 и f8.']) },
+    { h: 'Мат в углу', p: ['В углу схема такая же: король через клетку, ладья шахует по краю. Нажми «Показать».'], demo: ST('k7/8/1K6/8/8/8/8/7R w - - 0 1', ['h1h8|Мат! Король b6 закрывает a7 и b7, а ладья h8 шахует и закрывает b8.']) },
+    { h: 'Оппозиция: через одну клетку', p: ['Для мата ладьёй твой король должен встать напротив чужого короля. Между ними <b>одна клетка</b> (e3 и e5), это оппозиция. Тот, кому ходить, должен уступить.'], fen: '8/8/4k3/8/8/4K3/8/R7 w - - 0 1' },
+    { h: 'Оппозиция: через три и пять клеток', p: ['Оппозиция бывает и издалека: между королями 1, 3 или 5 клеток. Здесь между королями три клетки (e4, e5, e6). Помни про нечётные числа: <b>1, 3, 5</b>.'], fen: '8/4k3/8/8/8/4K3/8/R7 w - - 0 1' },
+    { h: 'Ладья отрезает линию', p: ['Ладья отрезает королю целую линию. Чёрный король на e5, ладья на a4: король не может идти на 4-ю горизонталь и ниже. Ставь ладью <b>на соседнюю линию</b>, но не рядом с королём: рядом король её съест!'], fen: '8/8/8/4k3/R7/8/8/4K3 w - - 0 1' },
+    { h: 'Вся партия: смотри внимательно', p: ['Здесь ладья отрезает короля, белый король подходит, потом оппозиция и мат. Нажимай «Показать» ход за ходом.'], demo: ST('8/1k6/8/4K3/8/3R4/8/8 w - - 0 1', lineSteps('8/1k6/8/4K3/8/3R4/8/8 w - - 0 1', RLINE, 4)) },
+    { h: 'План мата ладьёй', p: ['<b>1.</b> Ладья отрезает короля линией (соседняя линия, не рядом с королём).', '<b>2.</b> Свой король идёт к чужому и встаёт в оппозицию.', '<b>3.</b> Когда оппозиция есть, ладья делает «ход ожидания» вдоль линии или перескакивает: чёрный король должен отступить к краю.', '<b>4.</b> Король у края, твой напротив: шах ладьёй по краю, мат!', 'И всегда проверяй: <b>не пат ли</b>.'], fen: '8/8/8/8/8/8/8/R3K3 w - - 0 1' },
+    { h: 'Осторожно', p: ['Ладью нельзя ставить рядом с чужим королём, если она не защищена: король её съест. И следи за патом! Нажми «Показать»: так делать нельзя.'], demo: ST('k1K5/8/8/8/7R/8/8/8 w - - 0 1', ['h4h7|Пат! Ладья h7 закрыла 7-ю горизонталь, король c8 закрыл b8, а шаха нет. У чёрного короля нет ходов: ничья.']) },
+    { h: 'Теперь сам', p: ['В упражнениях ты будешь ставить мат в 1 ход, искать мат в 2 хода, вставать в оппозицию, отрезать короля ладьёй и проверять, будет ли пат. В конце — игры против компьютера из разных позиций.'] }
+  ];
+  /* ---------- случайные позиции: белый король, фигура, чёрный король; ход белых ---------- */
+  function rp(r, P) {
+    var b = new Int8Array(64), bk = rn(r, 64), wk = rn(r, 64), s = rn(r, 64);
+    if (cheb(bk, wk) < 2 || b[s] || s === bk || s === wk) return null; b[bk] = -6; b[wk] = 6; b[s] = P;
+    var pos = mkPos(b, 1, -1);
+    if (E.inCheck(mkPos(b, -1, -1))) return null; /* чёрный король не под шахом */
+    if (E.legal(pos).length === 0) return null;
+    return pos;
+  }
+  function mateMoves(pos) { return E.legal(pos).filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; }); }
+  function pieceOf(P) { return P === 5 ? 'ферзь' : 'ладья'; }
+  function genM1(r, P) {
+    for (var t = 0; t < 80000; t++) {
+      var pos = rp(r, P); if (!pos) continue; var mt = mateMoves(pos); if (mt.length < 1 || mt.length > 3) continue;
+      var stl = E.legal(pos).some(function (m) { return E.status(E.make(pos, m)) === 'stalemate'; });
+      if (!stl && r() < 0.5) continue;
+      return { pos: pos, say: 'Поставь мат одним ходом! Осторожно: пат — это ничья.', ok: function (m, p) { return E.status(E.make(p, m)) === 'mate'; }, good: function () { return 'Мат! Король закрыт со всех сторон.'; }, bad: function (m, p, np) { var s = E.status(np); return s === 'stalemate' ? 'Пат! Ходов у чёрных нет, но шаха тоже нет. Это ничья. Ищи мат.' : 'Это не мат. У чёрного короля есть ход или защита.'; } };
+    }
+    return null;
+  }
+  function genM2(r, P, j) {
+    var B = P === 5 ? BQ : BR, f = B[(j * 7 + rn(r, 3)) % B.length], pos = E.fromFEN(f);
+    var sols = E.legal(pos).filter(function (m) { var p2 = E.make(pos, m), st = E.status(p2); if (st === 'mate' || st === 'stalemate') return false; var bs = E.legal(p2); if (!bs.length) return false; return bs.every(function (bm) { return mateMoves(E.make(p2, bm)).length > 0; }); });
+    return { pos: pos, say: 'Мат в два хода. Найди первый ход: после него мат неизбежен, что бы ни сделал чёрный король.', ok: function (m) { return sols.some(function (s) { return s.f === m.f && s.t === m.t; }); }, good: function () { return 'Верно! Что бы ни ответил король, на следующем ходу будет мат.'; }, bad: function () { return 'Не то. После этого хода у чёрных есть защита. Подумай про оппозицию и линию.'; } };
+  }
+  function genOpp(r, P) {
+    for (var t = 0; t < 80000; t++) {
+      var pos = rp(r, P); if (!pos) continue; if (mateMoves(pos).length) continue;
+      var wk = findSq(pos.b, 6), bk = findSq(pos.b, -6), q = findSq(pos.b, P); if (cheb(q, bk) < 3) continue;
+      var good = E.legal(pos).filter(function (m) { return m.f === wk && opp(m.t, bk) && E.status(E.make(pos, m)) !== 'stalemate'; });
+      if (good.length < 1 || good.length > 2 || opp(wk, bk)) continue;
+      return { pos: pos, say: 'Ходи королём и встань в оппозицию: напротив чёрного короля, на одной линии через одну клетку.', ok: function (m, p) { var bk2 = findSq(p.b, -6); return p.b[m.f] === 6 && opp(m.t, bk2) && E.status(E.make(p, m)) !== 'stalemate'; }, good: function () { return 'Оппозиция! Теперь чёрному королю нельзя идти вперёд.'; }, bad: function (m, p) { return p.b[m.f] !== 6 ? 'Надо ходить королём.' : 'Нет. Король должен встать на одной линии с чёрным королём, через одну клетку между ними.'; } };
+    }
+    return null;
+  }
+  function genKn(r) {
+    for (var t = 0; t < 80000; t++) {
+      var pos = rp(r, 5); if (!pos) continue; if (mateMoves(pos).length) continue; var bk = findSq(pos.b, -6), q = findSq(pos.b, 5);
+      if (kn(q, bk)) continue;
+      function okm(p, m) { var np = E.make(p, m); var s = E.status(np); return p.b[m.f] === 5 && kn(m.t, findSq(p.b, -6)) && s !== 'stalemate' && s !== 'mate' && s !== 'check'; }
+      var g2 = E.legal(pos).filter(function (m) { return okm(pos, m); });
+      if (g2.length < 1 || g2.length > 4) continue;
+      return { pos: pos, say: 'Поставь ферзя на расстояние хода коня от чёрного короля (буква «Г»), чтобы не было ни шаха, ни пата.', ok: function (m, p) { return okm(p, m); }, good: function () { return 'Ферзь на расстоянии хода коня: король зажат, а пата нет.'; }, bad: function (m, p, np) { return np && E.status(np) === 'stalemate' ? 'Пат! Так нельзя.' : 'Нет. Ферзь должен стоять «буквой Г» от короля: два поля в одну сторону и одно вбок.'; } };
+    }
+    return null;
+  }
+  function genCut(r) {
+    for (var t = 0; t < 80000; t++) {
+      var pos = rp(r, 4); if (!pos) continue; if (mateMoves(pos).length) continue; var bk = findSq(pos.b, -6), rk = findSq(pos.b, 4);
+      if (cheb(rk, bk) < 2) continue; if ((bk & 7) === 0 || (bk & 7) === 7 || (bk >> 3) === 0 || (bk >> 3) === 7) continue;
+      function okm(p, m) {
+        var np = E.make(p, m), s = E.status(np), b2 = findSq(p.b, -6), t2 = m.t;
+        if (p.b[m.f] !== 4 || s === 'stalemate' || s === 'mate' || s === 'check') return false;
+        return cheb(t2, b2) >= 2 && (Math.abs((t2 & 7) - (b2 & 7)) === 1 || Math.abs((t2 >> 3) - (b2 >> 3)) === 1);
+      }
+      var g2 = E.legal(pos).filter(function (m) { return okm(pos, m); });
+      if (g2.length < 1 || g2.length > 5) continue;
+      return { pos: pos, say: 'Отрежь чёрного короля ладьёй: поставь ладью на соседнюю с королём вертикаль или горизонталь, но не рядом с королём и без шаха.', ok: function (m, p) { return okm(p, m); }, good: function () { return 'Ладья отрезала короля: он не может перейти эту линию.'; }, bad: function (m, p) { return p.b[m.f] !== 4 ? 'Надо ходить ладьёй.' : 'Нет. Ладья должна стоять на линии рядом с королём (но не вплотную), и без шаха.'; } };
+    }
+    return null;
+  }
+  function genYN(r, P, want) {
+    for (var t = 0; t < 120000; t++) {
+      var pos = rp(r, P); if (!pos) continue; var q = findSq(pos.b, P), bk = findSq(pos.b, -6);
+      if (want && !((bk & 7) % 7 === 0 && ((bk >> 3) % 7 === 0))) continue;
+      var ms = E.legal(pos).filter(function (m) { return m.f === q; }), cand = ms.filter(function (m) { var s = E.status(E.make(pos, m)); return want ? s === 'stalemate' : (s === 'ok' || s === 'check'); });
+      if (!cand.length) continue; var m = cand[rn(r, cand.length)], h = {}; h[m.t] = 1;
+      return { pos: pos, hl: h, q: 'Белые ходят ' + (P === 5 ? 'ферзём' : 'ладьёй') + ' на выделенную клетку. Это пат?', ans: !!want, expl: want ? 'Да, пат: у чёрного короля нет ни одного хода, а шаха нет. Ничья!' : 'Нет, пата нет: у чёрных остаётся ход или им поставлен шах.', hint: 'Посмотри: куда может пойти чёрный король? И есть ли шах?' };
+    }
+    return null;
+  }
+  var ORD = ['m1', 'opp', 'sp', 'm1', 'yn', 'm1', 'opp', 'sp', 'm2', 'm1', 'opp', 'sp', 'yn', 'm2', 'm1', 'opp', 'sp', 'm2', 'yn', 'm2'], T = ORD.length;
+  function mkGen(P) {
+    return function (lv, r) {
+      var k = (lv - 1) % T, t = ORD[k], j = 0; for (var i = 0; i < k; i++) if (ORD[i] === t) j++;
+      if (t === 'm1') return genM1(r, P); if (t === 'm2') return genM2(r, P, j); if (t === 'opp') return genOpp(r, P);
+      if (t === 'sp') return P === 5 ? genKn(r) : genCut(r); return genYN(r, P, j % 2 === 0);
+    };
+  }
+  [['mq', 5, QS, 'Мат ферзём и королём', 'Три способа мата, оппозиция (1, 3, 5), ход коня, план и 30 заданий.'], ['mr', 4, RS, 'Мат ладьёй и королём', 'Схема мата, оппозиция, как отрезать короля, план и 30 заданий.']].forEach(function (c) {
+    var L = LESS[c[0]]; if (!L) return; var oldRun = L.run;
+    L.t = c[3]; L.d = c[4]; L.slides = c[2]; L.levels = T + 10; L.gen = mkGen(c[1]);
+    L.run = function (host, Lx, lv, fin) {
+      if (lv <= T) { runTask(host, Lx, lv, fin); return; }
+      oldRun.call(this, host, Lx, lv - T, fin);
+      var rb = document.getElementById('resB'); if (rb) rb.onclick = function () { lessonPage(Lx.id, lv); };
+    };
+  });
+})();
+
 /* ===== Урок «Шахматная доска»: 30 разных заданий (свои формулировки) ===== */
 (function () {
   var L = LESS.board; if (!L) return;
@@ -7298,7 +7443,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         '<div class="y2task"><div class="y2cap"><b>' + kind(it, L) + '</b><span>' + B + ' баллов · ' + (black ? 'ход чёрных' : 'ход белых') + '</span><button class="y2gear y2gd" id="gdB" aria-label="Список задач" title="Список задач">▦</button><button class="y2gear" id="mnB" aria-label="Меню задачи" title="Меню задачи">⚙</button></div>' +
         '<div class="y2ins" id="ins"><span id="insT"></span><button class="btn alt" id="rpB">🔊 Повторить</button></div>' + boardHTML() +
         '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
-        '<div class="row y2nv"><button class="btn alt" id="pvB"' + (n <= 1 ? ' disabled' : '') + '>← Предыдущая</button><button class="btn alt" id="nxN"' + (n >= N ? ' disabled' : '') + '>Следующая →</button><button class="btn alt" id="resB">Сначала</button><button class="btn alt" id="flB">⇅ Перевернуть</button><button class="btn alt" id="hlB" aria-pressed="false">Подсветка ходов: выкл</button><button class="btn alt" id="vcB" aria-pressed="true">Голос: вкл</button></div><div class="y2time">⏱ Осталось: <b id="tmV">3:00</b></div><div id="after"></div></div>' + foot(L);
+        '<div class="row y2nv"><button class="btn alt" id="pvB"' + (n <= 1 ? ' disabled' : '') + '>← Предыдущая</button><button class="btn alt" id="nxN"' + (n >= N ? ' disabled' : '') + '>Следующая →</button><button class="btn alt" id="undB">↶ Вернуть ход</button><button class="btn alt" id="resB">Сначала</button><button class="btn alt" id="flB">⇅ Перевернуть</button><button class="btn alt" id="hlB" aria-pressed="false">Подсветка ходов: выкл</button><button class="btn alt" id="vcB" aria-pressed="true">Голос: вкл</button></div><div class="y2time">⏱ Осталось: <b id="tmV">3:00</b></div><div id="after"></div></div>' + foot(L);
       document.getElementById('insT').textContent = insTxt;
       if (window.__y2tm) clearInterval(window.__y2tm);
       var tStart = Date.now(), tvEl = document.getElementById('tmV');
@@ -7359,12 +7504,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
         document.getElementById('anB').onclick = function () { analysis(it[0], document.getElementById('anP'), S, draw0); };
         document.getElementById('nxB').focus();
       }
+      var undoSt = [];
       function play(m) {
-        var before = cur, np = E.make(before, m), want = toMove(before, sol[step]), good = want && want.f === m.f && want.t === m.t && (want.p || 0) === (m.p || 0);
+        var before = cur, stp0 = step, np = E.make(before, m), want = toMove(before, sol[step]), good = want && want.f === m.f && want.t === m.t && (want.p || 0) === (m.p || 0);
         var mates = E.status(np) === 'mate';
         moveSound(before, m, np); S.anim = animOf(before, m); S.last = { f: m.f, t: m.t }; S.lead = false; S.leadArrow = null;
         if (good || ((L.mate || /^Мат/.test(it[3] || '')) && mates)) {
-          cur = np; S.pos = np; S.sel = null; S.hint = null; S.hl = null; S.badge = null; step++; draw();
+          undoSt.push({ c: before, s: stp0 }); cur = np; S.pos = np; S.sel = null; S.hint = null; S.hl = null; S.badge = null; step++; draw();
           if (mates || step >= sol.length) { sfx('good'); var pe = /^Вечный/.test(kind(it, L)); sm(mates ? 'Мат.' : pe ? 'Верно! Шахи повторяются, позиция повторилась: ничья вечным шахом.' : 'Верно.', 'good'); speak(mates ? 'Мат. Верно.' : pe ? 'Верно. Вечный шах: ничья.' : 'Верно.'); finish(true); return; }
           sm('Верно. Соперник отвечает…', 'good'); reply(); return;
         }
@@ -7388,6 +7534,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         draw();
       }
       document.getElementById('resB').onclick = function () { task(L, n); };
+      document.getElementById('undB').onclick = function () { if (busy || done || !undoSt.length) { if (!done && !busy) sm('Возвращать пока нечего.'); return; } var u0 = undoSt.pop(); cur = u0.c; step = u0.s; S.pos = cur; S.last = null; S.sel = null; S.hint = null; S.hl = null; S.badge = null; tg = []; S.lead = false; S.leadArrow = null; draw(); sm('Ход возвращён. Подумайте ещё раз.'); };
       var _pvB = document.getElementById('pvB'); if (_pvB) _pvB.onclick = function () { if (n > 1) location.hash = '#y2/' + L.id + '/t/' + (n - 1); };
       var _nxN = document.getElementById('nxN'); if (_nxN) _nxN.onclick = function () { if (n < N) location.hash = '#y2/' + L.id + '/t/' + (n + 1); };
       var _rpB = document.getElementById('rpB'); if (_rpB) _rpB.onclick = function () { try { var ss = window.speechSynthesis; ss.cancel(); var u = new SpeechSynthesisUtterance(document.getElementById('insT').textContent); u.lang = 'ru-RU'; u.rate = 0.95; var vv = ss.getVoices().filter(function (v) { return /^ru/i.test(v.lang); }); if (vv.length) u.voice = vv[0]; ss.speak(u); } catch (e) {} };
@@ -7475,13 +7622,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
           if (tok !== A.tok) return;
           if (!r || !r.lines || !r.lines.length) { st.textContent = eng.failed && eng.failed() ? 'Нет связи с движком (нужен интернет).' : 'Нет данных.'; return; }
           st.textContent = 'Глубина ' + r.lines[0].depth + '.';
-          box.innerHTML = r.lines.map(function (l, i) { var e = evTxt(l, A.pos.turn); return '<button class="ln" data-u="' + l.move + '"><span class="ev ' + (e[0] === '-' || e.indexOf('#-') === 0 ? 'neg' : 'pos') + '">' + e + '</span><span class="pv">' + pvTxt(A.pos, l.pv, 9) + '</span></button>'; }).join('');
+          box.innerHTML = r.lines.map(function (l, i) { var e = evTxt(l, A.pos.turn); return '<button class="ln" data-u="' + l.move + '"><span class="ev ' + (e[0] === '-' || e.indexOf('#-') === 0 ? 'neg' : 'pos') + '">' + e + '</span><span class="pv">' + pvTxt(A.pos, l.pv, 14) + '</span></button>'; }).join('');
           box.onclick = function (ev) { var b = ev.target.closest('.ln'); if (!b) return; var m = toMove(A.pos, b.dataset.u); if (m) mv(m); };
         });
       }
       function mv(m) { var b0 = A.pos; A.hist.push(b0); A.pos = E.make(b0, m); S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); moveSound(b0, m, A.pos); A.sel = null; A.tg = []; show(); think(); }
       function clk(i) {
         var v = A.pos.b[i];
+        if (v && A.sel == null && (A.pos.turn === 1 ? v < 0 : v > 0)) { var fp = E.fromFEN(E.toFEN(A.pos).replace(/ [wb] /, A.pos.turn === 1 ? ' b ' : ' w ').replace(/ [a-h][36] /, ' - ')); A.hist.push(A.pos); A.pos = fp; think(); }
         if (A.sel != null && A.tg.indexOf(i) >= 0) { var c = movesFrom(A.pos, A.sel).filter(function (x) { return x.t === i; }); if (c.length > 1) c = [c.filter(function (x) { return x.p === 5; })[0] || c[0]]; mv(c[0]); return; }
         if (v && (A.pos.turn === 1 ? v > 0 : v < 0)) { A.sel = i; A.tg = movesFrom(A.pos, i).map(function (m) { return m.t; }); } else { A.sel = null; A.tg = []; }
         show();
