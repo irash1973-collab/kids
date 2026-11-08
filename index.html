@@ -2364,7 +2364,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       boardHTML() +
       '<div id="promo" class="promo" hidden></div>' +
       '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
-      '<div class="row"><button class="btn" id="newBtn">Новая игра</button><button class="btn alt" id="hintBtn">Подсказка</button><button class="btn alt" id="anBtn" hidden>Разобрать партию</button><button class="btn" id="nextLv" hidden>Следующий уровень</button></div>';
+      '<div class="row"><button class="btn" id="newBtn">Новая игра</button><button class="btn alt" id="hintBtn">Подсказка</button><button class="btn alt" id="resBtn">Сдаться</button><button class="btn alt" id="anBtn" hidden>Разобрать партию</button><button class="btn" id="nextLv" hidden>Следующий уровень</button></div>';
     var msg = document.getElementById('msg');
     function setMsg(t, kind) { msg.className = 'msg' + (kind ? ' ' + kind : ''); msg.textContent = t; }
     var intro = L <= 6 ? 'Привет! Я ' + name + ', я только учусь. Сыграем?' : L <= 18 ? 'Привет! Я ' + name + '. Сыграем партию?' : L <= 24 ? 'Я ' + name + '. Играю серьёзно, не зевай!' : 'Я ' + name + '. Это сильный соперник. Удачи!';
@@ -2508,6 +2508,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     };
     document.getElementById('back').onclick = function () { clearTimers(); location.hash = '#play/' + (wi + 1); };
     document.getElementById('newBtn').onclick = newGame;
+    document.getElementById('resBtn').onclick = function () { if (G.over || !G.rec.length) return; if (!confirm('Сдаться? Партия будет проиграна.')) return; G.busy = false; finish('Ты сдался. Разбери партию и сыграй ещё раз!', 'bad', false); draw(); };
     document.getElementById('anBtn').onclick = openAnalysis;
     document.getElementById('nextLv').onclick = function () { playGame(n + 1); };
     document.getElementById('side').onclick = function (e) {
@@ -8134,7 +8135,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       view.innerHTML = '<div class="row"><button class="btn alt" id="back">К уровням</button></div><h2>Живые шахматы · уровень ' + n + '</h2>' +
         say(av(HERO[(n - 1) % HERO.length]), name, (n <= 7 ? 'Я играю без части фигур, так что у тебя большое преимущество. Поиграем?' : 'Привет! Я ' + name + '. Сыграем партию?') + ' ' + talk(HERO[(n - 1) % HERO.length], 'hi'), 'уровень ' + n + ' из 20') + boardHTML() +
         '<div id="promo" class="promo" hidden></div><div class="msg" id="msg" role="status" aria-live="polite"></div>' +
-        '<div class="row"><button class="btn" id="newBtn">Новая игра</button><button class="btn" id="nextLv" hidden>Следующий уровень</button></div>';
+        '<div class="row"><button class="btn" id="newBtn">Новая игра</button><button class="btn alt" id="resBtn">Сдаться</button><button class="btn" id="nextLv" hidden>Следующий уровень</button></div>';
       var msg = document.getElementById('msg');
       function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
       function draw() { drawBoard(G, click); decorate(); }
@@ -8169,7 +8170,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function robot() {
         G.busy = true; draw(); msg.textContent += '  ·  ' + name + ' думает…';
         later(function () {
-          var m = E.bestMove(G.pos, L, G.hh.slice(0, -1)); if (m) apply(m, false); G.busy = false; draw();
+          if (G.over) return; var m = E.bestMove(G.pos, L, G.hh.slice(0, -1)); if (m) apply(m, false); G.busy = false; draw();
           if (checkEnd()) { draw(); return; }
           if (!/«/.test(document.getElementById('msg').textContent.replace(/·.*$/, '')) || true) setMsg(E.inCheck(G.pos) ? 'Тебе шах! Защити короля.' : 'Твой ход.', E.inCheck(G.pos) ? 'bad' : '');
         }, 450);
@@ -8186,6 +8187,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       }
       document.getElementById('back').onclick = function () { clearTimers(); location.hash = '#live'; };
       document.getElementById('newBtn').onclick = newGame;
+      document.getElementById('resBtn').onclick = function () { if (G.over || !G.rec.length) return; if (!confirm('Сдаться? Партия будет проиграна.')) return; G.busy = false; end('Ты сдался. Ничего страшного: сыграй ещё раз!', 'bad', false); draw(); };
       document.getElementById('nextLv').onclick = function () { liveGame(n + 1); };
       newGame();
     }
