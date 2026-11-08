@@ -3106,7 +3106,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var hasBoard = !!(s.fen || s.free || s.demo || s.show || s.try);
     var step = 0, cap = '';
     host.innerHTML = body + (hasBoard ? boardHTML() + '<div class="msg" id="sm" role="status" aria-live="polite"></div>' : '') +
-      (s.try ? '<div class="row"><button class="btn go" id="tReset">↺ Попробовать снова</button></div>' : '') + ((s.demo || s.show) ? '<div class="row"><button class="btn go" id="dPlay">▶ Показать</button><button class="btn" id="dNext">Следующий ход ▶</button><button class="btn alt" id="dReset">Сначала</button></div>' : '') +
+      (s.try ? '<div class="row"><button class="btn go" id="tReset">↺ Попробовать снова</button></div>' : '') + ((s.demo || s.show) ? '<div class="row"><button class="btn go" id="dPlay">▶ Показать</button>' + (s.demo ? '<button class="btn alt" id="dPrev">◀ Ход назад</button>' : '') + '<button class="btn" id="dNext">Следующий ход ▶</button><button class="btn alt" id="dReset">Сначала</button></div>' : '') +
       '<div class="row snav"><button class="btn alt" id="sPrev"' + (idx === 0 ? ' disabled' : '') + '>◀ Назад</button><span class="count">' + (idx + 1) + ' из ' + n + '</span><button class="btn" id="sNext">' + (idx === n - 1 ? (L.y2 ? 'К задачам' : L.levels ? 'К упражнениям' : 'Готово') : 'Дальше ▶') + '</button></div>';
     var sm = document.getElementById('sm');
     function say(t, k) { if (sm) { sm.className = 'msg' + (k ? ' ' + k : ''); sm.textContent = t; } }
@@ -3162,6 +3162,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         document.getElementById('dNext').disabled = step >= steps.length; paintScore();
       };
       y2redraw = function () { render(true); }; window.__y2redraw = y2redraw;
+      document.getElementById('dPrev').onclick = function () { clearTimers(); if (step > 0) { step--; render(true); } };
       document.getElementById('dNext').onclick = function () { if (step < steps.length) { step++; render(false); } };
       document.getElementById('dReset').onclick = function () { clearTimers(); step = 0; render(true); };
       document.getElementById('dPlay').onclick = function () { clearTimers(); if (step >= steps.length) { step = 0; render(true); } var k = 0; (function nx() { if (step < steps.length) { step++; render(false); later(nx, 1500); } })(); };
@@ -7719,11 +7720,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
       }
       return out.join(' ');
     }
-    window.__y2analysis = function (f, p, S, r) { return analysis(f, p, S, r); };
-    function analysis(fen0, panel, S, redraw) {
-      var A = { pos: E.fromFEN(fen0), hist: [], sel: null, tg: [], tok: 0, on: true };
-      panel.innerHTML = '<div class="y2an"><h4>Анализ на компьютере</h4><div class="row"><button class="btn alt" id="aBack">← Ход назад</button><button class="btn alt" id="aReset">Позиция задачи</button><button class="btn alt" id="aFlip">Перевернуть</button><button class="btn alt" id="aStop">Остановить анализ</button></div><div class="anl" id="anl"></div><p class="st" id="anst"></p><p class="st">Двигайте фигуры за обе стороны. Нажмите на линию, чтобы сыграть её первый ход. Движок: Stockfish 17.1, 5 линий.</p></div>';
-      S.hint = null; S.hl = null; S.badge = null; S.last = null; S.sel = null; S.flip = A.pos.turn === -1;
+    window.__y2analysis = function (f, p, S, r, h) { return analysis(f, p, S, r, h); };
+    function analysis(fen0, panel, S, redraw, hist0) {
+      var A = { pos: E.fromFEN(fen0), hist: hist0 ? hist0.slice() : [], fwd: [], sel: null, tg: [], tok: 0, on: true };
+      panel.innerHTML = '<div class="y2an"><h4>Анализ на компьютере</h4><div class="row"><button class="btn alt" id="aBack">← Ход назад</button><button class="btn alt" id="aFwd">Ход вперёд →</button><button class="btn alt" id="aReset">' + (hist0 ? 'Начало' : 'Позиция задачи') + '</button><button class="btn alt" id="aFlip">Перевернуть</button><button class="btn alt" id="aStop">Остановить анализ</button></div><div class="anl" id="anl"></div><p class="st" id="anst"></p><p class="st">Двигайте фигуры за обе стороны. Нажмите на линию, чтобы сыграть её первый ход. Движок: Stockfish 17.1, 5 линий.</p></div>';
+      S.hint = null; S.hl = null; S.badge = null; S.last = null; S.sel = null; if (!hist0) S.flip = A.pos.turn === -1;
       function show() { S.pos = A.pos; S.sel = A.sel; S.targets = []; drawBoard(S, clk); }
       function think() {
         var tok = ++A.tok, box = document.getElementById('anl'), st = document.getElementById('anst'), stt = E.status(A.pos);
@@ -7739,7 +7740,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
           box.onclick = function (ev) { var b = ev.target.closest('.ln'); if (!b) return; var m = toMove(A.pos, b.dataset.u); if (m) mv(m); };
         });
       }
-      function mv(m) { var b0 = A.pos; A.hist.push(b0); A.pos = E.make(b0, m); S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); moveSound(b0, m, A.pos); A.sel = null; A.tg = []; show(); think(); }
+      function mv(m) { var b0 = A.pos; A.fwd = []; A.hist.push(b0); A.pos = E.make(b0, m); S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); moveSound(b0, m, A.pos); A.sel = null; A.tg = []; show(); think(); }
       function clk(i) {
         var v = A.pos.b[i];
         if (v && A.sel == null && (A.pos.turn === 1 ? v < 0 : v > 0)) { var fp = E.fromFEN(E.toFEN(A.pos).replace(/ [wb] /, A.pos.turn === 1 ? ' b ' : ' w ').replace(/ [a-h][36] /, ' - ')); A.hist.push(A.pos); A.pos = fp; think(); }
@@ -7747,8 +7748,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
         if (v && (A.pos.turn === 1 ? v > 0 : v < 0)) { A.sel = i; A.tg = movesFrom(A.pos, i).map(function (m) { return m.t; }); } else { A.sel = null; A.tg = []; }
         show();
       }
-      document.getElementById('aBack').onclick = function () { if (!A.hist.length) return; A.pos = A.hist.pop(); S.last = null; A.sel = null; show(); think(); };
-      document.getElementById('aReset').onclick = function () { A.pos = E.fromFEN(fen0); A.hist = []; S.last = null; A.sel = null; show(); think(); };
+      document.getElementById('aBack').onclick = function () { if (!A.hist.length) return; A.fwd.push(A.pos); A.pos = A.hist.pop(); S.last = null; A.sel = null; show(); think(); };
+      document.getElementById('aFwd').onclick = function () { if (!A.fwd.length) return; A.hist.push(A.pos); A.pos = A.fwd.pop(); S.last = null; A.sel = null; show(); think(); };
+      document.getElementById('aReset').onclick = function () { A.pos = hist0 && hist0.length ? hist0[0] : E.fromFEN(fen0); A.hist = []; A.fwd = []; S.last = null; A.sel = null; show(); think(); };
       document.getElementById('aStop').onclick = function () { A.on = !A.on; this.textContent = A.on ? 'Остановить анализ' : 'Запустить анализ'; if (!A.on) { A.tok++; var e = ENG(); e.stop && e.stop(); document.getElementById('anst').textContent = 'Анализ остановлен.'; } else think(); };
       document.getElementById('aFlip').onclick = function () { S.flip = !S.flip; show(); };
       show(); think(); panel.scrollIntoView({ block: 'nearest' });
@@ -8400,6 +8402,32 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var L = LESS[id]; if (!L || typeof L.gen !== 'function' || L.__pl) return; var g = L.gen; L.__pl = 1;
     L.gen = function () { var t = null, i = 0; do { var a = Array.prototype.slice.call(arguments); if (i > 3) { for (var k = 0; k < a.length; k++) if (typeof a[k] === 'function') a[k] = mkRng(i * 7919 + 13 + k); } t = g.apply(this, a); i++; } while (t && t.pos && badPos(t.pos) && i < 80); return t; };
   });
+})();
+
+/* ===== Анализ на компьютере в уроках первого года: кнопка под доской, ход назад / вперёд, вся партия ===== */
+(function () {
+  var gh = [], ghS = null, ghKey = '', inAnl = false, db = drawBoard;
+  function kings(b) { var w = 0, k = 0; for (var i = 0; i < 64; i++) { if (b[i] === 6) w++; else if (b[i] === -6) k++; } return w === 1 && k === 1; }
+  function hook(S) {
+    if (inAnl || !S || !S.pos || !S.pos.b || !/^#lesson\//.test(location.hash) || !kings(S.pos.b)) return;
+    var key = E.key(S.pos);
+    if (S !== ghS) { ghS = S; gh = [S.pos]; ghKey = key; } else if (key !== ghKey) { gh.push(S.pos); ghKey = key; if (gh.length > 400) gh.shift(); }
+    var bd = document.getElementById('board'); if (!bd || document.getElementById('anlRow')) return;
+    var row = document.createElement('div'); row.id = 'anlRow'; row.innerHTML = '<div class="row"><button class="btn alt" id="anlBtn">🔍 Анализ на компьютере</button></div><div id="anlP"></div>';
+    var anchor = document.getElementById('msg') || document.getElementById('sm') || bd;
+    if (anchor.parentNode) anchor.parentNode.insertBefore(row, anchor.nextSibling);
+    document.getElementById('anlBtn').onclick = function () {
+      var P = document.getElementById('anlP'), saved = { pos: S.pos, last: S.last, sel: S.sel, targets: S.targets, flip: S.flip, hl: S.hl, hint: S.hint, badge: S.badge, mark: S.mark };
+      var hist = gh.slice(0, gh.length - 1); if (hist.length && E.key(hist[hist.length - 1]) === E.key(S.pos)) hist.pop();
+      var redraw = window.__curDraw;
+      inAnl = true;
+      window.__y2analysis(E.toFEN(S.pos), P, S, function () {}, hist);
+      var cl = document.createElement('div'); cl.className = 'row'; cl.innerHTML = '<button class="btn" id="anlX">✕ Закрыть анализ и вернуться</button>';
+      P.firstChild.appendChild(cl);
+      document.getElementById('anlX').onclick = function () { inAnl = false; try { var e = window.__SFMOCK || SF; e.stop && e.stop(); } catch (er) {} P.innerHTML = ''; for (var k in saved) S[k] = saved[k]; S.targets = []; S.sel = null; if (redraw) redraw(); };
+    };
+  }
+  drawBoard = function (S, onClick) { db(S, onClick); try { hook(S); } catch (e) {} };
 })();
 
 
