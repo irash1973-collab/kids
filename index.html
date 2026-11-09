@@ -866,6 +866,12 @@ body.y2 #prof { display: none; }
 .eqr .vi.s{width:34px;height:34px;display:block}.eqr .vi.s svg{width:100%;height:100%}
 .eqs{font-weight:700}.eqs b{font:800 26px/1 'Fredoka','Nunito',system-ui,sans-serif}.eqs i{font-style:normal;color:#888}
 @media(max-width:520px){.vals{grid-template-columns:repeat(3,1fr)}}
+
+.vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 12px; }
+.vcard { background: #fff; border: 2px solid #ffc21a; border-radius: 16px; padding: 12px; } .vcard h3 { margin: 0 0 8px; font-size: 1.05rem; }
+.vcard video { width: 100%; border-radius: 12px; background: #000; display: block; }
+.vcard.soon { opacity: .75; } .vsoon { height: 150px; border-radius: 12px; background: repeating-linear-gradient(45deg, #fff3d6, #fff3d6 12px, #ffe7a8 12px, #ffe7a8 24px); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #8a5a00; }
+.vidcard .vcard { max-width: 460px; margin: 0 auto; border: 0; padding: 0; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -894,6 +900,7 @@ body.y2 #prof { display: none; }
       <a href="#play" data-r="play">С роботом</a>
       <a href="#live" data-r="live">Живые</a>
       <a href="#board" data-r="board">Доска</a>
+      <a href="#cartoons" data-r="cartoons">Мультики</a>
       <a href="#awards" data-r="awards">Награды</a>
     </nav>
     <nav class="nav y2nav" aria-label="Второй год обучения">
@@ -2037,6 +2044,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<a class="card" href="#puzzles"><img class="ch" src="' + IMG.fox + '" alt=""><span class="big">Задачи на мат</span><p>Мат ладьёй, ферзём, слоном, конём, пешкой. Задачи не кончаются.</p><span class="pill">Решено: ' + (pt + cnt(solved)) + '</span></a>' +
       '<a class="card" href="#awards"><img class="ch" src="' + IMG.king + '" alt=""><span class="big">Награды</span><p>Медали, кубки и звёзды за твои успехи.</p><span class="pill">Медалей: ' + got + ' из ' + mm.length + '</span></a>' +
       '<a class="card" href="#board"><img class="ch" src="' + IMG.tima + '" alt=""><span class="big">Доска и компьютер</span><p>Играй с другом на одном экране, расставляй позиции и разбирай партии: какие ходы были хорошие, а какие нет.</p><span class="pill">Друг против друга</span></a>' +
+      '<a class="card" href="#cartoons"><img class="ch" src="' + IMG.simba + '" alt=""><span class="big">Мультики</span><p>Знакомство с фигурами: смотри, как они ходят и живут.</p></a>' +
       '<a class="card" href="#lessons"><img class="ch" src="' + IMG.prof + '" alt=""><span class="big">Уроки</span><p>История шахмат, доска, ходы фигур со звёздочками и лабиринтами, шах, мат и ловушки.</p><span class="pill">' + lessonSummary() + '</span></a>' +
       '</div>' +
       '<section><h2>Наши герои</h2><div class="heroes" style="margin-top:12px">' + hh + '</div>' +
@@ -2064,8 +2072,17 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var nx = R[cur + 1], lo = R[cur][0], pc = nx ? Math.min(100, Math.round((p - lo) / (nx[0] - lo) * 100)) : 100;
     return '<div class="path" aria-label="Путь к званию"><div class="pathh"><b>⭐ ' + p + ' баллов</b><span>' + (nx ? 'до звания «' + nx[1] + '» ещё ' + (nx[0] - p) : 'Ты чемпион страны!') + '</span></div><div class="pathbar"><i style="width:' + Math.max(4, pc) + '%"></i></div><div class="pathr">' + R.map(function (x, j) { return '<span class="' + (j <= cur ? 'on' : '') + '">' + x[1] + '</span>'; }).join('') + '</div></div>';
   }
+  var CARTOONS = [
+    { t: 'Знакомство: пешка', f: 'pawn2.mp4', d: 'Маленькая пешка идёт по залу, хитрит и становится королевой. Красивая сказка про пешку.' },
+    { t: 'Как ходит пешка', f: 'pawn.mp4', d: 'Пешка ходит вперёд, бьёт по диагонали, никогда не идёт назад и превращается в ферзя, ладью, слона или коня.' }
+  ];
+  var SOON = ['Ладья', 'Слон', 'Конь', 'Ферзь', 'Король'];
+  function vcard(c) { return '<div class="vcard"><h3>' + esc(c.t) + '</h3><video controls preload="metadata" playsinline aria-label="' + esc(c.t) + '"><source src="' + c.f + '#t=0.5" type="video/mp4"></video><p class="note">' + esc(c.d) + '</p></div>'; }
   function videoCard() {
-    return '<section class="vidcard"><h2>Мультик: как ходит пешка</h2><video controls preload="none" playsinline width="100%" style="max-width:420px;border-radius:14px;display:block;margin:0 auto" aria-label="Мультик: как ходит пешка"><source src="pawn.mp4" type="video/mp4"></video><p class="note">30 секунд: как ходит и бьёт пешка и во что она превращается.</p></section>';
+    return '<section class="vidcard"><h2>Мультик: пешка</h2>' + vcard(CARTOONS[0]).replace('<h3>' + esc(CARTOONS[0].t) + '</h3>', '') + '<p style="text-align:center"><a class="btn alt" href="#cartoons">Все мультики →</a></p></section>';
+  }
+  function cartoons() {
+    view.innerHTML = '<h2>Мультики: знакомство с фигурами</h2><p class="note">Смотри, как живут шахматные фигуры. Нажми на кнопку «играть» у видео.</p><div class="vgrid">' + CARTOONS.map(vcard).join('') + SOON.map(function (n) { return '<div class="vcard soon"><h3>' + esc(n) + '</h3><div class="vsoon">Скоро</div><p class="note">Мультик про фигуру скоро появится.</p></div>'; }).join('') + '</div>';
   }
   function clubPromo() {
     var logo = '<svg class="uplogo" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fff" stroke="#d7261e" stroke-width="3"/><use href="#pb1" x="10" y="12" width="34" height="34"/><path d="M48 44V18M40 26l8-9 8 9" fill="none" stroke="#d7261e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -7748,13 +7765,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     window.__y2analysis = function (f, p, S, r, h, fu) { return analysis(f, p, S, r, h, fu); };
     function analysis(fen0, panel, S, redraw, hist0, fut0) {
-      var A = { cur: null, root: null, sel: null, tg: [], tok: 0, on: true, ed: null };
+      var A = { play: false, hs: 1, want: false, cur: null, root: null, sel: null, tg: [], tok: 0, on: true, ed: null };
       function mk(pos, m, parent, main) { var n = { pos: pos, m: m, parent: parent, kids: [], main: !!main, key: E.key(pos) }; if (parent) parent.kids.push(n); return n; }
       function moveBetween(a, b) { var ms = E.legal(a), k = E.key(b); for (var i = 0; i < ms.length; i++) if (E.key(E.make(a, ms[i])) === k) return ms[i]; return null; }
       function build(seq) { var prev = null; seq.forEach(function (p, i) { var m = prev ? moveBetween(prev.pos, p) : null; var n = mk(p, m, prev, true); if (!prev) A.root = n; prev = n; seq[i] = n; }); return seq; }
       var seq = (hist0 || []).concat([E.fromFEN(fen0)]).concat(fut0 || []);
       var nodes = build(seq); A.cur = nodes[(hist0 || []).length];
-      panel.innerHTML = '<div class="y2an"><h4>Анализ на компьютере</h4><div class="row"><button class="btn alt" id="aBack">← Ход назад</button><button class="btn alt" id="aFwd">Ход вперёд →</button><button class="btn alt" id="aMain">К основной линии</button><button class="btn alt" id="aReset">' + (hist0 ? 'Начало' : 'Позиция задачи') + '</button><button class="btn alt" id="aFlip">Перевернуть</button><button class="btn alt" id="aEdit">Расставить фигуры</button><button class="btn alt" id="aStop">Остановить анализ</button></div><div id="aEd"></div><div class="y2sc" id="aTree"></div><div class="anl" id="anl"></div><p class="st" id="anst"></p><p class="st">Двигайте фигуры за обе стороны: ваши ходы запишутся красным вариантом, основная линия не пропадёт. Нажмите на линию движка, чтобы сыграть её первый ход. Движок: Stockfish 17.1, 5 линий.</p></div>';
+      panel.innerHTML = '<div class="y2an"><h4>Анализ на компьютере</h4><div class="row"><button class="btn alt" id="aBack">← Ход назад</button><button class="btn alt" id="aFwd">Ход вперёд →</button><button class="btn alt" id="aMain">К основной линии</button><button class="btn alt" id="aReset">' + (hist0 ? 'Начало' : 'Позиция задачи') + '</button><button class="btn alt" id="aFlip">Перевернуть</button><button class="btn alt" id="aEdit">Расставить фигуры</button><button class="btn alt" id="aStop">Остановить анализ</button><button class="btn" id="aPlay">Играть с компьютером</button><button class="btn alt" id="aSide" style="display:none">Поменяться сторонами</button></div><div id="aEd"></div><div class="y2sc" id="aTree"></div><div class="anl" id="anl"></div><p class="st" id="anst"></p><p class="st">Двигайте фигуры за обе стороны: ваши ходы запишутся красным вариантом, основная линия не пропадёт. Нажмите на линию движка, чтобы сыграть её первый ход. Движок: Stockfish 17.1, 5 линий.</p></div>';
       S.hint = null; S.hl = null; S.badge = null; S.last = null; S.sel = null; if (!hist0) S.flip = A.cur.pos.turn === -1;
       function show() { S.pos = A.cur.pos; S.sel = A.sel; S.targets = []; drawBoard(S, clk); tree(); }
       function tree() {
@@ -7786,18 +7803,20 @@ if (typeof module !== 'undefined') module.exports = Eng;
         var tok = ++A.tok, box = document.getElementById('anl'), st = document.getElementById('anst'), pos = A.cur.pos, stt = E.status(pos);
         if (A.ed) { box.innerHTML = ''; st.textContent = ''; return; }
         if (!A.on) { box.innerHTML = ''; st.textContent = 'Анализ остановлен.'; return; }
-        if (stt === 'mate' || stt === 'stalemate') { box.innerHTML = ''; st.textContent = stt === 'mate' ? 'Мат.' : 'Пат: ничья.'; return; }
+        if (stt === 'mate' || stt === 'stalemate') { A.want = false; box.innerHTML = ''; st.textContent = stt === 'mate' ? 'Мат.' : 'Пат: ничья.'; return; }
         st.textContent = 'Движок считает…'; box.innerHTML = '';
         var eng = ENG(); eng.stop && eng.stop();
         eng.eval(E.toFEN(pos), 16, 5).then(function (r) {
           if (tok !== A.tok) return;
           if (!r || !r.lines || !r.lines.length) { st.textContent = eng.failed && eng.failed() ? 'Нет связи с движком (нужен интернет).' : 'Нет данных.'; return; }
           st.textContent = 'Глубина ' + r.lines[0].depth + '.';
+          if (A.play && A.want && pos.turn !== A.hs) { A.want = false; var cm = toMove(pos, r.lines[0].move); if (cm) { st.textContent = 'Компьютер ходит…'; setTimeout(function () { if (tok === A.tok) mv(cm, true); }, 450); return; } }
           box.innerHTML = r.lines.map(function (l, i) { var e = evTxt(l, pos.turn); return '<button class="ln" data-u="' + l.move + '"><span class="ev ' + (e[0] === '-' || e.indexOf('#-') === 0 ? 'neg' : 'pos') + '">' + e + '</span><span class="pv">' + pvTxt(pos, l.pv, 14) + '</span></button>'; }).join('');
           box.onclick = function (ev) { var b = ev.target.closest('.ln'); if (!b) return; var m = toMove(pos, b.dataset.u); if (m) mv(m); };
         });
       }
-      function mv(m) {
+      function mv(m, byComp) {
+        if (A.play && !byComp) A.want = true;
         var b0 = A.cur.pos, np = E.make(b0, m), k = E.key(np), ex = null;
         A.cur.kids.forEach(function (x) { if (x.key === k) ex = x; });
         S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); moveSound(b0, m, np);
@@ -7809,7 +7828,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function clk(i) {
         if (A.ed) { edClick(i); return; }
         var pos = A.cur.pos, v = pos.b[i];
-        if (v && A.sel == null && (pos.turn === 1 ? v < 0 : v > 0)) { var fp = E.fromFEN(E.toFEN(pos).replace(/ [wb] /, pos.turn === 1 ? ' b ' : ' w ').replace(/ [a-h][36] /, ' - ')); var ex = null; A.cur.kids.forEach(function (x) { if (!x.m && x.key === E.key(fp)) ex = x; }); A.cur = ex || mk(fp, null, A.cur, false); think(); pos = A.cur.pos; }
+        if (!A.play && v && A.sel == null && (pos.turn === 1 ? v < 0 : v > 0)) { var fp = E.fromFEN(E.toFEN(pos).replace(/ [wb] /, pos.turn === 1 ? ' b ' : ' w ').replace(/ [a-h][36] /, ' - ')); var ex = null; A.cur.kids.forEach(function (x) { if (!x.m && x.key === E.key(fp)) ex = x; }); A.cur = ex || mk(fp, null, A.cur, false); think(); pos = A.cur.pos; }
         if (A.sel != null && A.tg.indexOf(i) >= 0) { var c = movesFrom(pos, A.sel).filter(function (x) { return x.t === i; }); if (c.length > 1) c = [c.filter(function (x) { return x.p === 5; })[0] || c[0]]; mv(c[0]); return; }
         if (v && (pos.turn === 1 ? v > 0 : v < 0)) { A.sel = i; A.tg = movesFrom(pos, i).map(function (m) { return m.t; }); } else { A.sel = null; A.tg = []; }
         show();
@@ -7819,6 +7838,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
       document.getElementById('aMain').onclick = function () { var n = A.cur; while (n.parent && !n.main) n = n.parent; A.cur = n; S.last = null; A.sel = null; show(); think(); };
       document.getElementById('aReset').onclick = function () { A.cur = A.root; S.last = null; A.sel = null; show(); think(); };
       document.getElementById('aStop').onclick = function () { A.on = !A.on; this.textContent = A.on ? 'Остановить анализ' : 'Запустить анализ'; if (!A.on) { A.tok++; var e = ENG(); e.stop && e.stop(); document.getElementById('anst').textContent = 'Анализ остановлен.'; document.getElementById('anl').innerHTML = ''; } else think(); };
+      document.getElementById('aPlay').onclick = function () {
+        A.play = !A.play; var sd = document.getElementById('aSide');
+        this.textContent = A.play ? 'Закончить игру' : 'Играть с компьютером'; sd.style.display = A.play ? '' : 'none';
+        if (A.play) { A.hs = A.cur.pos.turn; A.want = false; if (!A.on) document.getElementById('aStop').click(); document.getElementById('anst').textContent = 'Вы играете ' + (A.hs === 1 ? 'белыми' : 'чёрными') + '. Можно брать ход назад и пробовать другой.'; S.flip = A.hs === -1; show(); }
+        else { A.want = false; think(); }
+      };
+      document.getElementById('aSide').onclick = function () { A.hs = -A.hs; A.want = A.cur.pos.turn !== A.hs; S.flip = A.hs === -1; show(); think(); };
       document.getElementById('aFlip').onclick = function () { S.flip = !S.flip; show(); };
       document.getElementById('aEdit').onclick = function () {
         var box = document.getElementById('aEd');
@@ -9182,7 +9208,7 @@ GROUPS.forEach(function(g){var i=g.ids.indexOf('traps'); if(i>=0 && g.ids.indexO
   function route() {
     clearTimers(); view.onclick = null;
     var parts = (location.hash || '#home').slice(1).split('/'), r = parts[0];
-    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards'].indexOf(r) < 0) r = 'home';
+    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons'].indexOf(r) < 0) r = 'home';
     document.body.classList.toggle('y2', r === 'y2'); document.body.classList.toggle('home', r === 'home');
     var m = document.getElementById('modal'); if (m) m.remove();
     setActive(r === 'lesson' ? 'lessons' : r);
@@ -9194,6 +9220,7 @@ GROUPS.forEach(function(g){var i=g.ids.indexOf('traps'); if(i>=0 && g.ids.indexO
     else if (r === 'y2') window.__y2(parts);
     else if (r === 'board') boardPage();
     else if (r === 'awards') awards();
+    else if (r === 'cartoons') cartoons();
     else home();
     window.scrollTo(0, 0);
   }
