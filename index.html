@@ -5289,7 +5289,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       return null;
     }
     function genAttDef(r, lv) {
-      var d = lv <= 15 ? 1 : 2, kind = Math.floor((lv - 1) / 6) % 5, tries = 0, g = null;
+      var d = lv <= 15 ? 1 : 2, kind = Math.floor((lv - 1) / 3) % 5, tries = 0, g = null;
       var f = [function () { return genAdCnt(r, d, lv, false); }, function () { return genAdCnt(r, d, lv, true); }, function () { return genAdHang(r, d, lv); }, function () { return genAdStat(r, d, lv); }, function () { return genAdSafe(r, d, lv); }][kind];
       while (tries++ < 80) { g = f(); if (g && plausible(g.b)) return g; }
       return g;
@@ -8828,6 +8828,86 @@ L.slides=slides;
     animSlide(true),animSlide(false)
   ];
   Array.prototype.splice.apply(L.slides,[1,0].concat(add));
+})();
+
+// Ценность фигур: упражнения 11–30 с картинками фигур
+(function(){
+  var L=LESS.values; if(!L) return;
+  var VAL={P:1,N:3,B:3,R:5,Q:9}, NUM={P:1,N:2,B:3,R:4,Q:5}, RU={P:'пешка',N:'конь',B:'слон',R:'ладья',Q:'ферзь'};
+  var COL={P:'#2e9e4f',N:'#2b7de0',B:'#7a4fd1',R:'#e8590c',Q:'#d6246e'};
+  function rr(r,a,z){return a+Math.floor(r()*(z-a+1));}
+  function pk(r,a){return a[Math.floor(r()*a.length)];}
+  function sum(c){var t=0;c.forEach(function(x){t+=VAL[x]});return t;}
+  function srt(c){return c.slice().sort(function(a,b){return VAL[b]-VAL[a]||(a<b?-1:1)});}
+  function key(c){return srt(c).join('');}
+  function mk(r,s){for(var k=0;k<200;k++){var c=[],t=0,g=0;while(t<s&&g++<8){var x=pk(r,['P','N','B','R']);if(t+VAL[x]<=s){c.push(x);t+=VAL[x];}}if(t===s&&c.length>=1&&c.length<=4)return srt(c);}return null;}
+  function sq(c,white,i){return '<span class="sqp '+(i%2?'d':'l')+'">'+pcHTML((white?1:-1)*NUM[c])+'</span>';}
+  function grp(c,white,cls,label){return '<div class="pg '+(cls||'')+'">'+(label?'<b class="pgl">'+label+'</b>':'')+'<span class="pgr">'+srt(c).map(function(x,i){return sq(x,white,i)}).join('')+'</span></div>';}
+  function sign(t){return '<span class="pm">'+t+'</span>';}
+  function legend(){return '<div class="pleg">'+['P','N','B','R','Q'].map(function(c){return '<span class="pl" style="--c:'+COL[c]+'">'+pcHTML(NUM[c])+'<b>'+VAL[c]+'</b></span>'}).join('')+'</div>';}
+  function nm(n,w){return w}
+  var BEST=[['R'],['N','B'],['Q'],['P','P','P'],['B','P'],['R','P'],['N'],['B'],['R','R'],['N','N'],['Q','P'],['R','N'],['B','B','P'],['P','P'],['R','B']];
+  function genBest(r){
+    for(var k=0;k<100;k++){var a=pk(r,BEST),b=pk(r,BEST);if(key(a)===key(b))continue;var sa=sum(a),sb=sum(b);
+      var ans=sa>sb?'◀ Слева ценнее':sa<sb?'Справа ценнее ▶':'= Поровну';
+      return {pic:grp(a,true,'pa')+sign('?')+grp(b,true,'pb'),text:'Что ценнее: фигуры слева или справа? Посмотри на цены внизу.',opts:['◀ Слева ценнее','Справа ценнее ▶','= Поровну'],ans:ans,why:'Сложи цены каждой стороны.',expl:'Слева '+sa+', справа '+sb+'.'};}
+  }
+  function genEquiv(r){
+    for(var k=0;k<100;k++){var t=pk(r,['Q','R','R','N','B','Q']),s=VAL[t],g=mk(r,s);
+      if(!g||g.length<2)continue;
+      var o=[g],used={};used[key(g)]=1;
+      for(var j=0;j<60&&o.length<4;j++){var ds=s+pk(r,[-3,-2,-1,1,2,3]);if(ds<2)continue;var d=mk(r,ds);if(!d||used[key(d)])continue;used[key(d)]=1;o.push(d);}
+      if(o.length<4)continue;
+      var ans=key(g),oh={};o.sort(function(){return r()-.5});o.forEach(function(c){oh[key(c)]=grp(c,true,'po')});
+      return {pic:'<div class="pg pt">'+sq(t,true,0)+'</div>'+sign('=')+sign('?'),text:'Что равно по цене этой фигуре? Выбери картинку.',opts:o.map(key),oh:oh,ans:ans,why:'Сложи цены фигур в каждом наборе и сравни с ценой фигуры сверху ('+s+').',expl:RU[t][0].toUpperCase()+RU[t].slice(1)+' = '+s+'.'};}
+  }
+  function genWho(r){
+    for(var k=0;k<100;k++){var a=mk(r,pk(r,[3,4,5,6,8,9,10])),b=mk(r,pk(r,[3,4,5,6,8,9,10]));if(!a||!b)continue;var sa=sum(a),sb=sum(b);
+      var ans=sb>sa?'✅ Выгодно':sb===sa?'⚖️ Равный размен':'❌ Невыгодно';
+      return {pic:grp(a,true,'pgive','Отдали')+sign('⇄')+grp(b,false,'pget','Получили'),text:'Белые отдали свои фигуры и получили чёрные. Выгодный ли это размен для белых?',opts:['✅ Выгодно','⚖️ Равный размен','❌ Невыгодно'],ans:ans,why:'Сложи цены: сколько отдали и сколько получили.',expl:'Отдали '+sa+', получили '+sb+'.'};}
+  }
+  function genSame(r){
+    var k=pk(r,['Q','R','B','N','P','K']);
+    var all=['Q','R','B','N','P'],o,ans;
+    if(k==='K'){o=['Q','R','none'];ans='none';}
+    else{ans=k;o=[k].concat(all.filter(function(x){return VAL[x]!==VAL[k]}).sort(function(){return r()-.5}).slice(0,3)).sort(function(){return r()-.5});}
+    var oh={};o.forEach(function(x){oh[x]=x==='none'?'<span class="pgn">🚫 Никого</span>':'<span class="pgb">'+sq(x,false,0)+'<i>'+RU[x]+'</i></span>';});
+    var big=k==='K'?'<div class="pg pt"><span class="sqp l">'+pcHTML(6)+'</span></div>':'<div class="pg pt">'+sq(k,true,0)+'</div>';
+    return {pic:big+sign('⇄')+sign('?'),text:k==='K'?'Короля можно разменять?':'На какую фигуру выгодно разменять эту, чтобы размен был равным: «один на одного»?',opts:o,oh:oh,ans:ans,why:k==='K'?'Короля нельзя ни взять, ни разменять.':'Ищи фигуру с такой же ценой.',expl:k==='K'?'Короля не меняют: он бесценен.':'Ценность одинаковая: '+VAL[k]+'.'};
+  }
+  function genPawns(r){
+    var t=pk(r,['N','B','R','Q','R','Q']),s=VAL[t],o={},a=[String(s)];o[s]=1;
+    for(var j=0;j<40&&a.length<4;j++){var v=s+pk(r,[-3,-2,-1,1,2,4]);if(v<2||o[v])continue;o[v]=1;a.push(String(v));}
+    a.sort(function(x,y){return x-y});
+    var pw='';for(var i=0;i<s;i++)pw+='';
+    return {pic:'<div class="pg pt">'+sq(t,true,0)+'</div>'+sign('=')+'<div class="pg">'+sq('P',true,0)+sign('×')+sign('?')+'</div>',text:'Сколько пешек стоит эта фигура? Выбери число.',opts:a,ans:String(s),why:'Пешка стоит 1 очко. Посмотри цену фигуры внизу.',expl:RU[t][0].toUpperCase()+RU[t].slice(1)+' стоит '+s+', то есть '+s+' пешек.'};
+  }
+  function genMost(r){
+    var sets=[['P','N','R'],['P','B','R'],['N','R','Q'],['B','R','Q'],['P','R','Q'],['P','N','Q'],['N','B','R','Q'],['P','R','N','Q']];
+    var c=pk(r,sets).slice().sort(function(){return r()-.5}),best=null;
+    c.forEach(function(x){if(!best||VAL[x]>VAL[best])best=x;});
+    var oh={};c.forEach(function(x){oh[x]='<span class="pgb">'+sq(x,true,0)+'<i>'+RU[x]+'</i></span>'});
+    return {pic:'<div class="pg pt"><b class="pgl">Какая самая ценная?</b></div>',text:'Какая из этих фигур стоит дороже всех? Нажми на неё.',opts:c,oh:oh,ans:best,why:'Вспомни цены: пешка 1, конь и слон 3, ладья 5, ферзь 9.',expl:RU[best][0].toUpperCase()+RU[best].slice(1)+' стоит '+VAL[best]+'.'};
+  }
+  var SEQ=['cmp','best','pawns','pts','equiv','most','who','same','equiv','who'];
+  function typeOf(lv){return SEQ[Math.min(9,Math.floor((lv-1)/3))];}
+  function gen2(r,lv){var t=typeOf(lv);return t==='best'?genBest(r):t==='pawns'?genPawns(r):t==='equiv'?genEquiv(r):t==='most'?genMost(r):t==='who'?genWho(r):genSame(r);}
+  function task(lv){return gen2(mkRng(hstr('val2_'+lv)),lv);}
+  function runV(host,Lx,lv,finish){
+    var q=task(lv),mist=0,done=false;
+    host.innerHTML=say(av('prof'),'Профессор',q.text,Lx.t+' · '+lv)+'<div class="pq">'+q.pic+'</div>'+legend()+'<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts pgo" id="opts">'+q.opts.map(function(o){return '<button data-o="'+o+'">'+((q.oh&&q.oh[o])||o)+'</button>'}).join('')+'</div>';
+    var msg=document.getElementById('msg');
+    function sm(t,k){msg.className='msg'+(k?' '+k:'');msg.textContent=t;}
+    document.getElementById('opts').onclick=function(e){var b=e.target.closest('button');if(!b||done)return;
+      if(b.dataset.o===q.ans){b.className='good';done=true;sfx('good');sm('Верно! '+q.expl,'good');finish(mist===0?3:mist===1?2:1);}
+      else{b.className='bad';mist++;sfx('bad');sm('Подумай ещё. '+q.why,'bad');}};
+  }
+  var oldGen=L.gen,oldRun=L.run;
+  function old(lv){var t=typeOf(lv);return t==='cmp'||t==='pts';}
+  L.gen=function(r,lv){var t=typeOf(lv);if(t==='cmp')return oldGen(r,lv<7?1:4);if(t==='pts')return oldGen(r,6);return gen2(r,lv);};
+  L.run=function(host,Lx,lv,finish){return old(lv)?oldRun(host,Lx,lv,finish):runV(host,Lx,lv,finish);};
+  L.slides.forEach(function(x){if(x.h==='Дальше упражнения')x.p=['Задания разные и всё время меняются: сравни силы на доске, посчитай очки, выбери, что ценнее, найди равную замену, оцени размен. Смотри на картинки и цены внизу!'];});
+  L.d='Сколько стоит каждая фигура, чем можно её заменить и какой размен выгоден. 30 разных заданий.';
 })();
 
 /* ===== защита от «невозможных» позиций во всех упражнениях (лишние слоны, два слона одного цвета и т.п.) ===== */
