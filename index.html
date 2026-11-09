@@ -872,6 +872,7 @@ body.y2 #prof { display: none; }
 .vcard video { width: 100%; border-radius: 12px; background: #000; display: block; }
 .vcard.soon { opacity: .75; } .vsoon { height: 150px; border-radius: 12px; background: repeating-linear-gradient(45deg, #fff3d6, #fff3d6 12px, #ffe7a8 12px, #ffe7a8 24px); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #8a5a00; }
 .vidcard .vcard { max-width: 460px; margin: 0 auto; border: 0; padding: 0; }
+.gearB{min-width:40px;padding:6px 10px;font-size:18px;line-height:1}.gearPop{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0;padding:10px;background:#fff;border:1px solid #c5d0e0;border-radius:10px;max-width:420px}.gearPop[hidden]{display:none}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -8616,6 +8617,38 @@ GROUPS.forEach(function(g){var i=g.ids.indexOf('traps'); if(i>=0 && g.ids.indexO
     document.getElementById('anlX').onclick = function () { inAnl = false; try { var e = window.__SFMOCK || SF; e.stop && e.stop(); } catch (er) {} P.innerHTML = ''; for (var k in saved) S[k] = saved[k]; S.targets = []; S.sel = null; gh = keepGh; if (redraw) redraw(); };
   }
   drawBoard = function (S, onClick) { db(S, onClick); try { hook(S); } catch (e) {} };
+})();
+
+/* ===== Первый год: подсказки спрятаны за шестерёнку, анализ на компьютере открывается только после решения ===== */
+(function () {
+  function isTask() { return !!(document.getElementById('hintB') || (document.getElementById('hintBtn') && !document.getElementById('newBtn'))); }
+  function solved() {
+    var m = document.getElementById('msg') || document.getElementById('sm'), nb = document.getElementById('nextBtn') || document.getElementById('nxB');
+    return !!((m && /(^|\s)good(\s|$)/.test(m.className)) || (nb && !nb.hidden && nb.offsetParent !== null));
+  }
+  function gear() {
+    var h = document.getElementById('hintB') || document.getElementById('hintBtn'); if (!h || h.dataset.gear) return;
+    if (document.getElementById('newBtn') || document.getElementById('mnB')) return;
+    var a = document.getElementById('ansB') || document.getElementById('ansBtn'), row = h.parentNode;
+    h.dataset.gear = '1';
+    var g = document.createElement('button'); g.className = 'btn alt gearB'; g.id = 'gearB'; g.type = 'button'; g.textContent = '⚙'; g.setAttribute('aria-label', 'Меню задачи'); g.title = 'Меню задачи';
+    var pop = document.createElement('div'); pop.className = 'gearPop'; pop.id = 'gearPop'; pop.hidden = true;
+    if (a) a.textContent = 'Показать правильный ход'; else h.textContent = 'Показать правильный ход';
+    pop.appendChild(h); if (a) pop.appendChild(a);
+    var f = document.createElement('button'); f.className = 'btn alt'; f.type = 'button'; f.textContent = 'Перевернуть доску';
+    f.onclick = function () { pop.hidden = true; if (window.__curFlip) window.__curFlip(); else { var b = document.getElementById('flipBtn') || document.getElementById('flB'); if (b) b.click(); } };
+    if (document.getElementById('flipBtn') || document.getElementById('flB') || window.__curFlip) pop.appendChild(f);
+    row.insertBefore(g, row.firstChild); row.parentNode.insertBefore(pop, row.nextSibling);
+    g.onclick = function (e) { e.stopPropagation(); pop.hidden = !pop.hidden; };
+    pop.onclick = function (e) { if (e.target.closest('button')) setTimeout(function () { pop.hidden = true; }, 50); };
+    document.addEventListener('click', function cl(e) { if (!document.body.contains(pop)) { document.removeEventListener('click', cl); return; } if (!pop.hidden && !e.target.closest('#gearPop')) pop.hidden = true; });
+  }
+  function gate() {
+    var row = document.getElementById('anlRow'); if (!row) return;
+    var hide = isTask() && !solved();
+    row.style.display = hide ? 'none' : '';
+  }
+  setInterval(function () { try { gear(); gate(); } catch (e) {} }, 300);
 })();
 
 
