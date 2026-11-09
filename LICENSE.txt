@@ -1,0 +1,11 @@
+© 2026 Ирана Топчиева, UpGrade Chess Club. Все права защищены.
+© 2026 Irana Topchieva, UpGrade Chess Club. All rights reserved.
+
+Сайт «Шахматная страна» (kids.upgradechessclub.com): тексты уроков, задачи, составленные позиции, названия приёмов, мультфильмы, оформление и программный код принадлежат автору. Их нельзя копировать, переделывать, выкладывать на других сайтах или использовать в платных курсах и книгах без письменного разрешения автора.
+Просмотр и использование сайта детьми, родителями и тренерами для обучения бесплатны.
+
+The texts of the lessons, puzzles, composed positions, cartoons, design and source code of this site are the property of the author. They may not be copied, modified, republished or used in commercial courses or books without the author's written permission. Using the site for learning is free.
+
+Сторонние компоненты сохраняют свои лицензии / Third-party components keep their own licences:
+- Chess piece images: Colin M. L. Burnett, CC BY-SA 3.0.
+- Stockfish chess engine (GPL-3.0), loaded from its own source.
