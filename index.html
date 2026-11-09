@@ -2075,8 +2075,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
   var CARTOONS = [
     { t: 'Знакомство: пешка', f: 'pawn2.mp4', d: 'Маленькая пешка идёт по залу, хитрит и становится королевой. Красивая сказка про пешку.' },
     { t: 'Как ходит пешка', f: 'pawn.mp4', d: 'Пешка ходит вперёд, бьёт по диагонали, никогда не идёт назад и превращается в ферзя, ладью, слона или коня.' }
+    ,
+    { t: 'Приключения ладьи', f: 'rook.mp4', d: 'Ладья бьёт злых пешек по прямой: вперёд, назад и вбок.' },
+    { t: 'Приключения слона', f: 'bishop.mp4', d: 'Слон бьёт злых пешек только по диагонали.' },
+    { t: 'Приключения коня', f: 'knight.mp4', d: 'Конь прыгает буквой «Г» и бьёт ту фигуру, на чьё место прыгнул.' },
+    { t: 'Приключения ферзя', f: 'queen.mp4', d: 'Ферзь побеждает злых пешек и по прямой, и по диагонали.' },
+    { t: 'Приключения короля', f: 'king.mp4', d: 'Король забирает тех, кто стоит рядом.' }
   ];
-  var SOON = ['Ладья', 'Слон', 'Конь', 'Ферзь', 'Король'];
+  var SOON = [];
   function vcard(c) { return '<div class="vcard"><h3>' + esc(c.t) + '</h3><video controls preload="metadata" playsinline aria-label="' + esc(c.t) + '"><source src="' + c.f + '#t=0.5" type="video/mp4"></video><p class="note">' + esc(c.d) + '</p></div>'; }
   function videoCard() {
     return '<section class="vidcard"><h2>Мультик: пешка</h2>' + vcard(CARTOONS[0]).replace('<h3>' + esc(CARTOONS[0].t) + '</h3>', '') + '<p style="text-align:center"><a class="btn alt" href="#cartoons">Все мультики →</a></p></section>';
