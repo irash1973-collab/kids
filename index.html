@@ -5437,7 +5437,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         if (v && v > 0) { S.sel = i; S.targets = movesFrom(S.pos, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
         draw();
       }
-      document.getElementById('hintB').onclick = function () { if (busy || done) return; var s = step === 1 ? sols[0] : m1(cur); if (!s) return; S.sel = null; S.hint = s.f; draw(); sm('Подсказка: ходить надо мигающей фигурой.'); };
+      document.getElementById('hintB').onclick = function () { if (busy || done) return; var s = step === 1 ? sols[0] : m1(cur); if (!s) return; mist = 3; busy = true; S.sel = null; S.hint = s.f; S.targets = [s.t]; sm('Смотри: ' + PNAME[Math.abs(cur.b[s.f])] + ' идёт на поле ' + SQN(s.t) + '.'); draw(); later(function () { busy = false; S.hint = null; S.targets = []; play(s); }, 1300); };
       document.getElementById('resB').onclick = function () { lessonPage(L.id, lv); };
       draw();
     }
@@ -5485,7 +5485,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         if (v && v > 0) { S.sel = i; S.targets = movesFrom(cur, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
         draw();
       }
-      document.getElementById('hintB').onclick = function () { sm('Подсказка: ' + c.tip); };
+      document.getElementById('hintB').onclick = function () { sm('Подсказка: ' + c.tip); }; document.getElementById('hintB').dataset.tip = '1';
       document.getElementById('resB').onclick = function () { lessonPage(L.id, lv); };
       sm('Твой ход. ' + c.tip); draw();
     }
@@ -6349,7 +6349,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (v && v * mine > 0) { S.sel = i; S.targets = movesFrom(cur, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
       draw();
     }
-    document.getElementById('hintB').onclick = function () { sm('Подсказка: ' + g.tip); };
+    document.getElementById('hintB').onclick = function () { sm('Подсказка: ' + g.tip); }; document.getElementById('hintB').dataset.tip = '1';
     document.getElementById('resB').onclick = function () { lessonPage(Lx.id, lv); };
     if (cur.turn !== mine) comp(); else sm('Твой ход. ' + g.tip);
     draw();
@@ -6631,7 +6631,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (v && v > 0) { S.sel = i; S.targets = movesFrom(cur, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
       draw();
     }
-    document.getElementById('hintB').onclick = function () { sm('Подсказка: ' + g.tip); };
+    document.getElementById('hintB').onclick = function () { sm('Подсказка: ' + g.tip); }; document.getElementById('hintB').dataset.tip = '1';
     document.getElementById('resB').onclick = function () { lessonPage(Lx.id, lv); };
     sm('Твой ход. ' + g.tip); draw();
   }
@@ -7994,7 +7994,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         if (v && (black ? v < 0 : v > 0)) { S.sel = i; S.targets = movesFrom(S.pos, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
         draw();
       }
-      document.getElementById('hintB').onclick = function () { if (busy || done) return; var w = toMove(cur, sol[step]); if (!w) return; S.sel = null; S.hint = w.f; draw(); sm('Подсказка: ходить надо мигающей фигурой.'); };
+      document.getElementById('hintB').onclick = function () { if (busy || done) return; var w = toMove(cur, sol[step]); if (!w) return; mist = Math.max(mist, 3); busy = true; S.sel = null; S.hint = w.f; S.targets = [w.t]; sm('Смотри: ' + PNAME[Math.abs(cur.b[w.f])] + ' идёт на поле ' + sqName(w.t) + '.'); draw(); later(function () { busy = false; S.hint = null; S.targets = []; play(w); }, 1300); };
       document.getElementById('resB').onclick = function () { lessonPage(L.id, lv); };
       draw(); sm('Твой ход.');
     }
@@ -8987,7 +8987,7 @@ L.slides=slides;
     h.dataset.gear = '1';
     var g = document.createElement('button'); g.className = 'btn alt gearB'; g.id = 'gearB'; g.type = 'button'; g.textContent = '⚙'; g.setAttribute('aria-label', 'Меню задачи'); g.title = 'Меню задачи';
     var pop = document.createElement('div'); pop.className = 'gearPop'; pop.id = 'gearPop'; pop.hidden = true;
-    if (a) a.textContent = 'Показать правильный ход'; else h.textContent = 'Показать правильный ход';
+    if (a) a.textContent = 'Показать правильный ход'; else if (!h.dataset.tip) h.textContent = 'Показать правильный ход';
     pop.appendChild(h); if (a) pop.appendChild(a);
     var f = document.createElement('button'); f.className = 'btn alt'; f.type = 'button'; f.textContent = 'Перевернуть доску';
     f.onclick = function () { pop.hidden = true; if (window.__curFlip) window.__curFlip(); else { var b = document.getElementById('flipBtn') || document.getElementById('flB'); if (b) b.click(); } };
