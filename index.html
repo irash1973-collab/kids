@@ -875,6 +875,15 @@ body.y2 #prof { display: none; }
 .vcard.soon { opacity: .75; } .vsoon { height: 150px; border-radius: 12px; background: repeating-linear-gradient(45deg, #fff3d6, #fff3d6 12px, #ffe7a8 12px, #ffe7a8 24px); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #8a5a00; }
 .vidcard .vcard { max-width: 460px; margin: 0 auto; border: 0; padding: 0; }
 .gearB{min-width:40px;padding:6px 10px;font-size:18px;line-height:1}.gearPop{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0;padding:10px;background:#fff;border:1px solid #c5d0e0;border-radius:10px;max-width:420px}.gearPop[hidden]{display:none}
+.toc-top{background:#fff;border:2px solid #e6d9b8;border-radius:14px;padding:10px 14px;margin:8px 0}
+.toc-top b{font-size:18px}
+.toc-top .bar{margin:6px 0}
+.toc-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.toc-tabs .btn{flex:1;min-width:120px;font-size:17px}
+.toc-top .bar{height:14px;background:#e9e4d4}
+.toc-top .bar i{background:#2fa84f}
+.lcard .bar{background:#e9e4d4}
+.lcard .bar i{background:#2fa84f}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -8608,6 +8617,48 @@ var add=[
 ];
 var i=L.slides.length-1; // перед «Дальше упражнения»
 Array.prototype.splice.apply(L.slides,[i,0].concat(add));
+})();
+
+// Содержание первого года: вкладки «Теория / Практика / Анимация», общий процент и полоски прогресса
+(function(){
+var oldLessons = lessons;
+lessons = function () {
+  var tab = lsGet('ukc_toc', 't'); if (tab !== 't' && tab !== 'p') tab = 't';
+  var tot = 0, dn = 0;
+  GROUPS.forEach(function (g) { g.ids.forEach(function (id) { var L = LESS[id], n = L.levels || 0; for (var i = 1; i <= n; i++) { tot++; if (lvDone(id, i)) dn++; } }); });
+  var pc = tot ? Math.round(dn * 100 / tot) : 0, st = lessonStats();
+  var h = '<h2>Содержание</h2><div class="toc-top"><b>Пройдено ' + pc + '%</b><div class="bar" aria-hidden="true"><i style="width:' + pc + '%"></i></div><small class="note">Упражнений: ' + dn + ' из ' + tot + ' · уроков полностью: ' + st.done + ' из ' + st.total + '</small></div>';
+  h += '<div class="toc-tabs" role="tablist">' + [['t', '📖 Теория'], ['p', '✏️ Практика']].map(function (x) { return '<button type="button" role="tab" class="btn' + (tab === x[0] ? '' : ' alt') + '" data-tab="' + x[0] + '" aria-selected="' + (tab === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  {
+    h += '<p class="note">' + (tab === 't' ? 'Здесь объяснения: картинки, примеры и ходы по шагам. Выбери тему.' : 'Здесь только упражнения. Выбери тему и решай по порядку.') + '</p>';
+    GROUPS.forEach(function (g) {
+      var ids = g.ids.filter(function (id) { return tab === 't' ? !!LESS[id].slides : !!LESS[id].levels; });
+      if (!ids.length) return;
+      h += '<section class="course"><h3>' + esc(g.n) + ' <small class="note">(' + lessonsOf(g.ids) + ' из ' + g.ids.length + ')</small></h3><div class="lgrid">';
+      ids.forEach(function (id) {
+        var L = LESS[id], n = L.levels || 0, d = 0, first = 0; for (var i = 1; i <= n; i++) { if (lvDone(id, i)) d++; else if (!first) first = i; }
+        var href = tab === 't' ? '#lesson/' + id : '#lesson/' + id + '/' + (first || 1);
+        h += '<a class="lcard' + (n && d === n ? ' done' : '') + '" href="' + href + '"><span class="big">' + esc(L.t) + '</span><p>' + esc(L.d) + '</p>' +
+          (n ? '<div class="bar" aria-hidden="true"><i style="width:' + (d * 100 / n) + '%"></i></div><small class="note">' + d + ' из ' + n + ' упражнений</small>' : '') + '</a>';
+      });
+      h += '</div></section>';
+    });
+  }
+  view.innerHTML = h;
+  Array.prototype.forEach.call(view.querySelectorAll('.toc-tabs button'), function (b) { b.onclick = function () { lsSet('ukc_toc', b.getAttribute('data-tab')); lessons(); }; });
+};
+})();
+
+// «Как начинать партию»: три стадии партии (коротко; подробнее во втором году)
+(function(){
+var L=LESS.opening; if(!L) return;
+var add=[
+{h:'Три стадии шахматной партии',p:['Шахматная партия делится на три части, как книга: начало, середина и конец. У каждой части есть своё название и своя главная задача.','<b>Дебют</b> (начало). <b>Миттельшпиль</b> (середина). <b>Эндшпиль</b> (конец). Названия пришли из других языков, но запомнить их легко. Сейчас посмотрим на каждую стадию по очереди.'],fen:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'},
+{h:'Дебют: начало партии',p:['<b>Дебют</b> значит «начало». Это первые 8–12 ходов каждой стороны. В дебюте нужно быстро вывести лёгкие фигуры, занять центр и сделать рокировку.','Посмотри на диаграмму: прошло пять ходов. Центр занят пешками, слоны и кони вышли, пора рокироваться. Это типичная позиция дебюта.'],fen:'r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQK2R w KQkq - 0 1'},
+{h:'Миттельшпиль: середина партии',p:['<b>Миттельшпиль</b> значит «середина игры». Это главное сражение. Все фигуры вышли, короли спрятаны, и начинаются атаки, размены и тактика: вилки, связки, мат королю.','Смотри на диаграмму: прошло двенадцать ходов. Фигур ещё много, ладьи стоят на открытых линиях, обе стороны ищут слабые места. Отличие от дебюта в том, что теперь не просто развивают фигуры, а ищут план и сражаются.'],fen:'r3r1k1/bppq1ppp/p1np1n2/4p3/4P3/1QPP1NN1/PP3PPP/R1B1R1K1 w - - 0 1'},
+{h:'Эндшпиль: конец партии',p:['<b>Эндшпиль</b> значит «конец игры». Фигур осталось мало: часто ладьи, пара пешек и короли. Партия обычно заканчивается именно здесь.','В эндшпиле король становится сильной фигурой: ему уже не грозит мат, и он идёт в бой. Главная цель — провести пешку в ферзи. Позиция на диаграмме типичная для эндшпиля. Подробнее про каждую стадию мы поговорим во втором году обучения.'],fen:'3r4/pp3pk1/6p1/8/8/6P1/PP3PK1/3R4 w - - 0 1'}
+];
+Array.prototype.splice.apply(L.slides,[1,0].concat(add));
 })();
 
 /* ===== защита от «невозможных» позиций во всех упражнениях (лишние слоны, два слона одного цвета и т.п.) ===== */
