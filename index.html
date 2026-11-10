@@ -10074,7 +10074,7 @@ L.slides=slides;
         '<div class="plr" id="plB"><div class="pn"><b id="plBn"></b> <span class="pr" id="plBr"></span></div><span class="clk" id="clkBt" hidden></span></div>' +
         '<p class="note" id="lockNote" hidden>Пока идёт партия, подсказки, движок, угрозы и стрелки выключены. Они включатся, когда партия закончится.</p>' +
       '</div></div>' +
-      '<div class="vsrow"><label>Играть: <select id="vsLv"><option value="0">вдвоём с другом</option><option value="1">с компьютером, уровень 1 (Малыш)</option><option value="2">уровень 2 (Новичок)</option><option value="3">уровень 3 (Ученик)</option><option value="4">уровень 4 (Любитель)</option><option value="5">уровень 5 (Разрядник)</option><option value="6">уровень 6 (Кандидат)</option><option value="7">уровень 7 (Мастер)</option><option value="8">уровень 8 (Гроссмейстер)</option></select></label> <label id="vsColL" hidden>Я играю: <select id="vsCol"><option value="1">белыми</option><option value="-1">чёрными</option></select></label> <label>Часы: <select id="clkSel"><option value="0">без часов</option><option value="1+0">1 мин (пуля)</option><option value="3+0">3 мин (блиц)</option><option value="3+2">3 мин + 2 сек</option><option value="5+0">5 мин (блиц)</option><option value="5+3">5 мин + 3 сек</option><option value="10+0">10 мин (рапид)</option><option value="10+5">10 мин + 5 сек</option><option value="15+10">15 мин + 10 сек</option><option value="30+0">30 мин (классика)</option></select></label></div>' +
+      '<div class="vsrow"><label>Играть: <select id="vsLv"><option value="0">вдвоём с другом</option><option value="1">с компьютером, уровень 1 (Малыш)</option><option value="2">уровень 2 (Новичок)</option><option value="3">уровень 3 (Ученик)</option><option value="4">уровень 4 (Любитель)</option><option value="5">уровень 5 (Разрядник)</option><option value="6">уровень 6 (Кандидат)</option><option value="7">уровень 7 (Мастер)</option><option value="8">уровень 8 (Гроссмейстер)</option><option value="9">уровень 9 (Stockfish на полную силу)</option></select></label> <label id="vsColL" hidden>Я играю: <select id="vsCol"><option value="1">белыми</option><option value="-1">чёрными</option></select></label> <label id="vsAnL">Анализ в игре: <select id="vsAn"><option value="0">без анализа</option><option value="1">с анализом (движок и подсказки)</option></select></label> <label>Часы: <select id="clkSel"><option value="0">без часов</option><option value="1+0">1 мин (пуля)</option><option value="3+0">3 мин (блиц)</option><option value="3+2">3 мин + 2 сек</option><option value="5+0">5 мин (блиц)</option><option value="5+3">5 мин + 3 сек</option><option value="10+0">10 мин (рапид)</option><option value="10+5">10 мин + 5 сек</option><option value="15+10">15 мин + 10 сек</option><option value="30+0">30 мин (классика)</option></select></label></div>' +
       '<div id="pgnbox" class="pgnbox" hidden><b>Анализ любой партии</b><p class="note">Вставьте записанную партию: «1. e4 e5 2. Nf3 Nc6 …». Можно по-русски: Кf3, Сc4, Фh5, Лe1, Кре2, 0-0.</p><textarea id="pgnTx" rows="5" spellcheck="false"></textarea><div class="row"><button class="btn" id="pgnGo">Загрузить и разобрать</button><button class="btn alt" id="pgnEx">Вставить пример</button><button class="btn alt" id="pgnX">Закрыть</button></div><p id="pgnErr" class="msg bad" hidden></p></div>' +
       '<div class="eng" id="eng" hidden><div class="engh"><b>Движок Stockfish</b><span id="engsc">…</span></div><div class="evb" id="evb"><i class="w" id="evw"></i></div><div class="evm" id="evm"><span id="evmk">▲</span></div><div id="engl" class="engl"></div></div>' +
       '<div class="row" id="ctl">' +
@@ -10083,13 +10083,14 @@ L.slides=slides;
       '<div id="rvbox" hidden></div>' +
       '<div><h3>Ходы</h3><p class="mvlist" id="mv">Партия ещё не началась.</p></div>';
     var analysis = false, drawOffer = false;
-    var VS_NAME = ['', 'Малыш', 'Новичок', 'Ученик', 'Любитель', 'Разрядник', 'Кандидат', 'Мастер', 'Гроссмейстер'], VS_RT = [0, 300, 500, 700, 900, 1200, 1500, 1800, 2200];
-    function locked() { return !over && !rv && mode !== 'setup' && !analysis && (vs() > 0 || recs.length > 0); }
+    var VS_NAME = ['', 'Малыш', 'Новичок', 'Ученик', 'Любитель', 'Разрядник', 'Кандидат', 'Мастер', 'Гроссмейстер', 'Stockfish'], VS_RT = [0, 300, 500, 700, 900, 1200, 1500, 1800, 2400, 3000];
+    function anOn() { var e = document.getElementById('vsAn'); return !!e && e.value === '1'; }
+    function locked() { return !over && !rv && mode !== 'setup' && !analysis && !anOn() && (vs() > 0 || recs.length > 0); }
     var msg = document.getElementById('msg');
     function setMsg(t, kind) { msg.className = 'msg' + (kind ? ' ' + kind : ''); msg.textContent = t; }
     /* ---------- игра с компьютером (уровни 1-8) ---------- */
     var gen = 0, engOn = false, engGen = 0, engFen = '', arrows = [], showArr = !!lsGet('ukc_barr', false), showThr = !!lsGet('ukc_bthr', false);
-    var VS_SKILL = [0, 0, 0, 0, 1, 5, 9, 13, 16], VS_MS = [0, 0, 0, 0, 300, 400, 500, 700, 1000], VS_OLD = [0, 3, 8, 13];
+    var VS_SKILL = [0, 0, 0, 0, 1, 5, 9, 13, 20, 20], VS_MS = [0, 0, 0, 0, 300, 400, 500, 700, 2000, 4000], VS_OLD = [0, 3, 8, 13];
     function vs() { return +document.getElementById('vsLv').value; }
     function myCol() { return +document.getElementById('vsCol').value; }
     function autoComp() {
@@ -10110,6 +10111,7 @@ L.slides=slides;
       if (lv) { SF.load(); S.flip = myCol() === -1; setMsg('Ты играешь ' + (myCol() === 1 ? 'белыми' : 'чёрными') + '. Ход ' + who() + '.'); }
       draw(); autoComp();
     };
+    document.getElementById('vsAn').onchange = function () { engGen++; engFen = ''; setMsg(anOn() ? 'Анализ включён: можно смотреть движок и подсказки прямо в игре.' : 'Анализ выключен: играем честно, без подсказок.'); draw(); };
     document.getElementById('vsCol').onchange = function () { gen++; busy = false; S.flip = myCol() === -1; draw(); autoComp(); };
 
     /* ---------- движок: оценка, варианты, стрелки ---------- */
@@ -10522,7 +10524,11 @@ L.slides=slides;
       if (b[60] === 6 && b[63] === 4) c |= 1; if (b[60] === 6 && b[56] === 4) c |= 2;
       if (b[4] === -6 && b[7] === -4) c |= 4; if (b[4] === -6 && b[0] === -4) c |= 8;
       mode = 'move'; document.getElementById('pal').hidden = true; document.getElementById('bSetup').textContent = 'Расставить фигуры';
-      if (!silent) { reset({ b: b, turn: S.pos.turn, castle: c, ep: -1, half: 0 }, S.pos.turn); if (!checkEnd()) turnMsg(); draw(); }
+      if (!silent) {
+        var tn = S.pos.turn; reset({ b: b, turn: tn, castle: c, ep: -1, half: 0 }, tn);
+        if (vs() === 0) { document.getElementById('vsCol').value = String(tn); document.getElementById('vsLv').value = '8'; document.getElementById('vsLv').onchange(); setMsg('Играем с Stockfish (уровень 8, Гроссмейстер). Ты ходишь ' + who() + '. Силу можно поменять внизу, в строке «Играть».'); return true; }
+        if (!checkEnd()) turnMsg(); draw(); autoComp();
+      }
       return true;
     }
     document.getElementById('bSetup').onclick = function () { if (mode === 'setup') leaveSetup(false); else enterSetup(); };
