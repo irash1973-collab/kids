@@ -5759,10 +5759,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
       return { p0: p0, c0: c0, balls: balls };
     }
     function runCoins(host, L, lv, finish) {
-      var code = L.pc, d = (lv - 1) % 3, ball = BALLS[(lv + PCS.indexOf(code) * 2) % BALLS.length], lim = LIM[code], g = mkGame(code, lv);
+      var code = L.pc, d = (lv - 1) % 3, ball = BALLS[(lv + PCS.indexOf(code) * 2) % BALLS.length], lim = 400, g = mkGame(code, lv);
       var S = { pos: null, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
       var me, cp, balls, sc, sk, mv, over, busy;
-      host.innerHTML = say(av('simba'), PRU[code] + ' · игра ' + lv, 'Кто соберёт больше мячиков? Ходи по очереди с компьютером. Фигуры друг друга не берут.', 'уровень: ' + DIFF[d]) +
+      host.innerHTML = say(av('simba'), PRU[code] + ' · игра ' + lv, 'Съешьте все мячики по очереди с компьютером. Кто съест больше, тот победит! Фигуры друг друга не берут.', 'уровень: ' + DIFF[d]) +
         '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
         '<div class="gscore" id="gsc"></div>' +
         '<div class="row"><button class="btn alt" id="resB">Заново</button></div>' + boardHTML();
@@ -5779,7 +5779,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 };
         S.mark = {}; for (var k in balls) S.mark[k] = 'e:' + ball;
         S.sel = me; S.targets = over || busy ? [] : reach(code, me, cp);
-        document.getElementById('gsc').innerHTML = '<span class="gs you">Ты: <b>' + sc + '</b></span><span class="gs cpu">Компьютер: <b>' + sk + '</b></span><span class="gs">Осталось: <b>' + left() + '</b></span><span class="gs">Ход ' + Math.min(mv + 1, lim) + ' из ' + lim + '</span>';
+        document.getElementById('gsc').innerHTML = '<span class="gs you">Ты: <b>' + sc + '</b></span><span class="gs cpu">Компьютер: <b>' + sk + '</b></span><span class="gs">Осталось: <b>' + left() + '</b></span>';
         drawBoard(S, click);
       }
       function endCheck() {
