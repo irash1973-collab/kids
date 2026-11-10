@@ -8473,6 +8473,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var timer = null, lastMsg = '';
     var obs = new MutationObserver(function (muts) {
       if (!voiceOnG() || isY2()) return;
+      if (/^#(games|coords)/.test(location.hash || '')) { try { window.speechSynthesis.cancel(); } catch (e) {} return; }
       clearTimeout(timer);
       timer = setTimeout(function () {
         var m = document.getElementById('msg') || document.getElementById('sm');
@@ -9386,22 +9387,21 @@ L.slides=slides;
   GK.add({
     id: 'safe', group: 'att', ic: '🛡️', t: 'Безопасный ход',
     d: 'Твоя белая фигура в опасности. Из всех полей только одно безопасное — найди его.',
-    rules: ['Твоя фигура подсвечена, она под ударом.', 'Синие кружки — поля, куда она может пойти.', 'Выбери то поле, где её не съедят. Оно только одно.'],
+    rules: ['Твоя фигура подсвечена, она под ударом.', 'Нажми на поле, куда она может пойти.', 'Выбери то поле, где её не съедят. Оно только одно.'],
     start: function (ctx) {
       var cur;
       function next() {
         cur = GK.gen.safe(ctx.level()); setBoard(ctx.S, cur.b); ctx.S.sel = cur.X;
-        cur.moves.forEach(function (m) { ctx.S.mark[m] = 'e:🔵'; });
         ctx.draw(); ctx.prompt('Спаси фигуру: нажми на <b>безопасное</b> поле!'); ctx.msg('Проверь каждое поле.');
       }
       ctx.click = function (i) {
-        if (cur.moves.indexOf(i) < 0) return;
+        if (cur.moves.indexOf(i) < 0) { if (!cur.b[i]) ctx.msg('Туда фигура не ходит.'); return; }
         if (i === cur.safe) {
           var b = new Int8Array(cur.b); b[i] = b[cur.X]; b[cur.X] = 0; ctx.S.pos.b = b; ctx.S.sel = null; ctx.S.last = { f: cur.X, t: i }; ctx.S.mark = {};
           ctx.ok('Безопасно! Фигура спасена.'); ctx.draw(); ctx.later(next, 800);
         } else {
           ctx.S.mark[i] = 'e:❌'; ctx.bad('Здесь её съедят.'); ctx.draw();
-          ctx.later(function () { ctx.S.mark[i] = 'e:🔵'; ctx.draw(); }, 700);
+          ctx.later(function () { delete ctx.S.mark[i]; ctx.draw(); }, 700);
         }
       };
       next();
@@ -9439,7 +9439,7 @@ L.slides=slides;
             return;
           }
         }
-        if (v > 0) { sel = i; S.sel = i; S.targets = legal.filter(function (m) { return m.f === i; }).map(function (m) { return m.t; }); S.mark = {}; S.targets.forEach(function (t) { S.mark[t] = 'e:🔵'; }); ctx.draw(); }
+        if (v > 0) { sel = i; S.sel = i; S.targets = []; S.mark = {}; ctx.draw(); }
         else { sel = -1; S.sel = null; S.targets = []; S.mark = {}; ctx.draw(); }
       };
       next();
@@ -9556,7 +9556,7 @@ L.slides=slides;
             return;
           }
         }
-        if (b[i] === 1 && PR.pawnMoves(b, i).length) { sel = i; S.sel = i; S.targets = PR.pawnMoves(b, i); S.mark = {}; S.targets.forEach(function (t) { S.mark[t] = 'e:🔵'; }); ctx.draw(); }
+        if (b[i] === 1 && PR.pawnMoves(b, i).length) { sel = i; S.sel = i; S.targets = []; S.mark = {}; ctx.draw(); }
         else { sel = -1; S.sel = null; S.targets = []; S.mark = {}; ctx.draw(); }
       };
       newRound();
@@ -9831,7 +9831,7 @@ L.slides=slides;
             say2('Это не мат. Осталась ещё одна попытка.', 'bad'); sfx('bad'); draw(); return;
           }
         }
-        if (pos.b[i] > 0) { sel = i; S.sel = i; S.targets = legal.filter(function (m) { return m.f === i; }).map(function (m) { return m.t; }); S.mark = {}; S.targets.forEach(function (t) { S.mark[t] = 'e:🔵'; }); } else { sel = -1; S.sel = null; S.targets = []; S.mark = {}; }
+        if (pos.b[i] > 0) { sel = i; S.sel = i; S.targets = []; S.mark = {}; } else { sel = -1; S.sel = null; S.targets = []; S.mark = {}; }
         draw();
       }
     }
