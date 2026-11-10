@@ -937,6 +937,11 @@ body.y2 #prof { display: none; }
 .gk-step:nth-child(8){min-height:74px}.gk-step.done{background:#b9e3b0}.gk-step.on{background:#ffd54f}.gk-step b{display:block;font-size:11px;color:#555}
 .gk-lad-h{display:flex;justify-content:space-between;font-size:18px;margin:6px 0}
 .gk-cal{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}.gk-cal span{display:flex;flex-direction:column;align-items:center;font-size:18px;background:#fff;border-radius:8px;padding:2px 6px;min-width:34px}.gk-cal small{font-size:10px;color:#777}
+
+.bside{flex:0 1 380px!important}.bside .eng{margin:0!important;padding:10px 12px!important}.bside .eng .engln{font-size:13px;padding:4px 8px;flex-wrap:wrap}.bside .eng .engln span{min-width:0;overflow-wrap:anywhere}.bside .eng .evb{height:16px}
+.bside .engh{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline}.bside .engh span{font-size:14px;white-space:nowrap}
+
+.setx{flex:1 1 100%;display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:14px}.setx .sxc{display:flex;flex-direction:column;gap:4px;background:#fff;border:2px solid #ffd36b;border-radius:14px;padding:8px 12px}.setx .sxc label{display:flex;gap:6px;align-items:center}.setx input[type=text]{min-width:220px;padding:6px;border:2px solid #ccc;border-radius:8px;font-family:monospace;font-size:12px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -1601,7 +1606,7 @@ var Eng = (function () {
       rows.push(s);
     }
     var c = (pos.castle & 1 ? 'K' : '') + (pos.castle & 2 ? 'Q' : '') + (pos.castle & 4 ? 'k' : '') + (pos.castle & 8 ? 'q' : '');
-    return rows.join('/') + ' ' + (pos.turn === 1 ? 'w' : 'b') + ' ' + (c || '-') + ' - 0 1';
+    return rows.join('/') + ' ' + (pos.turn === 1 ? 'w' : 'b') + ' ' + (c || '-') + ' ' + (pos.ep >= 0 ? 'abcdefgh'[pos.ep & 7] + (8 - (pos.ep >> 3)) : '-') + ' 0 1';
   }
 
   function perft(pos, d) {
@@ -5617,7 +5622,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       { h: 'Бланк шахматной партии', p: ['На турнирах партию записывают на <b>бланке</b>. Вверху пишут турнир, дату, имена и фамилии игроков. Ниже таблица, где идут ходы. После партии пишут результат (1–0, 0–1 или ½–½), и оба игрока ставят подписи.'], v: BLANK },
       { h: 'Как правильно записывать', p: ['<b>1.</b> Записывай ход сразу после того, как сделал его. <b>2.</b> Пиши аккуратно и разборчиво, как в тетради. <b>3.</b> Ходы белых и чёрных пиши в свои столбики. <b>4.</b> Не торопись и проверяй номер хода. <b>5.</b> Запись партии — это твоя память: потом по ней можно найти ошибки вместе с тренером.'] },
       { h: 'Играем по записи', p: ['Теперь попробуй сыграть партию по записи. Нажми «Показать»: ходы идут по порядку, и под каждым написано, что произошло.'], demo: { steps: ['e2e4|1. e2–e4', 'e7e5|1... e7–e5', 'g1f3|2. Кg1–f3', 'b8c6|2... Кb8–c6', 'f1b5|3. Сf1–b5: слон давит на коня c6.', 'a7a6|3... a7–a6', 'b5a4|4. Сb5–a4: слон отступает.', 'g8f6|4... Кg8–f6'] } },
-      { h: 'Записываем позицию', p: ['Позицию тоже можно записать списком: перечислить, где стоит каждая фигура. Например: белые — <b>Крe1, Фd1, Лa1, Лh1, пешки e4, f2, g2</b>; чёрные — <b>Крe8, Фd8, Лa8, Лh8, пешки e5, f7, g7</b>.', 'Попробуй прочитать такую запись и расставить фигуры на доске. Так шахматисты передают позиции в книгах и задачах.'], fen: 'r2qk2r/5pp1/8/4p3/4P3/8/5PP1/R2QK2R w KQkq - 0 1' },
+      { h: 'Записываем позицию', p: ['Позицию тоже можно записать списком: перечислить, где стоит каждая фигура. Например: белые — <b>Крe1, Фd1, Лa1, Лh1, пешки e4, f2, g2, h2</b>; чёрные — <b>Крe8, Фd8, Лa8, Лh8, пешки e5, f7, g7, h7</b>.', 'Попробуй прочитать такую запись и расставить фигуры на доске. Так шахматисты передают позиции в книгах и задачах.'], fen: 'r2qk2r/5ppp/8/4p3/4P3/8/5PPP/R2QK2R w KQkq - 0 1' },
       { h: 'Дальше упражнения', p: ['<b>30 упражнений</b> всех видов: выбери правильную запись хода; сделай на доске записанный ход; найди клетку, куда пошла фигура; выбери нужный знак (×, +, #, O-O, =); сыграй несколько ходов подряд по записи.'] }
     ];
     LESS.notation = { id: 'notation', t: 'Шахматная нотация', d: 'Буквы фигур, откуда и куда, взятие, шах, мат, рокировка, знаки оценки, запись партии и бланк.', levels: 30, run: runNote2, slides: NOTE_SL };
@@ -5901,9 +5906,22 @@ if (typeof module !== 'undefined') module.exports = Eng;
         if (!left()) { draw(); return later(win, 400); }
         busy = true; draw(); setMsg('Ход пешек…');
         later(function () {
-          if (lv <= 6 && mv % 2 === 1) { busy = false; setMsg('Пешки стоят. Твой ход.'); draw(); return; }
-          var mp = Object.keys(pw).map(Number).sort(function (a, b) { return (b >> 3) - (a >> 3); }), moved = false;
-          for (var j = 0; j < mp.length && !moved; j++) { var s = mp[j], t = s + 8; if (t < 64 && !pw[t] && t !== me) { delete pw[s]; pw[t] = 1; moved = true; if ((t >> 3) === 7) { busy = false; return lose(); } } }
+          var moved = false, cand = [], q, en0 = {}, att0, rnd = Math.random;
+          for (q in pw) en0[q] = 1;
+          att0 = lone(code, me, { walls: {}, enemies: en0 });
+          Object.keys(pw).map(Number).forEach(function (s0) {
+            var t = s0 + 8; if (t >= 64 || pw[t] || t === me) return;
+            var en = {}; for (var z in pw) if (+z !== s0) en[z] = 1; en[t] = 1;
+            var safe = lone(code, me, { walls: {}, enemies: en }).indexOf(t) < 0, row = t >> 3, sc2;
+            if (row === 7) sc2 = 100;
+            else {
+              sc2 = (safe ? 10 : -10) + row * 1.2 + (att0.indexOf(s0) >= 0 ? (safe ? 6 : 0) : 0) + rnd() * (lv <= 4 ? 7 : 2);
+              /* пешка, уже стоящая под боем и не имеющая безопасного хода, не нужна впереди: пусть защищают соседей */
+            }
+            cand.push({ s: s0, t: t, sc: sc2 });
+          });
+          cand.sort(function (x, y) { return y.sc - x.sc; });
+          if (cand.length) { var c0 = cand[0]; delete pw[c0.s]; pw[c0.t] = 1; moved = true; if ((c0.t >> 3) === 7) { busy = false; return lose(); } }
           busy = false; setMsg('Твой ход.'); draw();
         }, 500);
       }
@@ -8711,7 +8729,7 @@ var add=[
 {h:'Три стадии шахматной партии',p:['Шахматная партия делится на три части, как книга: начало, середина и конец. У каждой части есть своё название и своя главная задача.','<b>Дебют</b> (начало). <b>Миттельшпиль</b> (середина). <b>Эндшпиль</b> (конец). Названия пришли из других языков, но запомнить их легко. Сейчас посмотрим на каждую стадию по очереди.'],fen:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'},
 {h:'Дебют: начало партии',p:['<b>Дебют</b> значит «начало». Это первые 8–12 ходов каждой стороны. В дебюте нужно быстро вывести лёгкие фигуры, занять центр и сделать рокировку.','Посмотри на диаграмму: прошло пять ходов. Центр занят пешками, слоны и кони вышли, пора рокироваться. Это типичная позиция дебюта.'],fen:'r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQK2R w KQkq - 0 1'},
 {h:'Миттельшпиль: середина партии',p:['<b>Миттельшпиль</b> значит «середина игры». Это главное сражение. Все фигуры вышли, короли спрятаны, и начинаются атаки, размены и тактика: вилки, связки, мат королю.','Смотри на диаграмму: прошло двенадцать ходов. Фигур ещё много, ладьи стоят на открытых линиях, обе стороны ищут слабые места. Отличие от дебюта в том, что теперь не просто развивают фигуры, а ищут план и сражаются.'],fen:'r3r1k1/bppq1ppp/p1np1n2/4p3/4P3/1QPP1NN1/PP3PPP/R1B1R1K1 w - - 0 1'},
-{h:'Эндшпиль: конец партии',p:['<b>Эндшпиль</b> значит «конец игры». Фигур осталось мало: часто ладьи, пара пешек и короли. Партия обычно заканчивается именно здесь.','В эндшпиле король становится сильной фигурой: ему уже не грозит мат, и он идёт в бой. Главная цель — провести пешку в ферзи. Позиция на диаграмме типичная для эндшпиля. Подробнее про каждую стадию мы поговорим во втором году обучения.'],fen:'3r4/pp3pk1/6p1/8/8/6P1/PP3PK1/3R4 w - - 0 1'}
+{h:'Эндшпиль: конец партии',p:['<b>Эндшпиль</b> значит «конец игры». Фигур осталось мало: часто ладьи, пара пешек и короли. Партия обычно заканчивается именно здесь.','В эндшпиле король становится сильной фигурой: ему уже не грозит мат, и он идёт в бой. Главная цель — провести пешку в ферзи. Позиция на диаграмме типичная для эндшпиля. Подробнее про каждую стадию мы поговорим во втором году обучения.'],fen:'2r5/pp3pk1/6p1/8/8/6P1/PP3PK1/3R4 w - - 0 1'}
 ];
 Array.prototype.splice.apply(L.slides,[1,0].concat(add));
 })();
@@ -10073,13 +10091,13 @@ L.slides=slides;
         '<div class="gact" id="gact"><button class="btn alt" id="gRes" title="Сдаться"><i>✕</i><span>Сдаться</span></button><button class="btn alt" id="gDraw" title="Предложить ничью"><i>½</i><span>Ничья</span></button><button class="btn alt" id="gFlag" title="Флажок: время соперника вышло"><i>🏳</i><span>Флажок</span></button></div>' +
         '<div class="plr" id="plB"><div class="pn"><b id="plBn"></b> <span class="pr" id="plBr"></span></div><span class="clk" id="clkBt" hidden></span></div>' +
         '<p class="note" id="lockNote" hidden>Пока идёт партия, подсказки, движок, угрозы и стрелки выключены. Они включатся, когда партия закончится.</p>' +
+        '<div class="eng" id="eng" hidden><div class="engh"><b>Движок Stockfish</b><span id="engsc">…</span></div><div class="evb" id="evb"><i class="w" id="evw"></i></div><div class="evm" id="evm"><span id="evmk">▲</span></div><div id="engl" class="engl"></div></div>' +
       '</div></div>' +
       '<div class="vsrow"><label>Играть: <select id="vsLv"><option value="0">вдвоём с другом</option><option value="1">с компьютером, уровень 1 (Малыш)</option><option value="2">уровень 2 (Новичок)</option><option value="3">уровень 3 (Ученик)</option><option value="4">уровень 4 (Любитель)</option><option value="5">уровень 5 (Разрядник)</option><option value="6">уровень 6 (Кандидат)</option><option value="7">уровень 7 (Мастер)</option><option value="8">уровень 8 (Гроссмейстер)</option><option value="9">уровень 9 (Stockfish на полную силу)</option></select></label> <label id="vsColL" hidden>Я играю: <select id="vsCol"><option value="1">белыми</option><option value="-1">чёрными</option></select></label> <label id="vsAnL">Анализ в игре: <select id="vsAn"><option value="0">без анализа</option><option value="1">с анализом (движок и подсказки)</option></select></label> <label>Часы: <select id="clkSel"><option value="0">без часов</option><option value="1+0">1 мин (пуля)</option><option value="3+0">3 мин (блиц)</option><option value="3+2">3 мин + 2 сек</option><option value="5+0">5 мин (блиц)</option><option value="5+3">5 мин + 3 сек</option><option value="10+0">10 мин (рапид)</option><option value="10+5">10 мин + 5 сек</option><option value="15+10">15 мин + 10 сек</option><option value="30+0">30 мин (классика)</option></select></label></div>' +
       '<div id="pgnbox" class="pgnbox" hidden><b>Анализ любой партии</b><p class="note">Вставьте записанную партию: «1. e4 e5 2. Nf3 Nc6 …». Можно по-русски: Кf3, Сc4, Фh5, Лe1, Кре2, 0-0.</p><textarea id="pgnTx" rows="5" spellcheck="false"></textarea><div class="row"><button class="btn" id="pgnGo">Загрузить и разобрать</button><button class="btn alt" id="pgnEx">Вставить пример</button><button class="btn alt" id="pgnX">Закрыть</button></div><p id="pgnErr" class="msg bad" hidden></p></div>' +
-      '<div class="eng" id="eng" hidden><div class="engh"><b>Движок Stockfish</b><span id="engsc">…</span></div><div class="evb" id="evb"><i class="w" id="evw"></i></div><div class="evm" id="evm"><span id="evmk">▲</span></div><div id="engl" class="engl"></div></div>' +
       '<div class="row" id="ctl">' +
       '<button class="btn alt" id="bNew">Новая партия</button><button class="btn alt" id="bUndo">Назад</button><button class="btn alt" id="bRedo">Вперёд</button>' +
-      '<button class="btn alt" id="bFlip">Перевернуть</button><button class="btn alt" id="bHint">Лучший ход</button><button class="btn alt" id="bSetup">Расставить фигуры</button><button class="btn alt" id="bEng" aria-pressed="false">Движок</button><button class="btn alt" id="bArr" aria-pressed="false" title="Стрелки лучших ходов движка">➚ Стрелки</button><button class="btn alt" id="bThr" aria-pressed="false" title="Показать фигуры под ударом">⚠ Угрозы</button><button class="btn alt" id="bPgn">Анализ любой партии</button><button class="btn" id="bAn">Разобрать эту партию</button></div>' +
+      '<button class="btn alt" id="bFlip">Перевернуть</button><button class="btn alt" id="bHint">Лучший ход</button><button class="btn alt" id="bSetup" title="Клавиша S">Расставить фигуры (S)</button><button class="btn alt" id="bEng" aria-pressed="false">Движок</button><button class="btn alt" id="bArr" aria-pressed="false" title="Стрелки лучших ходов движка">➚ Стрелки</button><button class="btn alt" id="bThr" aria-pressed="false" title="Показать фигуры под ударом">⚠ Угрозы</button><button class="btn" id="bLab" title="Как на профессиональных платформах: движок всегда включён, ходить можно за обе стороны">🔬 Анализ-доска</button><button class="btn alt" id="bPgn">Анализ любой партии</button><button class="btn" id="bAn">Разобрать эту партию</button></div>' +
       '<div id="rvbox" hidden></div>' +
       '<div><h3>Ходы</h3><p class="mvlist" id="mv">Партия ещё не началась.</p></div>';
     var analysis = false, drawOffer = false;
@@ -10129,7 +10147,7 @@ L.slides=slides;
     function drawArrows() {
       var b = document.getElementById('board'); if (!b) return;
       var old = b.querySelector('.arrows'); if (old) old.remove();
-      if (engOn && showArr && arrows.length && mode !== 'setup') b.insertAdjacentHTML('beforeend', arrowSvg());
+      if (engOn && showArr && arrows.length && (mode !== 'setup' || true)) b.insertAdjacentHTML('beforeend', arrowSvg());
     }
     function fmtScore(l, turn) {
       if (l.mate != null) { var m = l.mate * turn; return (m > 0 ? 'Мат белым в ' : 'Мат чёрным в ') + Math.abs(l.mate); }
@@ -10150,13 +10168,17 @@ L.slides=slides;
       box.hidden = !engOn;
       document.getElementById('bEng').setAttribute('aria-pressed', String(engOn));
       if (!engOn) { engFen = ''; return; }
-      if (mode === 'setup') return;
+      if (mode === 'setup') {
+        var bb = S.pos.b, wk = 0, bk = 0, pb = false, q;
+        for (q = 0; q < 64; q++) { if (bb[q] === 6) wk++; if (bb[q] === -6) bk++; if (Math.abs(bb[q]) === 1 && (q < 8 || q >= 56)) pb = true; }
+        if (wk !== 1 || bk !== 1 || pb || E.inCheck({ b: bb, turn: -S.pos.turn, castle: 0, ep: -1, half: 0 })) { engFen = ''; arrows = []; document.getElementById('engsc').textContent = 'расставьте обоих королей'; document.getElementById('engl').innerHTML = ''; return; }
+      }
       var fen = E.toFEN(S.pos); if (fen === engFen) return; engFen = fen;
       var my = ++engGen, pos = S.pos, st = E.status(pos);
       if (st === 'mate' || st === 'stalemate') { arrows = []; document.getElementById('engsc').textContent = st === 'mate' ? 'Мат' : 'Пат'; document.getElementById('engl').innerHTML = ''; setBar(st === 'mate' ? (pos.turn === 1 ? -3000 : 3000) : 0); drawArrows(); return; }
       document.getElementById('engsc').textContent = 'думаю…';
       SF.stop();
-      SF.eval(fen, 14, 3).then(function (r) {
+      SF.eval(fen, 14, 5).then(function (r) {
         if (my !== engGen) return;
         if (!r || !r.lines.length) { document.getElementById('engsc').textContent = SF.failed() ? 'нет связи с движком' : 'нет данных'; return; }
         var l0 = r.lines[0];
@@ -10164,7 +10186,7 @@ L.slides=slides;
         var wcp = l0.mate != null ? (l0.mate * pos.turn > 0 ? 1000 : -1000) : Math.max(-1000, Math.min(1000, l0.cp * pos.turn));
         setBar(l0.mate != null ? (l0.mate * pos.turn > 0 ? 3000 : -3000) : l0.cp * pos.turn); evHist[recs.length] = wcp; evHist.length = recs.length + 1; drawGraph();
         var h = '';
-        r.lines.forEach(function (l, k) { h += '<div class="engln e' + k + '"><b>' + fmtScore(l, pos.turn) + '</b> <span>' + esc(pvText(pos, l.pv || [l.move])) + '</span></div>'; });
+        r.lines.forEach(function (l, k) { h += '<div class="engln e' + k + '" data-u="' + esc(l.move) + '" title="Нажми — сыграть этот ход"><b>' + fmtScore(l, pos.turn) + '</b> <span>' + esc(pvText(pos, l.pv || [l.move])) + '</span></div>'; });
         document.getElementById('engl').innerHTML = h;
         arrows = r.lines.slice(0, 3).map(function (l) { var m = uciMove(pos, l.move); return m ? { f: m.f, t: m.t } : null; }).filter(Boolean);
         drawArrows();
@@ -10482,15 +10504,44 @@ L.slides=slides;
       var el = document.getElementById('pal'), h = '';
       [1, 2, 3, 4, 5, 6].forEach(function (t) { h += '<button data-b="' + t + '" aria-label="белый ' + PNAME[t] + '">' + pcHTML(t) + '</button>'; });
       [1, 2, 3, 4, 5, 6].forEach(function (t) { h += '<button data-b="' + (-t) + '" aria-label="чёрный ' + PNAME[t] + '">' + pcHTML(-t) + '</button>'; });
-      h += '<button data-b="0" class="erase">Убрать</button><button data-t="1" class="side">Ход белых</button><button data-t="-1" class="side">Ход чёрных</button><button id="clr" class="erase">Очистить доску</button>';
-      el.innerHTML = h;
+      h += '<button data-b="0" class="erase">Убрать</button><button data-t="1" class="side">Ход белых</button><button data-t="-1" class="side">Ход чёрных</button><button id="clr" class="erase">Очистить доску</button><button id="sxStart" class="erase">Начальная позиция</button><button id="sxSwap" class="erase">Белые↔Чёрные</button>';
+      h += '<div class="setx"><div class="sxc"><b>Рокировка</b><label><input type="checkbox" data-cb="1"> Белые 0-0</label><label><input type="checkbox" data-cb="2"> Белые 0-0-0</label><label><input type="checkbox" data-cb="4"> Чёрные 0-0</label><label><input type="checkbox" data-cb="8"> Чёрные 0-0-0</label></div><div class="sxc"><b>Взятие на проходе</b><select id="sxEp"></select></div><div class="sxc"><b>FEN</b><input id="sxFen" type="text" spellcheck="false" placeholder="вставьте FEN сюда"><button id="sxCopy" class="erase">Копировать FEN</button><button id="sxPaste" class="erase">Загрузить FEN</button></div></div>';
+      el.innerHTML = h; setTimeout(setxSync, 0);
       el.onclick = function (e) {
         var b = e.target.closest('button'); if (!b) return;
-        if (b.id === 'clr') { S.pos = { b: new Int8Array(64), turn: S.pos.turn, castle: 0, ep: -1, half: 0 }; draw(); return; }
-        if (b.dataset.t) { S.pos = { b: S.pos.b, turn: +b.dataset.t, castle: 0, ep: -1, half: 0 }; mark(); setMsg('Расстановка: ходят ' + who() + '.'); return; }
+        if (b.id === 'sxStart') { S.pos = E.start(); draw(); setxSync(); return; }
+        if (b.id === 'sxSwap') { var nb = new Int8Array(64), q; for (q = 0; q < 64; q++) nb[(7 - (q >> 3)) * 8 + (q & 7)] = -S.pos.b[q]; var c0 = S.pos.castle; S.pos = { b: nb, turn: -S.pos.turn, castle: ((c0 & 3) << 2) | ((c0 >> 2) & 3), ep: -1, half: 0 }; draw(); setxSync(); mark(); return; }
+        if (b.id === 'sxCopy') { var f = E.toFEN(S.pos), fi = document.getElementById('sxFen'); fi.value = f; fi.select(); try { navigator.clipboard.writeText(f).then(function () { setMsg('FEN скопирован.'); }, function () { setMsg('FEN в строке выше, скопируйте его.'); }); } catch (x) { setMsg('FEN в строке выше, скопируйте его.'); } return; }
+        if (b.id === 'sxPaste') { var tx = document.getElementById('sxFen').value.trim(); try { var np = E.fromFEN(tx); if (!/^[^ ]+\/[^ ]+\/[^ ]+\/[^ ]+\/[^ ]+\/[^ ]+\/[^ ]+\/[^ ]+/.test(tx)) throw 0; S.pos = np; draw(); setxSync(); mark(); setMsg('Позиция загружена.'); } catch (x) { setMsg('Не получилось прочитать FEN.', 'bad'); } return; }
+        if (b.id === 'clr') { S.pos = { b: new Int8Array(64), turn: S.pos.turn, castle: 0, ep: -1, half: 0 }; draw(); setxSync(); return; }
+        if (b.dataset.t) { S.pos = { b: S.pos.b, turn: +b.dataset.t, castle: S.pos.castle, ep: -1, half: 0 }; setxSync(); mark(); engFen = ''; engUpdate(); setMsg('Расстановка: ходят ' + who() + '.'); return; }
         brush = +b.dataset.b; mark();
       };
+      el.onchange = function (e) {
+        var t = e.target;
+        if (t.dataset && t.dataset.cb) { var v = +t.dataset.cb; S.pos = { b: S.pos.b, turn: S.pos.turn, castle: t.checked ? (S.pos.castle | v) : (S.pos.castle & ~v), ep: S.pos.ep, half: 0 }; }
+        if (t.id === 'sxEp') { S.pos = { b: S.pos.b, turn: S.pos.turn, castle: S.pos.castle, ep: +t.value, half: 0 }; }
+        engFen = ''; engUpdate();
+      };
       mark();
+    }
+    function castleOk(b) { return (b[60] === 6 && b[63] === 4 ? 1 : 0) | (b[60] === 6 && b[56] === 4 ? 2 : 0) | (b[4] === -6 && b[7] === -4 ? 4 : 0) | (b[4] === -6 && b[0] === -4 ? 8 : 0); }
+    function epList(pos) {
+      var r = [], b = pos.b, x;
+      for (x = 0; x < 8; x++) {
+        if (pos.turn === 1 && b[24 + x] === -1 && !b[16 + x] && !b[8 + x] && ((x > 0 && b[24 + x - 1] === 1) || (x < 7 && b[24 + x + 1] === 1))) r.push(16 + x);
+        if (pos.turn === -1 && b[32 + x] === 1 && !b[40 + x] && !b[48 + x] && ((x > 0 && b[32 + x - 1] === -1) || (x < 7 && b[32 + x + 1] === -1))) r.push(40 + x);
+      }
+      return r;
+    }
+    function setxSync() {
+      var ok = castleOk(S.pos.b), pos = S.pos, el = document.getElementById('pal'); if (!el) return;
+      pos.castle &= ok || 0; if (pos.castle === undefined) pos.castle = 0;
+      el.querySelectorAll('input[data-cb]').forEach(function (c) { var v = +c.dataset.cb; c.disabled = !(ok & v); c.checked = !!(pos.castle & v); });
+      var sel = document.getElementById('sxEp'); if (!sel) return;
+      var l = epList(pos), h = '<option value="-1">нет</option>';
+      l.forEach(function (q) { h += '<option value="' + q + '">' + 'abcdefgh'[q & 7] + (8 - (q >> 3)) + '</option>'; });
+      sel.innerHTML = h; if (l.indexOf(pos.ep) < 0) pos.ep = -1; sel.value = String(pos.ep);
     }
     function mark() {
       document.querySelectorAll('#pal button[data-b]').forEach(function (b) { b.setAttribute('aria-pressed', String(brush !== null && +b.dataset.b === brush)); });
@@ -10499,14 +10550,14 @@ L.slides=slides;
     function setupClick(i) {
       if (brush === null) { setMsg('Выбери фигуру внизу, потом нажимай на клетки.'); return; }
       var b = S.pos.b.slice(); b[i] = brush;
-      S.pos = { b: b, turn: S.pos.turn, castle: 0, ep: -1, half: 0 }; draw();
+      S.pos = { b: b, turn: S.pos.turn, castle: S.pos.castle, ep: -1, half: 0 }; draw(); setxSync();
     }
     function enterSetup() {
       if (rv) return;
       mode = 'setup'; brush = null; S.sel = null; S.targets = []; S.hint = null; S.last = null;
-      document.getElementById('pal').hidden = false; palette();
+      document.getElementById('pal').hidden = false; palette(); setxSync();
       document.getElementById('bSetup').textContent = 'Готово, играть';
-      setMsg('Расстановка: выбери фигуру и нажимай на клетки. Внизу можно выбрать, кто ходит.'); draw();
+      setMsg('Расстановка: выбери фигуру и нажимай на клетки. Внизу можно выбрать, кто ходит. Когда всё готово, нажми «Готово, играть». Кнопка «Движок» показывает лучшие ходы и во время расстановки.'); draw();
     }
     function leaveSetup(silent) {
       var b = S.pos.b, wk = 0, bk = 0, bad = false, i;
@@ -10520,17 +10571,31 @@ L.slides=slides;
         var other = { b: b, turn: -S.pos.turn, castle: 0, ep: -1, half: 0 };
         if (E.inCheck(other)) { setMsg('Так нельзя: король стороны, которая не ходит, под шахом.', 'bad'); return false; }
       }
-      var c = 0;
-      if (b[60] === 6 && b[63] === 4) c |= 1; if (b[60] === 6 && b[56] === 4) c |= 2;
-      if (b[4] === -6 && b[7] === -4) c |= 4; if (b[4] === -6 && b[0] === -4) c |= 8;
-      mode = 'move'; document.getElementById('pal').hidden = true; document.getElementById('bSetup').textContent = 'Расставить фигуры';
+      var c = S.pos.castle & castleOk(b), epq = epList(S.pos).indexOf(S.pos.ep) >= 0 ? S.pos.ep : -1;
+      mode = 'move'; document.getElementById('pal').hidden = true; document.getElementById('bSetup').textContent = 'Расставить фигуры (S)';
       if (!silent) {
-        var tn = S.pos.turn; reset({ b: b, turn: tn, castle: c, ep: -1, half: 0 }, tn);
+        var tn = S.pos.turn; reset({ b: b, turn: tn, castle: c, ep: epq, half: 0 }, tn);
         if (vs() === 0) { document.getElementById('vsCol').value = String(tn); document.getElementById('vsLv').value = '8'; document.getElementById('vsLv').onchange(); setMsg('Играем с Stockfish (уровень 8, Гроссмейстер). Ты ходишь ' + who() + '. Силу можно поменять внизу, в строке «Играть».'); return true; }
         if (!checkEnd()) turnMsg(); draw(); autoComp();
       }
       return true;
     }
+    document.getElementById('bLab').onclick = function () {
+      if (rv) return; if (mode === 'setup') leaveSetup(true);
+      document.getElementById('vsLv').value = '0'; document.getElementById('vsColL').hidden = true; document.getElementById('vsAn').value = '1'; gen++; busy = false;
+      analysis = true; engOn = true; engFen = ''; showArr = true; lsSet('ukc_barr', true); tgl('bArr', true); SF.load();
+      setMsg('Анализ-доска: ходи за обе стороны, движок показывает 5 лучших линий. Нажми на линию — ход сыграется. «Расставить фигуры» — любая позиция.'); draw();
+    };
+    document.getElementById('engl').onclick = function (e) {
+      var r = e.target.closest('[data-u]'); if (!r || mode === 'setup' || rv || busy || locked()) return;
+      var m = uciMove(S.pos, r.dataset.u); if (m) doMove(m);
+    };
+    function hotkey(e) {
+      if (!document.getElementById('bSetup')) { document.removeEventListener('keydown', hotkey); return; }
+      var t = e.target && e.target.tagName; if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT' || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key === 's' || e.key === 'S' || e.key === 'ы' || e.key === 'Ы') { if (rv) return; e.preventDefault(); if (mode === 'setup') leaveSetup(false); else enterSetup(); }
+    }
+    document.addEventListener('keydown', hotkey);
     document.getElementById('bSetup').onclick = function () { if (mode === 'setup') leaveSetup(false); else enterSetup(); };
 
     if (pending) {
