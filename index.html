@@ -903,6 +903,29 @@ body.y2 #prof { display: none; }
 .opts.pgo button{width:auto;min-width:0;padding:6px 8px}
 .pg.po{border-width:3px;box-shadow:none;padding:4px 6px}
 .po .sqp{width:44px;height:44px}.po .sqp svg{width:38px;height:38px}
+/* Тренажёр «Найди поле» */
+.ctr-set{display:grid;gap:10px;margin:12px 0 16px}
+.ctr-top{display:flex;align-items:center;gap:12px;margin:6px 0}
+.ctr-bar{height:14px;border-radius:999px;background:#e7e1d6;overflow:hidden;margin:6px 0}
+.ctr-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#2e9e4f,#f2b705);transition:width .1s linear}
+.ctr-stat{display:flex;gap:14px;flex-wrap:wrap;font-size:18px;margin:4px 0}
+.ctr-stat .ok{color:#2e7d32}.ctr-stat .no{color:#c62828}
+.ctr-prompt{font-size:24px;margin:8px 0}.ctr-prompt b{font-size:34px;color:#d6246e}
+.boardbox{position:relative}
+.ctr-obj{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:5;line-height:1}
+.ctr-obj .oi{font-size:1em;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.ctr-obj .ol{font:800 .38em/1 system-ui,sans-serif;background:#222;color:#fff;border-radius:6px;padding:2px 5px;margin-top:2px}
+.ctr-obj.landed{animation:ctrpop .5s}.ctr-obj.gone{opacity:0;transition:opacity .3s}
+@keyframes ctrpop{50%{transform:scale(1.3)}}
+.ctr-res{text-align:center;padding:24px 0}.ctr-big{font-size:64px;margin:8px 0}
+.gk-big{font-size:42px;margin:6px 0;color:#d9a300;letter-spacing:4px}.gk-big small{font-size:18px;color:#888}
+.gk-rules{background:#fff8e6;border-radius:14px;padding:6px 16px;margin:12px 0}.gk-rules h3{margin:8px 0}.gk-rules li{margin:4px 0}
+.gk-tbl{display:grid;gap:6px;margin:12px 0}.gk-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:6px;align-items:center;padding:8px 12px;background:#fff;border-radius:12px;text-decoration:none;color:inherit;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.gk-row span small{display:block;font-size:11px;color:#777}.gk-row span{color:#d9a300}.gk-row span:first-child{color:inherit;font-weight:600}.gk-hd{background:none;box-shadow:none;font-weight:700;color:#555}
+.gk-badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:10px 0}.gk-badge{background:#eee;border-radius:14px;padding:12px;text-align:center;opacity:.6}.gk-badge.on{background:#fff3c4;opacity:1;box-shadow:0 2px 8px rgba(217,163,0,.35)}.gk-badge b{display:block}.gk-badge small{display:block;color:#666;font-size:12px}.gk-bi{font-size:34px;display:block}
+@media(max-width:520px){.gk-row{grid-template-columns:1.4fr 1fr 1fr 1fr;font-size:13px}}
+.gk-order{display:flex;gap:4px;justify-content:center;margin:8px 0;flex-wrap:wrap}.gk-order span{display:flex;flex-direction:column;align-items:center;background:#fff;border-radius:8px;padding:2px 4px;box-shadow:0 1px 3px rgba(0,0,0,.15)}.gk-order i{font-size:11px;font-style:normal;color:#777}.gk-order .pcs{width:38px;height:38px}
+.gk-pal{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:8px 0}.gk-pb{width:44px;height:44px;border-radius:10px;border:2px solid #ddd;background:#fff;padding:2px;cursor:pointer;font-size:24px}.gk-pb.on{border-color:#f5b800;background:#fff3c4}.gk-pb .pcs{width:36px;height:36px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -931,6 +954,7 @@ body.y2 #prof { display: none; }
       <a href="#play" data-r="play">С роботом</a>
       <a href="#live" data-r="live">Живые</a>
       <a href="#board" data-r="board">Доска</a>
+      <a href="#games" data-r="games">Игротека</a>
       <a href="#cartoons" data-r="cartoons">Мультики</a>
       <a href="#awards" data-r="awards">Награды</a>
     </nav>
@@ -2001,7 +2025,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   }
   function drawBoard(S, onClick) {
     if (window.__auditPos && S && S.pos) window.__auditPos(S.pos);
-    if (S && S.pos && S.pos.b && typeof badPos === 'function' && badPos(S.pos)) {
+    if (S && S.pos && S.pos.b && typeof badPos === 'function' && !S.raw && badPos(S.pos)) {
       var bb = new Int8Array(S.pos.b); decoFix(bb); var np = {}; for (var kk in S.pos) np[kk] = S.pos[kk]; np.b = bb;
       var S2 = {}; for (var k2 in S) S2[k2] = S[k2]; S2.pos = np; S = S2;
     }
@@ -7205,7 +7229,6 @@ if (typeof module !== 'undefined') module.exports = Eng;
         '<a class="y2cell" href="#y2/engine"><i>В</i><b>Игра с компьютером</b><p>Выберите силу, цвет и контроль времени: от пули до классики.</p><span>тренировка</span></a>' +
         '<a class="y2cell" href="#y2/speed"><i>Д</i><b>Скорость</b><p>Спринт на три минуты и футбол: кто первым решит задачи и добежит до ворот.</p><span>на время</span></a>' +
         '<a class="y2cell" href="#y2/board"><i>Е</i><b>Доска и анализ партий</b><p>Играйте по уровням и с часами, расставляйте позиции, загружайте любые партии и разбирайте их с движком Stockfish.</p><span>доска</span></a>' +
-        '<a class="y2cell" href="#y2/coords"><i>Г</i><b>Координаты</b><p>Найдите на доске названную клетку. Можно играть с подписями и без них, за белых и за чёрных.</p><span>тренажёр</span></a>' +
         '<a class="y2cell" href="#y2/pos"><i>Б</i><b>Практические позиции</b><p>Теоретические окончания и заданные позиции по темам: играйте их против компьютера до конца.</p><span>пешечные и матовые окончания</span></a></div>';
     }
 
@@ -7935,7 +7958,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     /* ---------- маршрут ---------- */
     window.__y2 = function (parts) {
       (function () { var pg0 = parts[1] || 'theory'; if (pg0 === 'storm' || pg0 === 'race') pg0 = 'speed'; if (pg0 === 'games' || pg0 === 'pos' || pg0 === 'play' || pg0 === 'engine' || pg0 === 'coords' || pg0 === 'review') pg0 = 'practice'; if (!/^(theory|practice|progress|speed|board)$/.test(pg0)) pg0 = 'theory'; document.querySelectorAll('.y2nav a[data-y2]').forEach(function (a) { a.classList.toggle('on', a.dataset.y2 === pg0); }); })();
-      var pg = { theory: theory, practice: practice, review: reviewPage, engine: enginePage, coords: coordsPage, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: positions, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race };
+      var pg = { theory: theory, practice: practice, review: reviewPage, engine: enginePage, coords: function () { location.hash = '#games'; }, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: positions, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race };
       if (pg[parts[1]]) { pg[parts[1]](); return; }
       var L = Y2.filter(function (x) { return x.id === parts[1]; })[0];
       if (!L) { landing(); return; }
@@ -8910,6 +8933,673 @@ L.slides=slides;
   L.d='Сколько стоит каждая фигура, чем можно её заменить и какой размен выгоден. 30 разных заданий.';
 })();
 
+// Тренажёр «Найди поле»: поиск полей на время и «падающие» режимы (звёздочки, машинки, самолётики)
+(function () {
+  var MODES = {
+    find: { t: 'Найди поле', ic: '🎯', d: 'Назови поле — нажми на него. За верный ответ время растёт, за ошибку уменьшается.' },
+    star: { t: 'Поймай звёздочки', ic: '⭐', d: 'Звёздочка падает по вертикали. Нажми на поле, которое написано на ней.' },
+    car: { t: 'Поймай машинки', ic: '🚗', d: 'Машинка едет вниз по вертикали. Успей нажать на её поле!' },
+    plane: { t: 'Поймай самолётики', ic: '✈️', d: 'Самолётик летит вниз. Нажми на поле, куда он должен приземлиться.' }
+  };
+  var ORDER = ['find', 'star', 'car', 'plane'];
+  function cfg() { var c = lsGet('ukc_coords_cfg', {}); return { min: [1, 3, 5].indexOf(c.min) >= 0 ? c.min : 1, co: c.co !== false, side: c.side === 'b' ? 'b' : 'w' }; }
+  function saveCfg(c) { lsSet('ukc_coords_cfg', c); }
+  function best(k) { return (lsGet('ukc_coords_best', {}) || {})[k] || 0; }
+  function setBest(k, v) { var b = lsGet('ukc_coords_best', {}) || {}; b[k] = v; lsSet('ukc_coords_best', b); }
+  function rnd(n) { return Math.floor(Math.random() * n); }
+
+  function menu() {
+    var c = cfg();
+    var h = '<h2>Тренажёр: найди поле</h2><p class="note">Учимся быстро находить клетки доски. Выбери время, подписи и сторону, потом игру.</p>';
+    h += '<div class="ctr-set"><div><b>Время:</b> ' + [1, 3, 5].map(function (m) { return '<button class="btn' + (c.min === m ? '' : ' alt') + '" data-min="' + m + '">' + m + ' мин</button>'; }).join(' ') + '</div>' +
+      '<div><b>Подписи на доске:</b> <button class="btn' + (c.co ? '' : ' alt') + '" data-co="1">С буквами и цифрами</button> <button class="btn' + (c.co ? ' alt' : '') + '" data-co="0">Без букв и цифр</button></div>' +
+      '<div><b>Доска:</b> <button class="btn' + (c.side === 'w' ? '' : ' alt') + '" data-side="w">Со стороны белых</button> <button class="btn' + (c.side === 'b' ? '' : ' alt') + '" data-side="b">Со стороны чёрных</button></div></div>';
+    h += '<div class="lgrid">' + ORDER.map(function (k) {
+      var m = MODES[k], b = best(k + c.min + (c.co ? 'c' : 'n'));
+      return '<a class="lcard ctr-card" href="#coords/' + k + '"><span class="big">' + m.ic + ' ' + esc(m.t) + '</span><p>' + esc(m.d) + '</p><small class="note">Рекорд (' + c.min + ' мин): ' + b + '</small></a>';
+    }).join('') + '</div>';
+    view.innerHTML = h;
+    Array.prototype.forEach.call(view.querySelectorAll('.ctr-set button'), function (b) {
+      b.onclick = function () {
+        var n = cfg();
+        if (b.dataset.min) n.min = +b.dataset.min; if (b.dataset.co != null) n.co = b.dataset.co === '1'; if (b.dataset.side) n.side = b.dataset.side;
+        saveCfg(n); menu();
+      };
+    });
+  }
+
+  function game(mode) {
+    var c = cfg(), M = MODES[mode], total = c.min * 60000, t = total, score = 0, miss = 0, over = false, target = -1, flip = c.side === 'b', busy = false;
+    var S = { pos: { b: new Int8Array(64), turn: 1, castle: 0, ep: -1, half: 0 }, sel: null, targets: [], last: null, hint: null, flip: flip, coords: c.co, mark: {}, hl: null };
+    var obj = null, objTick = 0, objEl = null, ICS = { star: ['⭐', '🌟', '✨', '💫'], car: ['🚗', '🚕', '🚙', '🏎️', '🚓', '🚌'], plane: ['✈️', '🛩️', '🚁', '🚀'] };
+    view.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#coords">← Меню</a> <b>' + M.ic + ' ' + esc(M.t) + '</b></div>' +
+      '<div class="ctr-bar"><i id="ctrTime"></i></div>' +
+      '<div class="ctr-stat"><span id="ctrT">0:00</span><span class="ok">Верно: <b id="ctrS">0</b></span><span class="no">Ошибки: <b id="ctrM">0</b></span></div>' +
+      '<div class="ctr-prompt" id="ctrP"></div><div class="msg" id="msg" role="status" aria-live="polite"></div>' +
+      '<div class="row"><button class="btn alt" id="ctrFlip">↻ Перевернуть доску</button><button class="btn alt" id="ctrCo">' + (c.co ? 'Скрыть буквы и цифры' : 'Показать буквы и цифры') + '</button></div>' + boardHTML();
+    var msg = document.getElementById('msg');
+    function setMsg(x, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = x; }
+    function draw() { drawBoard(S, click); }
+    function fmt(ms) { var s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+    function hud() {
+      document.getElementById('ctrT').textContent = fmt(t); document.getElementById('ctrS').textContent = score; document.getElementById('ctrM').textContent = miss;
+      var bar = document.getElementById('ctrTime'); if (bar) bar.style.width = Math.max(0, Math.min(100, t * 100 / total)) + '%';
+    }
+    function next() {
+      var q; do { q = rnd(64); } while (q === target);
+      target = q; S.mark = {}; S.hl = null;
+      if (mode === 'find') { document.getElementById('ctrP').innerHTML = 'Найди поле: <b>' + SQN(target) + '</b>'; draw(); }
+      else spawn();
+    }
+    function geom() {
+      var b = document.getElementById('board'); if (!b) return null;
+      return { b: b, w: b.offsetWidth / 8, h: b.offsetHeight / 8, l: b.offsetLeft, tp: b.offsetTop };
+    }
+    function col(i) { return flip ? 7 - (i & 7) : (i & 7); }
+    function row(i) { return flip ? 7 - (i >> 3) : (i >> 3); }
+    function ensureObj() {
+      var g = geom(); if (!g) return null; var box = g.b.parentNode; box.style.position = 'relative';
+      if (!objEl || !objEl.parentNode) { objEl = document.createElement('div'); objEl.className = 'ctr-obj'; box.appendChild(objEl); }
+      return g;
+    }
+    function place(g, y, land) {
+      objEl.style.width = g.w + 'px'; objEl.style.height = g.h + 'px'; objEl.style.fontSize = Math.floor(g.w * 0.5) + 'px';
+      objEl.style.left = (g.l + col(target) * g.w) + 'px'; objEl.style.top = (g.tp + y) + 'px';
+    }
+    function spawn() {
+      var g = ensureObj(); if (!g) return;
+      objEl.className = 'ctr-obj'; objEl.style.transition = 'none';
+      objEl.innerHTML = '<span class="oi">' + (ICS[mode] ? ICS[mode][rnd(ICS[mode].length)] : M.ic) + '</span><span class="ol">' + SQN(target) + '</span>';
+      obj = { y: 0, dur: Math.max(3200, 8000 - score * 260) };
+      place(g, 0); document.getElementById('ctrP').innerHTML = 'Поймай: <b>' + SQN(target) + '</b> — нажми на это поле, пока ' + (mode === 'star' ? 'звёздочка' : mode === 'car' ? 'машинка' : 'самолётик') + ' не упал' + (mode === 'car' ? 'а' : mode === 'star' ? 'а' : '') + '!';
+      draw();
+    }
+    function fallTick() {
+      if (over || !obj) return;
+      var g = geom(); if (!g) return;
+      obj.y += 60 / obj.dur;
+      place(g, obj.y * (g.b.offsetHeight - g.h));
+      if (obj.y >= 1) { miss++; obj = null; sfx('bad'); setMsg('Не успела! Поле было ' + SQN(target) + '.', 'bad'); objEl.className = 'ctr-obj gone'; hud(); later(function () { if (!over) next(); }, 500); }
+    }
+    function land(g) {
+      obj = null; objEl.style.transition = 'left .2s, top .25s'; place(g, row(target) * g.h); objEl.className = 'ctr-obj landed';
+    }
+    function click(i) {
+      if (over || busy) return;
+      if (mode !== 'find' && !obj) return;
+      if (i === target) {
+        score++; sfx('good'); setMsg('Верно! ' + SQN(i), 'good');
+        if (mode === 'find') { t += 2500; S.mark = {}; S.mark[i] = 'e:✅'; draw(); hud(); busy = true; later(function () { busy = false; if (!over) next(); }, 180); }
+        else { var g = geom(); land(g); hud(); busy = true; later(function () { busy = false; objEl.className = 'ctr-obj gone'; if (!over) next(); }, 650); }
+      } else {
+        miss++; sfx('bad'); setMsg('Это поле ' + SQN(i) + '. Ищи ' + SQN(target) + '.', 'bad');
+        if (mode === 'find') { t -= 3000; S.mark = {}; S.mark[i] = 'e:❌'; draw(); busy = true; later(function () { busy = false; S.mark = {}; draw(); }, 350); }
+        else { S.mark = {}; S.mark[i] = 'e:❌'; draw(); later(function () { S.mark = {}; draw(); }, 350); }
+        hud();
+      }
+    }
+    function end() {
+      over = true; if (objEl) objEl.remove();
+      var key = mode + c.min + (c.co ? 'c' : 'n'), prev = best(key), pts = Math.max(0, score * 10 - miss * 5), rec = pts > prev; if (rec) setBest(key, pts);
+      var tot = score + miss, acc = tot ? Math.round(score * 100 / tot) : 0;
+      sfx(score >= 10 ? 'good' : 'move');
+      view.innerHTML = '<div class="ctr-res"><h2>Время вышло!</h2><p class="ctr-big">' + M.ic + ' ' + pts + '</p><p class="note">баллов</p>' +
+        '<div class="ctr-stat" style="justify-content:center"><span class="ok">Правильно: <b>' + score + '</b></span><span class="no">Неправильно: <b>' + miss + '</b></span><span>Точность: <b>' + acc + '%</b></span></div>' +
+        '<p class="note">За каждое верное поле 10 баллов, за ошибку минус 5.</p>' +
+        '<p>' + (rec ? '<b>🎉 Новый личный рекорд: ' + pts + '!</b>' : 'Твой личный рекорд: <b>' + prev + '</b> баллов.') + '</p><p><a class="btn" href="#coords/' + mode + '" id="ctrAgain">Ещё раз</a> <a class="btn alt" href="#coords">В меню</a></p></div>';
+      document.getElementById('ctrAgain').onclick = function (e) { e.preventDefault(); game(mode); };
+    }
+    function tick() {
+      if (over) return;
+      t -= (mode === 'find' ? 100 : 60) - (mode === 'find' ? 0 : 0);
+      if (mode !== 'find') fallTick();
+      hud();
+      if (t <= 0) { t = 0; hud(); return end(); }
+      later(tick, mode === 'find' ? 100 : 60);
+    }
+    document.getElementById('ctrFlip').onclick = function () { flip = !flip; S.flip = flip; draw(); if (obj) { var g = geom(); place(g, obj.y * (g.b.offsetHeight - g.h)); } };
+    document.getElementById('ctrCo').onclick = function () { S.coords = S.coords === false; this.textContent = S.coords === false ? 'Показать буквы и цифры' : 'Скрыть буквы и цифры'; draw(); };
+    hud(); setMsg('Поехали! Время идёт.'); next(); later(tick, 100);
+  }
+
+  window.__coords = function (parts) {
+    var m = parts && parts[1];
+    if (m && MODES[m]) game(m); else menu();
+  };
+
+  // карточка в «Практике» первого года
+  var oldLessons = lessons;
+  lessons = function () {
+    oldLessons();
+    if (lsGet('ukc_toc', 't') !== 'p') return;
+    var tabs = view.querySelector('.toc-tabs'); if (!tabs) return;
+    tabs.insertAdjacentHTML('afterend', '<section class="course"><h3>Тренажёр <small class="note">на скорость</small></h3><div class="lgrid"><a class="lcard" href="#coords"><span class="big">🎯 Найди поле</span><p>Найди поле на время, поймай звёздочки, машинки и самолётики. С буквами и без, за белых и за чёрных.</p></a></div></section>');
+  };
+})();
+
+// Игротека: общий каркас игр на время (очки, штрафы, звёзды, рекорды, награды) и страница-хаб
+(function () {
+  var GK = window.__gk = { games: [], gen: {}, add: function (g) { GK.games.push(g); }, byId: function (id) { for (var i = 0; i < GK.games.length; i++) if (GK.games[i].id === id) return GK.games[i]; return null; } };
+  var GROUPS_GK = [
+    { id: 'att', t: 'Игры на внимание', d: 'Найди незащищённые фигуры и безопасные поля.' },
+    { id: 'piece', t: 'Игры с фигурами', d: 'Фигура бегает по доске и собирает всё, что нужно.' },
+    { id: 'think', t: 'Думай быстро', d: 'Мат, лучший ход, лестница ферзя, молния.' },
+    { id: 'mem', t: 'Память', d: 'Запомни и восстанови.' }
+  ];
+  function rnd(n) { return Math.floor(Math.random() * n); }
+  GK.rnd = rnd; GK.E = E;
+
+  /* ---------- шахматная геометрия для генераторов ---------- */
+  function attacks(b, f, t) {
+    var v = b[f]; if (!v || f === t) return false;
+    var a = Math.abs(v), fx = f & 7, fy = f >> 3, tx = t & 7, ty = t >> 3, dx = tx - fx, dy = ty - fy, ax = Math.abs(dx), ay = Math.abs(dy);
+    if (a === 1) return ax === 1 && dy === (v > 0 ? -1 : 1);
+    if (a === 2) return (ax === 1 && ay === 2) || (ax === 2 && ay === 1);
+    if (a === 6) return Math.max(ax, ay) === 1;
+    var straight = dx === 0 || dy === 0, diag = ax === ay;
+    if ((a === 4 && !straight) || (a === 3 && !diag) || (a === 5 && !straight && !diag)) return false;
+    var sx = dx > 0 ? 1 : dx < 0 ? -1 : 0, sy = dy > 0 ? 1 : dy < 0 ? -1 : 0, x = fx + sx, y = fy + sy;
+    while (x !== tx || y !== ty) { if (b[y * 8 + x]) return false; x += sx; y += sy; }
+    return true;
+  }
+  function attackers(b, sq, color) { var o = []; for (var i = 0; i < 64; i++) if (b[i] && (b[i] > 0) === (color > 0) && attacks(b, i, sq)) o.push(i); return o; }
+  function defendersOf(b, sq) { return attackers(b, sq, b[sq] > 0 ? 1 : -1).filter(function (s) { return s !== sq; }); }
+  GK.attacks = attacks; GK.attackers = attackers; GK.defendersOf = defendersOf;
+  function pieceMoves(b, f) { // псевдо-ходы N,B,R,Q
+    var o = []; for (var t = 0; t < 64; t++) { if (t === f) continue; if (b[t] && (b[t] > 0) === (b[f] > 0)) continue; if (attacks(b, f, t)) o.push(t); } return o;
+  }
+  GK.pieceMoves = pieceMoves;
+  var TYPES = [1, 1, 1, 2, 2, 3, 3, 4, 4, 5];
+  function freeSq(b, region, pawn) {
+    for (var k = 0; k < 60; k++) { var s = region ? region[rnd(region.length)] : rnd(64); if (b[s]) continue; if (pawn && (s >> 3 === 0 || s >> 3 === 7)) continue; return s; }
+    return -1;
+  }
+  function regionOf(w, h) { var cx = rnd(8 - w + 1), cy = rnd(8 - h + 1), r = []; for (var y = cy; y < cy + h; y++) for (var x = cx; x < cx + w; x++) r.push(y * 8 + x); return r; }
+  var CAP = { 2: 2, 3: 2, 4: 2, 5: 1 };
+  function put(b, region, type, color) {
+    if (CAP[type]) { var c = 0; for (var q = 0; q < 64; q++) if (b[q] === type * color) c++; if (c >= CAP[type]) type = 1; }
+    var s = freeSq(b, region, type === 1); if (s < 0) return -1; b[s] = type * color; return s; }
+  GK.put = put; GK.regionOf = regionOf; GK.TYPES = TYPES;
+
+  /* ---------- хранилище: рекорды, звёзды ---------- */
+  function st() { var o = lsGet('ukc_gk', null); if (!o || typeof o !== 'object') o = {}; o.best = o.best || {}; o.stars = o.stars || {}; o.plays = o.plays || {}; o.bst = o.bst || {}; return o; }
+  function starsOf(pts, min) { var r = pts / min; return r >= 160 ? 3 : r >= 100 ? 2 : r >= 50 ? 1 : 0; }
+  function minCfg() { var m = lsGet('ukc_gk_min', 3); return [1, 3, 5].indexOf(m) >= 0 ? m : 3; }
+  function gameStars(id) { var o = st(), m = 0; [1, 3, 5].forEach(function (k) { m = Math.max(m, o.stars[id + k] || 0); }); return m; }
+  function totalStars() { var o = st(), n = 0; GK.games.forEach(function (g) { [1, 3, 5].forEach(function (k) { n += o.stars[g.id + k] || 0; }); }); return n; }
+  function starStr(n) { return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
+  GK.starStr = starStr; GK.gameStars = gameStars;
+
+  /* ---------- страница игры: правила, время, рекорд ---------- */
+  function menu(g) {
+    var m = minCfg(), o = st();
+    var h = '<div class="ctr-top"><a class="btn alt" href="#games">← Игротека</a></div><h2>' + g.ic + ' ' + esc(g.t) + '</h2><p>' + esc(g.d) + '</p>';
+    h += '<div class="ctr-set"><div><b>Время:</b> ' + [1, 3, 5].map(function (k) { return '<button class="btn' + (m === k ? '' : ' alt') + '" data-min="' + k + '">' + k + ' мин</button>'; }).join(' ') + '</div></div>';
+    h += '<div class="gk-rules"><h3>Правила</h3><ul>' + (g.rules || []).map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '<li>За верный ответ +10 очков и +2 секунды. Пять верных подряд — бонус +20.</li><li>За ошибку −5 очков и −3 секунды.</li></ul></div>';
+    h += '<p class="note">Твой рекорд (' + m + ' мин): <b>' + (o.best[g.id + m] || 0) + '</b> очков · ' + starStr(o.stars[g.id + m] || 0) + '</p>';
+    h += '<p><a class="btn" href="#games/' + g.id + '/go" id="gkGo">▶ Играть</a></p>';
+    view.innerHTML = h;
+    Array.prototype.forEach.call(view.querySelectorAll('[data-min]'), function (b) { b.onclick = function () { lsSet('ukc_gk_min', +b.dataset.min); menu(g); }; });
+    document.getElementById('gkGo').onclick = function (e) { e.preventDefault(); play(g, minCfg()); };
+  }
+
+  /* ---------- игра на время ---------- */
+  function play(g, min) {
+    clearTimers();
+    var total = min * 60000, t = total, score = 0, okN = 0, badN = 0, streak = 0, bestStreak = 0, over = false;
+    var S = { raw: true, pos: { b: new Int8Array(64), turn: 1, castle: 0, ep: -1, half: 0 }, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
+    view.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#games/' + g.id + '">← Выйти</a> <b>' + g.ic + ' ' + esc(g.t) + '</b></div>' +
+      '<div class="ctr-bar"><i id="ctrTime"></i></div>' +
+      '<div class="ctr-stat"><span id="ctrT">0:00</span><span class="ok">Верно: <b id="ctrS">0</b></span><span class="no">Ошибки: <b id="ctrM">0</b></span><span>Очки: <b id="gkP">0</b></span><span id="gkSt"></span></div>' +
+      '<div class="ctr-prompt" id="ctrP"></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div id="gkX"></div>' + boardHTML();
+    var msg = document.getElementById('msg');
+    function setMsg(x, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = x; }
+    function fmt(ms) { var s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+    function hud() {
+      document.getElementById('ctrT').textContent = fmt(t); document.getElementById('ctrS').textContent = okN; document.getElementById('ctrM').textContent = badN;
+      document.getElementById('gkP').textContent = Math.max(0, score); document.getElementById('gkSt').textContent = streak >= 2 ? '🔥 серия ' + streak : '';
+      var bar = document.getElementById('ctrTime'); if (bar) bar.style.width = Math.max(0, Math.min(100, t * 100 / total)) + '%';
+    }
+    var ctx = {
+      S: S, min: min, click: function () {},
+      draw: function () { drawBoard(S, function (i) { if (!over) ctx.click(i); }); },
+      prompt: function (h) { document.getElementById('ctrP').innerHTML = h; },
+      msg: setMsg, later: later,
+      level: function () { return Math.min(3, 1 + Math.floor(okN / 8)); },
+      ok: function (txt) {
+        okN++; streak++; bestStreak = Math.max(bestStreak, streak); score += 10; t += 2000; sfx('good');
+        var extra = ''; if (streak % 5 === 0) { score += 20; extra = ' Серия ' + streak + '! Бонус +20 🔥'; }
+        setMsg((txt || 'Верно!') + ' +10' + extra, 'good'); hud();
+      },
+      bad: function (txt) { badN++; streak = 0; score -= 5; t -= 3000; sfx('bad'); setMsg((txt || 'Не то.') + ' −5', 'bad'); hud(); },
+      addTime: function (ms) { t += ms; hud(); },
+      extra: function (h) { var e = document.getElementById('gkX'); if (h != null) e.innerHTML = h; return e; },
+      fail: function (txt) { badN++; streak = 0; sfx('bad'); setMsg(txt || 'Не получилось.', 'bad'); hud(); },
+      setTime: function (ms) { t = ms; hud(); }
+    };
+    function end() {
+      over = true; clearTimers();
+      var o = st(), key = g.id + min, pts = Math.max(0, score), prev = o.best[key] || 0, rec = pts > prev, sNow = starsOf(pts, min), sPrev = o.stars[key] || 0;
+      if (rec) o.best[key] = pts; if (sNow > sPrev) o.stars[key] = sNow; o.plays[g.id] = (o.plays[g.id] || 0) + 1; o.bst[g.id] = Math.max(o.bst[g.id] || 0, bestStreak); st && lsSet('ukc_gk', o);
+      var tot = okN + badN, acc = tot ? Math.round(okN * 100 / tot) : 0; sfx(sNow >= 1 ? 'good' : 'move');
+      var verdict = sNow === 3 ? 'Чемпион! Отличный результат!' : sNow === 2 ? 'Очень хорошо!' : sNow === 1 ? 'Хорошо! Есть куда расти.' : 'Попробуй ещё раз — станет лучше!';
+      view.innerHTML = '<div class="ctr-res"><h2>Время вышло!</h2><p class="gk-big">' + starStr(sNow) + '</p><p class="ctr-big">' + g.ic + ' ' + pts + '</p><p class="note">очков</p><p><b>' + verdict + '</b></p>' +
+        '<div class="ctr-stat" style="justify-content:center"><span class="ok">Правильно: <b>' + okN + '</b></span><span class="no">Неправильно: <b>' + badN + '</b></span><span>Точность: <b>' + acc + '%</b></span><span>Лучшая серия: <b>' + bestStreak + '</b></span></div>' +
+        (sNow > sPrev ? '<p><b>⭐ Новая награда: ' + starStr(sNow) + ' за ' + min + ' мин!</b></p>' : '') +
+        '<p>' + (rec ? '<b>🎉 Новый личный рекорд: ' + pts + '!</b>' : 'Твой личный рекорд: <b>' + prev + '</b> очков.') + '</p>' +
+        '<p class="note">Звёзды: 1★ — от ' + 50 * min + ' очков, 2★ — от ' + 100 * min + ', 3★ — от ' + 160 * min + ' (за ' + min + ' мин).</p>' +
+        '<p><a class="btn" href="#games/' + g.id + '" id="gkAgain">Ещё раз</a> <a class="btn alt" href="#games">В Игротеку</a> <a class="btn alt" href="#games/awards">Мои награды</a></p></div>';
+      document.getElementById('gkAgain').onclick = function (e) { e.preventDefault(); play(g, min); };
+    }
+    function tick() { if (over) return; t -= 100; hud(); if (t <= 0) { t = 0; hud(); return end(); } later(tick, 100); }
+    hud(); g.start(ctx); later(tick, 100);
+  }
+
+  /* ---------- страница наград ---------- */
+  function awards() {
+    var o = st(), tot = totalStars(), maxS = GK.games.length * 3 * 3;
+    var h = '<div class="ctr-top"><a class="btn alt" href="#games">← Игротека</a></div><h2>🏆 Мои награды</h2><p class="gk-big">★ ' + tot + ' <small>из ' + maxS + '</small></p><p class="note">Звёзды за каждую игру и каждое время (1, 3 и 5 минут). Играй и собирай все!</p>';
+    var played = 0, gold = 0;
+    h += '<div class="gk-tbl"><div class="gk-row gk-hd"><span>Игра</span><span>1 мин</span><span>3 мин</span><span>5 мин</span></div>';
+    GK.games.forEach(function (g) {
+      if (o.plays[g.id]) played++;
+      var cells = [1, 3, 5].map(function (k) { var s = o.stars[g.id + k] || 0, b = o.best[g.id + k] || 0; if (s === 3) gold++; return '<span>' + starStr(s) + '<small>' + (b ? b + ' оч.' : '—') + '</small></span>'; }).join('');
+      h += '<a class="gk-row" href="#games/' + g.id + '"><span>' + g.ic + ' ' + esc(g.t) + '</span>' + cells + '</a>';
+    });
+    h += '</div>';
+    var B = [
+      ['🎮', 'Первые шаги', 'Сыграй в любую игру', played >= 1], ['🎲', 'Игрок', 'Сыграй в 5 разных игр', played >= 5], ['🏅', 'Знаток Игротеки', 'Сыграй во все игры', played >= GK.games.length && GK.games.length > 0],
+      ['⭐', 'Звёздочка', 'Набери 5 звёзд', tot >= 5], ['🌟', 'Звёздный путь', 'Набери 20 звёзд', tot >= 20], ['🌠', 'Созвездие', 'Набери 50 звёзд', tot >= 50],
+      ['🥇', 'Чемпион', 'Получи 3 звезды в любой игре', gold >= 1], ['👑', 'Король Игротеки', 'Получи 3 звезды в 5 играх', gold >= 5]
+    ];
+    var bs = 0; Object.keys(o.bst).forEach(function (k) { bs = Math.max(bs, o.bst[k]); });
+    B.push(['🔥', 'Огонь!', 'Серия из 10 верных подряд', bs >= 10], ['⚡', 'Молния', 'Серия из 20 верных подряд', bs >= 20]);
+    h += '<h3>Значки</h3><div class="gk-badges">' + B.map(function (b) { return '<div class="gk-badge' + (b[3] ? ' on' : '') + '"><span class="gk-bi">' + (b[3] ? b[0] : '🔒') + '</span><b>' + esc(b[1]) + '</b><small>' + esc(b[2]) + '</small></div>'; }).join('') + '</div>';
+    view.innerHTML = h;
+  }
+
+  /* ---------- хаб ---------- */
+  function hub() {
+    var h = '<h2>Игротека</h2><p class="note">Игры и тренажёры на скорость. Выбирай и тренируйся! ★ ' + totalStars() + ' · <a href="#games/awards">🏆 Мои награды</a></p>';
+    h += '<section class="course"><h3>Найди поле <small class="note">координаты доски</small></h3><div class="lgrid">' +
+      '<a class="lcard" href="#coords/find"><span class="big">🎯 Найди поле</span><p>Назови поле, которое просят, пока идёт время.</p></a>' +
+      '<a class="lcard" href="#coords/star"><span class="big">⭐ Падающие звёздочки</span><p>Звёздочка падает на поле — успей найти его.</p></a>' +
+      '<a class="lcard" href="#coords/car"><span class="big">🚗 Машинки</span><p>Машинка едет к полю — найди его первым.</p></a>' +
+      '<a class="lcard" href="#coords/plane"><span class="big">✈️ Самолётики</span><p>Самолётик заходит на посадку на нужное поле.</p></a>' +
+      '</div><p><a class="btn alt" href="#coords">Настройки: время, буквы, сторона доски, рекорды</a></p></section>';
+    h += '<section class="course"><h3>Скорость решения задач</h3><div class="lgrid">' +
+      '<a class="lcard" href="#y2/storm"><span class="big">⚡ Спринт задач</span><p>Решай задачи подряд, пока идёт время.</p></a>' +
+      '<a class="lcard" href="#y2/race"><span class="big">⚽ Футбол: кто первый забьёт гол</span><p>Ты и девять соперников решаете задачи. Кто первый — тот забивает гол.</p></a></div></section>';
+    GROUPS_GK.forEach(function (G) {
+      var L = GK.games.filter(function (g) { return g.group === G.id; }); if (!L.length) return;
+      h += '<section class="course"><h3>' + esc(G.t) + ' <small class="note">' + esc(G.d) + '</small></h3><div class="lgrid">' + L.map(function (g) {
+        return '<a class="lcard" href="#games/' + g.id + '"><span class="big">' + g.ic + ' ' + esc(g.t) + '</span><p>' + esc(g.d) + '</p><small class="note">' + starStr(gameStars(g.id)) + '</small></a>';
+      }).join('') + '</div></section>';
+    });
+    view.innerHTML = h;
+  }
+
+  window.__games = function (parts) {
+    var id = parts && parts[1];
+    if (id === 'awards') return awards();
+    var g = id && GK.byId(id);
+    if (!g) return hub();
+    if (parts[2] === 'go') return play(g, minCfg());
+    menu(g);
+  };
+})();
+
+// Игры на внимание: «Кто висит?», «Съешь незащищённую», «Безопасный ход»
+(function () {
+  var GK = window.__gk, rnd = GK.rnd, attackers = GK.attackers, defendersOf = GK.defendersOf, put = GK.put, regionOf = GK.regionOf, TYPES = GK.TYPES;
+  function pt() { return TYPES[rnd(TYPES.length)]; }
+
+  /* ----- генераторы ----- */
+  // «Кто висит?»: фигуры одного цвета, часть без защиты
+  GK.gen.hang = function (level) {
+    var best = null;
+    for (var a = 0; a < 3000; a++) {
+      var b = new Int8Array(64), col = Math.random() < 0.5 ? 1 : -1, reg = regionOf(5 + rnd(2), 4 + rnd(2)), n = 6 + level + rnd(2), m = 3 + rnd(3), i, ok = true;
+      for (i = 0; i < n; i++) if (put(b, reg, pt(), col) < 0) ok = false;
+      for (i = 0; i < m; i++) if (put(b, reg, pt(), -col) < 0) ok = false;
+      if (!ok) continue;
+      var hang = [], all = [];
+      for (i = 0; i < 64; i++) if (b[i] && (b[i] > 0) === (col > 0)) { all.push(i); if (!defendersOf(b, i).length) hang.push(i); }
+      var want = Math.min(1 + level, 4);
+      if (hang.length >= 1 && hang.length <= want && all.length - hang.length >= 3) return { b: b, col: col, hang: hang };
+      if (hang.length >= 1 && !best) best = { b: b, col: col, hang: hang };
+    }
+    return best;
+  };
+  // «Съешь незащищённую»: белая фигура X бьёт несколько чёрных; защищены все чёрные, кроме одной
+  GK.gen.eat = function (level) {
+    var kmin = 2 + (level > 1 ? 1 : 0);
+    for (var a = 0; a < 40000; a++) {
+      var b = new Int8Array(64), reg = regionOf(6, 5), n = 5 + level + rnd(2), i;
+      var X = put(b, null, [2, 3, 4, 5][rnd(4)], 1); if (X < 0) continue;
+      var fail = false; for (i = 0; i < n; i++) if (put(b, reg, pt(), -1) < 0) fail = true; if (fail) continue;
+      var und = [], att = [];
+      for (i = 0; i < 64; i++) if (b[i] < 0) { if (!defendersOf(b, i).length) und.push(i); if (GK.attacks(b, X, i)) att.push(i); }
+      if (und.length !== 1 || att.indexOf(und[0]) < 0 || att.length < kmin) continue;
+      if (attackers(b, X, -1).length) continue;
+      return { b: b, X: X, target: und[0], att: att };
+    }
+    return null;
+  };
+  // «Безопасный ход»: белая фигура в окружении чёрных; безопасное поле — только одно
+  GK.gen.safe = function (level) {
+    var need = 4 + level;
+    for (var a = 0; a < 40000; a++) {
+      var b = new Int8Array(64), reg = regionOf(6, 5), n = 5 + level + rnd(2), i;
+      var X = put(b, reg, [2, 3, 4, 5][rnd(4)], 1); if (X < 0) continue;
+      var fail = false; for (i = 0; i < n; i++) if (put(b, reg, pt(), -1) < 0) fail = true; if (fail) continue;
+      if (!attackers(b, X, -1).length) continue;
+      var mv = GK.pieceMoves(b, X); if (mv.length < need) continue;
+      var safe = [];
+      for (i = 0; i < mv.length; i++) { var b2 = new Int8Array(b); b2[mv[i]] = b2[X]; b2[X] = 0; if (!attackers(b2, mv[i], -1).length) safe.push(mv[i]); }
+      if (safe.length !== 1) continue;
+      return { b: b, X: X, moves: mv, safe: safe[0] };
+    }
+    return null;
+  };
+
+  function setBoard(S, b) { S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; S.sel = null; S.targets = []; S.mark = {}; S.last = null; }
+
+  /* ----- Кто висит? ----- */
+  GK.add({
+    id: 'hang', group: 'att', ic: '🔍', t: 'Кто висит?',
+    d: 'На доске много фигур. Найди все фигуры, которые никто не защищает.',
+    rules: ['«Висит» — это фигура, которую не защищает ни одна своя фигура.', 'Нажимай на все незащищённые фигуры названного цвета.', 'Когда найдёшь все — появится новая позиция.'],
+    start: function (ctx) {
+      var cur, found;
+      function next() {
+        cur = GK.gen.hang(ctx.level()); found = {};
+        setBoard(ctx.S, cur.b); ctx.draw(); upd();
+        ctx.msg('Смотри внимательно!');
+      }
+      function upd() { ctx.prompt('Найди все незащищённые <b>' + (cur.col > 0 ? 'белые' : 'чёрные') + '</b> фигуры. Осталось: <b>' + (cur.hang.length - Object.keys(found).length) + '</b>'); }
+      ctx.click = function (i) {
+        var v = cur.b[i]; if (!v) return;
+        if ((v > 0) !== (cur.col > 0)) { ctx.msg('Ищи ' + (cur.col > 0 ? 'белые' : 'чёрные') + ' фигуры.'); return; }
+        if (found[i]) return;
+        if (cur.hang.indexOf(i) >= 0) {
+          found[i] = 1; ctx.S.mark[i] = 'e:✅'; ctx.ok('Верно, её никто не защищает!'); ctx.draw(); upd();
+          if (Object.keys(found).length === cur.hang.length) { ctx.later(next, 700); }
+        } else {
+          ctx.S.mark[i] = 'e:❌'; ctx.bad('Эту фигуру защищают.'); ctx.draw();
+          ctx.later(function () { if (ctx.S.mark[i] === 'e:❌') { delete ctx.S.mark[i]; ctx.draw(); } }, 600);
+        }
+      };
+      next();
+    }
+  });
+
+  /* ----- Съешь незащищённую ----- */
+  GK.add({
+    id: 'eat', group: 'att', ic: '🍎', t: 'Съешь незащищённую',
+    d: 'Твоя белая фигура выделена. Все чёрные фигуры защищены, кроме одной. Найди её и съешь!',
+    rules: ['Твоя фигура подсвечена на доске.', 'Съесть защищённую фигуру нельзя: тебя съедят в ответ.', 'Нужно взять ту единственную фигуру, которую никто не защищает.'],
+    start: function (ctx) {
+      var cur;
+      function next() {
+        cur = GK.gen.eat(ctx.level()); setBoard(ctx.S, cur.b); ctx.S.sel = cur.X; ctx.draw();
+        ctx.prompt('Съешь <b>незащищённую</b> чёрную фигуру!'); ctx.msg('Проверь, кого защищают.');
+      }
+      ctx.click = function (i) {
+        if (cur.b[i] >= 0) return;
+        if (cur.att.indexOf(i) < 0) { ctx.msg('Твоя фигура туда не достаёт.'); return; }
+        if (i === cur.target) {
+          var b = new Int8Array(cur.b); b[i] = b[cur.X]; b[cur.X] = 0; ctx.S.pos.b = b; ctx.S.sel = null; ctx.S.last = { f: cur.X, t: i }; ctx.S.mark = {};
+          ctx.ok('Съела! Её никто не защищал.'); ctx.draw(); ctx.later(next, 800);
+        } else {
+          ctx.S.mark[i] = 'e:❌'; ctx.bad('Эту фигуру защищают — тебя съедят!'); ctx.draw();
+          ctx.later(function () { delete ctx.S.mark[i]; ctx.draw(); }, 700);
+        }
+      };
+      next();
+    }
+  });
+
+  /* ----- Безопасный ход ----- */
+  GK.add({
+    id: 'safe', group: 'att', ic: '🛡️', t: 'Безопасный ход',
+    d: 'Твоя белая фигура в опасности. Из всех полей только одно безопасное — найди его.',
+    rules: ['Твоя фигура подсвечена, она под ударом.', 'Синие кружки — поля, куда она может пойти.', 'Выбери то поле, где её не съедят. Оно только одно.'],
+    start: function (ctx) {
+      var cur;
+      function next() {
+        cur = GK.gen.safe(ctx.level()); setBoard(ctx.S, cur.b); ctx.S.sel = cur.X;
+        cur.moves.forEach(function (m) { ctx.S.mark[m] = 'e:🔵'; });
+        ctx.draw(); ctx.prompt('Спаси фигуру: нажми на <b>безопасное</b> поле!'); ctx.msg('Проверь каждое поле.');
+      }
+      ctx.click = function (i) {
+        if (cur.moves.indexOf(i) < 0) return;
+        if (i === cur.safe) {
+          var b = new Int8Array(cur.b); b[i] = b[cur.X]; b[cur.X] = 0; ctx.S.pos.b = b; ctx.S.sel = null; ctx.S.last = { f: cur.X, t: i }; ctx.S.mark = {};
+          ctx.ok('Безопасно! Фигура спасена.'); ctx.draw(); ctx.later(next, 800);
+        } else {
+          ctx.S.mark[i] = 'e:❌'; ctx.bad('Здесь её съедят.'); ctx.draw();
+          ctx.later(function () { ctx.S.mark[i] = 'e:🔵'; ctx.draw(); }, 700);
+        }
+      };
+      next();
+    }
+  });
+})();
+
+// Игры: «Мат в один ход», «Съешь всё», «Превращение пешек», «Расставь фигуры», «Собери по памяти»
+(function () {
+  var GK = window.__gk, rnd = GK.rnd;
+  function pick(a) { return a[rnd(a.length)]; }
+  function setBoard(S, b) { S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; S.sel = null; S.targets = []; S.mark = {}; S.last = null; }
+
+  /* ----- Мат в один ход ----- */
+  GK.add({
+    id: 'mate1', group: 'think', ic: '♛', t: 'Мат в один ход',
+    d: 'Найди ход, после которого чёрному королю некуда деться. Позиции всё время новые.',
+    rules: ['Нажми на свою фигуру, потом на поле, куда она пойдёт.', 'Нужен мат одним ходом. Просто шах — это ошибка.', 'Следи, чтобы не вышло пата.'],
+    start: function (ctx) {
+      var pos, sel = -1, mates;
+      function next() {
+        var lv = ctx.level(), kinds = lv === 1 ? ['R', 'R', 'Q', 'X'] : lv === 2 ? ['R', 'Q', 'B', 'N', 'X'] : ['B', 'N', 'P', 'X', 'Q'], g = null;
+        for (var k = 0; k < 5 && !g; k++) g = E.genPuzzle(pick(kinds));
+        pos = E.fromFEN(g.fen); sel = -1;
+        setBoard(ctx.S, pos.b); ctx.S.pos = pos; ctx.draw(); ctx.prompt('Белые ходят и ставят <b>мат в один ход</b>'); ctx.msg('Найди мат!');
+      }
+      ctx.click = function (i) {
+        var S = ctx.S, v = pos.b[i], legal = E.legal(pos);
+        if (sel >= 0) {
+          var ms = legal.filter(function (m) { return m.f === sel && m.t === i; });
+          if (ms.length) {
+            var mate = ms.filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; })[0], m = mate || ms[0];
+            if (mate) { S.pos = E.make(pos, mate); S.sel = null; S.targets = []; S.last = { f: mate.f, t: mate.t }; ctx.ok('Мат! Король чёрных в ловушке.'); ctx.draw(); ctx.later(next, 900); }
+            else { var st = E.status(E.make(pos, m)); sel = -1; S.sel = null; S.targets = []; S.mark = {}; S.mark[m.t] = 'e:❌'; ctx.bad(st === 'stalemate' ? 'Это пат — ничья!' : 'Это не мат.'); ctx.draw(); ctx.later(function () { S.mark = {}; ctx.draw(); }, 700); }
+            return;
+          }
+        }
+        if (v > 0) { sel = i; S.sel = i; S.targets = legal.filter(function (m) { return m.f === i; }).map(function (m) { return m.t; }); S.mark = {}; S.targets.forEach(function (t) { S.mark[t] = 'e:🔵'; }); ctx.draw(); }
+        else { sel = -1; S.sel = null; S.targets = []; S.mark = {}; ctx.draw(); }
+      };
+      next();
+    }
+  });
+
+  /* ----- Съешь всё ----- */
+  var THEMES = [['🍎', 'яблоки'], ['⚽', 'мячики'], ['🚗', 'машинки'], ['✈️', 'самолётики'], ['🚜', 'тракторы'], ['⭐', 'звёзды'], ['🍓', 'клубничку'], ['🚀', 'ракеты']];
+  GK.add({
+    id: 'eatall', group: 'piece', ic: '🚜', t: 'Съешь всё',
+    d: 'Фигура бегает по доске и собирает всё, что на ней лежит. Каждый раз новая фигура и новая добыча.',
+    rules: ['Нажми на поле, куда пойдёт твоя фигура, по её правилам.', 'Собери всё за как можно меньше ходов.', 'Лишний ход отнимает 1 секунду, быстрый сбор даёт бонус.'],
+    start: function (ctx) {
+      var cur;
+      function mv(type, f) {
+        var o = [], fx = f & 7, fy = f >> 3, t;
+        for (t = 0; t < 64; t++) {
+          if (t === f) continue; var dx = Math.abs((t & 7) - fx), dy = Math.abs((t >> 3) - fy), ok = false;
+          if (type === 2) ok = dx * dy === 2; else if (type === 3) ok = dx === dy; else if (type === 4) ok = dx === 0 || dy === 0; else if (type === 5) ok = dx === dy || dx === 0 || dy === 0; else if (type === 6) ok = Math.max(dx, dy) === 1;
+          if (ok) o.push(t);
+        }
+        return o;
+      }
+      function next() {
+        var lv = ctx.level(), type = pick([2, 3, 4, 5, 6, 2, 3]), th = pick(THEMES), n = 4 + lv + rnd(2), b = new Int8Array(64), f = rnd(64), items = {}, sq = [], i, par;
+        b[f] = type; var colour = ((f >> 3) + (f & 7)) & 1;
+        for (i = 0; i < 64; i++) if (i !== f && (type !== 3 || (((i >> 3) + (i & 7)) & 1) === colour)) sq.push(i);
+        var cnt = 0; while (cnt < n && sq.length) { var k = rnd(sq.length), s = sq.splice(k, 1)[0]; items[s] = 1; cnt++; }
+        cur = { type: type, pos: f, items: items, th: th, left: cnt, moves: 0, par: cnt + 2 };
+        setBoard(ctx.S, b); ctx.S.sel = f; refresh(); ctx.prompt('Собери все ' + th[1] + ': ' + '<b>' + PNAME[type] + '</b> идёт по своим правилам. Осталось: <b id="gkLeft">' + cnt + '</b>'); ctx.msg('Планируй ходы!');
+      }
+      function refresh() { var S = ctx.S; S.mark = {}; for (var k in cur.items) S.mark[k] = 'e:' + cur.th[0]; ctx.draw(); }
+      ctx.click = function (i) {
+        if (mv(cur.type, cur.pos).indexOf(i) < 0) return;
+        var S = ctx.S, b = S.pos.b; b[cur.pos] = 0; b[i] = cur.type; S.last = { f: cur.pos, t: i }; cur.pos = i; S.sel = i; cur.moves++;
+        if (cur.items[i]) { delete cur.items[i]; cur.left--; ctx.ok('Съела!'); } else { ctx.addTime(-1000); ctx.msg('Ход без добычи: −1 секунда.'); }
+        refresh(); var l = document.getElementById('gkLeft'); if (l) l.textContent = cur.left;
+        if (cur.left <= 0) { if (cur.moves <= cur.par) { ctx.addTime(3000); ctx.msg('Отлично! ' + cur.moves + ' ходов — бонус +3 секунды!', 'good'); } ctx.later(next, 900); }
+      };
+      next();
+    }
+  });
+
+  /* ----- Превращение пешек ----- */
+  GK.add({
+    id: 'promo', group: 'piece', ic: '👑', t: 'Превращение пешек',
+    d: 'Восемь пешек идут на восьмую горизонталь. Чёрные фигуры мешают. Превратить нужно хотя бы три.',
+    rules: ['Пешка идёт вперёд на 1 поле (с начального места можно на 2) и берёт по диагонали.', 'Дойдёшь до восьмой горизонтали — пешка станет ферзём.', 'Превращено 3 и больше — задание выполнено. 1–2 — не справился, начинай снова.'],
+    start: function (ctx) {
+      var cur, sel = -1;
+      function bmoves(b, f) { return GK.pieceMoves(b, f); }
+      function newRound() {
+        var lv = ctx.level(), b = new Int8Array(64), i; for (i = 48; i < 56; i++) b[i] = 1;
+        var types = lv === 1 ? [2] : lv === 2 ? [2, 3] : [2, 3, 4], pool = []; for (i = 8; i < 40; i++) pool.push(i);
+        var black = []; types.forEach(function (t) { var s = pool.splice(rnd(pool.length), 1)[0]; b[s] = -t; });
+        setBoard(ctx.S, b); cur = { done: 0, lost: 0, b: b }; sel = -1; ctx.draw(); upd(); ctx.msg('Веди пешки вперёд!');
+      }
+      function upd() { ctx.prompt('Превращено пешек: <b>' + cur.done + '</b> (нужно 3 и больше). Пешек на доске: <b>' + count(1) + '</b>'); }
+      function count(v) { var n = 0; for (var i = 0; i < 64; i++) if (cur.b[i] === v) n++; return n; }
+      function pawnMoves(f) {
+        var b = cur.b, o = [], y = f >> 3, x = f & 7;
+        if (y === 0) return o; if (!b[f - 8]) { o.push(f - 8); if (y === 6 && !b[f - 16]) o.push(f - 16); }
+        if (x > 0 && b[f - 9] < 0) o.push(f - 9); if (x < 7 && b[f - 7] < 0) o.push(f - 7); return o;
+      }
+      function anyMove() { for (var i = 0; i < 64; i++) if (cur.b[i] === 1 && pawnMoves(i).length) return true; return false; }
+      function blackMove() {
+        var b = cur.b, best = null, i, all = [];
+        for (i = 0; i < 64; i++) if (b[i] < 0) bmoves(b, i).forEach(function (t) { all.push({ f: i, t: t, cap: b[t] === 1, y: t >> 3 }); });
+        if (!all.length) return;
+        var caps = all.filter(function (m) { return m.cap; });
+        if (caps.length && Math.random() < 0.85) { caps.sort(function (a, c) { return c.y - a.y; }); best = caps[0]; } else best = pick(all);
+        if (b[best.t] === 1) cur.lost++;
+        b[best.t] = b[best.f]; b[best.f] = 0; ctx.S.last = { f: best.f, t: best.t };
+      }
+      function finish() {
+        if (cur.done >= 3) { for (var k = 0; k < cur.done; k++) ctx.ok(k === cur.done - 1 ? 'Превращено ' + cur.done + '! Задание выполнено.' : 'Ферзь!'); ctx.later(newRound, 1200); }
+        else { ctx.fail('Не справился: превращено только ' + cur.done + '. Нужно 3 и больше. Начинай снова!'); ctx.later(newRound, 1800); }
+      }
+      ctx.click = function (i) {
+        var S = ctx.S, b = cur.b;
+        if (sel >= 0) {
+          var mm = pawnMoves(sel);
+          if (mm.indexOf(i) >= 0) {
+            b[sel] = 0; if (i >> 3 === 0) { cur.done++; sfx('good'); S.mark = {}; S.mark[i] = 'e:👑'; ctx.msg('Ферзь! Превращено: ' + cur.done, 'good'); } else { b[i] = 1; S.mark = {}; }
+            S.last = { f: sel, t: i }; sel = -1; S.sel = null; S.targets = [];
+            if (count(1) === 0) { ctx.draw(); upd(); return finish(); }
+            ctx.draw(); upd();
+            ctx.later(function () { blackMove(); if (count(1) === 0) { ctx.draw(); upd(); return finish(); } if (!anyMove()) { ctx.draw(); upd(); return finish(); } ctx.draw(); upd(); }, 450);
+            return;
+          }
+        }
+        if (b[i] === 1 && pawnMoves(i).length) { sel = i; S.sel = i; S.targets = pawnMoves(i); S.mark = {}; S.targets.forEach(function (t) { S.mark[t] = 'e:🔵'; }); ctx.draw(); }
+        else { sel = -1; S.sel = null; S.targets = []; S.mark = {}; ctx.draw(); }
+      };
+      newRound();
+    }
+  });
+})();
+
+// Игры: «Расставь фигуры», «Собери по памяти»
+(function () {
+  var GK = window.__gk, rnd = GK.rnd;
+  function setBoard(S, b) { S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; S.sel = null; S.targets = []; S.mark = {}; S.last = null; }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  /* ----- Расставь фигуры ----- */
+  GK.add({
+    id: 'setup', group: 'piece', ic: '🏁', t: 'Расставь фигуры',
+    d: 'Фигуры разбежались по доске. Поставь их на первую горизонталь в том порядке, который показан.',
+    rules: ['Над доской показан порядок фигур слева направо (от поля a1 до h1).', 'Нажми на фигуру, потом на её поле на первой горизонтали.', 'Поставишь не туда — ошибка. Чем быстрее, тем больше очков.'],
+    start: function (ctx) {
+      var cur, sel = -1;
+      function next() {
+        var order = shuffle([4, 2, 3, 5, 6, 3, 2, 4]), b = new Int8Array(64), pool = [], i;
+        for (i = 16; i < 48; i++) pool.push(i);
+        var set = []; for (i = 0; i < 8; i++) { var s = pool.splice(rnd(pool.length), 1)[0]; b[s] = order[i]; set.push(s); }
+        cur = { order: order, placed: 0 }; sel = -1;
+        setBoard(ctx.S, b); ctx.draw();
+        var row = '<div class="gk-order">'; for (i = 0; i < 8; i++) row += '<span><i>' + 'abcdefgh'[i] + '1</i>' + pcHTML(order[i]) + '</span>'; row += '</div>';
+        ctx.extra(row); ctx.prompt('Расставь фигуры на первой горизонтали по образцу. Осталось: <b id="gkLeft">8</b>'); ctx.msg('Нажми на фигуру, потом на поле.');
+      }
+      ctx.click = function (i) {
+        var S = ctx.S, b = S.pos.b, v = b[i];
+        if (sel >= 0 && i >= 56 && !v) {
+          var want = cur.order[i - 56], pc = b[sel];
+          if (pc === want && !isDone(i)) { b[i] = pc; b[sel] = 0; S.last = { f: sel, t: i }; sel = -1; S.sel = null; S.mark = {}; cur.placed++; cur.done = cur.done || {}; cur.done[i] = 1; ctx.ok('Верно!'); }
+          else { S.mark = {}; S.mark[i] = 'e:❌'; S.sel = null; sel = -1; ctx.bad('Здесь должна стоять ' + PNAME[cur.order[i - 56]] + '.'); ctx.draw(); ctx.later(function () { S.mark = {}; ctx.draw(); }, 600); return; }
+          var l = document.getElementById('gkLeft'); if (l) l.textContent = 8 - cur.placed;
+          ctx.draw(); if (cur.placed === 8) { ctx.addTime(3000); ctx.msg('Все фигуры на местах! Бонус +3 секунды', 'good'); ctx.later(next, 900); } return;
+        }
+        if (v > 0 && !(i >= 56 && cur.done && cur.done[i])) { sel = i; S.sel = i; S.mark = {}; ctx.draw(); } else { sel = -1; S.sel = null; ctx.draw(); }
+      };
+      function isDone(i) { return cur.done && cur.done[i]; }
+      next();
+    }
+  });
+
+  /* ----- Собери по памяти ----- */
+  GK.add({
+    id: 'memory', group: 'mem', ic: '🧠', t: 'Собери по памяти',
+    d: 'Запомни расстановку фигур, потом поставь их так же на пустой доске.',
+    rules: ['Сначала на доске появятся фигуры. Запоминай!', 'Потом доска опустеет. Выбери фигуру внизу и нажми на поле.', 'Верно поставленная фигура — очки, лишняя или не туда — ошибка. Нажми «Готово».'],
+    start: function (ctx) {
+      var orig, mem, pal = 0, phase = 0;
+      function palette() {
+        var h = '<div class="gk-pal">', v;
+        for (var c = 1; c >= -1; c -= 2) for (v = 1; v <= 6; v++) h += '<button class="gk-pb" data-v="' + (v * c) + '" aria-label="' + PNAME[v] + '">' + pcHTML(v * c) + '</button>';
+        h += '<button class="gk-pb" data-v="x" aria-label="Убрать">🧽</button></div><p><button class="btn" id="gkDone">Готово</button></p>';
+        ctx.extra(h);
+        Array.prototype.forEach.call(document.querySelectorAll('.gk-pb'), function (b) { b.onclick = function () { pal = b.dataset.v === 'x' ? 'x' : +b.dataset.v; Array.prototype.forEach.call(document.querySelectorAll('.gk-pb'), function (c) { c.classList.toggle('on', c === b); }); }; });
+        document.getElementById('gkDone').onclick = check;
+      }
+      function next() {
+        var lv = ctx.level(), n = 3 + lv + rnd(2), b = new Int8Array(64), i, types = [1, 1, 2, 3, 4, 5, 6];
+        for (i = 0; i < n; i++) { var s = GK.put(b, GK.regionOf(5, 5), types[rnd(types.length)], i % 2 ? -1 : 1); if (s < 0) continue; }
+        orig = b; phase = 0; pal = 0; ctx.extra('');
+        mem = new Int8Array(b); setBoard(ctx.S, mem); ctx.draw();
+        var secs = Math.max(4, 8 - lv), left = secs;
+        ctx.prompt('Запоминай! Осталось <b id="gkM">' + left + '</b> с'); ctx.msg('Запомни, где какая фигура.');
+        (function tk() { left--; var e = document.getElementById('gkM'); if (e) e.textContent = left; if (left <= 0) { hide(); } else ctx.later(tk, 1000); })();
+      }
+      function hide() { phase = 1; mem = new Int8Array(64); setBoard(ctx.S, mem); ctx.draw(); palette(); ctx.prompt('Поставь фигуры как было. Выбери фигуру и нажми на поле.'); ctx.msg('Теперь по памяти!'); }
+      function check() {
+        if (phase !== 1) return; phase = 2; var good = 0, wrong = 0, i, S = ctx.S, total = 0;
+        S.mark = {};
+        for (i = 0; i < 64; i++) { if (orig[i]) total++; if (orig[i] && mem[i] === orig[i]) { good++; S.mark[i] = 'e:✅'; } else if (mem[i]) { wrong++; S.mark[i] = 'e:❌'; } }
+        for (i = 0; i < good; i++) ctx.ok(i === good - 1 ? 'Верно поставлено: ' + good + ' из ' + total : 'Верно!');
+        for (i = 0; i < wrong; i++) ctx.bad('Лишняя или не на месте: ' + wrong);
+        if (!good && !wrong) ctx.msg('Ничего не поставлено!', 'bad');
+        ctx.extra(''); ctx.draw(); ctx.prompt('Верно: <b>' + good + '</b> из ' + total + '. Вот как было:');
+        ctx.later(function () { setBoard(S, new Int8Array(orig)); ctx.draw(); ctx.later(next, 2200); }, 1500);
+      }
+      ctx.click = function (i) {
+        if (phase !== 1 || !pal) return;
+        if (pal === 'x') mem[i] = 0; else mem[i] = pal;
+        ctx.S.pos.b = mem; ctx.draw();
+      };
+      next();
+    }
+  });
+})();
+
 /* ===== защита от «невозможных» позиций во всех упражнениях (лишние слоны, два слона одного цвета и т.п.) ===== */
 (function () {
   Object.keys(LESS).forEach(function (id) {
@@ -9601,10 +10291,10 @@ L.slides=slides;
   function route() {
     clearTimers(); view.onclick = null;
     var parts = (location.hash || '#home').slice(1).split('/'), r = parts[0];
-    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons'].indexOf(r) < 0) r = 'home';
+    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons', 'coords', 'games'].indexOf(r) < 0) r = 'home';
     document.body.classList.toggle('y2', r === 'y2'); document.body.classList.toggle('home', r === 'home');
     var m = document.getElementById('modal'); if (m) m.remove();
-    setActive(r === 'lesson' ? 'lessons' : r);
+    setActive(r === 'lesson' ? 'lessons' : r === 'coords' ? 'games' : r);
     if (r === 'puzzles') puzzles();
     else if (r === 'play') { var w = +parts[1]; if (w >= 1 && w <= WORLDS.length && unlocked((w - 1) * SUB + 1)) playWorld(w - 1); else playWorlds(); }
     else if (r === 'live') liveList();
@@ -9614,6 +10304,8 @@ L.slides=slides;
     else if (r === 'board') boardPage();
     else if (r === 'awards') awards();
     else if (r === 'cartoons') cartoons();
+    else if (r === 'coords') window.__coords(parts);
+    else if (r === 'games') window.__games(parts);
     else home();
     window.scrollTo(0, 0);
   }
