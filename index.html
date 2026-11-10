@@ -946,6 +946,9 @@ body.y2 #prof { display: none; }
 .bside #ctl{display:flex;flex-wrap:wrap;gap:6px;margin:0}.bside #ctl .btn{padding:7px 10px;font-size:13px;min-height:0}
 
 body.onboard #comp, body.onboard #walk, body.onboard #bubs, body.onboard #sky { display: none !important; }
+
+.bside{justify-content:flex-start!important;position:sticky;top:6px;align-self:flex-start!important}
+@media(max-width:700px){.bside{position:static}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -10568,10 +10571,11 @@ var SQR = (function () {
     var past = [], future = [], recs = [], startPos = S.pos, mode = 'move', brush = null, keys = {}, over = false, busy = false, rv = null, token = { cancel: false };
     keys[E.key(S.pos)] = 1;
     view.innerHTML =
-      '<h2>Доска: играть и разбирать</h2>' + sayHero('prof', 'Играйте вдвоём или с компьютером, ставьте часы, расставляйте позиции и разбирайте любые партии.', '') +
+      '<h2>Доска: играть и разбирать</h2>' +
       '<div id="pgnbox" class="pgnbox" hidden><b>Анализ любой партии</b><p class="note">Вставьте записанную партию: «1. e4 e5 2. Nf3 Nc6 …». Можно по-русски: Кf3, Сc4, Фh5, Лe1, Кре2, 0-0.</p><textarea id="pgnTx" rows="5" spellcheck="false"></textarea><div class="row"><button class="btn" id="pgnGo">Загрузить и разобрать</button><button class="btn alt" id="pgnEx">Вставить пример</button><button class="btn alt" id="pgnX">Закрыть</button></div><p id="pgnErr" class="msg bad" hidden></p></div>' +
       '<div class="bgame"><div class="bleft">' + boardHTML() + '<div id="pal" class="pal" hidden></div><div id="promo" class="promo" hidden></div></div>' +
       '<div class="bside">' +
+        '<div class="eng" id="eng" hidden><div class="engh"><b>Движок Stockfish</b><span id="engsc">…</span></div><div class="evb" id="evb"><i class="w" id="evw"></i></div><div class="evm" id="evm"><span id="evmk">▲</span></div><div id="engl" class="engl"></div></div>' +
         '<div class="plr" id="plT"><div class="pn"><b id="plTn"></b> <span class="pr" id="plTr"></span></div><span class="clk" id="clkT" hidden></span></div>' +
         '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
         '<div class="gact" id="gact"><button class="btn alt" id="gRes" title="Сдаться"><i>✕</i><span>Сдаться</span></button><button class="btn alt" id="gDraw" title="Предложить ничью"><i>½</i><span>Ничья</span></button><button class="btn alt" id="gFlag" title="Флажок: время соперника вышло"><i>🏳</i><span>Флажок</span></button></div>' +
@@ -10581,7 +10585,6 @@ var SQR = (function () {
       '<div class="row" id="ctl">' +
       '<button class="btn alt" id="bNew">Новая партия</button><button class="btn alt" id="bUndo">Назад</button><button class="btn alt" id="bRedo">Вперёд</button>' +
       '<button class="btn alt" id="bFlip">Перевернуть</button><button class="btn alt" id="bHint">Лучший ход</button><button class="btn alt" id="bSetup" title="Клавиша S">Расставить фигуры (S)</button><button class="btn alt" id="bEng" aria-pressed="false">Движок</button><button class="btn alt" id="bArr" aria-pressed="false" title="Стрелки лучших ходов движка">➚ Стрелки</button><button class="btn alt" id="bThr" aria-pressed="false" title="Показать фигуры под ударом">⚠ Угрозы</button><button class="btn" id="bLab" title="Как на профессиональных платформах: движок всегда включён, ходить можно за обе стороны">🔬 Анализ-доска</button><button class="btn alt" id="bPgn">Анализ любой партии</button><button class="btn" id="bAn">Разобрать эту партию</button></div>' +
-        '<div class="eng" id="eng" hidden><div class="engh"><b>Движок Stockfish</b><span id="engsc">…</span></div><div class="evb" id="evb"><i class="w" id="evw"></i></div><div class="evm" id="evm"><span id="evmk">▲</span></div><div id="engl" class="engl"></div></div>' +
       '</div></div>' +
       '<div id="rvbox" hidden></div>' +
       '<div><h3>Ходы</h3><p class="mvlist" id="mv">Партия ещё не началась.</p></div>';
