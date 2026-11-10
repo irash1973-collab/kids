@@ -926,6 +926,17 @@ body.y2 #prof { display: none; }
 @media(max-width:520px){.gk-row{grid-template-columns:1.4fr 1fr 1fr 1fr;font-size:13px}}
 .gk-order{display:flex;gap:4px;justify-content:center;margin:8px 0;flex-wrap:wrap}.gk-order span{display:flex;flex-direction:column;align-items:center;background:#fff;border-radius:8px;padding:2px 4px;box-shadow:0 1px 3px rgba(0,0,0,.15)}.gk-order i{font-size:11px;font-style:normal;color:#777}.gk-order .pcs{width:38px;height:38px}
 .gk-pal{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:8px 0}.gk-pb{width:44px;height:44px;border-radius:10px;border:2px solid #ddd;background:#fff;padding:2px;cursor:pointer;font-size:24px}.gk-pb.on{border-color:#f5b800;background:#fff3c4}.gk-pb .pcs{width:36px;height:36px}
+.gk-opts{display:grid;gap:8px;margin:8px 0}.gk-opt{display:flex;align-items:center;gap:10px;font-size:18px;padding:8px 14px;border-radius:12px;border:2px solid #ddd;background:#fff;cursor:pointer;text-align:left}.gk-opt .pcs{width:40px;height:40px}.gk-opt.on{border-color:#f5b800;background:#fff3c4}
+.gk-ladder{display:flex;gap:4px;margin:6px 0;align-items:flex-end}.gk-step{flex:1;border-radius:8px 8px 0 0;background:#e8e2d0;text-align:center;padding:4px 0;font-size:18px;min-height:26px}.gk-step:nth-child(1){min-height:32px}
+.gk-step:nth-child(2){min-height:38px}
+.gk-step:nth-child(3){min-height:44px}
+.gk-step:nth-child(4){min-height:50px}
+.gk-step:nth-child(5){min-height:56px}
+.gk-step:nth-child(6){min-height:62px}
+.gk-step:nth-child(7){min-height:68px}
+.gk-step:nth-child(8){min-height:74px}.gk-step.done{background:#b9e3b0}.gk-step.on{background:#ffd54f}.gk-step b{display:block;font-size:11px;color:#555}
+.gk-lad-h{display:flex;justify-content:space-between;font-size:18px;margin:6px 0}
+.gk-cal{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}.gk-cal span{display:flex;flex-direction:column;align-items:center;font-size:18px;background:#fff;border-radius:8px;padding:2px 6px;min-width:34px}.gk-cal small{font-size:10px;color:#777}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -7189,6 +7200,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
 
     /* ---------- главная страница второго года ---------- */
+    function fromG() { try { return sessionStorage.getItem('ukc_from_games') === '1' ? '#games' : '#y2/speed'; } catch (e) { return '#y2/speed'; } }
     function crumbs(t, up) { return '<div class="y2head"><a class="btn alt" href="' + (up || '#y2') + '">← Назад</a><h2>' + esc(t) + '</h2></div>'; }
     function landing() {
       var tot = 0, gt = 0; Y2.forEach(function (L) { tot += maxPts(L); gt += got(L); });
@@ -7505,13 +7517,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
       draw();
     }
     function speed() {
+      try { sessionStorage.removeItem('ukc_from_games'); } catch (e) {}
       var sp = spGet();
       view.innerHTML = crumbs('Скорость', '#y2') + '<div class="y2cells two"><a class="y2cell" href="#y2/storm"><i>А</i><b>Спринт</b><p>Три минуты. Верные ответы идут серией: за каждые пять подряд добавляется время, ошибка его отнимает.</p><span>рекорд: ' + sp.sprint + '</span></a><a class="y2cell" href="#y2/race"><i>Б</i><b>Футбол: забей гол</b><p>Вы и девять футболистов бежите к воротам. Каждая верная задача — шаг вперёд, ошибка — подкат. Кто первым добежит, забивает гол.</p><span>лучшее место: ' + (sp.race || '—') + '</span></a></div>';
     }
     function storm() {
       var sp = spGet(), cf = lsGet('ukc_y2spc', { min: 3, lv: 2 }), L0 = cf.min * 60, T = L0 * 1000, PEN = { 1: 3, 3: 5, 5: 6, 8: 8, 10: 8 }[cf.min] || 5, run = false, ended = false, iv = null, ls = Date.now(), solved = 0, err = 0, combo = 0, score = 0, best = 0, q = shuffle(pool(cf.lv)), qi = 0, flash = '', rkey = 'sp' + cf.min + '_' + cf.lv;
       var S = { pos: E.start ? E.start() : E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
-      view.innerHTML = crumbs('Спринт', '#y2/speed') + '<div class="y2task"><div id="cfg">' + cfgHTML(cf, [1, 3, 5, 8, 10]) + '</div><div class="y2clk"><span id="spT">' + fmt(T) + '</span><span id="spS">Серия 0 · Верно 0 · Ошибки 0</span></div>' + boardHTML() + '<div class="msg" id="msg" role="status"></div><div class="row"><button class="btn go" id="spGo">Начать</button></div><p class="y2fair">Правила: за каждые 5 верных ответов подряд — +5 секунд. Ошибка: минус ' + PEN + ' с и серия сброшена. Очки: 10 за каждую верную и +1 за каждый шаг серии. Подсказок нет.</p><div id="after"></div></div>';
+      view.innerHTML = crumbs('Спринт', fromG()) + '<div class="y2task"><div id="cfg">' + cfgHTML(cf, [1, 3, 5, 8, 10]) + '</div><div class="y2clk"><span id="spT">' + fmt(T) + '</span><span id="spS">Серия 0 · Верно 0 · Ошибки 0</span></div>' + boardHTML() + '<div class="msg" id="msg" role="status"></div><div class="row"><button class="btn go" id="spGo">Начать</button></div><p class="y2fair">Правила: за каждые 5 верных ответов подряд — +5 секунд. Ошибка: минус ' + PEN + ' с и серия сброшена. Очки: 10 за каждую верную и +1 за каждый шаг серии. Подсказок нет.</p><div id="after"></div></div>';
       var msg = document.getElementById('msg'); function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
       function stat() { var t = document.getElementById('spT'), st = document.getElementById('spS'); if (!t) return false; t.textContent = fmt(T); st.textContent = 'Серия ' + combo + ' · Верно ' + solved + ' · Ошибки ' + err + ' · Очки ' + score; return true; }
       function next() { if (ended) return; var x = q[qi % q.length]; qi++; sm(kind(x.it, x.L) + '. ' + (E.fromFEN(x.it[0]).turn === 1 ? 'Ход белых.' : 'Ход чёрных.')); mini(S, x.it, x.L, function (ok) {
@@ -7560,7 +7573,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var rcf = lsGet('ukc_y2rc', { n: 12, lv: 2 }), N = rcf.n, S = { pos: E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
       var prog = [0].concat(BOT.map(function () { return 0; })), t0 = 0, iv = null, run = false, ended = false, me = 0, q = shuffle(pool(rcf.lv)), qi = 0, stall = 0, tNow = 0, KF = rcf.lv === 1 ? 0.8 : rcf.lv === 3 ? 1.35 : 1;
       var names = ['Вы'].concat(BOT.map(function (b) { return b[0]; }));
-      view.innerHTML = crumbs('Футбол: кто первый забьёт гол', '#y2/speed') + '<div class="y2task"><div id="cfg"><div class="y2row y2opts"><span>Дистанция</span>' + [8, 12, 20].map(function (m) { return '<button class="btn alt" data-n="' + m + '">' + m + ' задач</button>'; }).join('') + '</div><div class="y2row y2opts"><span>Уровень</span>' + [1, 2, 3].map(function (l) { return '<button class="btn alt" data-l="' + l + '">' + LVN[l] + '</button>'; }).join('') + '</div></div><p class="y2lead">Нужно решить ' + N + ' задач, чтобы добежать до ворот. Каждая верная задача — ваш игрок ведёт мяч вперёд, ошибка — «подкат», вы стоите 3 секунды. Девять соперников бегут сами, у каждого свой темп. Кто первым добежит до ворот, тот забивает гол!</p><div class="y2race" id="rc"></div><div class="y2clk"><span id="rT">0:00</span><span id="rS">Решено 0 из ' + N + '</span></div>' + boardHTML() + '<div class="msg" id="msg" role="status"></div><div class="row"><button class="btn go" id="rGo">Вперёд, к воротам!</button></div><div id="after"></div></div>';
+      view.innerHTML = crumbs('Футбол: кто первый забьёт гол', fromG()) + '<div class="y2task"><div id="cfg"><div class="y2row y2opts"><span>Дистанция</span>' + [8, 12, 20].map(function (m) { return '<button class="btn alt" data-n="' + m + '">' + m + ' задач</button>'; }).join('') + '</div><div class="y2row y2opts"><span>Уровень</span>' + [1, 2, 3].map(function (l) { return '<button class="btn alt" data-l="' + l + '">' + LVN[l] + '</button>'; }).join('') + '</div></div><p class="y2lead">Нужно решить ' + N + ' задач, чтобы добежать до ворот. Каждая верная задача — ваш игрок ведёт мяч вперёд, ошибка — «подкат», вы стоите 3 секунды. Девять соперников бегут сами, у каждого свой темп. Кто первым добежит до ворот, тот забивает гол!</p><div class="y2race" id="rc"></div><div class="y2clk"><span id="rT">0:00</span><span id="rS">Решено 0 из ' + N + '</span></div>' + boardHTML() + '<div class="msg" id="msg" role="status"></div><div class="row"><button class="btn go" id="rGo">Вперёд, к воротам!</button></div><div id="after"></div></div>';
       var msg = document.getElementById('msg'); function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
       function lanes() {
         var rc = document.getElementById('rc'); if (!rc) return false;
@@ -8950,7 +8963,7 @@ L.slides=slides;
 
   function menu() {
     var c = cfg();
-    var h = '<h2>Тренажёр: найди поле</h2><p class="note">Учимся быстро находить клетки доски. Выбери время, подписи и сторону, потом игру.</p>';
+    var h = '<div class="ctr-top"><a class="btn alt" href="#games">← Игротека</a></div><h2>Тренажёр: найди поле</h2><p class="note">Учимся быстро находить клетки доски. Выбери время, подписи и сторону, потом игру.</p>';
     h += '<div class="ctr-set"><div><b>Время:</b> ' + [1, 3, 5].map(function (m) { return '<button class="btn' + (c.min === m ? '' : ' alt') + '" data-min="' + m + '">' + m + ' мин</button>'; }).join(' ') + '</div>' +
       '<div><b>Подписи на доске:</b> <button class="btn' + (c.co ? '' : ' alt') + '" data-co="1">С буквами и цифрами</button> <button class="btn' + (c.co ? ' alt' : '') + '" data-co="0">Без букв и цифр</button></div>' +
       '<div><b>Доска:</b> <button class="btn' + (c.side === 'w' ? '' : ' alt') + '" data-side="w">Со стороны белых</button> <button class="btn' + (c.side === 'b' ? '' : ' alt') + '" data-side="b">Со стороны чёрных</button></div></div>';
@@ -8972,7 +8985,7 @@ L.slides=slides;
     var c = cfg(), M = MODES[mode], total = c.min * 60000, t = total, score = 0, miss = 0, over = false, target = -1, flip = c.side === 'b', busy = false;
     var S = { pos: { b: new Int8Array(64), turn: 1, castle: 0, ep: -1, half: 0 }, sel: null, targets: [], last: null, hint: null, flip: flip, coords: c.co, mark: {}, hl: null };
     var obj = null, objTick = 0, objEl = null, ICS = { star: ['⭐', '🌟', '✨', '💫'], car: ['🚗', '🚕', '🚙', '🏎️', '🚓', '🚌'], plane: ['✈️', '🛩️', '🚁', '🚀'] };
-    view.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#coords">← Меню</a> <b>' + M.ic + ' ' + esc(M.t) + '</b></div>' +
+    view.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#games">← Игротека</a> <b>' + M.ic + ' ' + esc(M.t) + '</b></div>' +
       '<div class="ctr-bar"><i id="ctrTime"></i></div>' +
       '<div class="ctr-stat"><span id="ctrT">0:00</span><span class="ok">Верно: <b id="ctrS">0</b></span><span class="no">Ошибки: <b id="ctrM">0</b></span></div>' +
       '<div class="ctr-prompt" id="ctrP"></div><div class="msg" id="msg" role="status" aria-live="polite"></div>' +
@@ -9148,10 +9161,10 @@ L.slides=slides;
     clearTimers();
     var total = min * 60000, t = total, score = 0, okN = 0, badN = 0, streak = 0, bestStreak = 0, over = false;
     var S = { raw: true, pos: { b: new Int8Array(64), turn: 1, castle: 0, ep: -1, half: 0 }, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
-    view.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#games/' + g.id + '">← Выйти</a> <b>' + g.ic + ' ' + esc(g.t) + '</b></div>' +
+    view.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#games">← Игротека</a> <b>' + g.ic + ' ' + esc(g.t) + '</b></div>' +
       '<div class="ctr-bar"><i id="ctrTime"></i></div>' +
       '<div class="ctr-stat"><span id="ctrT">0:00</span><span class="ok">Верно: <b id="ctrS">0</b></span><span class="no">Ошибки: <b id="ctrM">0</b></span><span>Очки: <b id="gkP">0</b></span><span id="gkSt"></span></div>' +
-      '<div class="ctr-prompt" id="ctrP"></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div id="gkX"></div>' + boardHTML();
+      '<div class="ctr-prompt" id="ctrP"></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div id="gkY"></div><div id="gkX"></div>' + boardHTML();
     var msg = document.getElementById('msg');
     function setMsg(x, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = x; }
     function fmt(ms) { var s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
@@ -9173,6 +9186,9 @@ L.slides=slides;
       },
       bad: function (txt) { badN++; streak = 0; score -= 5; t -= 3000; sfx('bad'); setMsg((txt || 'Не то.') + ' −5', 'bad'); hud(); },
       addTime: function (ms) { t += ms; hud(); },
+      head: function (h) { var e = document.getElementById('gkY'); if (e && h != null) e.innerHTML = h; return e; },
+      bonus: function (pts, txt) { score += pts; sfx('good'); setMsg((txt || 'Бонус!') + ' +' + pts, 'good'); hud(); },
+      finish: function () { if (!over) end(); },
       extra: function (h) { var e = document.getElementById('gkX'); if (h != null) e.innerHTML = h; return e; },
       fail: function (txt) { badN++; streak = 0; sfx('bad'); setMsg(txt || 'Не получилось.', 'bad'); hud(); },
       setTime: function (ms) { t = ms; hud(); }
@@ -9213,6 +9229,8 @@ L.slides=slides;
       ['🥇', 'Чемпион', 'Получи 3 звезды в любой игре', gold >= 1], ['👑', 'Король Игротеки', 'Получи 3 звезды в 5 играх', gold >= 5]
     ];
     var bs = 0; Object.keys(o.bst).forEach(function (k) { bs = Math.max(bs, o.bst[k]); });
+    var di2 = GK.dailyInfo ? GK.dailyInfo() : { best: 0, total: 0 };
+    B.push(['📅', 'Три дня подряд', 'Ежедневная задача 3 дня подряд', di2.best >= 3], ['🗓️', 'Неделя подряд', 'Ежедневная задача 7 дней подряд', di2.best >= 7], ['🏆', 'Месяц подряд', 'Ежедневная задача 30 дней подряд', di2.best >= 30]);
     B.push(['🔥', 'Огонь!', 'Серия из 10 верных подряд', bs >= 10], ['⚡', 'Молния', 'Серия из 20 верных подряд', bs >= 20]);
     h += '<h3>Значки</h3><div class="gk-badges">' + B.map(function (b) { return '<div class="gk-badge' + (b[3] ? ' on' : '') + '"><span class="gk-bi">' + (b[3] ? b[0] : '🔒') + '</span><b>' + esc(b[1]) + '</b><small>' + esc(b[2]) + '</small></div>'; }).join('') + '</div>';
     view.innerHTML = h;
@@ -9220,7 +9238,9 @@ L.slides=slides;
 
   /* ---------- хаб ---------- */
   function hub() {
-    var h = '<h2>Игротека</h2><p class="note">Игры и тренажёры на скорость. Выбирай и тренируйся! ★ ' + totalStars() + ' · <a href="#games/awards">🏆 Мои награды</a></p>';
+    var h = '<div class="ctr-top"><a class="btn alt" href="#home">← На главную</a></div><h2>Игротека</h2><p class="note">Игры и тренажёры на скорость. Выбирай и тренируйся! ★ ' + totalStars() + ' · <a href="#games/awards">🏆 Мои награды</a></p>';
+    var di = GK.dailyInfo ? GK.dailyInfo() : { streak: 0, today: '' };
+    h += '<section class="course"><div class="lgrid"><a class="lcard" href="#games/daily"><span class="big">📅 Ежедневная задача</span><p>Одна новая задача в день. Решай каждый день — серия растёт!</p><small class="note">🔥 Серия: ' + di.streak + (di.today === 'ok' ? ' · сегодня решено ✅' : '') + '</small></a></div></section>';
     h += '<section class="course"><h3>Найди поле <small class="note">координаты доски</small></h3><div class="lgrid">' +
       '<a class="lcard" href="#coords/find"><span class="big">🎯 Найди поле</span><p>Назови поле, которое просят, пока идёт время.</p></a>' +
       '<a class="lcard" href="#coords/star"><span class="big">⭐ Падающие звёздочки</span><p>Звёздочка падает на поле — успей найти его.</p></a>' +
@@ -9237,11 +9257,13 @@ L.slides=slides;
       }).join('') + '</div></section>';
     });
     view.innerHTML = h;
+    try { sessionStorage.setItem('ukc_from_games', '1'); } catch (e) {}
   }
 
   window.__games = function (parts) {
     var id = parts && parts[1];
     if (id === 'awards') return awards();
+    if (id === 'daily' && GK.daily) return GK.daily();
     var g = id && GK.byId(id);
     if (!g) return hub();
     if (parts[2] === 'go') return play(g, minCfg());
@@ -9462,35 +9484,61 @@ L.slides=slides;
   });
 
   /* ----- Превращение пешек ----- */
+  // Мини-поиск: чёрные стараются остановить пешки, белые (ребёнок) — провести их в ферзи
+  var PR = GK.promoAI = {
+    pawnMoves: function (b, f) {
+      var o = [], y = f >> 3, x = f & 7; if (y === 0) return o;
+      if (!b[f - 8]) { o.push(f - 8); if (y === 6 && !b[f - 16]) o.push(f - 16); }
+      if (x > 0 && b[f - 9] < 0) o.push(f - 9); if (x < 7 && b[f - 7] < 0) o.push(f - 7); return o;
+    },
+    score: function (b, prom) { // для белых; чем больше — тем лучше белым
+      var sc = prom * 70, i; for (i = 0; i < 64; i++) { if (b[i] === 1) { var p = 6 - (i >> 3); sc += 8 + p * p * 2; } else if (b[i] < 0) sc -= 35; }
+      return sc;
+    },
+    wmoves: function (b) { var o = [], i; for (i = 0; i < 64; i++) if (b[i] === 1) PR.pawnMoves(b, i).forEach(function (t) { o.push([i, t]); }); return o; },
+    bmoves: function (b) { var o = [], i; for (i = 0; i < 64; i++) if (b[i] < 0) GK.pieceMoves(b, i).forEach(function (t) { o.push([i, t]); }); return o; },
+    search: function (b, prom, side, depth, alpha, beta) {
+      if (depth === 0) return PR.score(b, prom);
+      var ms = side > 0 ? PR.wmoves(b) : PR.bmoves(b), best, i, m, b2, pr2, v;
+      if (!ms.length) return PR.search(b, prom, -side, depth - 1, alpha, beta);
+      if (side > 0) { best = -1e9; for (i = 0; i < ms.length; i++) { m = ms[i]; b2 = new Int8Array(b); pr2 = prom; b2[m[0]] = 0; if (m[1] >> 3 === 0) pr2++; else b2[m[1]] = 1; v = PR.search(b2, pr2, -1, depth - 1, alpha, beta); if (v > best) best = v; if (best > alpha) alpha = best; if (alpha >= beta) break; } }
+      else { best = 1e9; for (i = 0; i < ms.length; i++) { m = ms[i]; b2 = new Int8Array(b); b2[m[1]] = b2[m[0]]; b2[m[0]] = 0; v = PR.search(b2, prom, 1, depth - 1, alpha, beta); if (v < best) best = v; if (best < beta) beta = best; if (alpha >= beta) break; } }
+      return best;
+    },
+    blackBest: function (b, prom, depth) { // ход чёрных: минимизируем счёт белых
+      var ms = PR.bmoves(b), bi = -1, bv = 1e9, i, m, b2, v; if (!ms.length) return null;
+      for (i = 0; i < ms.length; i++) { m = ms[i]; b2 = new Int8Array(b); b2[m[1]] = b2[m[0]]; b2[m[0]] = 0; v = PR.search(b2, prom, 1, depth - 1, -1e9, 1e9) + Math.random() * 3; if (v < bv) { bv = v; bi = i; } }
+      return ms[bi];
+    },
+    whiteBest: function (b, prom, depth) {
+      var ms = PR.wmoves(b), bi = -1, bv = -1e9, i, m, b2, v, pr2; if (!ms.length) return null;
+      for (i = 0; i < ms.length; i++) { m = ms[i]; b2 = new Int8Array(b); pr2 = prom; b2[m[0]] = 0; if (m[1] >> 3 === 0) pr2++; else b2[m[1]] = 1; v = PR.search(b2, pr2, -1, depth - 1, -1e9, 1e9) + Math.random() * 3; if (v > bv) { bv = v; bi = i; } }
+      return ms[bi];
+    },
+    setup: function (lv) {
+      var b = new Int8Array(64), i; for (i = 48; i < 56; i++) b[i] = 1;
+      var types = lv === 1 ? [2] : lv === 2 ? [2, 2] : [2, 3], pool = []; for (i = 8; i < 40; i++) pool.push(i);
+      types.forEach(function (t) { b[pool.splice(rnd(pool.length), 1)[0]] = -t; });
+      return b;
+    },
+    depthFor: function () { return 3; }
+  };
   GK.add({
     id: 'promo', group: 'piece', ic: '👑', t: 'Превращение пешек',
-    d: 'Восемь пешек идут на восьмую горизонталь. Чёрные фигуры мешают. Превратить нужно хотя бы три.',
-    rules: ['Пешка идёт вперёд на 1 поле (с начального места можно на 2) и берёт по диагонали.', 'Дойдёшь до восьмой горизонтали — пешка станет ферзём.', 'Превращено 3 и больше — задание выполнено. 1–2 — не справился, начинай снова.'],
+    d: 'Восемь пешек идут на восьмую горизонталь. Чёрные фигуры стараются им помешать. Превратить нужно хотя бы три.',
+    rules: ['Пешка идёт вперёд на 1 поле (с начального места можно на 2) и берёт по диагонали.', 'Береги пешки: ходи цепочкой, чтобы они защищали друг друга. Чёрные фигуры играют всерьёз!', 'Превращено 3 и больше — задание выполнено. 1–2 — не справился, начинай снова.'],
     start: function (ctx) {
       var cur, sel = -1;
-      function bmoves(b, f) { return GK.pieceMoves(b, f); }
       function newRound() {
-        var lv = ctx.level(), b = new Int8Array(64), i; for (i = 48; i < 56; i++) b[i] = 1;
-        var types = lv === 1 ? [2] : lv === 2 ? [2, 3] : [2, 3, 4], pool = []; for (i = 8; i < 40; i++) pool.push(i);
-        var black = []; types.forEach(function (t) { var s = pool.splice(rnd(pool.length), 1)[0]; b[s] = -t; });
-        setBoard(ctx.S, b); cur = { done: 0, lost: 0, b: b }; sel = -1; ctx.draw(); upd(); ctx.msg('Веди пешки вперёд!');
+        var b = PR.setup(ctx.level());
+        setBoard(ctx.S, b); cur = { done: 0, b: b }; sel = -1; ctx.draw(); upd(); ctx.msg('Веди пешки вперёд, держи их цепочкой!');
       }
       function upd() { ctx.prompt('Превращено пешек: <b>' + cur.done + '</b> (нужно 3 и больше). Пешек на доске: <b>' + count(1) + '</b>'); }
       function count(v) { var n = 0; for (var i = 0; i < 64; i++) if (cur.b[i] === v) n++; return n; }
-      function pawnMoves(f) {
-        var b = cur.b, o = [], y = f >> 3, x = f & 7;
-        if (y === 0) return o; if (!b[f - 8]) { o.push(f - 8); if (y === 6 && !b[f - 16]) o.push(f - 16); }
-        if (x > 0 && b[f - 9] < 0) o.push(f - 9); if (x < 7 && b[f - 7] < 0) o.push(f - 7); return o;
-      }
-      function anyMove() { for (var i = 0; i < 64; i++) if (cur.b[i] === 1 && pawnMoves(i).length) return true; return false; }
+      function anyMove() { return PR.wmoves(cur.b).length > 0; }
       function blackMove() {
-        var b = cur.b, best = null, i, all = [];
-        for (i = 0; i < 64; i++) if (b[i] < 0) bmoves(b, i).forEach(function (t) { all.push({ f: i, t: t, cap: b[t] === 1, y: t >> 3 }); });
-        if (!all.length) return;
-        var caps = all.filter(function (m) { return m.cap; });
-        if (caps.length && Math.random() < 0.85) { caps.sort(function (a, c) { return c.y - a.y; }); best = caps[0]; } else best = pick(all);
-        if (b[best.t] === 1) cur.lost++;
-        b[best.t] = b[best.f]; b[best.f] = 0; ctx.S.last = { f: best.f, t: best.t };
+        var b = cur.b, m = PR.blackBest(b, cur.done, PR.depthFor(ctx.level())); if (!m) return;
+        b[m[1]] = b[m[0]]; b[m[0]] = 0; ctx.S.last = { f: m[0], t: m[1] };
       }
       function finish() {
         if (cur.done >= 3) { for (var k = 0; k < cur.done; k++) ctx.ok(k === cur.done - 1 ? 'Превращено ' + cur.done + '! Задание выполнено.' : 'Ферзь!'); ctx.later(newRound, 1200); }
@@ -9499,17 +9547,16 @@ L.slides=slides;
       ctx.click = function (i) {
         var S = ctx.S, b = cur.b;
         if (sel >= 0) {
-          var mm = pawnMoves(sel);
+          var mm = PR.pawnMoves(b, sel);
           if (mm.indexOf(i) >= 0) {
             b[sel] = 0; if (i >> 3 === 0) { cur.done++; sfx('good'); S.mark = {}; S.mark[i] = 'e:👑'; ctx.msg('Ферзь! Превращено: ' + cur.done, 'good'); } else { b[i] = 1; S.mark = {}; }
             S.last = { f: sel, t: i }; sel = -1; S.sel = null; S.targets = [];
-            if (count(1) === 0) { ctx.draw(); upd(); return finish(); }
-            ctx.draw(); upd();
-            ctx.later(function () { blackMove(); if (count(1) === 0) { ctx.draw(); upd(); return finish(); } if (!anyMove()) { ctx.draw(); upd(); return finish(); } ctx.draw(); upd(); }, 450);
+            ctx.draw(); upd(); if (count(1) === 0) return finish();
+            ctx.later(function () { blackMove(); ctx.draw(); upd(); if (count(1) === 0 || !anyMove()) finish(); }, 450);
             return;
           }
         }
-        if (b[i] === 1 && pawnMoves(i).length) { sel = i; S.sel = i; S.targets = pawnMoves(i); S.mark = {}; S.targets.forEach(function (t) { S.mark[t] = 'e:🔵'; }); ctx.draw(); }
+        if (b[i] === 1 && PR.pawnMoves(b, i).length) { sel = i; S.sel = i; S.targets = PR.pawnMoves(b, i); S.mark = {}; S.targets.forEach(function (t) { S.mark[t] = 'e:🔵'; }); ctx.draw(); }
         else { sel = -1; S.sel = null; S.targets = []; S.mark = {}; ctx.draw(); }
       };
       newRound();
@@ -9598,6 +9645,209 @@ L.slides=slides;
       next();
     }
   });
+})();
+
+// Игры: «Угадай ход», «Лестница ферзя», «Шахматная молния»
+(function () {
+  var GK = window.__gk, rnd = GK.rnd, E = GK.E;
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function setPos(S, pos) { S.pos = pos; S.sel = null; S.targets = []; S.mark = {}; S.last = null; S.hl = null; }
+
+  /* ----- генератор «Угадай ход»: один ход явно лучший, два других заметно хуже (проверено движком) ----- */
+  GK.gen.guess = function () {
+    for (var att = 0; att < 12; att++) {
+      var pos = E.start(), plies = 2 * (3 + rnd(6)), i, ok = true;
+      for (i = 0; i < plies; i++) { var m = E.bestMove(pos, 2 + rnd(3), []); if (!m) { ok = false; break; } pos = E.make(pos, m); }
+      if (!ok) continue;
+      var st = E.status(pos); if (st === 'mate' || st === 'stalemate' || E.insufficient(pos)) continue;
+      var ms = E.legal(pos); if (ms.length < 10) continue;
+      var sc = ms.map(function (mm) { return E.evalMove(pos, mm, 3, 40); }), bi = 0;
+      for (i = 1; i < ms.length; i++) if (sc[i] > sc[bi]) bi = i;
+      var second = -1e9; for (i = 0; i < ms.length; i++) if (i !== bi && sc[i] > second) second = sc[i];
+      if (sc[bi] - second < 150) continue;
+      var bad = []; for (i = 0; i < ms.length; i++) if (sc[i] <= sc[bi] - 150 && sc[i] > -2000) bad.push(i);
+      if (bad.length < 2) continue;
+      shuffle(bad); var d1 = bad[0], d2 = bad[1];
+      // перепроверка глубже
+      var bs = E.evalMove(pos, ms[bi], 4, 160), s1 = E.evalMove(pos, ms[d1], 4, 160), s2 = E.evalMove(pos, ms[d2], 4, 160);
+      if (bs - s1 < 120 || bs - s2 < 120) continue;
+      var opts = shuffle([{ m: ms[bi], best: true }, { m: ms[d1] }, { m: ms[d2] }]);
+      return { pos: pos, opts: opts };
+    }
+    return null;
+  };
+  function mvText(pos, m) { var v = Math.abs(pos.b[m.f]); return PNAME[v] + ' ' + SQN(m.f) + (pos.b[m.t] ? ' × ' : ' → ') + SQN(m.t); }
+
+  GK.add({
+    id: 'guess', group: 'think', ic: '🤔', t: 'Угадай ход',
+    d: 'Три хода на выбор. Только один из них самый сильный. Позиции каждый раз новые.',
+    rules: ['Нажми на ход — он подсветится на доске.', 'Потом нажми «Это мой ход».', 'Лучший ход проверен шахматной программой.'],
+    start: function (ctx) {
+      var cur, chosen = -1, locked = false, nextQ = null;
+      function load() { var g = nextQ || GK.gen.guess(); nextQ = null; return g; }
+      function next() {
+        cur = load(); if (!cur) { ctx.msg('Не удалось подобрать позицию, пробую ещё…'); return ctx.later(next, 300); }
+        chosen = -1; locked = false; setPos(ctx.S, cur.pos); ctx.draw();
+        var h = '<div class="gk-opts">' + cur.opts.map(function (o, k) { return '<button class="gk-opt" data-k="' + k + '">' + pcHTML(cur.pos.b[o.m.f]) + '<span>' + esc(mvText(cur.pos, o.m)) + '</span></button>'; }).join('') + '</div><p><button class="btn" id="gkConf" disabled>Это мой ход</button></p>';
+        ctx.extra(h); ctx.prompt('Белые ходят. Какой ход <b>лучший</b>?'); ctx.msg('Нажми на ход, чтобы увидеть его на доске.');
+        Array.prototype.forEach.call(document.querySelectorAll('.gk-opt'), function (b) { b.onclick = function () { if (locked) return; chosen = +b.dataset.k; var m = cur.opts[chosen].m; ctx.S.last = { f: m.f, t: m.t }; ctx.S.hl = {}; ctx.S.hl[m.f] = 1; ctx.S.hl[m.t] = 1; ctx.draw(); Array.prototype.forEach.call(document.querySelectorAll('.gk-opt'), function (c) { c.classList.toggle('on', c === b); }); document.getElementById('gkConf').disabled = false; }; });
+        document.getElementById('gkConf').onclick = confirm;
+        ctx.later(function () { try { nextQ = GK.gen.guess(); } catch (e) { nextQ = null; } }, 50);
+      }
+      function confirm() {
+        if (locked || chosen < 0) return; locked = true; var o = cur.opts[chosen], best = cur.opts.filter(function (x) { return x.best; })[0];
+        if (o.best) { ctx.S.pos = E.make(cur.pos, o.m); ctx.S.hl = null; ctx.ok('Верно! Лучший ход: ' + mvText(cur.pos, o.m)); ctx.draw(); ctx.later(next, 1300); }
+        else { ctx.bad('Не лучший. Лучше было: ' + mvText(cur.pos, best.m)); ctx.S.last = { f: best.m.f, t: best.m.t }; ctx.S.hl = {}; ctx.S.hl[best.m.f] = 1; ctx.S.hl[best.m.t] = 1; ctx.draw(); ctx.later(next, 2200); }
+      }
+      ctx.click = function () {};
+      next();
+    }
+  });
+
+  /* ----- обёртка: запуск мини-задач других игр внутри «Лестницы» и «Молнии» ----- */
+  var POOL = ['safe', 'eat', 'mate1', 'guess'];
+  function runner(ctx, o) {
+    var tok = 0, locked = false, cur = null;
+    function mk(level) {
+      var my = ++tok; locked = false;
+      var P = {
+        S: ctx.S, min: ctx.min, level: function () { return level; },
+        draw: ctx.draw, prompt: ctx.prompt, msg: ctx.msg, extra: ctx.extra, head: ctx.head, addTime: ctx.addTime, bonus: ctx.bonus, finish: ctx.finish,
+        later: function (fn, ms) { if (locked) return; return ctx.later(function () { if (tok === my) fn(); }, ms); },
+        ok: function (t) { if (locked) return; locked = true; ctx.ok(t); o.onOk(); },
+        bad: function (t) { if (locked) return; ctx.bad(t); o.onBad(); },
+        fail: function (t) { ctx.fail(t); o.onBad(); }
+      };
+      Object.defineProperty(P, 'click', { set: function (f) { ctx.click = function (i) { if (tok === my && !(locked && cur)) f(i); }; } });
+      return P;
+    }
+    return {
+      start: function (level) { var id = POOL[rnd(POOL.length)]; var g = GK.byId(id); ctx.extra(''); ctx.S.hl = null; cur = id; var P = mk(level); g.start(P); },
+      stop: function () { tok++; locked = true; }
+    };
+  }
+
+  /* ----- Лестница ферзя ----- */
+  GK.add({
+    id: 'ladder', group: 'think', ic: '🪜', t: 'Лестница ферзя',
+    d: 'Пешка поднимается на 8 ступенек. Верный ответ — шаг вверх, ошибка — шаг вниз. Дойдёшь до верха — станешь ферзём!',
+    rules: ['На каждой ступеньке новая мини-задача.', 'Верно — пешка идёт вверх, ошибка — спускается на ступеньку.', 'Дошла до восьмой ступени — ферзь! Бонус +50 очков и новая лестница.'],
+    start: function (ctx) {
+      var step = 0, crowns = 0, R;
+      function show() {
+        var h = '<div class="gk-ladder">'; for (var k = 0; k < 8; k++) h += '<div class="gk-step' + (k === step ? ' on' : k < step ? ' done' : '') + '"><b>' + (k + 1) + '</b>' + (k === step ? '♟️' : k === 7 ? '👑' : '') + '</div>'; h += '</div>';
+        ctx.head('<div class="gk-lad-h">' + '<span>Ступенька: <b>' + (step + 1) + '</b> из 8</span><span>Ферзей: <b>' + crowns + '</b></span></div>' + h);
+      }
+      function go() { show(); R.start(1 + Math.floor(step / 3)); }
+      R = runner(ctx, {
+        onOk: function () { step++; if (step >= 8) { crowns++; step = 0; show(); ctx.bonus(50, '👑 Пешка стала ферзём!'); } else show(); ctx.later(go, 1100); },
+        onBad: function () { if (step > 0) step--; show(); }
+      });
+      go();
+    }
+  });
+
+  /* ----- Шахматная молния ----- */
+  GK.add({
+    id: 'lightning', group: 'think', ic: '⚡', t: 'Шахматная молния',
+    d: 'Три жизни. Задачи идут одна за другой, время на каждую всё меньше. Ошибка или опоздание — минус жизнь.',
+    rules: ['У тебя 3 жизни ❤️.', 'На каждую задачу ограничено время.', 'Ошибся или не успел — минус жизнь. Нет жизней — конец игры.'],
+    start: function (ctx) {
+      var lives = 3, done = 0, left = 0, total = 0, tk = 0, R;
+      function head() { ctx.head('<div class="gk-lad-h"><span>' + '❤️'.repeat(lives) + '🖤'.repeat(3 - lives) + '</span><span>Задач: <b>' + done + '</b></span></div><div class="ctr-bar"><i id="gkTq" style="width:' + Math.max(0, left * 100 / total) + '%"></i></div>'); }
+      function begin() {
+        total = Math.max(7000, 15000 - done * 500); left = total; var my = ++tk; head(); R.start(Math.min(3, 1 + Math.floor(done / 6)));
+        (function tick() { if (my !== tk) return; left -= 100; var e = document.getElementById('gkTq'); if (e) e.style.width = Math.max(0, left * 100 / total) + '%'; if (left <= 0) { tk++; R.stop(); lose('Время вышло!'); } else ctx.later(tick, 100); })();
+      }
+      function lose(txt) { lives--; head(); ctx.fail(txt + ' Осталось жизней: ' + lives); if (lives <= 0) { ctx.later(ctx.finish, 700); return; } ctx.later(begin, 1100); }
+      R = runner(ctx, {
+        onOk: function () { done++; tk++; head(); ctx.later(begin, 1000); },
+        onBad: function () { tk++; R.stop(); lives--; head(); if (lives <= 0) { ctx.msg('Жизни закончились!', 'bad'); ctx.later(ctx.finish, 900); } else ctx.later(begin, 1100); }
+      });
+      begin();
+    }
+  });
+})();
+
+// «Ежедневная задача»: одна новая задача в день, серия дней подряд, значки
+(function () {
+  var GK = window.__gk, E = GK.E, rnd = GK.rnd;
+  function dkey(d) { d = d || new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function ld() { var o = lsGet('ukc_gk_daily', null); if (!o || typeof o !== 'object') o = {}; o.days = o.days || {}; return o; }
+  function sd(o) { lsSet('ukc_gk_daily', o); }
+  function streak(o) {
+    var d = new Date(), n = 0; if (!(o.days[dkey(d)] && o.days[dkey(d)].s === 'ok')) d.setDate(d.getDate() - 1);
+    while (o.days[dkey(d)] && o.days[dkey(d)].s === 'ok') { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  function total(o) { var n = 0; for (var k in o.days) if (o.days[k].s === 'ok') n++; return n; }
+  function bestStreak(o) { var ks = Object.keys(o.days).filter(function (k) { return o.days[k].s === 'ok'; }).sort(), b = 0, c = 0, prev = null; ks.forEach(function (k) { var d = new Date(k + 'T12:00:00'); if (prev && Math.round((d - prev) / 86400000) === 1) c++; else c = 1; prev = d; b = Math.max(b, c); }); return b; }
+  GK.dailyInfo = function () { var o = ld(); return { streak: streak(o), total: total(o), best: bestStreak(o), today: (o.days[dkey()] || {}).s || '' }; };
+
+  function makeTask() {
+    var doy = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    if (doy % 2 === 0) {
+      var g = null; for (var k = 0; k < 6 && !g; k++) g = E.genPuzzle(['R', 'Q', 'B', 'N', 'X', 'P'][doy % 6]); if (g) return { t: 'mate', fen: g.fen };
+    }
+    var q = null; for (var j = 0; j < 8 && !q; j++) q = GK.gen.guess();
+    if (q) return { t: 'guess', fen: E.toFEN(q.pos), opts: q.opts.map(function (o) { return { f: o.m.f, t: o.m.t, p: o.m.p || 0, best: !!o.best }; }) };
+    var g2 = E.genPuzzle('R'); return { t: 'mate', fen: g2.fen };
+  }
+  function mvText(pos, m) { return PNAME[Math.abs(pos.b[m.f])] + ' ' + SQN(m.f) + (pos.b[m.t] ? ' × ' : ' → ') + SQN(m.t); }
+
+  GK.daily = function () {
+    var o = ld(), key = dkey(), day = o.days[key];
+    if (!day) { day = o.days[key] = { s: 'open', tries: 0, task: makeTask() }; sd(o); }
+    var pos = E.fromFEN(day.task.fen), info = GK.dailyInfo();
+    var S = { raw: true, pos: pos, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
+    // календарь за 14 дней
+    var cal = '<div class="gk-cal">'; for (var i = 13; i >= 0; i--) { var d = new Date(); d.setDate(d.getDate() - i); var e = o.days[dkey(d)], sym = e ? (e.s === 'ok' ? '✅' : e.s === 'fail' ? '❌' : '⬜') : '▫️'; cal += '<span title="' + dkey(d) + '">' + sym + '<small>' + d.getDate() + '</small></span>'; } cal += '</div>';
+    view.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#games">← Игротека</a></div><h2>📅 Ежедневная задача</h2>' +
+      '<p class="note">Одна новая задача каждый день. Решай каждый день — серия растёт! 🔥 Серия: <b>' + info.streak + '</b> · Решено всего: <b>' + info.total + '</b> · Лучшая серия: <b>' + info.best + '</b></p>' + cal +
+      '<div class="ctr-prompt" id="ctrP"></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div id="gkX"></div>' + boardHTML();
+    var msg = document.getElementById('msg');
+    function say2(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+    function draw() { drawBoard(S, click); }
+    function finish(ok) { var o2 = ld(); o2.days[key].s = ok ? 'ok' : 'fail'; sd(o2); }
+    var sel = -1, chosen = -1;
+    function done(ok, txt) {
+      finish(ok); S.sel = null; S.targets = []; S.mark = {}; say2(txt, ok ? 'good' : 'bad'); sfx(ok ? 'good' : 'bad');
+      document.getElementById('gkX').innerHTML = ''; var n = GK.dailyInfo();
+      document.getElementById('ctrP').innerHTML = ok ? '🎉 Задача дня решена! Серия: <b>' + n.streak + '</b> 🔥 Приходи завтра за новой.' : 'Сегодня не получилось. Завтра будет новая задача — попробуй снова!';
+      ctx.over = true; draw();
+    }
+    var ctx = { over: day.s !== 'open' };
+    function click(i) {
+      if (ctx.over) return;
+      if (day.task.t === 'mate') {
+        var legal = E.legal(pos);
+        if (sel >= 0) {
+          var ms = legal.filter(function (m) { return m.f === sel && m.t === i; });
+          if (ms.length) {
+            var mate = ms.filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; })[0];
+            if (mate) { S.pos = E.make(pos, mate); S.last = { f: mate.f, t: mate.t }; return done(true, 'Мат! Отличное решение.'); }
+            var o2 = ld(); o2.days[key].tries = (o2.days[key].tries || 0) + 1; sd(o2); sel = -1; S.sel = null; S.targets = []; S.mark = {}; S.mark[i] = 'e:❌';
+            if (o2.days[key].tries >= 2) { var sol = legal.filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; })[0]; S.last = { f: sol.f, t: sol.t }; return done(false, 'Мат ставил ход: ' + mvText(pos, sol)); }
+            say2('Это не мат. Осталась ещё одна попытка.', 'bad'); sfx('bad'); draw(); return;
+          }
+        }
+        if (pos.b[i] > 0) { sel = i; S.sel = i; S.targets = legal.filter(function (m) { return m.f === i; }).map(function (m) { return m.t; }); S.mark = {}; S.targets.forEach(function (t) { S.mark[t] = 'e:🔵'; }); } else { sel = -1; S.sel = null; S.targets = []; S.mark = {}; }
+        draw();
+      }
+    }
+    if (day.s !== 'open') {
+      var okd = day.s === 'ok'; document.getElementById('ctrP').innerHTML = okd ? '🎉 Сегодняшняя задача уже решена! Серия: <b>' + info.streak + '</b> 🔥 Приходи завтра.' : 'Сегодняшняя задача не решена. Завтра будет новая!';
+      draw(); return;
+    }
+    if (day.task.t === 'mate') { document.getElementById('ctrP').innerHTML = 'Белые ходят и ставят <b>мат в один ход</b>. Две попытки.'; say2('Найди мат!'); }
+    else {
+      var opts = day.task.opts; document.getElementById('ctrP').innerHTML = 'Белые ходят. Какой ход <b>лучший</b>? Одна попытка.'; say2('Нажми на ход, чтобы увидеть его на доске.');
+      document.getElementById('gkX').innerHTML = '<div class="gk-opts">' + opts.map(function (op, k) { return '<button class="gk-opt" data-k="' + k + '">' + pcHTML(pos.b[op.f]) + '<span>' + esc(mvText(pos, op)) + '</span></button>'; }).join('') + '</div><p><button class="btn" id="gkConf" disabled>Это мой ход</button></p>';
+      Array.prototype.forEach.call(document.querySelectorAll('.gk-opt'), function (b) { b.onclick = function () { chosen = +b.dataset.k; var m = opts[chosen]; S.last = { f: m.f, t: m.t }; S.hl = {}; S.hl[m.f] = 1; S.hl[m.t] = 1; draw(); Array.prototype.forEach.call(document.querySelectorAll('.gk-opt'), function (c) { c.classList.toggle('on', c === b); }); document.getElementById('gkConf').disabled = false; }; });
+      document.getElementById('gkConf').onclick = function () { if (chosen < 0 || ctx.over) return; var m = opts[chosen], bm = opts.filter(function (x) { return x.best; })[0]; if (m.best) { S.pos = E.make(pos, m); S.hl = null; done(true, 'Верно! Лучший ход: ' + mvText(pos, m)); } else { S.last = { f: bm.f, t: bm.t }; S.hl = {}; S.hl[bm.f] = 1; S.hl[bm.t] = 1; done(false, 'Лучше было: ' + mvText(pos, bm)); } };
+    }
+    draw();
+  };
 })();
 
 /* ===== защита от «невозможных» позиций во всех упражнениях (лишние слоны, два слона одного цвета и т.п.) ===== */
