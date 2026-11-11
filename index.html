@@ -2133,11 +2133,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function profLabel() { var b = document.getElementById('prof'); if (b) b.textContent = '👤 ' + (kidName() || 'Профиль'); }
   function openProfile() {
     var ov = document.createElement('div'); ov.className = 'profov';
-    ov.innerHTML = '<div class="profbox" role="dialog" aria-label="Мой профиль"><button class="profx" aria-label="Закрыть">✕</button><h2>Мой профиль</h2>' +
+    ov.innerHTML = '<div class="profbox" role="dialog" aria-label="Мой профиль"><button class="profx" aria-label="Закрыть">✕</button><h2>Мой профиль</h2><a class="parNote" href="#parents" style="display:block;margin:6px 0 10px;padding:8px 12px;border:3px solid #e10600;background:#fff6c2;border-radius:12px;color:#111;text-decoration:none"><b style="color:#e10600">📌 Родителям:</b> прочитайте памятку, пожалуйста</a>' +
       '<label class="proflb" for="pn">Как тебя зовут?</label><div class="row"><input id="pn" maxlength="20" value="' + esc(kidName()) + '" placeholder="Твоё имя" autocomplete="off"><button class="btn" id="pnS">Сохранить имя</button></div>' + saveBox() + '</div>';
     document.body.appendChild(ov);
     function close() { ov.remove(); }
-    ov.querySelector('.profx').onclick = close;
+    ov.querySelector('.profx').onclick = close; var pn1 = ov.querySelector('.parNote'); if (pn1) pn1.onclick = close;
     ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
     document.addEventListener('keydown', function esc1(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc1); } });
     document.getElementById('pnS').onclick = function () { var v = (document.getElementById('pn').value || '').replace(/[<>&"]/g, '').trim().slice(0, 20); lsSet('ukc_name', v); profLabel(); close(); if ((location.hash || '#home') === '#home' || location.hash === '') home(); };
@@ -3698,7 +3698,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     id: 'baby', t: 'Детский мат', d: 'Быстрый мат за четыре хода и как от него защититься.', levels: 20,
     slides: [
       { h: 'Что такое детский мат', p: ['Это самая быстрая ловушка для новичков: белые ферзь и слон вместе атакуют слабое поле f7 рядом с чёрным королём. Нажимай «Следующий ход» и смотри.'], demo: { steps: ['e2e4', 'e7e5', 'f1c4|Слон смотрит на f7.', 'b8c6', 'd1h5|Ферзь тоже смотрит на f7.', 'g8f6|Чёрные не заметили угрозы!', 'h5f7|Ферзь берёт f7: мат за четыре хода!'] } },
-      { h: 'Как защититься', p: ['Чтобы не попасть в детский мат: после Фh5 сыграй <b>g6</b> (выгони ферзя) или защити пешку f7 ходом <b>Фe7</b>, <b>Фf6</b> или <b>Кh6</b>. Ход Кf6 здесь не защита: ферзь берёт f7 с матом. Всегда смотри, какое поле атакует соперник.'] },
+      { h: 'Как защититься', p: ['Чтобы не попасть в детский мат: после Фh5 сыграй <b>g6</b> (выгони ферзя) или защити пешку f7 ходом <b>Фe7</b> или <b>Фf6</b>. Конь h6 тоже защищает, но это коварный ход: после d3 слон c1 берёт коня. Ход Кf6 здесь не защита: ферзь берёт f7 с матом. Всегда смотри, какое поле атакует соперник.'] },
       { h: 'Упражнения', p: ['1–10: поставь мат на f7. 11–20: защити свою позицию от детского мата (ты играешь чёрными).'] }
     ],
     gen: function (lv, r) {
@@ -4940,10 +4940,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function kings(r, b) { var a = place(r, b, 'K'), d = place(r, b, 'k', function (s) { return a < 0 || Math.max(Math.abs((s & 7) - (a & 7)), Math.abs((s >> 3) - (a >> 3))) > 1; }); return d >= 0; }
 
     /* --- общий исполнитель: вопросы с доской, варианты или клик --- */
+    function pawnEdge(b) { if (!b) return false; for (var i = 0; i < 64; i++) if ((b[i] === 'P' || b[i] === 'p') && (i < 8 || i >= 56)) return true; return false; }
     function runQ(host, L, lv, finish) {
       var r = mkRng(hstr(L.id + lv + '_fx')), q = null, tries = 0;
       function badKings(b) { try { var ps = E.fromFEN(fenOfB(b) + ' w - - 0 1'), wk = E.kingSq(ps.b, 1), bk = E.kingSq(ps.b, -1); if (wk >= 0 && bk >= 0 && Math.max(Math.abs((wk & 7) - (bk & 7)), Math.abs((wk >> 3) - (bk >> 3))) < 2) return true; if (wk >= 0 && E.inCheck(ps)) return true; ps.turn = -1; return bk >= 0 && E.inCheck(ps); } catch (e) { return false; } }
-      q = uniqTask(L.id, lv, function (k, rr) { var qq = null, tr = 0; while ((!qq || (L.id !== 'kingrules' && badKings(qq.b))) && tr++ < 150) qq = L.gen(rr, k); return qq; });
+      q = uniqTask(L.id, lv, function (k, rr) { var qq = null, tr = 0; while ((!qq || pawnEdge(qq.b) || (L.id !== 'kingrules' && badKings(qq.b))) && tr++ < 150) qq = L.gen(rr, k); return qq; });
       var S = { pos: E.fromFEN(fenOfB(q.b) + ' w - - 0 1'), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: q.hl || null }, mist = 0, done = false;
       if (q.star != null) { if (!q.ring) S.mark[q.star] = 'star'; S.hl = S.hl || {}; S.hl[q.star] = true; }
       host.innerHTML = say(av('prof'), 'Профессор', q.text, L.t + ' · ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' + (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
@@ -6374,7 +6375,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     { t: 'Против слона c5', c: 'w', s: 'e2e4 e7e5 f1c4 f8c5', lim: 5, d: 1, a: true, tip: 'Чёрный слон тоже смотрит на f2. Но ты успеешь первым: ферзь на h5!' },
     { t: 'Чёрные атакуют', c: 'b', s: 'a2a3 e7e5 h2h3', lim: 5, d: 1, a: true, tip: 'Выведи слона на c5 и ферзя на h4 или f6. Цель — белое поле f2.' },
     { t: 'Чёрные: мат на f2', c: 'b', s: 'a2a3 e7e5 b2b3 f8c5 h2h3', lim: 4, d: 1, a: true, tip: 'Слон уже на c5. Ферзь на h4 или f6!' },
-    { t: 'Защищайся чёрными', c: 'b', s: 'e2e4 e7e5 f1c4 b8c6 d1h5', lim: 5, d: 3, a: false, tip: 'Угроза: Фxf7#. Сыграй g6, Фe7, Фf6 или Кh6. Ход Кf6 не спасает.' },
+    { t: 'Защищайся чёрными', c: 'b', s: 'e2e4 e7e5 f1c4 b8c6 d1h5', lim: 5, d: 3, a: false, tip: 'Угроза: Фxf7#. Лучше всего g6, хороши Фe7 и Фf6. Кh6 тоже защищает, но это коварный ход: после d3 слон c1 берёт коня. Ход Кf6 не спасает.' },
     { t: 'Защищайся ещё раз', c: 'b', s: 'e2e4 e7e5 d1h5 b8c6 f1c4', lim: 5, d: 3, a: false, tip: 'Белые целятся в f7. Защити его или прогони ферзя.' },
     { t: 'Защищайся белыми', c: 'w', s: 'a2a3 e7e5 h2h3 f8c5 b2b3 d8h4', lim: 5, d: 3, a: false, tip: 'Угроза: Фxf2#. Прогони ферзя или защити f2.' }
   ];
@@ -6448,7 +6449,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     { h: '8. Как защититься: пешка g6', p: ['Если ферзь напал на f7 (после Фh5), сыграй <b>g6</b>: пешка прогоняет ферзя. Ферзь берёт на e5, ничего страшного.'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 3', steps: ['g7g6|Пешка нападает на ферзя.', 'h5f3|Ферзь отступил. Мата нет.'] } },
     { h: '9. Конь f6: когда он НЕ защищает', p: ['Осторожно! Если слон c4 и ферзь h5 уже смотрят на f7, ход конём f6 <b>не защищает</b>. Конь нападает на ферзя, но ферзь не боится: он берёт f7, и это мат. Нажми «Показать».','Запомни: защита должна закрывать поле f7, а не просто нападать на ферзя.'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 3', steps: ['g8f6|Конь нападает на ферзя, но это ошибка!', 'h5f7|Мат! Конь f6 не закрыл поле f7.'] } },
     { h: '9а. Конь f6: когда он защищает', p: ['Если ферзь стоит не на h5, а на <b>f3</b>, то конь f6 закрывает линию «f» и ферзь не может взять f7. Мата нет. Сравни с прошлым слайдом: всё зависит от того, откуда ферзь смотрит на f7.'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR b KQkq - 3 3', steps: ['g8f6|Конь закрыл линию f: Фxf7 уже невозможно.', 'd2d3|Белые ничего не выиграли, угроза отбита.'] } },
-    { h: '10. Как защититься: ферзь e7 и конь h6', p: ['Можно просто защитить f7 ещё одной фигурой: <b>ферзь e7</b>, <b>ферзь f6</b> или <b>конь h6</b>. Тогда Фxf7 не мат.','Если белые пойдут Фf3, а чёрные ответят Кf6, то конь перекроет линию и закроет f7. Мата не будет, и ферзю придётся отступить.'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 3', steps: ['d8e7|Ферзь защитил f7.', 'd2d3|Белые ничего не выиграли.'] } },
+    { h: '10. Как защититься: ферзь e7 и ферзь f6', p: ['Кроме g6, можно просто защитить f7 ещё одной фигурой: <b>ферзь e7</b> или <b>ферзь f6</b>. Тогда Фxf7 не мат: чёрный ферзь прикрывает пешку. Это хорошие, надёжные защиты.','Лучше всего g6: пешка сразу прогоняет ферзя. Ферзь e7 и ферзь f6 тоже годятся.'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 3', steps: ['d8e7|Ферзь защитил f7.', 'd2d3|Белые ничего не выиграли.'] } },
+    { h: '10а. Конь h6: коварная защита', p: ['Конь h6 тоже защищает f7, но это <b>не лучшая защита</b>. Белые играют d3, и слон c1 нападает на коня h6. Если чёрные не заметят, слон берёт коня, пешка g7 его берёт, и угроза Фxf7 мат появляется снова. Нажми «Показать».','Лучше сразу выбрать <b>g6</b> (прогнать ферзя), <b>ферзь e7</b> или <b>ферзь f6</b>: эти защиты надёжнее. Конь h6 годится, только если ты всё время следишь за слоном c1.'], demo: { fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 3', steps: ['g8h6|Конь защитил f7. Но это коварный ход.', 'd2d3|Белые открыли слона c1: он нападает на коня h6.', 'd7d6|Чёрные не заметили угрозу.', 'c1h6|Слон берёт коня.', 'g7h6|Пешка берёт слона.', 'h5f7|Ферзь берёт f7: мат! Угроза детского мата вернулась.'] } },
     { h: '11. Не защита: ходы в сторону', p: ['Ходы вроде a6 или h6 не защищают f7. Ферзь берёт f7 — и это мат. Всегда спрашивай себя: «Что теперь бьёт соперник? Кто защищает это поле?»'], fen: 'r1bqkbnr/1ppp1ppp/p1n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 4' },
     { h: '12. Ты играешь белыми: не попадись', p: ['Иногда ловушка срабатывает против белых. Если слон c5 и ферзь h4 смотрят на f2, прогони ферзя пешкой g3 или защити f2 ферзём (Фe2 тоже годится).'], fen: 'rnb1k1nr/pppp1ppp/8/2b1p3/7q/PPP4P/3PPPP1/RNBQKBNR w KQkq - 0 4' },
     { h: '13. Как сделать угрозу', p: ['Чтобы угрожать матом, поставь вторую фигуру на f7. Если слон уже на c4, поставь ферзя на h5 или f3. Если ферзь на h5, поставь слона на c4.'], fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 0 3' },
@@ -8754,7 +8756,7 @@ var add=[
 {h:'Разбор: ферзь на f3 и пропущенная защита',p:['Белые сыграли слоном и поставили ферзя на f3. Угроза мата на f7 уже есть. Правильный ответ чёрных: развивающий ход конём f6, он закрывает линию. Но в нашей партии чёрные сыграли слоном c5 и забыли про f7.'],demo:{steps:['e2e4','e7e5','f1c4','b8c6','d1f3|Угроза мата на f7.','f8c5|Развивающий ход, но он не защищает f7!','f3f7|Мат!']}},
 {h:'Разбор: защита g6 и ловушка слона',p:['Если чёрные правильно защитились ходом g6, белым не стоит торопиться. Если же они продолжают упрямо нападать, как в этой партии, они сами могут остаться без фигуры. Белые отдали слона за пешку f7, но это не привело к победе.'],demo:{steps:['e2e4','e7e5','f1c4','b8c6','d1h5','g7g6|Чёрные защитились: ферзя прогоняют.','h5f3','g8f6|Конь выходит и закрывает линию f.','f3b3|Белые упрямо идут на f7.','c6d4|Конь нападает на ферзя.','c4f7|Белые берут пешку слоном: шах.','e8e7','b3c4','b7b5|Слабая пешка прогоняет ферзя.','c4d3','e7f7|Чёрный король берёт слона: выиграна лишняя фигура.']}},
 {h:'Подготовленный мат: убери помеху',p:['Иногда поле f7 уже под ударом, но на пути ферзя стоит своя фигура. Тогда сначала убери помеху ходом с шахом или с угрозой, а потом ставь мат. Главное — заранее посчитать, что соперник ответит.','Запомни порядок: 1) найди слабое поле f7 (или f2); 2) посмотри, сколько фигур его бьют и сколько защищают; 3) если нападающих больше, ищи мат.']},
-{h:'Реши сам: как защититься за чёрных',p:['Белые поставили слон c4 и ферзь h5. Мат на f7 уже угрожает. Хорошие ответы: <b>Фd7, Фe7, Фf6, Кh6, g6</b>. Выбери любой и сыграй. Нажми «Показать», чтобы увидеть ход Фf6.','Обрати внимание: после Фf6 чёрные заодно нападают на пешку f2. Белым надо следить за этим и ответить развивающим ходом Кf3.'],demo:{fen:'rnbqk1nr/ppp2ppp/3p4/2b1p2Q/2B1P3/2N5/PPPP1PPP/R1B1K1NR b KQkq - 0 4',steps:['d8f6|Ферзь защитил f7 и сам нападает на f2.','g1f3|Белые защитили f2 и развили коня. Всё спокойно.']}}
+{h:'Реши сам: как защититься за чёрных',p:['Белые поставили слон c4 и ферзь h5. Мат на f7 уже угрожает. Хорошие ответы: <b>g6</b> (лучше всего), <b>Фe7, Фf6, Фd7</b>. Конь h6 тоже защищает, но это коварный ход: после d3 слон c1 берёт коня, и угроза мата возвращается. Выбери любой и сыграй. Нажми «Показать», чтобы увидеть ход Фf6.','Обрати внимание: после Фf6 чёрные заодно нападают на пешку f2. Белым надо следить за этим и ответить развивающим ходом Кf3.'],demo:{fen:'rnbqk1nr/ppp2ppp/3p4/2b1p2Q/2B1P3/2N5/PPPP1PPP/R1B1K1NR b KQkq - 0 4',steps:['d8f6|Ферзь защитил f7 и сам нападает на f2.','g1f3|Белые защитили f2 и развили коня. Всё спокойно.']}}
 ];
 var i=L.slides.length-2; // перед «Главное правило» и «Мини-игры»
 Array.prototype.splice.apply(L.slides,[i,0].concat(add));
@@ -10104,10 +10106,9 @@ var SQR = (function () {
   var PE1 = themeLesson({
     id: 'pe1', t: 'Пешечные окончания: напади на пешку', d: 'Король нападает на пешку. Какая пешка защищена, а какую можно забрать.', levels: 10,
     slides: [
-      { h: 'Наш шахматный словарик', p: ['<b>Пешечное окончание</b> — на доске остались только короли и пешки. <b>Проходная пешка</b> — перед ней нет чужих пешек ни на её вертикали, ни на соседних. <b>Поле превращения</b> — последняя клетка на пути пешки: там она становится ферзём. <b>Нападение</b> — угроза взятия. <b>Защита</b> — своя фигура или пешка стоит так, что если твою пешку возьмут, ты возьмёшь обратно. В пешечном окончании король — сильная фигура: он и нападает, и защищает.'] },
       { h: 'Нападение на пешку', p: ['Король нападает на пешку, когда стоит рядом с ней: по вертикали, горизонтали или диагонали. Если пешку <b>никто не защищает</b>, король её просто забирает. Нажми «Следующий ход».'], demo: { fen: '7k/8/8/3p4/8/4K3/8/8 w - - 0 1', steps: ['e3d4|Король встал рядом с пешкой и нападает на неё. Защитить пешку некому.', 'h8g7|Чёрный король далеко.', 'd4d5|Король забрал пешку.'] } },
       { h: 'Защищена пешка или нет', p: ['Пешку защищает <b>свой король</b>, если стоит рядом с ней, или <b>своя пешка</b>, если стоит по диагонали позади. Защищённую пешку королём брать нельзя: после взятия он оказался бы рядом с чужим королём, а короли не могут стоять рядом. Пешка d5 защищена чёрным королём.'], fen: '8/8/3k4/3p4/8/8/8/4K3 w - - 0 1', hl: [27], hint: 'Чёрный король стоит рядом с пешкой d5. Белый король её не возьмёт.' },
-      { h: 'Узелки на память', p: ['<b>Раз.</b> Сначала проверь, защищена ли пешка. <b>Два.</b> Чтобы напасть на пешку, подведи короля вплотную к ней. <b>Три.</b> Нельзя ставить короля рядом с чужим королём. Дальше <b>10 упражнений</b>: напасть на пешку и ответить, защищена ли она.'] }
+      { h: 'Запомни', p: ['<b>Раз.</b> Сначала проверь, защищена ли пешка. <b>Два.</b> Чтобы напасть на пешку, подведи короля вплотную к ней. <b>Три.</b> Нельзя ставить короля рядом с чужим королём. Дальше <b>10 упражнений</b>: напасть на пешку и ответить, защищена ли она.'] }
     ],
     gen: function (lv, r) {
       if (lv % 2 === 0) { var side = lv % 4 === 0 ? 1 : -1; return genDefQ(r, side); }
@@ -10138,7 +10139,7 @@ var SQR = (function () {
     slides: [
       { h: 'Пешку атакуют', p: ['Когда король соперника напал на твою пешку, её нужно сразу спасать. Способы такие: <b>1.</b> подвести к ней своего короля; <b>2.</b> защитить её другой пешкой; <b>3.</b> увести пешку вперёд, если там ей ничего не грозит.'] },
       { h: 'Король защищает', p: ['Чёрный король e4 напал на пешку d4. Белый король подходит и защищает её. Теперь чёрный король пешку не возьмёт. Нажми «Следующий ход».'], demo: { fen: '8/8/8/8/3Pk3/8/2K5/8 w - - 0 1', steps: ['c2c3|Белый король встал рядом с пешкой. Теперь пешка защищена.'] } },
-      { h: 'Узелки на память', p: ['<b>Раз.</b> Найди пешку, которая под ударом. <b>Два.</b> Поставь короля рядом с ней, но не рядом с чужим королём. <b>Три.</b> Проверь, не стала ли защищённой именно та пешка, которую ты спасаешь. Дальше <b>10 упражнений</b>: 5 на защиту и 5 вопросов «защищена ли пешка».'] }
+      { h: 'Запомни', p: ['<b>Раз.</b> Найди пешку, которая под ударом. <b>Два.</b> Поставь короля рядом с ней, но не рядом с чужим королём. <b>Три.</b> Проверь, не стала ли защищённой именно та пешка, которую ты спасаешь. Дальше <b>10 упражнений</b>: 5 на защиту и 5 вопросов «защищена ли пешка».'] }
     ],
     gen: function (lv, r) {
       if (lv % 2 === 0) { var side = lv % 4 === 0 ? -1 : 1; return genDefQ(r, side); }
@@ -10183,7 +10184,7 @@ var SQR = (function () {
       { h: 'Строим квадрат', p: ['Квадрат строится от пешки до поля превращения: его сторона равна <b>числу ходов</b> пешки до края. Пешка c5 идёт на c1: четыре хода, значит сторона квадрата — четыре хода. Квадрат подсвечен. Если пешка стоит на начальной линии, считай так, будто она на одну клетку дальше: первым ходом она может пойти сразу на две клетки.'], fen: '7k/8/8/2p5/8/8/8/K7 w - - 0 1', hl: sqArr(26, 56), hint: 'Сторона квадрата — число ходов, которые нужно пешке до последней горизонтали.' },
       { h: 'Король в квадрате', p: ['Если король, у которого сейчас очередь ходить, может <b>войти в квадрат</b> пешки, он её догонит. Здесь белый король уже внутри квадрата c5–c1: пешка не пройдёт.'], fen: '8/8/8/2p5/8/4K3/8/7k w - - 0 1', hl: sqArr(26, 44), hint: 'Белый король внутри квадрата и догоняет пешку.' },
       { h: 'Король за квадратом', p: ['Если король не может войти в квадрат, пешка дойдёт до края и станет ферзём. Здесь король стоит слишком далеко: даже сделав ход, он не окажется внутри квадрата.'], fen: '7k/8/8/2p5/8/8/8/7K w - - 0 1', hl: sqArr(26, 63), hint: 'Король h1 далеко от квадрата пешки.' },
-      { h: 'Упражнения', p: ['<b>Узелки на память.</b> Раз: если пешка ещё не ходила, считай, что она уже на клетку впереди (первым ходом она может пройти две клетки). Два: король в квадрате пешки или входит в него своим ходом — значит, догонит. Три: на пути короля не должно быть помех. <b>10 упражнений</b>: догонит ли король пешку, и сколько ходов до края.'] }
+      { h: 'Упражнения', p: ['<b>Запомни.</b> Раз: если пешка ещё не ходила, считай, что она уже на клетку впереди (первым ходом она может пройти две клетки). Два: король в квадрате пешки или входит в него своим ходом — значит, догонит. Три: на пути короля не должно быть помех. <b>10 упражнений</b>: догонит ли король пешку, и сколько ходов до края.'] }
     ],
     gen: function (lv, r) {
       if (lv % 2 === 1) return genCatchQ(r, lv <= 5);
@@ -10250,9 +10251,8 @@ var SQR = (function () {
   var PE5 = themeLesson({
     id: 'pe5', t: 'Проконтролируй поле превращения', d: 'Король рядом с полем, куда идёт пешка, помогает ей стать ферзём.', levels: 10,
     slides: [
-      { h: 'Наш шахматный словарик', p: ['<b>Поле превращения</b> — клетка на последней горизонтали прямо перед пешкой: когда пешка туда дойдёт, она станет ферзём. <b>Контролировать поле</b> — стоять на нём или рядом с ним, чтобы чужой король не мог его занять и не мог взять нового ферзя.'] },
       { h: 'Король ведёт пешку', p: ['Пешка на седьмой горизонтали делает последний шаг. Но чёрный король стоит рядом и съест нового ферзя, если тот никем не защищён. Поэтому белый король сначала подходит к полю превращения. Поле e8 подсвечено. Нажми «Следующий ход».'], fen: '8/3kP3/5K2/8/8/8/8/8 w - - 0 1', hl: [4], demo: { fen: '8/3kP3/5K2/8/8/8/8/8 w - - 0 1', steps: ['f6f7|Король f7 контролирует поле e8.', 'd7c7|Чёрному королю нечем помешать.', 'e7e8q|Пешка превратилась в ферзя. Ферзь защищён королём f7!'] }, hint: 'Король f7 стоит рядом с полем e8: ферзь на e8 будет под защитой.' },
-      { h: 'Узелки на память', p: ['<b>Раз.</b> Найди поле превращения: оно прямо перед пешкой. <b>Два.</b> Поставь своего короля на это поле или рядом с ним. <b>Три.</b> Не подходи королём вплотную к чужому королю. Дальше <b>10 упражнений</b>: найти ход королём к полю превращения и ответить, контролирует ли король это поле.'] }
+      { h: 'Запомни', p: ['<b>Раз.</b> Найди поле превращения: оно прямо перед пешкой. <b>Два.</b> Поставь своего короля на это поле или рядом с ним. <b>Три.</b> Не подходи королём вплотную к чужому королю. Дальше <b>10 упражнений</b>: найти ход королём к полю превращения и ответить, контролирует ли король это поле.'] }
     ],
     gen: function (lv, r) {
       if (lv % 2 === 0) {
@@ -10591,7 +10591,7 @@ var SQR = (function () {
     { h: 'Что такое связка', p: ['<b>Связка</b> — это когда твоя фигура нападает на фигуру соперника, а за ней на той же линии стоит более важная фигура (король, ферзь или ладья). Связанная фигура не может уйти, или ей уходить невыгодно.', 'Нажми «Показать»: слон нападает на коня, а за конём на одной диагонали стоит король.'], demo: ST('4k3/8/8/1n6/8/4PK2/2B5/8 w - - 0 1', ['c2a4|Слон a4 нападает на коня b5. За конём по диагонали стоит король: конь связан.', 'e8d7|Коня не спасти.', 'a4b5|Слон берёт связанного коня.']) },
     { h: 'Кто связывает: слон', p: ['Связывать могут только <b>дальнобойные</b> фигуры: слон, ладья и ферзь. Слон связывает по диагонали. Здесь слон a4 связал коня d7 с королём e8 (линия отмечена).'], fen: '4k3/3n4/8/8/B7/8/8/6K1 w - - 0 1', hl: lineSqs('a4', 'e8'), hint: 'Линия связки: слон, конь, король.' },
     { h: 'Кто связывает: ладья', p: ['Ладья связывает по вертикали или горизонтали. Здесь ладья e1 связала коня e7 с королём e8.'], fen: '4k3/4n3/8/8/8/8/8/4R1K1 w - - 0 1', hl: lineSqs('e1', 'e8'), hint: 'Линия связки по вертикали e.' },
-    { h: 'Кто связывает: ферзь', p: ['Ферзь ходит как слон и как ладья, поэтому связывает и по диагонали, и по прямой. Здесь ферзь b3 связал слона f7 с королём g8.'], fen: '6k1/5b2/8/8/8/1Q6/8/6K1 w - - 0 1', hl: lineSqs('b3', 'g8'), hint: 'Линия связки по диагонали.' },
+    { h: 'Кто связывает: ферзь', p: ['Ферзь ходит как слон и как ладья, поэтому связывает и по диагонали, и по прямой. Здесь ферзь b3 связал коня f7 с королём g8.'], fen: '6k1/5n2/8/8/8/1Q6/8/6K1 w - - 0 1', hl: lineSqs('b3', 'g8'), hint: 'Линия связки по диагонали.' },
     { h: 'Связка с королём', p: ['Если за связанной фигурой стоит <b>король</b>, она вообще не может ходить: иначе королю будет шах, а так играть нельзя. Это <b>полная (абсолютная) связка</b>. Конь e7 стоит на месте: уйти ему нельзя.'], fen: '4k3/4n3/8/8/8/8/8/4R1K1 b - - 0 1', hl: lineSqs('e1', 'e8'), hint: 'Конь e7 прикрывает короля от ладьи.' },
     { h: 'Связка без короля', p: ['Если за связанной фигурой стоит ферзь или ладья, фигура <b>может</b> уйти, но тогда ты возьмёшь более дорогую фигуру. Это <b>неполная (относительная) связка</b>. Нажми «Показать»: конь f6 связан с ферзём d8.'], demo: game('d2d4 e7e6 g1f3 g8f6 c1g5 f6e4 g5d8 e8d8', { 4: 'Слон g5 связал коня f6 с ферзём d8.', 5: 'Конь ушёл и бросил ферзя.', 6: 'Слон берёт ферзя!', 7: 'Король берёт слона: белые выиграли ферзя за слона.' }) },
     { h: 'Связка и угроза мата', p: ['Связанная фигура не может защитить поле, и поэтому иногда получается мат. Нажми «Показать»: слон g4 связал коня f3 с ферзём.'], demo: game('e2e4 e7e5 g1f3 d7d6 f1c4 c8g4 b1c3 g7g6 f3e5 g4d1 c4f7 e8e7 c3d5', { 5: 'Слон g4 связал коня f3 с ферзём d1.', 8: 'Конь берёт пешку: связка не помогла.', 9: 'Чёрные берут ферзя.', 10: 'Слон f7 даёт шах.', 12: 'Конь d5: мат! Король не может уйти.' }) },
@@ -10604,6 +10604,445 @@ var SQR = (function () {
   LESS.pin = L;
   var gi = -1; GROUPS.forEach(function (g, i) { if (g.n === 'Двойной удар') gi = i; });
   GROUPS.splice(gi < 0 ? GROUPS.length : gi + 1, 0, { n: 'Связка', ids: ['pin'] });
+})();
+
+/* ===== Итоговая работа за первый год: 20 заданий по всем темам, 80% для диплома ===== */
+(function () {
+  var KEY = 'ukc_exam', N = 20;
+  /* 20 тем: у каждой свой урок; в трёх ячейках урок выбирается случайно */
+  var SLOTS = [['squares'], ['lg_pieces'], ['kingrules'], ['values'], ['trades'], ['attdef'], ['castle'], ['ep'], ['promo'], ['check'], ['mate'], ['baby'], ['draws'], ['stalemate'], ['mkinds'], ['m2'], ['forkN', 'forkQ', 'forkR', 'forkB', 'forkP'], ['pin'], ['pe3', 'pe4', 'pe5', 'pe6', 'pe7'], ['G:Q', 'G:R', 'G:RR', 'G:QR']];
+  /* допуск: имя + не меньше 80% упражнений в каждом уроке первого года (или скрытое «Открыть всё») */
+  function req() {
+    var name = (lsGet('ukc_name', '') || '').trim(), miss = [], total = 0, ok = 0;
+    GROUPS.forEach(function (g) { g.ids.forEach(function (id) {
+      var L = LESS[id]; if (!L || !L.levels) return; total++;
+      var d = 0; for (var i = 1; i <= L.levels; i++) if (lvDone(id, i)) d++;
+      var need = Math.ceil(L.levels * 0.8);
+      if (d >= need) ok++; else miss.push({ id: id, t: L.t, d: d, need: need, n: L.levels });
+    }); });
+    var unlocked = !!lsGet('ukc_all', false) || (!!name && !miss.length);
+    return { name: name, miss: miss, total: total, ok: ok, unlocked: unlocked };
+  }
+  var MINLV = { promo: 5 }; /* первые уровни «Превращения» — партии с компьютером, в тест не берём */
+  function st() { return lsGet(KEY, { pass: false, best: 0 }); }
+  window.__examPassed = function () { return !!st().pass; };
+
+  /* --- партия: поставить мат по-настоящему (пат, повтор позиции и правило 50 ходов = не решено) --- */
+  var MG = { Q: { t: 'Мат ферзём и королём', pcs: [5], link: 'mq' }, R: { t: 'Мат ладьёй и королём', pcs: [4], link: 'mr' }, RR: { t: 'Мат двумя ладьями', pcs: [4, 4], link: 'mrr' }, QR: { t: 'Мат ферзём и ладьёй', pcs: [5, 4], link: 'mqr' } };
+  function mgPos(pcs) {
+    function cheb(a, b) { return Math.max(Math.abs((a & 7) - (b & 7)), Math.abs((a >> 3) - (b >> 3))); }
+    for (var tr = 0; tr < 500; tr++) {
+      var b = new Int8Array(64), bk = Math.floor(Math.random() * 64), wk = Math.floor(Math.random() * 64), ok = true;
+      if (bk === wk || cheb(bk, wk) < 3) continue; b[bk] = -6; b[wk] = 6;
+      for (var i = 0; i < pcs.length && ok; i++) { var q = Math.floor(Math.random() * 64); if (b[q] || cheb(q, bk) < 2) { ok = false; break; } b[q] = pcs[i]; }
+      if (!ok) continue;
+      var pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }, bp = { b: b, turn: -1, castle: 0, ep: -1, half: 0 };
+      if (E.inCheck(bp)) continue; var st = E.status(pos); if (st !== 'ok' && st !== 'check') continue;
+      if (E.status(bp) !== 'ok') continue;
+      return pos;
+    }
+    return E.fromFEN('8/8/8/4k3/8/8/8/R3K3 w - - 0 1');
+  }
+  function mgRun(host, key, finish) {
+    var c = MG[key], cur = mgPos(c.pcs), moves = 0, busy = false, done = false, hh = [E.hashOf(cur)];
+    var S = { pos: cur, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
+    host.innerHTML = say(av('prof'), c.t, 'Ты играешь белыми. Поставь мат чёрному королю. Нельзя ставить пат, повторять позицию три раза и играть дольше 50 ходов. Компьютер защищается!', 'мат') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="count" id="cnt" style="margin:6px 0"></div>';
+    var msg = document.getElementById('msg');
+    function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+    function draw() { document.getElementById('cnt').textContent = 'Ход ' + moves + ' из 50'; drawBoard(S, click); }
+    function check(who) {
+      var st = E.status(cur);
+      if (st === 'mate') { done = true; draw(); sm('Мат! Ты поставил мат за ' + moves + ' ходов.', 'good'); finish(3); return true; }
+      if (st === 'stalemate') { done = true; draw(); sm('Пат! Это ничья, мат не поставлен.', 'bad'); return true; }
+      if (E.insufficient(cur)) { done = true; draw(); sm('Фигур не осталось: мат уже не поставить.', 'bad'); return true; }
+      var rep = 0; hh.forEach(function (h) { if (h === hh[hh.length - 1]) rep++; });
+      if (rep >= 3) { done = true; draw(); sm('Позиция повторилась три раза: это ничья.', 'bad'); return true; }
+      if (moves >= 50 && who === 'b') { done = true; draw(); sm('Прошло 50 ходов, а мата нет: по правилам это ничья.', 'bad'); return true; }
+      return false;
+    }
+    function click(i) {
+      if (busy || done) return; var v = cur.b[i];
+      if (S.sel != null && S.targets.indexOf(i) >= 0) {
+        var m = movesFrom(cur, S.sel).filter(function (x) { return x.t === i; })[0], b0 = cur;
+        cur = E.make(cur, m); moves++; S.pos = cur; S.last = { f: m.f, t: m.t }; S.sel = null; S.targets = []; hh.push(E.hashOf(cur)); moveSound(b0, m, cur); draw();
+        if (check('w')) return; busy = true; sm('Компьютер думает…');
+        later(function () {
+          var bm = E.bestMove(cur, 7, hh), b1 = cur; if (!bm) { busy = false; return; }
+          cur = E.make(cur, bm); S.pos = cur; S.last = { f: bm.f, t: bm.t }; hh.push(E.hashOf(cur)); moveSound(b1, bm, cur); busy = false; draw();
+          if (check('b')) return; sm(E.inCheck(cur) ? 'Тебе шах!' : 'Твой ход.', '');
+        }, 450); return;
+      }
+      if (v && v > 0) { S.sel = i; S.targets = movesFrom(cur, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
+      draw();
+    }
+    sm('Твой ход.'); draw();
+  }
+  function mgLesson(key) { var c = MG[key]; return { id: 'mg_' + key, t: c.t, link: c.link, game: true, levels: 1, run: function (host, L, lv, fin) { mgRun(host, key, fin); } }; }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  /* задания не повторяются от попытки к попытке: запоминаем, какие уже были */
+  function seenGet() { var o = lsGet('ukc_examseen', {}); return o && typeof o === 'object' ? o : {}; }
+  function makeSet() {
+    var seen = seenGet(), out = [];
+    SLOTS.forEach(function (s) {
+      if (s[0].indexOf('G:') === 0) { var gk = pick(s).slice(2); out.push({ L: mgLesson(gk), lv: 1 }); return; }
+      var ids = s.filter(function (id) { var L = LESS[id]; return L && L.levels && L.run; }); if (!ids.length) return;
+      var id = pick(ids), L = LESS[id], used = seen[id] || [], free = [];
+      for (var k = (MINLV[id] || 1); k <= L.levels; k++) if (used.indexOf(k) < 0) free.push(k);
+      if (!free.length) { used = []; seen[id] = []; for (var k2 = (MINLV[id] || 1); k2 <= L.levels; k2++) free.push(k2); }
+      var lv = pick(free); seen[id] = used.concat([lv]); out.push({ L: L, lv: lv });
+    });
+    lsSet('ukc_examseen', seen);
+    return shuffle(out).slice(0, N);
+  }
+  function page(parts) {
+    var r = req(); if (!r.unlocked) { lockedPage(r); return; }
+    if (lsGet('ukc_all', false) && parts && parts[1] === 'pool') { poolPage(); return; }
+    if (lsGet('ukc_all', false) && parts && parts[1] === 'coach') { coachRun(makeSetNoSave(), 0); return; }
+    var v = document.getElementById('view'), s = st();
+    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#lessons">← Уроки</a></div><h2>🏁 Завершающий тестовый урок</h2>' +
+      '<div class="slide"><p>Это завершающая работа за весь первый год. В ней <b>20 заданий</b> по разным темам: клетки, ходы фигур, шах и мат, рокировка, двойной удар, связка и другие.</p>' +
+      '<p><b>Решай сам, без подсказок и без помощи взрослых.</b> Диплом нужен тебе, пусть он будет честным. Подсказок и «показать ответ» в тесте нет.</p>' +
+      '<p>У каждого задания одна попытка: ошибся, и задание не засчитано. Тест дойдёт до конца, и ты увидишь свой результат. Чтобы получить диплом, нужно решить <b>все 20 заданий (100%)</b>.</p>' +
+      '<p>Если что-то не получилось, не расстраивайся: мы покажем, какие уроки повторить, и ты разберёшь свои ошибки. Следующий тест будет из <b>новых заданий</b>.</p>' +
+      (s.pass ? '<p class="msg good">Ты уже сдал(а) завершающий тест. Диплом ждёт тебя!</p>' : (s.best ? '<p class="note">Лучший результат: ' + s.best + ' из ' + N + '.</p>' : '')) +
+      '<p><label style="font-size:18px;cursor:pointer"><input type="checkbox" id="exPr" style="width:22px;height:22px;vertical-align:middle"> Обещаю решать сам(а), без подсказок</label></p>' +
+      (lsGet('ukc_all', false) ? '<div class="msg" style="background:#eef;border:2px dashed #55a;padding:8px;border-radius:10px"><b>Для тренера</b> (видно, пока включено «Открыть всё»): <a class="btn alt" href="#exam/coach">👀 Пройти тест с подсказками</a> <a class="btn alt" href="#exam/pool">📋 Все задания теста</a></div>' : '') + '<div class="row"><button class="btn go" id="exGo" disabled style="opacity:.5">Начать тест</button>' + (s.pass ? '<a class="btn" href="#diploma">🎓 Получить диплом</a>' : '') + '</div></div>';
+    var pr = document.getElementById('exPr'), go = document.getElementById('exGo');
+    pr.onchange = function () { go.disabled = !pr.checked; go.style.opacity = pr.checked ? '1' : '.5'; };
+    go.onclick = function () { if (pr.checked) run(makeSet(), 0, []); };
+  }
+  function strip() {
+    ['hintB', 'ansB', 'hintBtn', 'ansBtn', 'gearB', 'gearPop', 'anlRow', 'newBtn'].forEach(function (id) { var e = document.getElementById(id); if (e) e.remove(); });
+    var h = document.getElementById('exT'); if (!h) return;
+    h.querySelectorAll('button').forEach(function (b) { if (/Подсказка|Показать ответ|Показать правильный|Анализ|Подсветка/.test(b.textContent)) b.remove(); });
+  }
+  function run(set, i, log) {
+    var v = document.getElementById('view'); if (!set.length) { page(); return; }
+    if (i >= set.length) { result(log, set.length); return; }
+    var q = set[i], good = log.filter(function (x) { return x.ok; }).length;
+    v.innerHTML = '<div class="ctr-top"><span class="count">Задание ' + (i + 1) + ' из ' + set.length + '</span></div>' +
+      '<div style="height:10px;background:#eee;border-radius:6px;margin:6px 0 12px"><div style="height:10px;width:' + Math.round(i / set.length * 100) + '%;background:#e10600;border-radius:6px"></div></div>' +
+      '<div id="exT"></div><div id="exRes"></div>';
+    var host = document.getElementById('exT'), res = document.getElementById('exRes'), done = false, iv, ob;
+    function next(ok) {
+      if (done) return; done = true; clearInterval(iv); if (ob) ob.disconnect();
+      log.push({ ok: ok, id: q.L.id, lv: q.lv, t: q.L.t, link: q.L.link, game: q.L.game });
+      host.style.pointerEvents = 'none';
+      res.innerHTML = '<div class="slide resbox"><h3>' + (ok ? 'Верно!' : 'Здесь ошибка: задание не засчитано.') + '</h3><div class="row"><button class="btn go" id="exNext">' + (i + 1 >= set.length ? 'Узнать результат' : 'Дальше') + '</button></div></div>';
+      sfx(ok ? 'good' : 'bad');
+      document.getElementById('exNext').onclick = function () { run(set, i + 1, log); };
+      document.getElementById('exNext').scrollIntoView({ block: 'nearest' });
+    }
+    iv = setInterval(function () { if (!document.getElementById('exT')) { clearInterval(iv); return; } strip(); }, 200);
+    function failed() { return !!host.querySelector('.msg.bad,#msg.bad,button.bad,.opts .bad'); }
+    ob = new MutationObserver(function () { if (!done && failed()) later(function () { next(false); }, 900); });
+    ob.observe(host, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+    try {
+      q.L.run(host, q.L, q.lv, function (stars) {
+        if (done) return; later(function () { host.querySelectorAll('.resbox').forEach(function (b) { b.remove(); }); next(!failed() && stars >= 3); }, 30);
+      });
+    } catch (e) { next(false); }
+    strip();
+  }
+  function result(log, n) {
+    var v = document.getElementById('view'), good = log.filter(function (x) { return x.ok; }).length, ok = good === n, s = st();
+    if (good > (s.best || 0)) s.best = good; if (ok) { s.pass = true; s.date = Date.now(); } lsSet(KEY, s);
+    var pct = Math.round(good / n * 100), bad = log.filter(function (x) { return !x.ok; }), seen = {}, lessonsTo = [];
+    bad.forEach(function (x) { if (!seen[x.id]) { seen[x.id] = 1; lessonsTo.push(x); } });
+    v.innerHTML = '<h2>🏁 Результат завершающего теста</h2><div class="slide resbox"><h3>Решено ' + good + ' из ' + n + ' (' + pct + '%)</h3>' +
+      '<div class="row" style="flex-wrap:wrap;gap:6px;margin:8px 0">' + log.map(function (m, k) { return '<span style="display:grid;place-items:center;width:34px;height:34px;border-radius:50%;font-weight:700;' + (m.ok ? 'background:#d6f5d6;border:2px solid #2a9d2a' : 'background:#fdd;border:2px solid #e10600') + '">' + (k + 1) + '</span>'; }).join('') + '</div>' +
+      (ok ? '<p class="msg good"><b>Ты решил(а) все задания! Первый год обучения закончен.</b> Получи свой диплом!</p><div class="row"><a class="btn go" href="#diploma">🎓 Получить диплом</a><a class="btn alt" href="#lessons">К урокам</a></div>' :
+        '<p class="msg bad"><b>Тест пока не пройден.</b> Для диплома нужно решить все задания (100%), а у тебя ' + pct + '%. Совсем немного не хватило. Ошибки бывают от невнимательности, это поправимо!</p>' +
+        '<p><b>Какие уроки стоит повторить:</b></p><div class="row" style="flex-wrap:wrap;gap:6px">' + lessonsTo.map(function (x) { return '<a class="btn alt" href="#lesson/' + (x.link || x.id) + '">' + esc(x.t) + '</a>'; }).join('') + '</div>' +
+        '<p><b>Разбери свои ошибки.</b> Нажми на задание: ты увидишь его ещё раз, сможешь посмотреть правильное решение и включить компьютер.</p><div class="row" style="flex-wrap:wrap;gap:6px">' + bad.map(function (x) { return '<a class="btn alt" href="#lesson/' + (x.link || x.id) + (x.game ? '' : '/' + x.lv) + '">' + esc(x.t) + (x.game ? ' (партия)' : ', задание ' + x.lv) + '</a>'; }).join('') + '</div>' +
+        '<p>Мы тебя очень ждём! Повтори уроки, разбери ошибки и приходи снова. В новом тесте будут <b>новые задания</b>.</p><div class="row"><button class="btn go" id="exAgain">Пройти тест снова</button><a class="btn alt" href="#lessons">К урокам</a></div>') + '</div>';
+    if (ok) { sfx('win'); confetti(120); } else sfx('bad');
+    var ag = document.getElementById('exAgain'); if (ag) ag.onclick = function () { page(); };
+  }
+
+  /* --- просмотр для тренера: все задания теста, без записи результатов --- */
+  function makeSetNoSave() { var keep = lsGet('ukc_examseen', {}); var set = makeSet(); lsSet('ukc_examseen', keep); return set; }
+  function poolPage() {
+    var v = document.getElementById('view'), h = '<div class="ctr-top"><a class="btn alt" href="#exam">← Тест</a></div><h2>📋 Все задания завершающего теста</h2><p class="note">Каждый раз в тест берётся по одному заданию из каждой темы. Здесь весь запас. Нажми на номер: задание откроется в уроке, там есть подсказка и «показать ответ».</p>';
+    SLOTS.forEach(function (s, k) {
+      h += '<section class="course"><h3>' + (k + 1) + '. ' + s.map(function (id) { return esc(id.indexOf('G:') === 0 ? MG[id.slice(2)].t + ' (партия)' : LESS[id] ? LESS[id].t : id); }).join(' / ') + '</h3>';
+      s.forEach(function (id) { if (id.indexOf('G:') === 0) { h += '<a class="btn alt" href="#lesson/' + MG[id.slice(2)].link + '">' + esc(MG[id.slice(2)].t) + ': урок</a> '; return; } var L = LESS[id]; if (!L || !L.levels) return; h += (s.length > 1 ? '<p class="note">' + esc(L.t) + '</p>' : '') + '<div class="row" style="flex-wrap:wrap;gap:4px">'; for (var i = (MINLV[id] || 1); i <= L.levels; i++) h += '<a class="btn alt" style="padding:4px 10px;min-width:38px" href="#lesson/' + id + '/' + i + '">' + i + '</a>'; h += '</div>'; });
+      h += '</section>';
+    });
+    v.innerHTML = h;
+  }
+  function coachRun(set, i) {
+    var v = document.getElementById('view'); if (i >= set.length) { page(['exam']); return; }
+    var q = set[i];
+    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#exam">← Тест</a> <span class="count">Тренерский просмотр: ' + (i + 1) + ' из ' + set.length + ' · ' + esc(q.L.t) + ', задание ' + q.lv + '</span></div><div id="exT"></div><div class="row"><button class="btn alt" id="cPrev"' + (i ? '' : ' disabled') + '>← Назад</button><button class="btn" id="cNext">Дальше →</button></div>';
+    try { q.L.run(document.getElementById('exT'), q.L, q.lv, function () {}); } catch (e) {}
+    document.getElementById('cPrev').onclick = function () { coachRun(set, i - 1); };
+    document.getElementById('cNext').onclick = function () { coachRun(set, i + 1); };
+  }
+  /* --- памятка для родителей --- */
+  var PAR = ['Сайт создан для ребят, которые хотят научиться играть в шахматы.',
+    'Шахматы развивают у ребёнка внимание, память, логику и умение просчитывать свои действия на несколько шагов вперёд. Они учат терпению, ответственности за каждое решение и умению не сдаваться после неудачи. Всё это пригодится ему и в школе, и в жизни. Но эти качества растут только тогда, когда ребёнок думает и решает сам.',
+    'Уважаемые родители, просим вас следить, чтобы ребёнок не пользовался подсказками, и самим не подсказывать ему. Если подсказывать постоянно, ребёнок привыкает ждать подсказку и ничему не учится: пользы от занятий не будет.',
+    'Вы можете прочитать ребёнку условие задания. Если он что-то не понимает, помогите разобраться с темой или обратитесь к тренеру, чтобы тренер объяснил нужную тему. После этого вернитесь к заданию.',
+    'Ни в коем случае не решайте задания за ребёнка: это не даёт результата и портит ребёнка. Каждое задание, найденное самим, это маленькая победа, и именно из таких побед растут уверенность и интерес к учёбе.',
+    'В играх тоже не подсказывайте. Ребёнок должен сам стараться победить, учиться, возвращаться снова и снова и видеть свой прогресс. Проигрыш и ошибка здесь не беда, а часть обучения: каждая партия делает ребёнка сильнее.',
+    'Занимайтесь понемногу, но регулярно: 15–20 минут в день лучше, чем два часа раз в неделю. Хвалите ребёнка за старание и внимательность, а не только за результат. Тогда он полюбит шахматы, а вместе с ними и учёбу.'];
+  window.__parents = function () {
+    var v = document.getElementById('view');
+    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#home">← На главную</a></div><h2>📌 Памятка для родителей</h2><div class="slide" style="border:4px solid #e10600;background:#fff6c2;border-radius:18px;font-size:19px;line-height:1.5">' +
+      PAR.map(function (t, k) { return '<p' + (k === 0 ? ' style="font-weight:700"' : '') + '>' + t + '</p>'; }).join('') + '<p style="font-weight:700;color:#e10600">Спасибо за ваше доверие и терпение! Команда UpGrade Chess Club.</p></div>';
+  };
+  var oldHome = home;
+  home = function () {
+    oldHome();
+    var v = document.getElementById('view'); if (!v) return; var d = document.createElement('div');
+    d.innerHTML = '<a href="#parents" style="display:block;margin:14px 0;padding:14px 18px;border:4px solid #e10600;background:#fff6c2;border-radius:18px;text-decoration:none;color:#111"><b style="color:#e10600;font-size:20px">📌 Памятка для родителей</b><br>Сайт создан для ребят, которые хотят научиться играть в шахматы. Пожалуйста, не подсказывайте ребёнку: так он учится лучше. Нажмите, чтобы прочитать.</a>';
+    v.insertBefore(d, v.children[1] || null);
+  };
+  window.__exam = page;
+  var oldLessons = lessons;
+  lessons = function () {
+    oldLessons();
+    var v = document.getElementById('view'); if (!v) return; var r = req(), s = st(), d = document.createElement('section'); d.className = 'course';
+    var body = s.pass ? '<p>Ты сдал(а) завершающий тест. Диплом ждёт тебя!</p><a class="btn go" href="#diploma">🎓 Получить диплом</a>' :
+      r.unlocked ? '<p>Ты прошёл(а) все уроки. Сдай тест из 20 заданий и получи диплом об окончании первого года.</p><div class="row" style="margin-top:10px"><a class="btn go" href="#exam">Сдать завершающий тест</a></div>' :
+      '<p>Это последний урок первого года. Он откроется, когда ты напишешь своё имя (кнопка «Профиль») и пройдёшь все уроки: в каждом нужно решить не меньше 80% упражнений. Готово уроков: <b>' + r.ok + ' из ' + r.total + '</b>.</p><div class="row" style="margin-top:10px"><a class="btn alt" href="#exam">🔒 Что осталось сделать</a></div>';
+    d.innerHTML = '<h3 style="color:#e10600">🏁 Завершающий тестовый урок</h3><div class="slide" style="border:4px solid #e10600;background:#fff1ef;border-radius:18px">' + body + '</div>';
+    v.appendChild(d);
+  };
+  /* диплом открывается только после сданной работы */
+  var oldDip = window.__diploma;
+  window.__diploma = function () {
+    if (window.__examPassed()) { oldDip(); return; }
+    var v = document.getElementById('view');
+    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#awards">← Награды</a></div><h2>🎓 Диплом</h2><div class="slide"><p>Диплом выдаётся тем, кто закончил первый год обучения и сдал <b>итоговую работу</b>: 20 заданий по всем темам, нужно набрать 80%.</p><div class="row"><a class="btn go" href="#exam">📝 Сдать итоговую работу</a></div></div>';
+  };
+  window.__dipCard = function () {
+    var v = document.getElementById('view'); if (!v) return; var d = document.createElement('div'), ok = window.__examPassed();
+    d.innerHTML = ok ? '<a class="btn" href="#diploma" style="display:block;margin:16px 0;text-align:center;font-size:20px">🎓 Получить диплом об окончании первого года</a>' :
+      '<a class="btn" href="#exam" style="display:block;margin:16px 0;text-align:center;font-size:20px">📝 Итоговая работа за первый год: сдай и получи диплом</a>';
+    v.appendChild(d);
+  };
+})();
+
+/* ===== Игровая практика: настоящие партии на мат (ферзь, ладья, две ладьи, ферзь и ладья) и «Проведи пешку в ферзи» ===== */
+(function () {
+  function cheb(a, b) { return Math.max(Math.abs((a & 7) - (b & 7)), Math.abs((a >> 3) - (b >> 3))); }
+  function adj(a, b) { return a !== b && cheb(a, b) <= 1; }
+  var NB = []; (function () { for (var s = 0; s < 64; s++) { var l = []; for (var t = 0; t < 64; t++) if (adj(s, t)) l.push(t); NB[s] = l; } })();
+
+  /* ---------- таблица «король и пешка против короля» (идеальная защита компьютера и честные выигрышные позиции) ---------- */
+  var KP = null;
+  function pAtt(p, s) { var r = p >> 3, c = p & 7; if (r < 1) return false; var sr = s >> 3, sc = s & 7; return sr === r - 1 && Math.abs(sc - c) === 1; }
+  function idx(stm, wk, bk, p) { return ((stm * 64 + wk) * 64 + bk) * 64 + p; }
+  function legalS(stm, wk, bk, p) {
+    var pr = p >> 3; if (pr < 1 || pr > 6) return false; if (p === wk || p === bk || wk === bk || adj(wk, bk)) return false;
+    if (stm === 0 && pAtt(p, bk)) return false; return true;
+  }
+  function qAttacks(q, s, wk) {
+    if (q === s) return false; var dr = Math.sign((s >> 3) - (q >> 3)), dc = Math.sign((s & 7) - (q & 7));
+    if (!(dr === 0 || dc === 0 || Math.abs((s >> 3) - (q >> 3)) === Math.abs((s & 7) - (q & 7)))) return false;
+    var r = (q >> 3) + dr, c = (q & 7) + dc; while (r !== (s >> 3) || c !== (s & 7)) { if (r * 8 + c === wk) return false; r += dr; c += dc; } return true;
+  }
+  function promoWin(wk, bk, q) {
+    if (q === bk || q === wk) return false;
+    if (adj(bk, q) && !adj(q, wk)) return false; /* ферзь повис */
+    var escape = false;
+    NB[bk].forEach(function (n) { if (n === wk || adj(n, wk) || n === q) return; if (qAttacks(q, n, wk)) return; escape = true; });
+    if (escape) return true; return qAttacks(q, bk, wk); /* нет ходов: мат — победа, пат — ничья */
+  }
+  function buildKP() {
+    if (KP) return KP;
+    var win = new Uint8Array(2 * 262144), dep = new Uint8Array(2 * 262144), ch = true, it = 0;
+    while (ch && it++ < 120) {
+      ch = false;
+      for (var wk = 0; wk < 64; wk++) for (var bk = 0; bk < 64; bk++) {
+        if (wk === bk || adj(wk, bk)) continue;
+        for (var p = 8; p < 56; p++) {
+          if (p === wk || p === bk) continue;
+          var i0 = idx(0, wk, bk, p);
+          if (!win[i0] && !pAtt(p, bk)) {
+            var best = 999, nb = NB[wk], k, n, ip;
+            for (k = 0; k < nb.length; k++) { n = nb[k]; if (n === p || n === bk || adj(n, bk)) continue; ip = idx(1, n, bk, p); if (win[ip] && dep[ip] + 1 < best) best = dep[ip] + 1; }
+            var np = p - 8;
+            if (np !== wk && np !== bk) {
+              if ((np >> 3) === 0) { if (promoWin(wk, bk, np) && best > 1) best = 1; }
+              else { ip = idx(1, wk, bk, np); if (win[ip] && dep[ip] + 1 < best) best = dep[ip] + 1;
+                if ((p >> 3) === 6) { var n2 = p - 16; if (n2 !== wk && n2 !== bk) { ip = idx(1, wk, bk, n2); if (win[ip] && dep[ip] + 1 < best) best = dep[ip] + 1; } } }
+            }
+            if (best < 999) { win[i0] = 1; dep[i0] = best; ch = true; }
+          }
+          var i1 = idx(1, wk, bk, p);
+          if (!win[i1]) {
+            var worst = 0, ok = true, any = false, nb2 = NB[bk], ip2;
+            for (k = 0; k < nb2.length && ok; k++) {
+              n = nb2[k]; if (n === wk || adj(n, wk)) continue;
+              if (n === p) { if (!adj(p, wk)) ok = false; continue; }
+              if (pAtt(p, n)) continue;
+              any = true; ip2 = idx(0, wk, n, p);
+              if (!win[ip2]) ok = false; else if (dep[ip2] > worst) worst = dep[ip2];
+            }
+            if (ok && any) { win[i1] = 1; dep[i1] = worst + 1; ch = true; }
+          }
+        }
+      }
+    }
+    KP = { win: win, dep: dep }; return KP;
+  }
+  function kpFrom(pos) { var wk = -1, bk = -1, p = -1; for (var i = 0; i < 64; i++) { if (pos.b[i] === 6) wk = i; else if (pos.b[i] === -6) bk = i; else if (pos.b[i] === 1) p = i; } return { wk: wk, bk: bk, p: p }; }
+  function kpWinningMoves(pos) { /* ходы белых, сохраняющие выигрыш */
+    var T = buildKP(), s = kpFrom(pos); if (s.p < 0) return [];
+    return E.legal(pos).filter(function (m) {
+      var np = E.make(pos, m); if (m.p && m.p !== 1 && Math.abs(np.b[m.t]) === 5) return promoWin(s.wk, s.bk, m.t);
+      var t = kpFrom(np); if (t.p < 0) return false; return !!T.win[idx(1, t.wk, t.bk, t.p)];
+    });
+  }
+  function kpBest(pos) { /* самый быстрый выигрывающий ход (для проверок и подсказок) */
+    var T = buildKP(), ws = kpWinningMoves(pos), best = null, bd = 999;
+    ws.forEach(function (m) { var np = E.make(pos, m), t = kpFrom(np), d = t.p < 0 ? 0 : (Math.abs(np.b[m.t]) === 5 ? 0 : T.dep[idx(1, t.wk, t.bk, t.p)]); if (d < bd) { bd = d; best = m; } });
+    return best;
+  }
+  function kpDefend(pos) { /* лучший ход чёрных: взять пешку или перейти в ничью, иначе самое долгое сопротивление */
+    var T = buildKP(), ms = E.legal(pos), best = [], bs = -1;
+    ms.forEach(function (m) {
+      var np = E.make(pos, m), t = kpFrom(np), sc;
+      if (t.p < 0) sc = 1000; else if (!T.win[idx(0, t.wk, t.bk, t.p)]) sc = 500; else sc = T.dep[idx(0, t.wk, t.bk, t.p)];
+      if (sc > bs) { bs = sc; best = [m]; } else if (sc === bs) best.push(m);
+    });
+    return best.length ? best[Math.floor(Math.random() * best.length)] : null;
+  }
+  /* выигрышные позиции по уровням: чем выше уровень, тем длиннее путь к ферзю и тем больше надо думать */
+  var KB = [[4, 12, 3], [6, 14, 3], [8, 18, 2], [10, 20, 2], [12, 24, 2], [14, 28, 1], [18, 32, 1], [22, 36, 1], [26, 44, 1], [30, 60, 1]];
+  function kpPos(lv, r) {
+    var T = buildKP(), band = KB[Math.min(KB.length, lv) - 1], tries = 0, pawnRows = lv <= 3 ? [3, 4, 5] : lv <= 6 ? [2, 3, 4, 5] : [2, 3, 4, 5, 6];
+    while (tries++ < 60000) {
+      var wk = Math.floor(r() * 64), bk = Math.floor(r() * 64), p = Math.floor(r() * 64);
+      if (pawnRows.indexOf(p >> 3) < 0 || (p & 7) === 0 || (p & 7) === 7) continue;
+      if (!legalS(0, wk, bk, p)) continue; var i = idx(0, wk, bk, p);
+      if (!T.win[i] || T.dep[i] < band[0] || T.dep[i] > band[1]) continue;
+      var b = new Int8Array(64); b[wk] = 6; b[bk] = -6; b[p] = 1; var pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 };
+      if (E.status(pos) !== 'ok') continue;
+      if (kpWinningMoves(pos).length < band[2] && band[2] > 1) continue;
+      return pos;
+    }
+    return E.fromFEN('8/8/8/4k3/8/4K3/4P3/8 w - - 0 1');
+  }
+
+  /* ---------- позиции на мат: не «мат в один ход» и не разбросанные по всей доске фигуры ---------- */
+  var MG = { Q: { t: 'Мат ферзём и королём', pcs: [5], tip: 'Не торопись с шахами! Поставь ферзя на расстоянии хода коня от чёрного короля, чтобы он не мог выйти. Потом подведи своего короля. И следи, чтобы не было пата!' },
+    R: { t: 'Мат ладьёй и королём', pcs: [4], tip: 'Сначала оттесни короля к краю: ладья отрезает его линией. Потом подведи своего короля (оппозиция) и ставь мат ладьёй. Следи за патом!' },
+    RR: { t: 'Мат двумя ладьями', pcs: [4, 4], tip: 'Ладьи ходят по очереди: одна даёт шах, другая отрезает следующую линию. Так король дойдёт до края, и будет мат. Береги ладьи от короля!' },
+    QR: { t: 'Мат ферзём и ладьёй', pcs: [5, 4], tip: 'Действуй как двумя ладьями: ферзь и ладья по очереди отрезают линии и подгоняют короля к краю. Следи за патом!' } };
+  function mateIn1(pos) { return E.legal(pos).some(function (m) { return E.status(E.make(pos, m)) === 'mate'; }); }
+  function mateIn2(pos) {
+    return E.legal(pos).some(function (m) {
+      var np = E.make(pos, m), st = E.status(np); if (st === 'mate') return true; if (st === 'stalemate') return false;
+      var rs = E.legal(np); return rs.length > 0 && rs.every(function (x) { return mateIn1(E.make(np, x)); });
+    });
+  }
+  function mgPos(pcs, r) {
+    for (var tr = 0; tr < 3000; tr++) {
+      var b = new Int8Array(64), bk = Math.floor(r() * 64), wk = Math.floor(r() * 64), ok = true;
+      if (bk === wk || cheb(bk, wk) < 3 || cheb(bk, wk) > 6) continue; b[bk] = -6; b[wk] = 6;
+      for (var i = 0; i < pcs.length; i++) { var q = Math.floor(r() * 64); if (b[q] || cheb(q, bk) < 2 || cheb(q, wk) > 4) { ok = false; break; } b[q] = pcs[i]; }
+      if (!ok) continue;
+      var pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }, bp = { b: b, turn: -1, castle: 0, ep: -1, half: 0 };
+      if (E.inCheck(bp) || E.status(pos) !== 'ok' || E.status(bp) !== 'ok') continue;
+      if (mateIn1(pos) || mateIn2(pos)) continue;
+      return pos;
+    }
+    return E.fromFEN('8/8/8/4k3/8/8/2Q5/4K3 w - - 0 1');
+  }
+
+  /* ---------- общая партия против компьютера: правила 50 ходов, троекратное повторение, пат ---------- */
+  function playRun(host, L, lv, finish, cfg) {
+    var seedR = mkRng(hstr(L.id + lv)), first = true;
+    function start(random) {
+      var r = random ? Math.random : seedR, cur = cfg.pos(lv, r), moves = 0, busy = false, done = false, hh = [E.hashOf(cur)];
+      var S = { pos: cur, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null };
+      host.innerHTML = say(av('prof'), cfg.title + ' · ' + lv, cfg.say, cfg.sub) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="count" id="cnt" style="margin:6px 0"></div>' +
+        '<div class="row"><button class="btn alt" id="hintB">Подсказка</button><button class="btn alt" id="resB">🔄 Новая позиция</button></div>';
+      var msg = document.getElementById('msg');
+      function sm(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
+      function draw() { document.getElementById('cnt').textContent = 'Ход ' + moves + (cfg.limit ? ' из ' + cfg.limit : ''); drawBoard(S, click); }
+      function fail(t) { done = true; draw(); sfx('bad'); sm(t + ' Нажми «Новая позиция» и попробуй ещё раз.', 'bad'); }
+      function win(t) { done = true; draw(); sm(t, 'good'); finish(3); }
+      function check(afterBlack) {
+        var r = cfg.judge(cur, moves, hh); if (r) { if (r.win) win(r.msg); else fail(r.msg); return true; }
+        var rep = 0; hh.forEach(function (h) { if (h === hh[hh.length - 1]) rep++; }); if (rep >= 3) { fail('Позиция повторилась три раза: это ничья.'); return true; }
+        if (cur.half >= 100) { fail('Прошло 50 ходов без взятия и хода пешки: по правилам это ничья.'); return true; }
+        if (cfg.limit && moves >= cfg.limit && afterBlack) { fail('Прошло ' + cfg.limit + ' ходов: ничья.'); return true; }
+        return false;
+      }
+      function click(i) {
+        if (busy || done) return; var v = cur.b[i];
+        if (S.sel != null && S.targets.indexOf(i) >= 0) {
+          var cs = movesFrom(cur, S.sel).filter(function (x) { return x.t === i; }), m = cs.filter(function (x) { return x.p === 5; })[0] || cs[0], b0 = cur;
+          cur = E.make(cur, m); moves++; S.pos = cur; S.last = { f: m.f, t: m.t }; S.sel = null; S.targets = []; hh.push(E.hashOf(cur)); moveSound(b0, m, cur); draw();
+          var jr = cfg.afterWhite ? cfg.afterWhite(b0, m, cur) : null; if (jr) { if (jr.win) win(jr.msg); else fail(jr.msg); return; }
+          if (check(false)) return; busy = true; sm('Компьютер думает…');
+          later(function () {
+            var bm = cfg.reply(cur, hh), b1 = cur; if (!bm) { busy = false; return; }
+            cur = E.make(cur, bm); S.pos = cur; S.last = { f: bm.f, t: bm.t }; hh.push(E.hashOf(cur)); moveSound(b1, bm, cur); busy = false; draw();
+            if (check(true)) return; sm(E.inCheck(cur) ? 'Тебе шах!' : 'Твой ход.', E.inCheck(cur) ? 'bad' : '');
+          }, 450); return;
+        }
+        if (v && v > 0) { S.sel = i; S.targets = movesFrom(cur, i).map(function (m) { return m.t; }); } else { S.sel = null; S.targets = []; }
+        draw();
+      }
+      var hb = document.getElementById('hintB'); hb.onclick = function () { sm('Подсказка: ' + cfg.tip); }; hb.dataset.tip = '1';
+      document.getElementById('resB').onclick = function () { start(true); };
+      sm('Твой ход. ' + cfg.tip); draw();
+    }
+    start(false);
+  }
+  function mateCfg(key) {
+    var c = MG[key];
+    return { title: c.t, tip: c.tip, limit: 50, say: 'Ты играешь белыми. Поставь мат чёрному королю. Нельзя ставить пат, повторять позицию три раза и играть дольше 50 ходов. Компьютер защищается всерьёз!', sub: 'мат',
+      pos: function (lv, r) { return mgPos(c.pcs, r); },
+      judge: function (cur) { var st = E.status(cur); if (st === 'mate') return { win: true, msg: 'Мат! Ты поставил мат за ' + '' + 'несколько ходов. Молодец!' }; if (st === 'stalemate') return { msg: 'Пат! Это ничья, мат не поставлен.' }; if (E.insufficient(cur)) return { msg: 'Фигур не осталось: мат уже не поставить.' }; return null; },
+      reply: function (cur, hh) { return E.bestMove(cur, 7, hh); } };
+  }
+  function pawnCfg() {
+    return { title: 'Проведи пешку в ферзи', tip: 'Король должен идти впереди пешки, а не за ней. Сначала подведи короля к пешке, потом веди пешку вместе с королём. Если чёрный король стоит прямо перед пешкой, помни про оппозицию.', limit: 50,
+      say: 'Ты играешь белыми. Проведи пешку в ферзи. Нельзя ошибиться: компьютер защищается точно, играют правила 50 ходов и троекратного повторения.', sub: 'пешка в ферзи',
+      pos: function (lv, r) { return kpPos(lv, r); },
+      judge: function () { return null; },
+      afterWhite: function (b0, m, cur) {
+        if (Math.abs(cur.b[m.t]) === 5) return { win: true, msg: 'Пешка стала ферзём, и чёрный король её не взял. Ты победил!' };
+        var s = kpFrom(cur); if (s.p < 0) return { msg: 'Пешку потерял, а без неё выиграть нельзя.' };
+        if (!buildKP().win[idx(1, s.wk, s.bk, s.p)]) return { msg: 'Ты упустил выигрыш: теперь пешку провести не получится, это ничья.' };
+        return null;
+      },
+      reply: function (cur) { return kpDefend(cur); } };
+  }
+
+  /* ---------- уроки ---------- */
+  function lesson(id, t, d, slides, cfg) { return { id: id, t: t, d: d, levels: 10, slides: slides, run: function (host, L, lv, fin) { playRun(host, L, lv, fin, cfg()); }, gen: null }; }
+  var FEN_Q = '8/8/8/4k3/8/8/2Q5/4K3 w - - 0 1', FEN_R = '8/8/8/4k3/8/8/2R5/4K3 w - - 0 1', FEN_RR = '8/8/8/4k3/8/R7/1R6/4K3 w - - 0 1', FEN_QR = '8/8/8/4k3/8/Q7/1R6/4K3 w - - 0 1';
+  var PAT = '7k/5Q2/6K1/8/8/8/8/8 b - - 0 1';
+  function sl(key, fen, plan) {
+    return [
+      { h: 'Играем партию: ' + MG[key].t.toLowerCase(), p: ['Теперь ты ставишь мат в настоящей партии. Позиция каждый раз новая, а компьютер защищается всерьёз и не поддаётся.', plan], fen: fen, hint: 'Белые начинают и ставят мат.' },
+      { h: 'Правила партии', p: ['Играют все правила: <b>пат</b> — ничья (чёрному нечем ходить, а шаха нет), <b>три повторения</b> одной позиции — ничья, <b>50 ходов</b> без взятия и хода пешки — ничья. Выигрыш засчитывается только за мат. На доске пат: чёрному королю ходить некуда, шаха нет. Так нельзя!'], fen: PAT, hl: [7], hint: 'Король h8 не под шахом, но ходить ему некуда: это пат.' }
+    ];
+  }
+  var PS = [
+    { h: 'Проведи пешку в ферзи', p: ['Теперь ты проводишь пешку до последней горизонтали в настоящей партии. Позиции выигрышные, но выиграть можно только точной игрой. Компьютер защищается правильно и не поддаётся. Главное правило: <b>король идёт впереди пешки</b>.'], fen: '4k3/8/4K3/4P3/8/8/8/8 w - - 0 1', hint: 'Белый король стоит перед пешкой: это выигрыш.' },
+    { h: 'Правила партии', p: ['Играют все правила: <b>пат</b> — ничья, <b>три повторения</b> позиции — ничья, <b>50 ходов</b> без хода пешки — ничья. Если ты упустил выигрыш, сайт скажет об этом, и можно начать с новой позиции. Побеждает тот, кто провёл пешку в ферзи и не потерял его.'], fen: '8/8/8/8/8/5k2/5p2/5K2 b - - 0 1', hl: [53], hint: 'Бывает и так: пешка защищена, и взять её нельзя.' }
+  ];
+  var LQ = lesson('gmQ', 'Мат ферзём: партия', 'Настоящая партия: ставь мат ферзём из любой позиции. Пат, 50 ходов и повторения учитываются.', sl('Q', FEN_Q, 'План: оттесни короля к краю ферзём (ставь ферзя на расстоянии хода коня), подведи своего короля, потом мат.'), function () { return mateCfg('Q'); });
+  var LR = lesson('gmR', 'Мат ладьёй: партия', 'Настоящая партия: ставь мат ладьёй из любой позиции.', sl('R', FEN_R, 'План: ладьёй отрежь короля, подведи своего короля (оппозиция), потом мат.'), function () { return mateCfg('R'); });
+  var LRR = lesson('gmRR', 'Мат двумя ладьями: партия', 'Настоящая партия: линейный мат двумя ладьями.', sl('RR', FEN_RR, 'План: ладьи ходят «лесенкой»: одна даёт шах, другая отрезает следующую линию.'), function () { return mateCfg('RR'); });
+  var LQR = lesson('gmQR', 'Мат ферзём и ладьёй: партия', 'Настоящая партия: линейный мат ферзём и ладьёй.', sl('QR', FEN_QR, 'План: действуй «лесенкой», как двумя ладьями.'), function () { return mateCfg('QR'); });
+  var LP = lesson('pe8', 'Проведи пешку в ферзи: партия', 'Настоящая партия: выигрышная позиция, компьютер защищается точно.', PS, pawnCfg);
+  [LQ, LR, LRR, LQR, LP].forEach(function (L) { LESS[L.id] = L; });
+  GROUPS.forEach(function (g) {
+    if (g.n === 'Игровая практика') ['gmQ', 'gmR', 'gmRR', 'gmQR'].forEach(function (id) { if (g.ids.indexOf(id) < 0) g.ids.push(id); });
+    if (g.n === 'Пешечные окончания' && g.ids.indexOf('pe8') < 0) g.ids.push('pe8');
+  });
+  window.__kpk = { best: kpBest, build: buildKP, win: kpWinningMoves, pos: kpPos, mgPos: mgPos, from: kpFrom, idx: idx };
 })();
 
 /* ===== защита от «невозможных» позиций во всех упражнениях (лишние слоны, два слона одного цвета и т.п.) ===== */
@@ -11353,11 +11792,11 @@ var SQR = (function () {
   function route() {
     clearTimers(); view.onclick = null;
     var parts = (location.hash || '#home').slice(1).split('/'), r = parts[0];
-    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons', 'coords', 'games', 'diploma'].indexOf(r) < 0) r = 'home';
+    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons', 'coords', 'games', 'diploma', 'exam', 'parents'].indexOf(r) < 0) r = 'home';
     document.body.classList.toggle('y2', r === 'y2'); document.body.classList.toggle('home', r === 'home');
     var m = document.getElementById('modal'); if (m) m.remove();
     document.body.classList.toggle('onboard', r === 'board');
-    setActive(r === 'lesson' ? 'lessons' : r === 'coords' ? 'games' : r);
+    setActive(r === 'lesson' || r === 'exam' ? 'lessons' : r === 'coords' ? 'games' : r);
     if (r === 'puzzles') puzzles();
     else if (r === 'play') { var w = +parts[1]; if (w >= 1 && w <= WORLDS.length && unlocked((w - 1) * SUB + 1)) playWorld(w - 1); else playWorlds(); }
     else if (r === 'live') liveList();
@@ -11367,6 +11806,8 @@ var SQR = (function () {
     else if (r === 'board') boardPage();
     else if (r === 'awards') { awards(); if (window.__dipCard) window.__dipCard(); }
     else if (r === 'diploma') window.__diploma();
+    else if (r === 'exam') window.__exam(parts);
+    else if (r === 'parents') window.__parents();
     else if (r === 'cartoons') cartoons();
     else if (r === 'coords') window.__coords(parts);
     else if (r === 'games') window.__games(parts);
@@ -11380,7 +11821,7 @@ var SQR = (function () {
     sb.onclick = function () { muted = !muted; lsSet('ukc_mute', muted); upd(); if (!muted) sfx('good'); };
     upd();
   }
-  window.__T = { LESS: LESS, GROUPS: GROUPS, genPiece: genPiece, solveEx: solveEx, uciMove: uciMove, buildBook: buildBook, bad: function () { return BOOKBAD; }, E: E, drawBoard: drawBoard, mkRng: mkRng, lone: lone, PN: PN, SQN: SQN, notation: notation };
+  window.__T = { hstr: hstr, uniqTask: uniqTask, LESS: LESS, GROUPS: GROUPS, genPiece: genPiece, solveEx: solveEx, uciMove: uciMove, buildBook: buildBook, bad: function () { return BOOKBAD; }, E: E, drawBoard: drawBoard, mkRng: mkRng, lone: lone, PN: PN, SQN: SQN, notation: notation };
   updPts();
   route();
 })();
