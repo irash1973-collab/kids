@@ -11094,6 +11094,74 @@ var SQR = (function () {
   })();
 })();
 
+/* Размены: настоящие позиции, ответ посчитан точно (одно нападение, не больше одной защиты) */
+(function () {
+  var L = LESS.trades; if (!L) return;
+  var OLD = L.gen;
+  var NM = { P: 'пешка', N: 'конь', B: 'слон', R: 'ладья', Q: 'ферзь' }, VAL = { P: 1, N: 3, B: 3, R: 5, Q: 9 };
+  var T = [
+    ["r3k1nr/ppp2ppp/2n5/8/1b1q4/2N2B2/PP3PPP/R1BQK2R","d4","Q","Q","eq",1],
+    ["2rqkb1r/R4ppp/1n2p3/1N6/QppP1B2/4PP2/1P3P1P/5RK1","b4","Q","P","bad",1],
+    ["r1q1k3/1r2n3/1p1pQ2p/p3pP2/P1P1P3/1P3B2/3R3P/6RK","e5","Q","P","bad",1],
+    ["r1b1k2r/pp1n1p1p/n2p2p1/3N4/8/5N2/PPP2PPP/3RKB1R","a6","B","N","eq",1],
+    ["8/3q1kpp/Q1n5/2b1P3/1p6/1P3NBP/P5P1/5K2","c6","Q","N","bad",1],
+    ["3r2k1/3p1p1p/1Np1n1p1/q1P1P3/8/4PbP1/R1Q2P1P/1B4K1","a5","R","Q","good",0],
+    ["4k1r1/R7/3PP2p/1p2K3/p5P1/P6P/8/8","a4","R","P","bad",1],
+    ["8/1R4pp/2r1bn2/q6k/5Q2/2PB4/1PK4P/3R4","f6","Q","N","bad",1],
+    ["r1b1q1kr/ppNnb1pp/5n2/8/3P4/8/PPP2PPP/R1BQKB1R","e8","N","Q","good",1],
+    ["r5r1/pp5k/2nN1p1p/q3n3/8/QR3P2/PPP1N2P/2K3R1","a5","Q","Q","eq",1],
+    ["2k3nr/ppp1qppp/8/4n3/2PP4/P6P/1PQ2PP1/R3KB1R","e5","P","N","good",1],
+    ["r1q2r1k/5pp1/4p1p1/pp6/3B1Q2/1BP5/PP4PP/5RK1","f7","Q","P","bad",1],
+    ["rn2r1k1/ppp4p/5np1/1Q1p2N1/5bb1/2N5/PPPB1PPP/2K2B1R","f4","B","B","good",0],
+    ["1r1qr2k/1b3p1p/pp2pP2/2b5/2PN1R1Q/P5PP/1P4B1/2R3K1","b7","B","B","eq",1],
+    ["r3Qb2/pp6/3p3p/2pP1k1N/2n5/P1N4b/1Pq3P1/1RB3K1","a8","Q","R","good",0],
+    ["1r4k1/4Bpp1/5n1p/3q4/2pN4/2P3Pb/2Q2P1P/4R1K1","f6","B","N","eq",1],
+    ["8/8/1kp5/3pQ3/6P1/4pP2/2q5/5K2","d5","Q","P","bad",1],
+    ["1n3r2/6pk/8/3bN3/2P3N1/2n3B1/7P/R5K1","d5","P","B","good",1],
+    ["8/6k1/5qp1/1p1p2p1/2pP2Q1/2P1PP1K/6P1/8","g5","Q","P","bad",1],
+    ["r3k2r/7p/p2pNRp1/2pq4/1p2p3/1PP5/P5PP/RNB1Q1K1","b4","P","P","eq",1],
+    ["8/6N1/Q7/1p3q2/2p2P1K/4n1P1/P1k4P/8","f5","N","Q","good",1],
+    ["4r2k/1Q4p1/p6p/1p6/6r1/1PP2p2/2PR1P2/5K2","b5","Q","P","bad",1],
+    ["4r1k1/pb5p/6P1/2p5/5P2/6P1/P2R4/1B1n2K1","d1","R","N","good",0],
+    ["5bkr/2R5/8/2pN3p/1pP3pK/6P1/8/8","c5","R","P","bad",1],
+    ["r4rk1/2b3p1/p1q4p/1n1pP3/1PpP1p1P/2P1N1P1/3Q2B1/R1R4K","f4","P","P","eq",1],
+    ["2r1r1k1/ppp2npp/3bq3/3p4/3B1PQ1/1NP3P1/PP3R1P/R5K1","e6","Q","Q","eq",1],
+    ["6k1/1p4p1/pP2p2p/P3P3/3q3P/1r1P4/5Q2/3R2K1","d4","Q","Q","good",0],
+    ["r4rk1/1Q2bppp/3p1n2/p2P1q2/P7/1PN2pP1/N4P1P/R1B2RK1","e7","Q","B","good",0],
+    ["r2r2k1/4ppbp/2p3p1/p3Pb2/8/7P/PP1B1PP1/RN2R1K1","a5","B","P","bad",1],
+    ["4r3/b4pk1/p3p3/Pp1pPnpp/1P5r/2P2B2/3BRPP1/2R1Q1K1","d5","B","P","bad",1],
+    ["4r1k1/R4ppp/p1b5/8/1P6/P7/1B3PPP/5K2","f7","R","P","bad",1],
+    ["2r3k1/pp3pb1/6p1/4q3/2P3b1/1P1QN3/P6R/1KR5","g4","N","B","good",0],
+    ["6k1/4bpp1/3Pp2p/1bp4P/1n1p1BK1/r2P2P1/PR1Q1P2/4RB1q","e7","P","B","good",0],
+    ["4r3/2b2k1p/5p2/p6R/2p1N1P1/2P2P2/6P1/3b3K","a5","R","P","bad",1],
+    ["5rk1/p7/bp3p2/4p3/P7/5qPp/1PQ2P1P/4R1K1","e5","R","P","bad",1],
+    ["r3r1k1/ppp2ppp/3p4/3P1bq1/1P1Q4/5R2/PBP2PPP/2R3K1","f5","R","B","bad",1],
+    ["7r/2R1bk2/2N1p2r/p7/3P1B2/5pP1/1P3P2/6K1","h6","B","R","good",1],
+    ["5rk1/5r1p/3p2p1/p1pPn1P1/1pP1PP1R/4K3/Pn1NN2R/8","e5","P","N","good",1]
+  ];
+  function sqi(s) { return (8 - parseInt(s.charAt(1), 10)) * 8 + 'abcdefgh'.indexOf(s.charAt(0)); }
+  function boardOf(fen) {
+    var b = new Array(64).fill(''), rows = fen.split('/'), i = 0;
+    rows.forEach(function (row) { for (var k = 0; k < row.length; k++) { var c = row.charAt(k); if (/\d/.test(c)) i += +c; else b[i++] = c; } });
+    return b;
+  }
+  function mk(t) {
+    var fen = t[0], sq = t[1], ac = t[2], tc = t[3], ans = t[4], d = t[5];
+    var gain = VAL[tc] - (d ? VAL[ac] : 0);
+    var A = { good: 'Выгодно', eq: 'Равный размен', bad: 'Невыгодно' }[ans];
+    return {
+      b: boardOf(fen), star: sqi(sq),
+      text: 'Белые могут взять чёрную ' + (tc === 'P' ? 'пешку' : 'фигуру') + ' на красной клетке: ' + NM[ac] + '. Выгодно ли это?',
+      opts: ['Выгодно', 'Равный размен', 'Невыгодно'], ans: A,
+      why: 'Сначала проверь: защищена ли чёрная фигура? Если защищена, соперник возьмёт твою. Сравни цены: ' + NM[tc] + ' ' + VAL[tc] + ', ' + NM[ac] + ' ' + VAL[ac] + '.',
+      expl: d ? 'Чёрные берут обратно: ты получаешь ' + VAL[tc] + ', отдаёшь ' + VAL[ac] + '.' : 'Фигура не защищена: ты забираешь её бесплатно (+' + VAL[tc] + ').'
+    };
+  }
+  L.levels = T.length + 8;
+  L.d = 'Правильные и неправильные размены в настоящих позициях: защищена ли фигура и что выгоднее. ' + L.levels + ' заданий.';
+  L.gen = function (r, lv) { return lv <= T.length ? mk(T[lv - 1]) : OLD(r, lv); };
+})();
+
 /* Диплом: имя вводится на странице, дата ставится сама, файл скачивается в PDF (без внешних библиотек) */
 (function () {
   var VAR = {
