@@ -96,7 +96,33 @@ a.card:hover { border-color: var(--red); }
 .boardbox { container-type: inline-size; width: min(100%, var(--bw)); margin: 0 auto; position: relative; }
 .boardbox::after { content: ''; position: absolute; right: -6px; bottom: -6px; width: 30px; height: 30px; cursor: nwse-resize; touch-action: none; z-index: 20; background: linear-gradient(135deg, transparent 0 48%, #1b1a19 48% 56%, transparent 56% 66%, #1b1a19 66% 74%, transparent 74%); border-radius: 0 0 14px 0; opacity: .7; }
 .bsize { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 6px 0; font-weight: 700; }
-.bsize .btn { padding: 4px 12px; min-height: 0; font-size: 16px; } .bsize small { color: var(--muted); font-weight: 600; }
+.bsize .upz[data-board="bw"] { --sq-light: #fbf6e6; --sq-dark: #8f9db3; } .upz[data-board="green"] { --sq-light: #eeeed2; --sq-dark: #6f9a54; } .upz[data-board="brown"] { --sq-light: #f0d9b5; --sq-dark: #b58863; } .upz[data-board="blue"] { --sq-light: #dee3e6; --sq-dark: #5f87b5; }
+.upz[data-pset="bold"] .pcs { filter: drop-shadow(0 0 .7px #000) drop-shadow(0 0 .7px #000); }
+.upz-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: -1px; border: 2px solid #1b1a19; }
+.ut { display: grid; grid-template-columns: repeat(var(--cw), var(--c)); grid-template-rows: repeat(var(--rh), var(--c)); }
+.us { position: relative; display: grid; place-items: center; width: var(--c); height: var(--c); padding: 0; border: 0; background: var(--sq-dark); }
+.us.l { background: var(--sq-light); }
+.upz .us .pcs { width: 90%; height: 90%; }
+.upz-main { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; justify-content: center; margin: 8px 0; }
+.upz-bd { position: relative; border: 4px solid var(--ink); border-radius: 6px; box-sizing: content-box; background: #fff; }
+.upz-bd > .ut { position: absolute; inset: 0; }
+.upz-slot { position: absolute; box-sizing: border-box; border: 2px dashed #8a847d; background: rgba(255, 255, 255, .55); padding: 0; cursor: pointer; }
+.upz-slot.done { border: 0; background: none; cursor: default; }
+.upz-slot .ut.in { position: absolute; inset: 0; }
+.upz-tray { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 8px 0; }
+.upz-pc { padding: 0; border: 0; background: none; cursor: pointer; box-shadow: 0 0 0 3px var(--ink); border-radius: 3px; line-height: 0; }
+.upz-pc.sel { box-shadow: 0 0 0 5px #ffc21a, 0 0 0 7px var(--ink); transform: translateY(-3px); }
+.upz-sample { text-align: center; } .upz-sample b { display: block; margin-bottom: 4px; }
+.upz-sm { position: relative; border: 3px solid var(--ink); box-sizing: content-box; margin: 0 auto; }
+.upz-sm > .ut { position: absolute; inset: 0; }
+.upz-ln { position: absolute; box-sizing: border-box; border: 2px solid rgba(27, 26, 25, .85); pointer-events: none; }
+.upz-ln em { position: absolute; left: 1px; top: 0; font: 700 11px/1 sans-serif; font-style: normal; color: #1b1a19; background: rgba(255, 255, 255, .8); padding: 0 2px; }
+.upz-ln.cur { border: 4px solid #ffc21a; box-shadow: 0 0 0 2px #1b1a19 inset; } .upz-ln.ok { border-color: #1f8a4c; }
+.us.off { opacity: .35; cursor: default; } .us.dn { box-shadow: inset 0 0 0 3px #1f8a4c; } .us.act { cursor: pointer; } .us.act:not(.l)::after, .us.act.l::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 2px rgba(255, 194, 26, .95); }
+.us.bad { background: #ff8a80 !important; } .us.tgt::before { content: ''; position: absolute; width: 30%; height: 30%; border-radius: 50%; background: rgba(40, 80, 50, .55); z-index: 3; }
+.upz-pal { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; max-width: calc(var(--c) * 8); } .upz-pal button { width: 46px; height: 46px; padding: 0; display: grid; place-items: center; border: 2px solid var(--line); border-radius: 8px; background: var(--card); font-size: 20px; font-weight: 800; cursor: pointer; } .upz-pal button.sel { border-color: #ffc21a; box-shadow: 0 0 0 3px #1b1a19; } .upz-pal .pcs { width: 38px; height: 38px; }
+.upz-q { font-size: 18px; margin: 8px 0; }
+.btn { padding: 4px 12px; min-height: 0; font-size: 16px; } .bsize small { color: var(--muted); font-weight: 600; }
 .board {
   display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(8, minmax(0, 1fr)); width: 100%; aspect-ratio: 1; border-radius: 14px; overflow: hidden;
   border: 4px solid var(--ink); background: var(--sq-dark);
@@ -10176,6 +10202,218 @@ L.slides=slides;
   window.__gk.balls = ['gcN', 'gcK', 'gcR', 'gcB', 'gcQ', 'gpR', 'gpQ'];
 })();
 
+/* ===== UPGRADE CHESS PUZZLES: три вида карточек-пазлов, три уровня ===== */
+(function () {
+  var POS = {"1": [["5K1k/8/8/8/8/8/6R1/8 w - - 0 1", "g2h2"], ["5k2/8/5K2/1R6/8/8/8/8 w - - 0 1", "b5b8"], ["2k5/5R2/8/7R/8/8/6K1/8 w - - 0 1", "h5h8"], ["8/8/6b1/8/8/8/4kq2/7K b - - 0 1", "g6e4"], ["8/8/8/8/8/3K4/5Q2/qk6 w - - 0 1", "f2c2"], ["8/8/8/Q7/8/3K4/1p6/2k5 w - - 0 1", "a5e1"], ["2R4R/8/8/Q5N1/P5k1/8/6K1/8 w - - 0 1", "c8c4"], ["2k5/5R2/1KNp4/8/4r3/8/5p2/8 w - - 0 1", "f7c7"], ["8/1p6/8/k2b4/8/5p1p/7B/7K b - - 0 1", "f3f2"]], "2": [["2k5/2B3p1/1K5p/7P/6p1/3B4/8/8 w - - 0 1", "d3f5"], ["4QQ2/8/1r4B1/3k2K1/7p/6PP/8/8 w - - 0 1", "e8e4"], ["7k/5Q2/6p1/4N2p/5P1P/8/6P1/6K1 w - - 0 1", "e5g6"], ["8/8/6pn/4Kpkp/8/6P1/4B2P/8 w - - 0 1", "h2h4"], ["8/5p1p/8/2B3b1/5kP1/1P1K1p1P/8/8 w - - 0 1", "c5d6"], ["8/2b4k/2p2rpp/1p6/3N3P/8/6K1/1q6 b - - 0 1", "b1f1"], ["8/7q/2Q2p2/4kp2/P2p4/1P1K1PP1/8/8 w - - 0 1", "f3f4"], ["4k1r1/R7/3PP2p/1p2K3/p5P1/P6P/8/8 w - - 0 1", "a7a8"], ["8/1B5p/3b1p2/4kn2/R6P/1P6/2P2B2/1K6 w - - 0 1", "a4e4"]], "3": [["2r5/6p1/p3k2p/R4N2/PK4P1/8/1P1n4/r7 b - - 0 1", "c8c4"], ["5r2/1q4pk/2n1Q3/4PN2/2R5/7P/5PP1/6K1 w - - 0 1", "c4h4"], ["4b3/2p5/8/1pKPkp2/1P1n2p1/P3N1P1/8/1B6 b - - 0 1", "d4b3"], ["6k1/5p2/3P2p1/pQ2P2p/1p1b4/1P1N1q2/P7/4K3 b - - 0 1", "d4c3"], ["7k/5p2/p3bN2/r1p1pp2/8/P1P2PR1/5KPP/8 w - - 0 1", "g3g8"], ["4R3/1p3pkp/2pp4/7P/nPPN4/8/6Bq/B1b2K2 w - - 0 1", "d4f5"], ["5rk1/2p2p2/6p1/1p1Pb2q/1B6/2P4P/PQ3PP1/3R2K1 b - - 0 1", "h5d1"], ["4r1k1/p3pp1p/1p2n1p1/1Q2n1P1/3P4/P5N1/5PKP/4r3 b - - 0 1", "e6f4"], ["r6k/ppp3pp/2b5/8/2N5/P1P5/BP4RP/R3nrQK b - - 0 1", "c6g2"]]};
+  var SPL = {
+    1: [{ c: [4, 4], r: [4, 4] }, { c: [4, 4], r: [4, 4] }, { c: [3, 3, 2], r: [4, 4] }],
+    2: [{ c: [3, 3, 2], r: [3, 3, 2] }, { c: [3, 3, 2], r: [3, 3, 2] }, { c: [3, 3, 2], r: [2, 2, 2, 2] }],
+    3: [{ c: [2, 2, 2, 2], r: [2, 2, 2, 2] }, { c: [2, 2, 2, 2], r: [2, 2, 2, 1, 1] }, { c: [2, 2, 2, 2], r: [2, 1, 1, 1, 1, 2] }]
+  };
+  var GAMES = [
+    { id: 1, t: 'Собери доску', d: 'Собери шахматную диаграмму из частей. Образец подскажет, куда класть каждую часть.' },
+    { id: 2, t: 'Восстанови позицию', d: 'Смотри на образец и расставляй фигуры по частям картинки.' },
+    { id: 3, t: 'Собери и реши', d: 'Собери доску, определи, чей ход, и найди мат в один ход.' }
+  ];
+  var LEVS = [
+    { id: 1, t: 'Уровень 1', age: '4–6 лет', n: '4–6 частей', col: '#2f9e44' },
+    { id: 2, t: 'Уровень 2', age: '7–9 лет', n: '9–12 частей', col: '#f0b400' },
+    { id: 3, t: 'Уровень 3', age: '10–12 лет', n: '16–24 части', col: '#d7261e' }
+  ];
+  var LET = ' PNBRQK';
+  function ucis(m) { return 'abcdefgh'[m.f & 7] + (8 - (m.f >> 3)) + 'abcdefgh'[m.t & 7] + (8 - (m.t >> 3)); }
+  function card(g, l, j) { var e = POS[l][j * 3 + (g - 1)], sp = SPL[l][j]; return { fen: e[0], mate: e[1], c: sp.c, r: sp.r, key: 'g' + g + 'l' + l + 'c' + j, g: g, l: l, j: j }; }
+  function prog() { return lsGet('ukc_upz', {}) || {}; }
+  function save(key, st) { var o = prog(); if (!o[key] || o[key] < st) o[key] = st; lsSet('ukc_upz', o); }
+  function starsTxt(n) { return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var k = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[k]; a[k] = t; } return a; }
+  function tiles(cd) {
+    var T = [], y0 = 0, x0;
+    cd.r.forEach(function (h) { x0 = 0; cd.c.forEach(function (w) { T.push({ x: x0, y: y0, w: w, h: h }); x0 += w; }); y0 += h; });
+    return T;
+  }
+  function sig(b, t) { var s = ((t.x + t.y) & 1) + ':' + t.w + 'x' + t.h + ':'; for (var y = 0; y < t.h; y++) for (var x = 0; x < t.w; x++) s += (b[(t.y + y) * 8 + t.x + x] || 0) + ','; return s; }
+  function cellsHTML(b, t, mk) {
+    var h = '';
+    for (var y = 0; y < t.h; y++) for (var x = 0; x < t.w; x++) {
+      var i = (t.y + y) * 8 + t.x + x, v = b[i], cls = 'us' + (((t.x + x + t.y + y) & 1) === 0 ? ' l' : '') + (mk && mk[i] ? ' ' + mk[i] : '');
+      h += '<span class="' + cls + '" data-i="' + i + '">' + (v ? pcHTML(v) : '') + '</span>';
+    }
+    return h;
+  }
+  function tileHTML(b, t, extra, mk) { return '<div class="ut ' + (extra || '') + '" style="--cw:' + t.w + ';--rh:' + t.h + '">' + cellsHTML(b, t, mk) + '</div>'; }
+  function cs() { var w = Math.min((view.clientWidth || 600) - 24, 520); return Math.max(26, Math.floor(w / 8)); }
+  function wrap(inner, c) { return '<div class="upz" data-board="' + boardTheme + '" data-pset="' + lsGet('ukc_pset', 'classic') + '" style="--c:' + c + 'px">' + inner + '</div>'; }
+
+  /* ---------- меню ---------- */
+  function menu() {
+    var o = prog(), h = '<div class="ctr-top"><a class="btn alt" href="#games">← Игротека</a></div><h2>UPGRADE CHESS PUZZLES</h2><p class="note">Шахматные пазлы: три вида карточек и три уровня сложности.</p>';
+    GAMES.forEach(function (g) {
+      h += '<section class="course"><h3>' + esc(g.t) + '</h3><p class="note">' + esc(g.d) + '</p><div class="lgrid">';
+      LEVS.forEach(function (lv) {
+        var st = 0, cards = '';
+        for (var j = 0; j < 3; j++) { var k = card(g.id, lv.id, j).key, s = o[k] || 0; st += s ? 1 : 0; cards += '<a class="btn alt" href="#games/upz/' + g.id + '/' + lv.id + '/' + j + '">' + (j + 1) + ' ' + starsTxt(s) + '</a> '; }
+        h += '<div class="lcard"><span class="big"><i class="upz-dot" style="background:' + lv.col + '"></i> ' + lv.t + ' · ' + lv.age + '</span><p>' + lv.n + '. Решено: ' + st + ' из 3</p><p>' + cards + '</p></div>';
+      });
+      h += '</div></section>';
+    });
+    view.innerHTML = h;
+  }
+
+  /* ---------- общий пазл: собери доску ---------- */
+  function assemble(cd, b, onDone, withSample) {
+    var c = cs(), T = tiles(cd), placed = {}, sel = -1, mistakes = 0, order = shuffle(T.map(function (t, i) { return i; }));
+    var area = document.getElementById('upzArea');
+    function render() {
+      var h = '<div class="upz-main"><div class="upz-bd" style="width:' + 8 * c + 'px;height:' + 8 * c + 'px">';
+      T.forEach(function (t, i) {
+        var st = 'left:' + t.x * c + 'px;top:' + t.y * c + 'px;width:' + t.w * c + 'px;height:' + t.h * c + 'px';
+        h += placed[i] != null ? '<div class="upz-slot done" style="' + st + '">' + tileHTML(b, t, 'in') + '</div>' : '<button class="upz-slot" data-s="' + i + '" style="' + st + '" aria-label="Пустое место ' + (i + 1) + '"></button>';
+      });
+      h += '</div>';
+      if (withSample) h += '<div class="upz-sample"><b>Образец</b>' + sampleHTML(b, cd, 14) + '</div>';
+      h += '</div><p class="note">Выбери часть внизу, потом нажми на место, куда она подходит.</p><div class="upz-tray">';
+      order.forEach(function (i) { if (placed[i] == null) h += '<button class="upz-pc' + (sel === i ? ' sel' : '') + '" data-t="' + i + '" aria-label="Часть доски ' + (i + 1) + '">' + tileHTML(b, T[i], '') + '</button>'; });
+      h += '</div>';
+      area.innerHTML = h;
+      area.querySelectorAll('.upz-pc').forEach(function (e) { e.onclick = function () { sel = +e.dataset.t; sfx('move'); render(); }; });
+      area.querySelectorAll('.upz-slot[data-s]').forEach(function (e) { e.onclick = function () { put(+e.dataset.s); }; });
+    }
+    function put(s) {
+      if (sel < 0) return msg('Сначала выбери часть внизу.', '');
+      if (sig(b, T[sel]) === sig(b, T[s])) { placed[sel] = s; sel = -1; sfx('good'); msg('Верно!', 'good'); if (Object.keys(placed).length === T.length) return onDone(mistakes); }
+      else { mistakes++; sfx('bad'); msg('Не сюда. Посмотри на образец и на клетки: тёмные и светлые.', 'bad'); }
+      render();
+    }
+    function msg(t, k) { var m = document.getElementById('msg'); if (m) { m.className = 'msg' + (k ? ' ' + k : ''); m.textContent = t; } }
+    render();
+  }
+  function sampleHTML(b, cd, cell, hlT, done) {
+    var T = tiles(cd), h = '<div class="upz-sm" style="--c:' + cell + 'px;width:' + 8 * cell + 'px;height:' + 8 * cell + 'px">', full = { x: 0, y: 0, w: 8, h: 8 };
+    h += '<div class="ut" style="--cw:8;--rh:8">' + cellsHTML(b, full) + '</div>';
+    T.forEach(function (t, i) { h += '<i class="upz-ln' + (hlT === i ? ' cur' : '') + (done && done[i] ? ' ok' : '') + '" style="left:' + t.x * cell + 'px;top:' + t.y * cell + 'px;width:' + t.w * cell + 'px;height:' + t.h * cell + 'px">' + (hlT != null ? '<em>' + (i + 1) + '</em>' : '') + '</i>'; });
+    return h + '</div>';
+  }
+  function finish(cd, mistakes, extra) {
+    var s = mistakes === 0 ? 3 : mistakes <= 2 ? 2 : 1; save(cd.key, s); sfx('good');
+    var nj = cd.j < 2 ? '<a class="btn" href="#games/upz/' + cd.g + '/' + cd.l + '/' + (cd.j + 1) + '">Следующая карточка →</a> ' : (cd.l < 3 ? '<a class="btn" href="#games/upz/' + cd.g + '/' + (cd.l + 1) + '/0">Следующий уровень →</a> ' : '');
+    document.getElementById('upzArea').innerHTML = '<div class="ctr-res"><h2>Готово!</h2><p class="gk-big">' + starsTxt(s) + '</p><p>' + (extra || '') + 'Ошибок: <b>' + mistakes + '</b>.</p><p>' + nj + '<a class="btn alt" href="#games/upz/' + cd.g + '/' + cd.l + '/' + cd.j + '">Ещё раз</a> <a class="btn alt" href="#games/upz">К карточкам</a></p></div>';
+  }
+  function head(cd) {
+    var g = GAMES[cd.g - 1], lv = LEVS[cd.l - 1];
+    view.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#games/upz">← Карточки</a> <b>' + esc(g.t) + '</b> · <i class="upz-dot" style="background:' + lv.col + '"></i> ' + lv.t + ' · карточка ' + (cd.j + 1) + ' из 3</div><div class="msg" id="msg" role="status" aria-live="polite"></div><div id="upzArea"></div>';
+  }
+
+  /* ---------- 1. Собери доску ---------- */
+  function game1(cd) {
+    var pos = E.fromFEN(cd.fen); head(cd);
+    var root = document.getElementById('upzArea'); root.className = 'upz'; root.dataset.board = boardTheme; root.dataset.pset = lsGet('ukc_pset', 'classic'); root.style.setProperty('--c', cs() + 'px');
+    assemble(cd, pos.b, function (m) { finish(cd, m); }, true);
+  }
+
+  /* ---------- 2. Восстанови позицию ---------- */
+  function game2(cd) {
+    var pos = E.fromFEN(cd.fen), tgt = pos.b, T = tiles(cd), c = cs(), cur = new Int8Array(64), done = {}, mistakes = 0, pal = -99, k = 0;
+    head(cd);
+    var root = document.getElementById('upzArea'); root.className = 'upz'; root.dataset.board = boardTheme; root.dataset.pset = lsGet('ukc_pset', 'classic'); root.style.setProperty('--c', c + 'px');
+    var types = {}; for (var i = 0; i < 64; i++) if (tgt[i]) types[tgt[i]] = 1;
+    var P = Object.keys(types).map(Number);
+    [1, -1, 3, -3, 2, -2, 4, -4].forEach(function (v) { if (cd.l >= 2 && P.length < Object.keys(types).length + 2 && P.indexOf(v) < 0) P.push(v); });
+    P.sort(function (a, b) { return (b > 0) - (a > 0) || Math.abs(b) - Math.abs(a); });
+    function empty(t) { for (var y = 0; y < t.h; y++) for (var x = 0; x < t.w; x++) if (tgt[(t.y + y) * 8 + t.x + x]) return false; return true; }
+    function nextT() { while (k < T.length && (done[k] || empty(T[k]))) { if (empty(T[k])) done[k] = 1; k++; } return k < T.length; }
+    function check(t, mark) {
+      var ok = true, mk = {};
+      for (var y = 0; y < t.h; y++) for (var x = 0; x < t.w; x++) { var i = (t.y + y) * 8 + t.x + x; if ((cur[i] || 0) !== (tgt[i] || 0)) { ok = false; if (mark) mk[i] = 'bad'; } }
+      return mark ? mk : ok;
+    }
+    function msg(t, kk) { var m = document.getElementById('msg'); if (m) { m.className = 'msg' + (kk ? ' ' + kk : ''); m.textContent = t; } }
+    function render(mk) {
+      if (!nextT()) return finish(cd, mistakes);
+      var t = T[k], h = '<div class="upz-main"><div><div class="upz-bd" style="width:' + 8 * c + 'px;height:' + 8 * c + 'px"><div class="ut" style="--cw:8;--rh:8">';
+      for (var i = 0; i < 64; i++) {
+        var x = i & 7, y = i >> 3, inT = x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h, dn = false;
+        T.forEach(function (tt, q) { if (done[q] && x >= tt.x && x < tt.x + tt.w && y >= tt.y && y < tt.y + tt.h) dn = true; });
+        h += '<button class="us' + (((x + y) & 1) === 0 ? ' l' : '') + (inT ? ' act' : dn ? ' dn' : ' off') + (mk && mk[i] ? ' bad' : '') + '" data-i="' + i + '" aria-label="' + SQN(i) + '"' + (inT ? '' : ' tabindex="-1"') + '>' + (cur[i] ? pcHTML(cur[i]) : '') + '</button>';
+      }
+      h += '</div></div><div class="upz-pal">';
+      P.forEach(function (v) { h += '<button class="' + (pal === v ? 'sel' : '') + '" data-v="' + v + '" aria-label="' + (v > 0 ? 'белый ' : 'чёрный ') + PNAME[Math.abs(v)] + '">' + pcHTML(v) + '</button>'; });
+      h += '<button class="' + (pal === 0 ? 'sel' : '') + '" data-v="0" aria-label="Убрать фигуру">✕</button></div></div>';
+      h += '<div class="upz-sample"><b>Образец. Часть ' + (k + 1) + ' из ' + T.length + '</b>' + sampleHTML(tgt, cd, 16, k, done) + '</div></div>';
+      root.innerHTML = h;
+      root.querySelectorAll('.upz-pal button').forEach(function (e) { e.onclick = function () { pal = +e.dataset.v; sfx('move'); render(); }; });
+      root.querySelectorAll('.us.act').forEach(function (e) { e.onclick = function () { place(+e.dataset.i); }; });
+    }
+    function place(i) {
+      if (pal === -99) return msg('Выбери фигуру внизу.', '');
+      cur[i] = pal === 0 ? 0 : pal; sfx('move');
+      var t = T[k], cnt = 0, need = 0;
+      for (var y = 0; y < t.h; y++) for (var x = 0; x < t.w; x++) { var q = (t.y + y) * 8 + t.x + x; if (cur[q]) cnt++; if (tgt[q]) need++; }
+      if (cnt >= need) {
+        if (check(t)) { done[k] = 1; sfx('good'); msg('Часть ' + (k + 1) + ' готова!', 'good'); k++; return render(); }
+        mistakes++; sfx('bad'); msg('Есть ошибки: красные клетки. Сравни с образцом и поправь.', 'bad'); return render(check(t, true));
+      }
+      msg('', ''); render();
+    }
+    msg('Смотри на образец: рамка показывает, какую часть делать сейчас.', '');
+    render();
+  }
+
+  /* ---------- 3. Собери и реши ---------- */
+  function game3(cd) {
+    var pos = E.fromFEN(cd.fen); head(cd);
+    var root = document.getElementById('upzArea'); root.className = 'upz'; root.dataset.board = boardTheme; root.dataset.pset = lsGet('ukc_pset', 'classic'); root.style.setProperty('--c', cs() + 'px');
+    var mist = 0, c = cs();
+    function msg(t, k) { var m = document.getElementById('msg'); if (m) { m.className = 'msg' + (k ? ' ' + k : ''); m.textContent = t; } }
+    function boardHTMLx(sel, tg) {
+      var h = '<div class="upz-bd" style="width:' + 8 * c + 'px;height:' + 8 * c + 'px"><div class="ut" style="--cw:8;--rh:8">';
+      for (var i = 0; i < 64; i++) { var x = i & 7, y = i >> 3, v = pos.b[i]; h += '<button class="us' + (((x + y) & 1) === 0 ? ' l' : '') + (sel === i ? ' act' : '') + (tg && tg.indexOf(i) >= 0 ? ' tgt' : '') + '" data-i="' + i + '" aria-label="' + SQN(i) + '">' + (v ? pcHTML(v) : '') + '</button>'; }
+      return h + '</div></div>';
+    }
+    function whose() {
+      root.innerHTML = '<p class="upz-q"><b>Чей ход?</b> Подумай: у кого из игроков есть мат в один ход?</p>' + boardHTMLx(-1) + '<p><button class="btn" data-w="1">Ход белых</button> <button class="btn" data-w="-1">Ход чёрных</button></p>';
+      root.querySelectorAll('[data-w]').forEach(function (e) { e.onclick = function () {
+        if (+e.dataset.w === pos.turn) { sfx('good'); msg('Верно! Ходят ' + (pos.turn > 0 ? 'белые' : 'чёрные') + ': у них есть мат в один ход.', 'good'); solve(); }
+        else { mist++; sfx('bad'); msg('Нет. Найди того, у кого есть мат в один ход.', 'bad'); }
+      }; });
+    }
+    function solve() {
+      var sel = -1, tg = [];
+      function r() {
+        root.innerHTML = '<p class="upz-q"><b>Поставь мат в один ход.</b> Нажми на свою фигуру, потом на поле, куда она пойдёт.</p>' + boardHTMLx(sel, tg);
+        root.querySelectorAll('.us').forEach(function (e) { e.onclick = function () { click(+e.dataset.i); }; });
+      }
+      function click(i) {
+        var v = pos.b[i];
+        if (sel < 0 || (v && (v > 0) === (pos.turn > 0))) { if (v && (v > 0) === (pos.turn > 0)) { sel = i; tg = E.legal(pos).filter(function (m) { return m.f === i; }).map(function (m) { return m.t; }); sfx('move'); r(); } return; }
+        var m = E.legal(pos).filter(function (x) { return x.f === sel && x.t === i; })[0];
+        if (!m) { mist++; sfx('bad'); msg('Так ходить нельзя. Выбери другую фигуру или поле.', 'bad'); sel = -1; tg = []; return r(); }
+        var np = E.make(pos, m);
+        if (E.status(np) === 'mate') { pos = np; sel = -1; tg = []; root.innerHTML = '<p class="upz-q"><b>Мат!</b></p>' + boardHTMLx(-1); finish2(); }
+        else { mist++; sfx('bad'); msg(E.status(np) === 'check' ? 'Шах, но не мат: король может защититься.' : 'Это не мат. Попробуй другой ход.', 'bad'); sel = -1; tg = []; r(); }
+      }
+      function finish2() { later(function () { finish(cd, mist, 'Мат поставлен! '); }, 900); }
+      r();
+    }
+    var keep = pos.b;
+    assemble(cd, keep, function (m) { mist += m; msg('Доска собрана!', 'good'); root = document.getElementById('upzArea'); whose(); }, true);
+  }
+
+  window.__upz = { card: card, POS: POS };
+  var og = window.__games;
+  window.__games = function (parts) {
+    if (parts && parts[1] === 'upz') {
+      clearTimers();
+      var g = +parts[2], l = +parts[3], j = +parts[4];
+      if (g >= 1 && g <= 3 && l >= 1 && l <= 3 && j >= 0 && j <= 2) { var cd = card(g, l, j); return g === 1 ? game1(cd) : g === 2 ? game2(cd) : game3(cd); }
+      return menu();
+    }
+    og(parts);
+    if (!parts || !parts[1]) view.insertAdjacentHTML('beforeend', '<section class="course"><h3>Шахматные пазлы <small class="note">UPGRADE CHESS PUZZLES</small></h3><div class="lgrid"><a class="lcard" href="#games/upz"><span class="big">Собери доску, восстанови позицию, найди мат</span><p>Три вида карточек и три уровня: 4–6, 7–9 и 10–12 лет.</p></a></div></section>');
+  };
+  var SQN = function (i) { return 'abcdefgh'[i & 7] + (8 - (i >> 3)); };
+})();
+
 // Игры: «Угадай ход», «Лестница ферзя», «Шахматная молния»
 (function () {
   var GK = window.__gk, rnd = GK.rnd, E = GK.E;
@@ -11445,6 +11683,62 @@ var MT = [{"fen": "4R1rk/1p4qp/pb6/7N/1P6/Pb5P/1B4P1/7K w - - 0 1", "s": ["b2g7"
   GROUPS.splice(gi < 0 ? GROUPS.length : gi + 1, 0, { n: 'Связка', ids: ['pin'] });
 })();
 
+/* ===== Вскрытое нападение (1 год): позиции проверены движком ===== */
+(function () {
+  var D = {"w52": [["8/p1R3Nk/1p3p2/5Ppp/3r4/8/P3b1P1/6K1 w - - 0 1", "g7e6"], ["5rk1/p5p1/2B1p1p1/2b5/8/2B1n1P1/PP5P/R5K1 b - - 0 1", "e3c2"], ["2r1r2k/5ppB/p1qnp3/1p4PQ/2pP4/2P1n3/PP1N3P/R5K1 w - - 0 1", "h7e4"], ["1k6/ppp4p/2b2qp1/2p5/2P1nPB1/PQ2P1P1/1P4KP/1R3R2 b - - 0 1", "e4d2"], ["r3k2r/pppq2pp/2n1Nb2/8/3p4/8/PPP2PPP/R2QR1K1 w - - 0 1", "e6c5"], ["r3r3/p4p1k/1pn4p/2pb1N2/4n2B/P7/1P3PPP/R3KB1R b - - 0 1", "e4g3"]], "w53": [["r4rk1/pp2bpp1/2p1pn1p/8/2Pq4/2NB4/PP3PPP/R2Q1RK1 w - - 0 1", "d3h7"], ["rn2kb1r/ppp1qppp/5n2/5b2/3PNp2/3B4/PPP1Q1PP/R1B1K1NR w - - 0 1", "e4f6"], ["rnbq1k1r/pp2ppbp/6p1/1B2P3/3N2n1/2N5/PPP3PP/R1BQK2R w - - 0 1", "d4e6"], ["r1b2rk1/p2q1pp1/1pN1pn1p/8/3P4/3B1Q2/PP3PPP/2R2RK1 w - - 0 1", "c6e7"], ["r3rbk1/1b3pp1/p1n4p/1p1qp1N1/1p2N3/P1PP1Q2/5PPP/R1B1R1K1 w - - 0 1", "e4f6"], ["r4k1r/pp2npp1/2b1p2p/4P2P/Pq1N2Q1/2p4R/2P2PP1/R3KB2 w - - 0 1", "d4e6"]], "w54": [["5rk1/2q1p1bp/3p2p1/3Pnp2/2P5/5PP1/1Q4BP/2R2RK1 b - - 0 1", "e5f3"], ["Q1bqk2r/p4ppp/n4p2/1p6/1bpP4/4P3/PP3PPP/R2K1BNR b - - 0 1", "c8g4"], ["r1bq1rk1/ppp2ppp/3b4/8/3Q4/8/PPP2PPP/RNB2RK1 b - - 0 1", "d6h2"], ["r3r1k1/ppq1bppp/2n5/5B2/4Q3/8/PPP1N3/R1B1K3 b - - 0 1", "e7b4"], ["2b3k1/p5pp/3bpq2/8/2Q5/P1n1P1PB/5P1P/R5K1 b - - 0 1", "c3e2"], ["r2r2k1/ppp4p/2b2bp1/5p2/2Pnp3/BP4P1/P1NRPPBP/5RK1 b - - 0 1", "d4f3"]], "m1": ["2r1kb2/5p2/2P2P2/1B2p3/7R/8/P1P5/7K w - - 0 1", "8/1p6/8/k2b4/8/5p1p/7B/7K b - - 0 1", "3Q1Bk1/q4p1p/4p1p1/1R1n4/3b4/6P1/5P1P/6K1 w - - 0 1", "6k1/5pp1/1qp4p/1p2P3/7N/PP1B2P1/1B3rbP/Q2R2K1 b - - 0 1", "2r5/3b3k/p2P4/1pp1BppB/5P2/P5P1/1PP2K2/7R w - - 0 1", "2k5/ppp5/4bp2/3N3p/2P1r1r1/1PR4K/P4P2/4n3 b - - 0 1"], "m2": ["5k1r/4pp1p/r2p2pP/1bqB2P1/4PQ2/1K3P2/1P6/3R3R b - - 0 1", "r1k1r3/pp5R/2b1p1p1/2p1B3/2P2p2/2NR1P2/PP2P1P1/2K2n2 w - - 0 1", "1bR1r1k1/1p3p1p/pQ6/3p4/3B1p2/1P2P2P/P4qPK/5R2 b - - 0 1", "r1bq1rk1/ppp1b1pn/2n3pp/3NP3/2B5/5N2/PP3PPP/R1B2RK1 w - - 0 1", "3r1nk1/1p3Nbp/p1p1Qpp1/2qP4/5P2/8/PPP3PP/3R1R1K w - - 0 1", "r1bk1b1r/1pp2pp1/p6p/4p3/1n2P1P1/2N2N1P/PPPB1P2/2KR3R w - - 0 1", "4q1r1/4p2k/p6b/2pPnR2/8/2N1BP2/PrQ5/2K5 w - - 0 1", "5r2/r4Pk1/3qbR1p/1p1n4/p2pB3/4p1N1/PP5P/6RK w - - 0 1", "r1bR3r/2b2kpp/p7/1p3p2/2N3N1/1BP5/PP4PP/7K w - - 0 1", "7k/ppp4r/3p4/3PpN2/8/2P2Pbn/PPB3R1/5R1K b - - 0 1", "2k3nr/ppp1qppp/8/4n3/2PP4/P6P/1PQ2PP1/R3KB1R b - - 0 1", "4r1k1/5p1p/p5p1/2bB4/P4B2/3p2PP/1r3n1K/R4Q2 b - - 0 1", "1kr5/1p1r1pR1/p1bbpP1p/8/3pN2P/5B2/PPK3P1/3RQ3 b - - 0 1", "1k1r3B/pp2qp1p/3b4/8/1nB5/1Q3Pn1/PP1K1P1P/2R4R b - - 0 1", "rnbqr1k1/pp2bppp/5n2/3p2B1/2P5/1B3Q1P/PPP2PP1/RN2K1NR b - - 0 1"]};
+  function ucis(m) { return 'abcdefgh'[m.f & 7] + (8 - (m.f >> 3)) + 'abcdefgh'[m.t & 7] + (8 - (m.t >> 3)); }
+  function sqi(s) { return (8 - +s[1]) * 8 + 'abcdefgh'.indexOf(s[0]); }
+  function lineSqs(a, b) { var x0 = sqi(a) & 7, y0 = sqi(a) >> 3, x1 = sqi(b) & 7, y1 = sqi(b) >> 3, dx = Math.sign(x1 - x0), dy = Math.sign(y1 - y0), out = [], x = x0, y = y0; for (var i = 0; i < 9; i++) { out.push(y * 8 + x); if (x === x1 && y === y1) break; x += dx; y += dy; } return out; }
+  function who(pos) { return pos.turn === 1 ? 'белых' : 'чёрных'; }
+  function mates(pos) { return E.legal(pos).filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; }); }
+  function isKey(pos, m) {
+    var np = E.make(pos, m), st = E.status(np); if (st === 'mate' || st === 'stalemate') return false;
+    var rs = E.legal(np); return rs.length > 0 && rs.every(function (x) { return mates(E.make(np, x)).length > 0; });
+  }
+  function win(e) {
+    var pos = E.fromFEN(e[0]);
+    return { pos: pos, say: 'Выиграй фигуру. Ход ' + who(pos) + '.', sub: 'вскрытое нападение',
+      ok: function (m) { return ucis(m).slice(0, 4) === e[1]; },
+      good: function () { return 'Верно! Ход открыл линию, и соперник теряет фигуру.'; },
+      bad: function () { return 'Так фигуру не выиграть. Найди свою фигуру-«шторку»: если она уйдёт, за ней откроется нападение.'; } };
+  }
+  function m1(f) {
+    var pos = E.fromFEN(f);
+    return { pos: pos, say: 'Поставь мат в один ход. Ход ' + who(pos) + '.', sub: 'вскрытое нападение',
+      ok: function (m, b, np) { return E.status(np) === 'mate'; },
+      good: function () { return 'Мат! Королю некуда деться.'; },
+      bad: function (m, b, np) { return E.status(np) === 'check' ? 'Шах, но не мат: король может защититься.' : 'Это не мат. Найди ход, после которого королю не спастись.'; } };
+  }
+  function m2(f) {
+    var pos = E.fromFEN(f);
+    return { pos: pos, say: 'Мат в два хода. Ход ' + who(pos) + '.', sub: 'вскрытый шах, двойной шах',
+      ok: function (m, b) { return isKey(b, m); },
+      good: function () { return 'Верно! Что бы ни ответил соперник, следующим ходом будет мат.'; },
+      bad: function (m, b, np) { return E.status(np) === 'mate' ? 'Тут мат ставится не сразу. Ищи ход, после которого мат неизбежен.' : 'У соперника есть защита. Ищи другой ход: часто он открывает шах.'; } };
+  }
+  var T = [];
+  D.w52.forEach(function (e) { T.push(function () { return win(e); }); });
+  D.m1.forEach(function (f) { T.push(function () { return m1(f); }); });
+  D.w53.forEach(function (e) { T.push(function () { return win(e); }); });
+  D.w54.forEach(function (e) { T.push(function () { return win(e); }); });
+  D.m2.forEach(function (f) { T.push(function () { return m2(f); }); });
+  var S1 = '4q1k1/5ppp/8/8/4N3/8/5PPP/3KR3 w - - 0 1', S2 = '4k3/5ppp/8/4B3/8/2q5/5PPP/4R1K1 w - - 0 1', S3 = '3k4/pp4qp/8/8/3N4/8/5PPP/3R2K1 w - - 0 1', S4 = '5r1k/pb3ppB/1p2r3/q1pp4/2P4Q/P7/1P3PPP/3R1RK1 w - - 0 1';
+  var SLIDES = [
+    { h: 'Что такое вскрытое нападение', p: ['Ладья e1 нападает на ферзя e8, но между ними стоит твой конь e4. Конь — как шторка на окне.', 'Если конь уйдёт, шторка откроется, и ладья нападёт на ферзя. Это <b>вскрытое нападение</b>.'], fen: S1, hl: lineSqs('e1', 'e8') },
+    { h: 'Открываем шторку', p: ['Нажми «Показать». Конь ушёл, и теперь на ферзя нападает ладья. Нападает не тот, кто пошёл, а фигура, которая стояла за ним.'], demo: { fen: S1, steps: ['e4c5|Конь ушёл: ладья e1 напала на ферзя e8.'] } },
+    { h: 'Вскрытый шах', p: ['Если открытая линия ведёт к <b>королю</b>, это <b>вскрытый шах</b>. Нажми «Показать»: слон берёт ферзя и сразу открывает шах ладьи e1.', 'Соперник обязан ответить на шах, поэтому он не успевает ничего сделать.'], demo: { fen: S2, steps: ['e5c3|Слон берёт ферзя и открывает шах ладьи e1.', 'e8d7|Король ушёл из-под шаха. Белые выиграли ферзя.'] } },
+    { h: 'Двойной шах', p: ['Шах могут давать сразу <b>две</b> фигуры. Это <b>двойной шах</b>. Нажми «Показать»: конь e6 даёт шах и открывает шах ладьи d1.', 'От двойного шаха можно спастись только <b>ходом короля</b>: закрыться или взять фигуру нельзя.'], demo: { fen: S3, steps: ['d4e6|Двойной шах: конь e6 и ладья d1.', 'd8c8|Спастись можно только ходом короля.', 'e6g7|Конь берёт ферзя g7.'] } },
+    { h: 'Вскрытый шах и мат', p: ['Вскрытый шах часто заканчивается матом. Нажми «Показать»: слон открыл шах ферзя h4, и у чёрных единственный ответ.'], demo: { fen: S4, steps: ['h7g6|Слон открыл шах ферзя h4.', 'h8g8|Король ушёл на g8.', 'h4h7|Ферзь ставит мат: его защищает слон g6.'] } },
+    { h: 'Запомни: как искать', p: ['<b>1.</b> Найди свою дальнобойную фигуру (ладью, слона или ферзя) и свою же фигуру перед ней: это шторка.', '<b>2.</b> Посмотри, на кого нападёт линия, когда шторка уйдёт: на короля, ферзя или ладью.', '<b>3.</b> Уведи шторку так, чтобы у неё тоже была цель: шах, взятие или угроза. Тогда соперник не успеет защититься от обоих ударов.'] }
+  ];
+  var L = { id: 'disc', t: 'Вскрытое нападение', d: 'Фигура уходит с линии и открывает нападение другой фигуры. Вскрытый и двойной шах.', run: runTask, slides: SLIDES, gen: function (lv) { var f = T[lv - 1]; return f ? f() : null; } };
+  Object.defineProperty(L, 'levels', { get: function () { return T.length; } });
+  LESS.disc = L;
+  window.__discT = { n: T.length, gen: L.gen };
+  var gi = -1; GROUPS.forEach(function (g, i) { if (g.n === 'Связка') gi = i; });
+  GROUPS.splice(gi < 0 ? GROUPS.length : gi + 1, 0, { n: 'Вскрытое нападение', ids: ['disc'] });
+})();
+
 /* ===== Итоговая работа за первый год: 20 заданий по всем темам, 80% для диплома ===== */
 (function () {
   var KEY = 'ukc_exam', N = 20;
@@ -11976,6 +12270,220 @@ var MT = [{"fen": "4R1rk/1p4qp/pb6/7N/1P6/Pb5P/1B4P1/7K w - - 0 1", "s": ["b2g7"
 (function () {
   GROUPS.forEach(function (g) { var i = g.ids.indexOf('rules'); if (i >= 0) g.ids.splice(i, 1); });
   GROUPS.forEach(function (g) { if (g.n === 'Повторение' && g.ids.indexOf('rules') < 0) g.ids.push('rules'); });
+})();
+
+/* Позиции для «Мат в 1 ход», «Мат в 2 хода и угроза мата»: проверены движком. Ход и решение считаются по правилам. */
+(function () {
+  var A = LESS.rm1, B = LESS.rm2; if (!A || !B) return;
+  var D5 = [
+    "2kr3r/pp1b1ppp/2p2n2/8/1Q3B2/P4NP1/1P2PP1P/2KR1B1q w - - 0 1",
+    "2r1r1k1/p4p2/1p3Bp1/4Pp2/2nR4/P1P3Np/2P2PbP/R5K1 w - - 0 1",
+    "4r1k1/pp1r1p1p/5Bp1/8/1P3Q2/6P1/P2n1PKP/8 w - - 0 1",
+    "1q4kr/3bRp1p/3p2pB/1ppP4/8/2N5/PP3KPP/8 w - - 0 1",
+    "rr3n1k/4Np1p/6pB/pN6/2p5/P5PP/1bb4K/R3R3 w - - 0 1",
+    "3r1rk1/p4p1p/1p2p2q/2b2p2/5n2/2PB1PN1/PPQ2P1P/3R1RK1 b - - 0 1",
+    "r5k1/pp1n1ppp/2p1r3/3p4/1P1Pn2q/P1NQP3/1B1N1PP1/4RRK1 b - - 0 1",
+    "r4rk1/1Q2bppp/3p1n2/p2P1q2/P7/1PN2pP1/N4P1P/R1B2RK1 b - - 0 1",
+    "8/6N1/8/7p/4np1P/7K/5k2/8 b - - 0 1",
+    "8/p1N5/4p3/3P4/1Bb3k1/P3K3/6r1/8 b - - 0 1",
+    "8/3N4/8/4p2P/P1n5/4k3/4b3/4K3 b - - 0 1",
+    "r5k1/5p1p/3p2p1/3Pp3/1rn1P1PP/1p3P2/1P2Q2R/1K1N4 b - - 0 1",
+    "3r1k2/ppp1n1p1/7p/4b2q/4N3/1B4Pb/PPQ2P1P/R1B3K1 b - - 0 1",
+    "8/8/2N2kp1/7p/5K1b/N7/3n2P1/8 b - - 0 1",
+    "4n1k1/3b4/pB1p3p/2pPp1pK/2P1P1P1/1P1n1BN1/5b1P/1R6 b - - 0 1",
+    "4r3/b4pk1/p3p3/Pp1pPnpp/1P5r/2P2B2/3BRPP1/2R1Q1K1 b - - 0 1"
+  ];
+  var D6M1 = [
+    "r5k1/pb3rb1/1p4R1/q2pPp1Q/2pP4/1PPBP3/PB1K4/7R w - - 0 1",
+    "r4rk1/1pb2ppp/p2qbnn1/3p4/1P1Np3/1BP4P/PBN2PP1/R2Q1RK1 b - - 0 1",
+    "r1qbn1k1/ppp2p2/3pr1p1/3N3p/3QP2P/2B2P2/PPP3P1/2KR3R w - - 0 1",
+    "5k2/2p3b1/pN6/5p2/1p1q4/1B6/PP6/1K5Q b - - 0 1"
+  ];
+  var D6M2 = [
+    "3rrnk1/1p3pb1/p3b1p1/q2p4/3B2PQ/2N2P2/PPP5/1K1R1B1R w - - 0 1",
+    "5r2/5r2/3pnpp1/p1p1k3/4P1PP/1PKP4/2P2R2/5R2 w - - 0 1",
+    "8/pp2k3/4pb1p/1Q4p1/BP1p1P2/8/5PPK/4q3 w - - 0 1",
+    "4r1k1/1R3R1p/8/r3bN2/8/P1p1P1P1/5P1P/6K1 w - - 0 1",
+    "4r1k1/3q3p/p2p2p1/5b2/1pPQ4/1P5P/PB4P1/4R1K1 w - - 0 1",
+    "2r3k1/pp3pb1/6p1/4q3/2P3b1/1P1QN3/P6R/1KR5 b - - 0 1",
+    "5r1k/1pp4p/p3R3/2b5/6p1/3RN1P1/PPP2r1P/6K1 b - - 0 1",
+    "5nk1/p4ppp/1pP4r/7q/4Q3/4P1P1/PP3PBr/2R2RK1 b - - 0 1",
+    "r1b2rk1/1pp1qppp/2n1p3/3n2P1/3PNP2/1P3Q2/1KP1N2P/3R1B1R b - - 0 1"
+  ];
+  var K64 = [
+    "4r1k1/p1Q1B2p/1p2bPp1/2n5/7N/1P2P1P1/PN1bqP1P/5RK1 w - - 0 1",
+    "6k1/3R3p/7p/p4K2/1p6/1P3P2/P6r/8 w - - 0 1",
+    "6k1/p4pP1/1p6/2b2P2/P6R/1P6/3rr3/5R1K w - - 0 1",
+    "1r4k1/p1q2pBp/1p1p2pQ/2b1p3/3P4/5P2/PPP3PP/2KR4 w - - 0 1",
+    "8/2p4k/2p4p/1qn5/8/5PR1/1bP1N1QP/r5NK w - - 0 1",
+    "r4rk1/pp1bbpp1/4p2p/q1p5/1n6/1PN2N1Q/P1P3PP/K1B1R2R b - - 0 1",
+    "6k1/5pb1/8/R1PBpp2/P4P2/4P2p/1r5r/5RK1 b - - 0 1",
+    "5rk1/R5p1/4b2p/1Np5/PpP5/1P4P1/7P/7K b - - 0 1",
+    "3rk1nr/p5pp/1p2bp2/2b1n3/4PK2/2N2P2/PPPN2PP/R1B2B1R b - - 0 1",
+    "3rrb1k/1pp1qp2/2n1pp1p/p7/5Q1P/PBN3R1/KPP2PP1/4R3 w - - 0 1",
+    "2kr1br1/pp2nqpp/1bp5/4Q3/8/2N2N2/PPP2PP1/1KBRR3 w - - 0 1",
+    "1nq2rk1/p4p1p/1p4pQ/2p1p3/1PPnP3/P1N2PPN/5BKP/8 w - - 0 1",
+    "2b3k1/Q6p/1pp3p1/1q3pK1/5P2/1P3N1P/P5P1/8 w - - 0 1",
+    "8/2P3p1/5p2/8/3k4/5Q1P/qp4PK/8 w - - 0 1"
+  ];
+
+  var V = [0, 1, 3, 3, 5, 9, 100];
+  function ucis(m) { return 'abcdefgh'[m.f & 7] + (8 - (m.f >> 3)) + 'abcdefgh'[m.t & 7] + (8 - (m.t >> 3)); }
+  function mates(pos) { return E.legal(pos).filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; }); }
+  function flip(n) { return { b: n.b, turn: -n.turn, castle: 0, ep: -1, half: 0 }; }
+  function isKey(pos, m) {
+    var np = E.make(pos, m), st = E.status(np); if (st === 'mate' || st === 'stalemate') return false;
+    var rs = E.legal(np); return rs.length > 0 && rs.every(function (x) { return mates(E.make(np, x)).length > 0; });
+  }
+  function safe(pos, m) {
+    var n = E.make(pos, m), to = m.t, pv = V[Math.abs(n.b[to])];
+    var caps = E.legal(n).filter(function (x) { return x.t === to; });
+    for (var i = 0; i < caps.length; i++) {
+      var c = caps[i]; if (V[Math.abs(n.b[c.f])] < pv) return false;
+      var n2 = E.make(n, c); if (!E.legal(n2).some(function (x) { return x.t === to; })) return false;
+    }
+    return true;
+  }
+  function isThreat(pos, m) {
+    var n = E.make(pos, m), st = E.status(n); if (st === 'mate' || st === 'stalemate' || E.inCheck(n)) return false;
+    if (mates(n).length) return false; if (!mates(flip(n)).length) return false; return safe(pos, m);
+  }
+  function who(pos) { return pos.turn === 1 ? 'белых' : 'чёрных'; }
+  function mate1(fen) {
+    var pos = E.fromFEN(fen);
+    return { pos: pos, say: 'Поставь мат в один ход. Ход ' + who(pos) + '.', sub: 'Осмотри доску: где король и какие поля ему доступны? Две фигуры на одной линии усиливают друг друга.',
+      ok: function (m, b, np) { return E.status(np) === 'mate'; },
+      good: function () { return 'Мат! Королю некуда деться.'; },
+      bad: function (m, b, np) { return E.status(np) === 'check' ? 'Шах, но не мат: король может защититься.' : 'Это не мат. Найди ход, после которого королю не спастись.'; } };
+  }
+  function mate2(fen) {
+    var pos = E.fromFEN(fen);
+    return { pos: pos, say: 'Мат в два хода. Ход ' + who(pos) + '.', sub: 'Найди первый ход: что бы ни ответил соперник, ты ставишь мат следующим ходом.',
+      ok: function (m, b) { return isKey(b, m); },
+      good: function () { return 'Верно! Теперь, что бы ни ответил соперник, следующим ходом будет мат.'; },
+      bad: function (m, b, np) { return E.status(np) === 'mate' ? 'Тут мат ставится не сразу. Ищи ход, после которого мат неизбежен.' : 'У соперника есть защита. Ищи другой ход.'; } };
+  }
+  function threatKey(fen) {
+    var pos = E.fromFEN(fen);
+    return { pos: pos, say: 'Создай неотразимую угрозу мата. Ход ' + who(pos) + '.', sub: 'Сделай такой ход, чтобы мат в один ход стал неизбежным, как бы ни ответил соперник.',
+      ok: function (m, b) { return isKey(b, m); },
+      good: function () { return 'Верно! Угроза мата неотразима: что бы ни ответил соперник, ты ставишь мат.'; },
+      bad: function (m, b, np) { return E.status(np) === 'mate' ? 'Это уже мат, а нужно создать угрозу. Ищи тихий ход.' : E.inCheck(np) ? 'Шах даёт передышку, но не создаёт неотразимой угрозы. Ищи другой ход.' : 'Соперник может защититься. Ищи ход, после которого защиты нет.'; } };
+  }
+  function threat1(fen) {
+    var pos = E.fromFEN(fen);
+    return { pos: pos, say: 'Создай угрозу мата в один ход. Ход ' + who(pos) + '.', sub: 'Сделай ход, после которого следующим ходом ты сможешь поставить мат. Не оставляй фигуру под боем!',
+      ok: function (m, b) { return isThreat(b, m); },
+      good: function () { return 'Верно! Теперь ты угрожаешь матом в один ход.'; },
+      bad: function (m, b, np) { return E.inCheck(np) ? 'Шах не нужен: нужен тихий ход с угрозой мата.' : mates(flip(np)).length ? 'Угроза есть, но твою фигуру могут просто взять. Найди более надёжный ход.' : 'После этого хода угрозы мата нет. Подумай, какая фигура может присоединиться к атаке.'; } };
+  }
+  var n1 = A.levels, n2 = B.levels, o1 = A.gen, o2 = B.gen;
+  var X2 = D6M2.map(function (f) { return function () { return mate2(f); }; })
+    .concat(D5.map(function (f) { return function () { return threatKey(f); }; }))
+    .concat(K64.map(function (f) { return function () { return threat1(f); }; }));
+  A.levels = n1 + D6M1.length;
+  A.gen = function (lv) { return lv <= n1 ? o1(lv) : mate1(D6M1[lv - n1 - 1]); };
+  B.levels = n2 + X2.length;
+  B.gen = function (lv) { return lv <= n2 ? o2(lv) : X2[lv - n2 - 1](); };
+
+  function sq(f, r) { return (8 - r) * 8 + 'abcdefgh'.indexOf(f); }
+  var F = {
+    QR: '3rrb1k/1pp1qp2/2n1pp1p/p7/5Q1P/PBN3R1/KPP2PP1/4R3 w - - 0 1',
+    QB: '2kr1br1/pp2nqpp/1bp5/4Q3/8/2N2N2/PPP2PP1/1KBRR3 w - - 0 1',
+    QN: '1nq2rk1/p4p1p/1p4pQ/2p1p3/1PPnP3/P1N2PPN/5BKP/8 w - - 0 1',
+    QK: '2b3k1/Q6p/1pp3p1/1q3pK1/5P2/1P3N1P/P5P1/8 w - - 0 1',
+    QQ: '8/2P3p1/5p2/8/3k4/5Q1P/qp4PK/8 w - - 0 1',
+    QP: '5rk1/5p2/6P1/7Q/8/8/8/6K1 w - - 0 1',
+    RR: '7k/R7/8/8/8/8/8/1R5K w - - 0 1',
+    RB: '6k1/8/6K1/4B2R/8/8/8/8 w - - 0 1',
+    RN: '5k2/3p4/6K1/3N4/8/8/8/7R w - - 0 1',
+    RP: '7k/5p1p/5p1P/8/R7/8/8/2K5 w - - 0 1',
+    BB: '7k/7p/8/8/5K2/1B6/3B4/8 w - - 0 1',
+    BN: '4k3/2KNp1p1/6p1/8/8/8/2B5/8 w - - 0 1'
+  };
+  var BAT = [
+    { h: 'Что такое угроза мата в один ход', p: ['<b>Угроза мата</b> — это когда ты сделал ход, и если соперник ничего не изменит, следующим ходом будет мат. Чаще всего угрозу создают <b>тихим ходом</b>, не шахом.', 'Здесь белый ферзь только что пришёл на g4. Он угрожает пойти на g8 и поставить мат: ладья g3 стоит сзади и защищает его. Чёрные должны это заметить и защититься.'],
+      fen: '3rrb1k/1pp1qp2/2n1pp1p/p7/6QP/PBN3R1/KPP2PP1/4R3 b - - 0 1', hl: [sq('g', 4), sq('g', 8)] },
+    { h: 'Шахматные батареи', p: ['<b>Батарея</b> — это когда две фигуры или больше действуют вместе. Одна ставит шах или мат, другая её защищает или отрезает королю поле. Большинство матов ставит именно батарея.', 'Бывают батареи: ферзь и ладья, ферзь и слон, ферзь и конь, ферзь и пешка, ферзь и король, ферзь и ферзь; ладья и ладья, ладья и слон, ладья и конь, ладья и пешка; слон и слон, слон и конь. Смотри все по очереди.'],
+      fen: F.QR, hl: [sq('g', 3), sq('f', 4)] },
+    { h: 'Ферзь и ладья', p: ['Ладья стоит сзади на той же линии, что и ферзь. Ферзь идёт на g4 и угрожает пойти на g8: ладья защитит его. Нажми «Показать».'],
+      demo: { fen: F.QR, steps: ['f4g4|Ферзь идёт на g4: угроза Фg8 и мат.', 'd8c8|Чёрные не заметили угрозы.', 'g4g8|Мат! Ладья g3 защищает ферзя, король не может его взять.'] } },
+    { h: 'Ферзь и слон', p: ['Слон стоит на одной диагонали с ферзём. Слон идёт на f4 и подготавливает ферзя: ферзь пойдёт на b8 под защитой слона.'],
+      demo: { fen: F.QB, steps: ['c1f4|Слон занимает диагональ: угроза ферзём на b8.', 'd8e8|Чёрные ничего не заметили.', 'e5b8|Мат! Слон f4 защищает ферзя на b8.'] } },
+    { h: 'Ферзь и конь', p: ['Конь защищает поле, на котором встанет ферзь. Конь идёт на g5 и защищает поле h7. Дальше ферзь берёт пешку h7: мат.'],
+      demo: { fen: F.QN, steps: ['h3g5|Конь идёт на g5: теперь поле h7 защищено дважды.', 'b8c6|Чёрные пошли конём.', 'h6h7|Мат! Ферзь на h7 защищён конём.'] } },
+    { h: 'Ферзь и король', p: ['Король тоже может быть членом батареи: он защищает ферзя. Белый король идёт на f6, и теперь ферзь на g7 будет защищён королём.'],
+      demo: { fen: F.QK, steps: ['g5f6|Король идёт на f6 и готовит мат ферзём на g7.', 'g8h8|Чёрный король отошёл.', 'a7g7|Мат! Ферзь на g7 защищён королём.'] } },
+    { h: 'Ферзь и ферзь', p: ['Два ферзя вместе очень сильны. Пешка c7 идёт на c8 и становится ферзём. Два ферзя на одной вертикали и рядом с королём: следующим ходом ферзь c8 идёт на c3 и ставит мат, второй ферзь защищает его.'],
+      fen: F.QQ, hl: [sq('c', 7), sq('c', 8), sq('c', 3)] },
+    { h: 'Ферзь и пешка', p: ['Пешка защищает поле, на котором встанет ферзь. Пешка g6 защищает h7. Ферзь берёт пешку h7: мат.'],
+      demo: { fen: F.QP, steps: ['h5h7|Мат! Ферзь взял пешку, пешка g6 защищает ферзя.'] } },
+    { h: 'Ладья и ладья', p: ['Две ладьи работают лучше всего: одна отрезает королю линию, другая ставит мат.'],
+      demo: { fen: F.RR, steps: ['b1b8|Мат! Ладья a7 закрыла седьмую горизонталь, ладья b8 бьёт восьмую.'] } },
+    { h: 'Ладья и слон', p: ['Слон защищает ладью и отрезает королю поле. Ладья идёт на h8, а слон e5 защищает её.'],
+      demo: { fen: F.RB, steps: ['h5h8|Мат! Слон e5 защищает ладью, король g6 закрывает остальные поля.'] } },
+    { h: 'Ладья и конь', p: ['Конь закрывает королю поле для побега. Ладья идёт на h8: поле e7 бьёт конь d5, остальные поля бьёт король.'],
+      demo: { fen: F.RN, steps: ['h1h8|Мат! Конь d5 не пускает короля на e7.'] } },
+    { h: 'Ладья и пешка', p: ['Пешка закрывает королю поле. Пешка h6 бьёт поле g7, ладья идёт на a8: мат.'],
+      demo: { fen: F.RP, steps: ['a4a8|Мат! Поле g7 бьёт пешка h6, поле g8 бьёт ладья.'] } },
+    { h: 'Слон и слон', p: ['Два слона разных цветов вместе бьют много полей. Слон идёт на c3 и ставит шах, а второй слон b3 закрывает поле g8.'],
+      demo: { fen: F.BB, steps: ['d2c3|Мат! Один слон бьёт g7 и даёт шах, другой бьёт g8.'] } },
+    { h: 'Слон и конь', p: ['Слон ставит мат, а конь закрывает королю поля. Слон берёт пешку g6 и ставит мат.'],
+      demo: { fen: F.BN, steps: ['c2g6|Мат! Конь d7 закрывает поле f8, король c7 закрывает d8.'] } },
+    { h: 'Как защититься от угрозы мата', p: ['Нашёл угрозу? Защититься можно так: <b>1.</b> Освободить королю поле для побега. <b>2.</b> Закрыть линию или поле, где будет мат. <b>3.</b> Взять или прогнать фигуру, которая угрожает. <b>4.</b> Поставить шах или создать большую угрозу сам. Лучшая защита часто бывает нападением! Нажми «Показать»: чёрные освобождают королю поле f8.'],
+      demo: { fen: F.QN, steps: ['h3g5|Белые угрожают ферзём на h7.', 'f8e8|Ладья ушла с f8: королю есть куда отступить. Теперь после Фxh7 король идёт на f8, и мата нет.'] } }
+  ];
+  B.slides = B.slides.concat(BAT);
+
+  /* Как закончится партия? Ещё 30 позиций (правило квадрата, оппозиция, крайняя пешка). Итог каждой известен из разбора. */
+  var P9 = LESS.pe9;
+  if (P9) {
+    var PEX = [
+    ["8/8/2k5/8/2K4p/8/8/8 w - - 0 1", "B"],
+    ["6k1/8/6K1/1p6/8/8/8/8 w - - 0 1", "D"],
+    ["8/6k1/8/5K2/1p6/3P4/8/8 w - - 0 1", "B"],
+    ["7k/p7/7K/8/8/8/8/8 w - - 0 1", "B"],
+    ["8/4k3/8/3K1p2/5P1p/8/8/8 w - - 0 1", "B"],
+    ["8/8/8/2Pk2N1/8/7K/8/8 w - - 0 1", "W"],
+    ["8/8/1K6/3k3P/8/8/8/8 b - - 0 1", "D"],
+    ["8/8/4p3/2P3k1/8/8/5K2/8 b - - 0 1", "D"],
+    ["8/8/4p3/4P3/1k4P1/8/3K4/8 b - - 0 1", "W"],
+    ["8/8/8/8/1p3P2/k7/8/1K6 b - - 0 1", "W"],
+    ["8/8/8/7k/2pK2n1/8/8/8 b - - 0 1", "B"],
+    ["8/8/4k3/8/1pK5/8/8/6b1 b - - 0 1", "B"],
+    ["2K5/5k2/8/4P3/8/8/8/8 w - - 0 1", "W"],
+    ["3k4/8/2KP4/8/8/8/8/8 w - - 0 1", "W"],
+    ["3k4/8/4K3/3P4/8/8/8/8 w - - 0 1", "W"],
+    ["3k4/8/4P3/3K4/8/8/8/8 w - - 0 1", "W"],
+    ["8/8/8/8/4k3/4p3/4K3/8 w - - 0 1", "D"],
+    ["8/8/8/1p6/2k5/8/8/1K6 w - - 0 1", "D"],
+    ["8/3k4/3P4/3K4/8/8/8/8 b - - 0 1", "D"],
+    ["8/8/8/8/3k1p2/8/3K4/8 b - - 0 1", "B"],
+    ["3k4/8/8/1KP5/8/8/8/8 b - - 0 1", "D"],
+    ["3k4/8/8/3K4/3P4/8/8/8 b - - 0 1", "D"],
+    ["8/8/8/4p2k/8/8/7K/8 b - - 0 1", "B"],
+    ["8/8/8/8/2p1k3/8/1K6/8 b - - 0 1", "B"],
+    ["8/4k3/6K1/8/7P/8/8/8 w - - 0 1", "W"],
+    ["8/8/8/8/8/pk6/8/1K6 w - - 0 1", "D"],
+    ["8/8/8/8/8/4K2p/7k/8 w - - 0 1", "D"],
+    ["8/8/3k4/1K6/8/P7/8/8 w - - 0 1", "W"],
+    ["8/3k4/1K6/P7/8/8/8/8 b - - 0 1", "D"],
+    ["8/4k3/p7/2K5/1P6/8/8/8 b - - 0 1", "D"]
+    ];
+    var seen = {}, n9 = P9.levels, o9 = P9.gen, i9;
+    for (i9 = 1; i9 <= n9; i9++) { try { var t9 = o9(i9); seen[t9.pos.b.join(',')] = 1; } catch (e) {} }
+    var PX = PEX.filter(function (x) { return !seen[E.fromFEN(x[0]).b.join(',')]; });
+    var OP9 = ['Выиграют белые', 'Ничья', 'Выиграют чёрные'];
+    P9.levels = n9 + PX.length;
+    P9.gen = function (lv) {
+      if (lv <= n9) return o9(lv);
+      var x = PX[lv - n9 - 1], pos = E.fromFEN(x[0]), right = x[1] === 'W' ? 0 : x[1] === 'D' ? 1 : 2;
+      return { pos: pos, q: 'Как закончится партия? Ход ' + (pos.turn === 1 ? 'белых' : 'чёрных') + '.', opts: OP9, right: right,
+        expl: right === 1 ? 'Ничья: защищающаяся сторона успевает остановить пешку или сохранить ничью.' : 'Выигрыш: ' + (right === 0 ? 'белые' : 'чёрные') + ' проводят пешку в ферзи или выигрывают пешку соперника.',
+        hint: 'Посчитай, за сколько ходов пешка дойдёт до последней горизонтали и за сколько ходов до неё добежит чужой король. Вспомни правило квадрата, оппозицию и крайнюю пешку.' };
+    };
+  }
+  window.__thrT = { A: A, B: B, n1: n1, n2: n2, D5: D5, D6M1: D6M1, D6M2: D6M2, K64: K64, isKey: isKey, isThreat: isThreat, mates: mates, ucis: ucis };
 })();
 
 /* ===== Задачи из пособий вставлены в существующие уроки «Шах» и «Мат» (позиции проверены движком) ===== */
