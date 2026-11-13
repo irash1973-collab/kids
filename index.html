@@ -11098,17 +11098,31 @@ var SQR = (function () {
     return { pos: np, hl: [sq], q: 'Фигура с рамкой (' + nm + ') связана с королём. Может ли она сделать ход?', ans: moves.length > 0,
       expl: moves.length ? 'Да, но только вдоль линии связки: в сторону уйти нельзя, будет шах.' : 'Нет: если она уйдёт, королю будет шах, а так ходить нельзя.', hint: 'Если фигура уйдёт, кто окажется под шахом?' };
   }
+var MT = [{"fen": "4R1rk/1p4qp/pb6/7N/1P6/Pb5P/1B4P1/7K w - - 0 1", "s": ["b2g7"]}, {"fen": "r6k/ppp3pp/2b5/8/2N5/P1P5/BP4RP/R3nrQK b - - 0 1", "s": ["c6g2"]}, {"fen": "2b1k1nr/p4ppp/4p3/8/1b6/8/PP1NPPPP/R1qQKBNR b - - 0 1", "s": ["b4d2"]}, {"fen": "2rqr3/1p2bQpk/p3R3/8/2n5/2P5/P5PP/R1B3K1 w - - 0 1", "s": ["e6h6"]}, {"fen": "rkbR1b1r/4Rp1p/p1P2p2/8/8/5N2/P4PPP/6K1 w - - 0 1", "s": ["e7b7"]}, {"fen": "2kr4/p5b1/Ppp3p1/5p2/2p2PP1/2P5/1PQB1qBK/8 b - - 0 1", "s": ["d8h8"]}, {"fen": "r2NR1qk/pp1n2pp/3p1p2/8/5B2/1P6/1Pr3PP/4R1K1 w - - 0 1", "s": ["d8f7"]}, {"fen": "6b1/3NQ1bk/6Np/P4Pp1/r7/5B2/8/q5BK w - - 0 1", "s": ["d7f8"]}, {"fen": "3r2k1/6pp/3Np2p/2Q1n1p1/6q1/3P4/PP3rPK/3R3R b - - 0 1", "s": ["e5f3", "g4g2", "f2g2"]}];
+  function mateTask(e) {
+    var pos = E.fromFEN(e.fen), side = pos.turn, ok = {}; e.s.forEach(function (u) { ok[u] = 1; });
+    return {
+      pos: pos, say: 'Ход ' + (side > 0 ? 'белых' : 'чёрных') + '. Поставь мат в один ход.', sub: 'мат со связкой',
+      ok: function (m) { return !!ok[ucis(m)]; },
+      good: function () { return 'Мат! Связанная фигура не смогла помочь своему королю.'; },
+      bad: function () { return 'Это не мат. Посмотри, какая фигура связана и не может защищаться.'; }
+    };
+  }
   var YN = [], ORDER = [];
   function order() {
     if (ORDER.length) return ORDER;
     DATA.forEach(function (e) { var y = yesNo(e); if (y && YN.length < 6) YN.push(y); });
     var pi = 0, yi = 0, n = DATA.length + YN.length;
     for (var k = 0; k < n; k++) { if (k % 5 === 4 && yi < YN.length) ORDER.push({ y: YN[yi++] }); else if (pi < DATA.length) ORDER.push({ p: DATA[pi++] }); }
+    var base = ORDER.slice(), mi = 0; ORDER = [];
+    base.forEach(function (o, k) { ORDER.push(o); if (k >= 8 && (k - 8) % 3 === 2 && mi < MT.length) ORDER.push({ m: MT[mi++] }); });
+    while (mi < MT.length) ORDER.push({ m: MT[mi++] });
     return ORDER;
   }
   function genPin(lv) {
     var o = order()[lv - 1]; if (!o) return null;
     if (o.y) { var y = o.y; return { pos: y.pos, q: y.q, ans: y.ans, expl: y.expl, hint: y.hint, hl: y.hl }; }
+    if (o.m) return mateTask(o.m);
     return taskFrom(o.p, lv);
   }
   var START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
