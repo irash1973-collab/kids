@@ -10864,6 +10864,236 @@ var SQR = (function () {
   GROUPS.splice(gi < 0 ? GROUPS.length : gi + 1, 0, { n: 'Пешечные окончания', ids: ['pe1', 'pe2', 'pe3', 'pe4', 'pe5', 'pe6', 'pe7'] });
 })();
 
+/* ===== «Правило квадрата»: задания на готовых позициях (учебные, проверены таблицами) ===== */
+(function () {
+  var L = LESS.pe3; if (!L) return;
+  function FLp(s) { return (7 - (s >> 3)) * 8 + (s & 7); }
+  function mp(b, turn) { return { b: b, turn: turn, castle: 0, ep: -1, half: 0 }; }
+  function mirror(pos) { var b = new Int8Array(64); for (var s = 0; s < 64; s++) b[FLp(s)] = -pos.b[s]; return mp(b, -pos.turn); }
+  function sqi(n) { return (8 - +n[1]) * 8 + 'abcdefgh'.indexOf(n[0]); }
+  function nm(x, y) { return 'abcdefgh'[x] + y; }
+  function board(items) { var b = new Int8Array(64); items.forEach(function (it) { b[sqi(it[1])] = it[0]; }); return b; }
+  function P(items, turn) { return mp(board(items), turn); }
+
+  /* угловые поля квадрата пешки */
+  function corners(x, y, white, side) {
+    var d = white ? 8 - y : y - 1, init = white ? y === 2 : y === 7;
+    if (side == null) side = init ? d : d + 1;
+    var x0 = x + side - 1 <= 7 ? x : x - side + 1, x1 = x0 === x ? x + side - 1 : x;
+    var far = x0 === x ? x1 : x0, dir = white ? 1 : -1;
+    var py = init ? y + dir : y, fy = py + dir * (side - 1);
+    return [nm(x, py), nm(x, fy), nm(far, fy), nm(far, py)].join(', ');
+  }
+  function cornerTask(white, sq) {
+    var x = 'abcdefgh'.indexOf(sq[0]), y = +sq[1], init = white ? y === 2 : y === 7, d = white ? 8 - y : y - 1, side = init ? d : d + 1;
+    var right = corners(x, y, white), wr = [];
+    function okc(c) { return c.split(', ').every(function (q) { return /^[a-h][1-8]$/.test(q); }); }
+    [side - 1, side + 1, side - 2, side + 2].forEach(function (s) {
+      if (s < 2 || s > 8) return; var c = corners(x, y, white, s); if (okc(c) && c !== right && wr.indexOf(c) < 0) wr.push(c);
+    });
+    var opts = [right].concat(wr.slice(0, 3)); if (opts.length < 3) return null;
+    var ord = [0, 1, 2, 3].slice(0, opts.length), k = (x + y) % opts.length, o2 = opts.map(function (_, i) { return opts[(i + k) % opts.length]; });
+    var ri = o2.indexOf(right);
+    return { pos: P([[white ? 1 : -1, sq]], 1), q: 'Какие угловые поля у квадрата пешки?', opts: o2, right: ri,
+      expl: 'Угловые поля: ' + right + '. ' + (init ? 'Пешка ещё не ходила, поэтому квадрат строят без неё.' : 'Сторона квадрата равна числу полей от пешки до последней горизонтали, считая саму пешку.'),
+      hint: 'сначала посчитай поля от пешки до последней горизонтали' };
+  }
+  function inSquare(white, sq, ksq) {
+    var x = 'abcdefgh'.indexOf(sq[0]), y = +sq[1], kx = 'abcdefgh'.indexOf(ksq[0]), ky = +ksq[1];
+    var d = white ? 8 - y : y - 1, init = white ? y === 2 : y === 7, s = init ? d - 1 : d, pr = white ? 8 : 1;
+    return Math.max(Math.abs(kx - x), Math.abs(ky - pr)) <= s;
+  }
+  function inTask(white, sq, ksq) {
+    var ans = inSquare(white, sq, ksq);
+    return { pos: P([[white ? 1 : -1, sq], [white ? -6 : 6, ksq]], 1), q: 'Король находится в квадрате пешки?', ans: ans,
+      expl: ans ? 'Да, король успевает войти в квадрат и догнать пешку.' : 'Нет, король стоит за квадратом: пешка дойдёт до последней горизонтали.',
+      hint: 'построй квадрат от пешки до поля превращения' };
+  }
+  function resultTask(items, white) {
+    var pos = P(items, 1), w = KPK.of(pos);
+    if (w === 1) {
+      return { pos: pos, say: 'Белые ходят и выигрывают. Сделай ход пешкой так, чтобы король не успел в квадрат.', sub: 'правило квадрата',
+        ok: function (m, p) { return Math.abs(p.b[m.f]) === 1 && KPK.afterMove(p, m) === 1; },
+        good: function () { return 'Верно! Теперь король остаётся за квадратом пешки.'; },
+        bad: function () { return 'Король ещё успевает в квадрат. Подумай, какой ход пешки уменьшит его шансы.'; } };
+    }
+    return { pos: pos, q: 'Белые ходят. Чем закончится партия при правильной игре?', opts: ['Выиграют белые', 'Ничья'], right: 1,
+      expl: 'Король входит в квадрат пешки и задерживает её: получается ничья.', hint: 'построй квадрат пешки и посмотри, успевает ли король' };
+  }
+  function stopTask(items) {
+    var pos = P(items, 1), pawn = pos.b.indexOf(-1);
+    return { pos: pos, say: 'Белый король должен задержать чёрную пешку. Поставь его в квадрат пешки.', sub: 'задержи пешку',
+      ok: function (m, p) { if (Math.abs(p.b[m.f]) !== 6) return false; var np = E.make(p, m); if (np.b[pawn] !== -1) return false; return KPK.of(mirror(np)) === 0; },
+      good: function () { return 'Верно! Король в квадрате, пешка остановлена.'; },
+      bad: function () { return 'Пешка прорвётся. Король должен успеть в квадрат пешки.'; } };
+  }
+  var T = [
+    function () { return cornerTask(true, 'c2'); },
+    function () { return cornerTask(true, 'h5'); },
+    function () { return cornerTask(true, 'c3'); },
+    function () { return cornerTask(false, 'g6'); },
+    function () { return cornerTask(false, 'a7'); },
+    function () { return cornerTask(true, 'f4'); },
+    function () { return inTask(true, 'd3', 'h6'); },
+    function () { return inTask(false, 'h7', 'b4'); },
+    function () { return inTask(true, 'c5', 'f5'); },
+    function () { return inTask(false, 'e5', 'd6'); },
+    function () { return resultTask([[1, 'b2'], [-6, 'g4'], [6, 'h1']]); },
+    function () { return resultTask([[1, 'e2'], [-6, 'f2'], [6, 'a1']]); },
+    function () { return resultTask([[1, 'a4'], [-6, 'e8'], [6, 'g2']]); },
+    function () { return resultTask([[1, 'd6'], [-6, 'a8'], [6, 'b1']]); },
+    function () { return stopTask([[-1, 'a3'], [-6, 'd3'], [6, 'd1']]); },
+    function () { return stopTask([[-1, 'f5'], [-6, 'a3'], [6, 'a5']]); },
+    function () { return stopTask([[-1, 'a7'], [-6, 'h5'], [6, 'g7']]); },
+    function () { return stopTask([[-1, 'g7'], [-6, 'b7'], [6, 'a5']]); }
+  ];
+  L.levels = T.length;
+  L.d = 'Как узнать, догонит ли король пешку: квадрат пешки, его углы и задания на задержку пешки.';
+  L.gen = function (lv) { var f = T[lv - 1]; return f ? f() : null; };
+  window.__kostT = { T: T, KPK: KPK, SQR: SQR };
+
+  /* ===== остальные пешечные уроки: готовые позиции ===== */
+  function adjK(a, b) { return a !== b && Math.abs((a & 7) - (b & 7)) <= 1 && Math.abs((a >> 3) - (b >> 3)) <= 1; }
+  function aligned(a, b, near) {
+    var dx = Math.abs((a & 7) - (b & 7)), dy = Math.abs((a >> 3) - (b >> 3)), d = Math.max(dx, dy);
+    if (!(d >= 2 && d % 2 === 0)) return false; if (near && d !== 2) return false;
+    return dx === 0 || dy === 0 || dx === dy;
+  }
+  function attackTask(items) {
+    var pos = P(items, -1);
+    return { pos: pos, say: 'Ход чёрных. Нападай королём на пешку: подойди так, чтобы её нельзя было спасти.', sub: 'нападение на пешку',
+      ok: function (m, p) {
+        if (Math.abs(p.b[m.f]) !== 6) return false; var np = E.make(p, m), k = np.b.indexOf(-6), pw = np.b.indexOf(1);
+        if (pw < 0 || !adjK(k, pw)) return false;
+        return E.legal(np).every(function (x) { var q = E.make(np, x); return E.legal(q).some(function (y) { return q.b[y.t] > 0 && q.b[y.t] < 6; }); });
+      },
+      good: function () { return 'Верно! Король напал на пешку, и спасти её уже нельзя.'; },
+      bad: function () { return 'Пешку ещё можно спасти. Подойди королём так, чтобы белый король не успел её защитить.'; } };
+  }
+  function defendTask(items, lost) {
+    var pos = P(items, 1), win = KPK.of(pos) === 1;
+    return { pos: pos, say: 'Ход белых. Чёрный король нападает на пешку. Защити её.', sub: 'защита пешки',
+      ok: function (m, p) {
+        var np = E.make(p, m); if (np.b.indexOf(1) < 0 && np.b.indexOf(5) < 0) return false;
+        if (win) return KPK.afterMove(p, m) === 1;
+        return E.legal(np).every(function (x) { var q = E.make(np, x); return q.b.indexOf(1) >= 0 || q.b.indexOf(5) >= 0; });
+      },
+      good: function () { return 'Верно! Пешка в безопасности.'; },
+      bad: function () { return 'Пешка может пропасть. Защити её королём или уведи её из-под удара.'; } };
+  }
+  function winTask(items, say, sub, mode) {
+    var pos = P(items, 1);
+    return { pos: pos, say: say, sub: sub || 'ход белых',
+      ok: function (m, p) {
+        if (KPK.afterMove(p, m) !== 1) return false; var pc = Math.abs(p.b[m.f]);
+        if (mode === 'pawn') return pc === 1;
+        if (mode === 'king' || mode === 'opp') { if (pc !== 6) return false; }
+        if (mode === 'king') { var n0 = E.make(p, m), pw = n0.b.indexOf(1), ps = pw & 7, wk = n0.b.indexOf(6); if (pw < 0 || !(wk === ps || adjK(wk, ps))) return false; }
+        if (mode === 'opp') { var np = E.make(p, m); return aligned(np.b.indexOf(6), np.b.indexOf(-6), false); }
+        return true;
+      },
+      good: function () { return 'Верно! Выигрыш сохранён.'; },
+      bad: function () { return 'Так выигрыш упускается. Подумай, где король должен стоять рядом с пешкой.'; } };
+  }
+  function holdBTask(items, say) {
+    var pos = P(items, -1);
+    return { pos: pos, say: say, sub: 'ход чёрных',
+      ok: function (m, p) { if (Math.abs(p.b[m.f]) !== 6) return false; var np = E.make(p, m); return KPK.of(np) === 0; },
+      good: function () { return 'Верно! Чёрный король держит ничью.'; },
+      bad: function () { return 'Пешка прорвётся. Король должен встать на блокирующее поле или взять оппозицию.'; } };
+  }
+  function holdWTask(items, say) {
+    var pos = P(items, 1), pawn = pos.b.indexOf(-1);
+    return { pos: pos, say: say, sub: 'задержи пешку',
+      ok: function (m, p) { if (Math.abs(p.b[m.f]) !== 6) return false; var np = E.make(p, m); if (np.b.indexOf(-1) < 0) return true; return KPK.of(mirror(np)) === 0; },
+      good: function () { return 'Верно! Король остановит пешку.'; },
+      bad: function () { return 'Пешка прорвётся. Король должен успеть к пешке.'; } };
+  }
+  function oppTask(items, near) {
+    var pos = P(items, 1);
+    return { pos: pos, say: 'Ход белых. Захвати оппозицию: поставь короля напротив чёрного через ' + (near ? 'одну клетку' : 'нечётное число клеток') + '.', sub: 'оппозиция',
+      ok: function (m, p) { if (Math.abs(p.b[m.f]) !== 6) return false; var np = E.make(p, m); return aligned(np.b.indexOf(6), np.b.indexOf(-6), near); },
+      good: function () { return 'Верно! Короли стоят в оппозиции.'; },
+      bad: function () { return 'Короли не стоят друг против друга. Выбери клетку на одной линии с чёрным королём.'; } };
+  }
+  function curated(id, list) {
+    var Lx = LESS[id]; if (!Lx) return;
+    var old = Lx.gen, n = list.length;
+    Lx.gen = function (lv, r) { return lv <= n ? list[lv - 1]() : (old ? old(lv - n, r) : null); };
+    return Lx;
+  }
+  var PE1 = [
+    function () { return attackTask([[1, 'e5'], [6, 'e2'], [-6, 'e7']]); },
+    function () { return attackTask([[1, 'd5'], [6, 'f3'], [-6, 'f6']]); },
+    function () { return attackTask([[6, 'g7'], [-6, 'f5'], [1, 'h4']].map(function (x) { return x; })); },
+    function () { return attackTask([[1, 'b7'], [6, 'c4'], [-6, 'd8']]); }
+  ];
+  /* в 111 белый король на g7, пешка h4 — чёрные нападают на пешку */
+  PE1[2] = function () { return attackTask([[1, 'h4'], [6, 'g7'], [-6, 'f5']]); };
+  var PE2 = [
+    function () { return defendTask([[1, 'e5'], [6, 'c7'], [-6, 'f5']]); },
+    function () { return defendTask([[1, 'e4'], [6, 'c2'], [-6, 'e5']]); },
+    function () { return defendTask([[1, 'c6'], [6, 'c3'], [-6, 'd5']]); },
+    function () { return defendTask([[1, 'f3'], [6, 'g5'], [-6, 'g3']]); }
+  ];
+  var PE5 = [
+    function () { return winTask([[1, 'e7'], [6, 'f6'], [-6, 'd7']], 'Ход белых. Поставь короля так, чтобы он контролировал поле превращения.', 'поле превращения', 'king'); },
+    function () { return winTask([[1, 'd6'], [6, 'e6'], [-6, 'c8']], 'Ход белых. Поставь короля так, чтобы он контролировал поле превращения.', 'поле превращения', 'king'); },
+    function () { return winTask([[1, 'd5'], [6, 'd6'], [-6, 'c8']], 'Ход белых. Поставь короля так, чтобы он контролировал поле превращения.', 'поле превращения', 'king'); },
+    function () { return winTask([[1, 'd5'], [6, 'e6'], [-6, 'c7']], 'Ход белых. Поставь короля так, чтобы он контролировал поле превращения.', 'поле превращения', 'king'); },
+    function () { return holdBTask([[1, 'e6'], [6, 'e5'], [-6, 'f8']], 'Ход чёрных. Встань королём на блокирующее поле: пешка не должна пройти.'); },
+    function () { return holdWTask([[-1, 'f2'], [-6, 'e3'], [6, 'g2']], 'Ход белых. Встань королём на блокирующее поле: пешка не должна пройти.'); },
+    function () { return holdWTask([[-1, 'a2'], [-6, 'b3'], [6, 'b1']], 'Ход белых. Встань королём на блокирующее поле: пешка не должна пройти.'); },
+    function () { return holdBTask([[1, 'c6'], [6, 'd5'], [-6, 'c7']], 'Ход чёрных. Встань королём на резервное блокирующее поле.'); },
+    function () { return holdBTask([[1, 'b3'], [6, 'c3'], [-6, 'c5']], 'Ход чёрных. Встань королём на резервное блокирующее поле.'); },
+    function () { return holdBTask([[1, 'f3'], [6, 'g3'], [-6, 'e5']], 'Ход чёрных. Встань королём на резервное блокирующее поле.'); },
+    function () { return holdBTask([[1, 'h6'], [6, 'g6'], [-6, 'g8']], 'Ход чёрных. Встань королём на резервное блокирующее поле.'); }
+  ];
+  var PE6 = [
+    function () { return oppTask([[6, 'e3'], [-6, 'e6']], true); },
+    function () { return oppTask([[6, 'f4'], [-6, 'c4']], false); },
+    function () { return oppTask([[6, 'c3'], [-6, 'e6']], true); },
+    function () { return oppTask([[6, 'b3'], [-6, 'g3']], false); },
+    function () { return oppTask([[6, 'h3'], [-6, 'a4']], false); },
+    function () { return oppTask([[6, 'd2'], [-6, 'e6']], false); },
+    function () { return oppTask([[6, 'e1'], [-6, 'f8']], false); },
+    function () { return winTask([[1, 'e4'], [6, 'f4'], [-6, 'f7']], 'Ход белых. Займи оппозицию королём сильной стороны.', 'оппозиция', 'opp'); },
+    function () { return winTask([[1, 'g4'], [6, 'f5'], [-6, 'g7']], 'Ход белых. Займи оппозицию королём сильной стороны.', 'оппозиция', 'opp'); },
+    function () { return winTask([[1, 'e3'], [6, 'e4'], [-6, 'e7']], 'Ход белых. Займи оппозицию королём сильной стороны.', 'оппозиция', 'opp'); },
+    function () { return winTask([[1, 'e3'], [6, 'd3'], [-6, 'e6']], 'Ход белых. Займи оппозицию королём сильной стороны.', 'оппозиция', 'opp'); },
+    function () { return holdBTask([[1, 'e6'], [6, 'd6'], [-6, 'c8']], 'Ход чёрных. Займи оппозицию королём слабой стороны.'); },
+    function () { return holdBTask([[1, 'e4'], [6, 'e5'], [-6, 'e8']], 'Ход чёрных. Займи оппозицию королём слабой стороны.'); },
+    function () { return holdBTask([[1, 'g5'], [6, 'f5'], [-6, 'g7']], 'Ход чёрных. Займи оппозицию королём слабой стороны.'); },
+    function () { return holdBTask([[1, 'd2'], [6, 'd3'], [-6, 'c5']], 'Ход чёрных. Займи оппозицию королём слабой стороны.'); },
+    function () { return winTask([[1, 'd3'], [6, 'd5'], [-6, 'd7']], 'Ход белых. Используй запасной ход пешкой, чтобы захватить оппозицию.', 'оппозиция', 'pawn'); },
+    function () { return winTask([[1, 'c2'], [6, 'b4'], [-6, 'b6']], 'Ход белых. Используй запасной ход пешкой, чтобы захватить оппозицию.', 'оппозиция', 'pawn'); },
+    function () { return winTask([[1, 'b5'], [6, 'e5'], [-6, 'e7']], 'Ход белых. Используй запасной ход пешкой, чтобы захватить оппозицию.', 'оппозиция', 'pawn'); },
+    function () { return winTask([[1, 'e5'], [6, 'd6'], [-6, 'd8']], 'Ход белых. Используй запасной ход пешкой, чтобы захватить оппозицию.', 'оппозиция', 'pawn'); },
+    function () { return winTask([[1, 'g4'], [6, 'f4'], [-6, 'h7']], 'Ход белых. Захвати оппозицию королём.', 'оппозиция', 'opp'); },
+    function () { return winTask([[1, 'd6'], [6, 'e5'], [-6, 'c8']], 'Ход белых. Захвати оппозицию королём.', 'оппозиция', 'opp'); },
+    function () { return winTask([[1, 'a5'], [6, 'b5'], [-6, 'd6']], 'Ход белых. Захвати оппозицию королём.', 'оппозиция', 'opp'); },
+    function () { return holdWTask([[-1, 'h4'], [-6, 'h2'], [6, 'f3']], 'Ход белых. Задержи пешку королём.'); },
+    function () { return winTask([[1, 'd5'], [6, 'h4'], [-6, 'a5']], 'Ход белых. Захвати оппозицию королём.', 'оппозиция', 'opp'); },
+    function () { return winTask([[1, 'f4'], [6, 'c3'], [-6, 'h4']], 'Ход белых. Захвати оппозицию королём.', 'оппозиция', 'opp'); },
+    function () { return winTask([[1, 'c2'], [6, 'g2'], [-6, 'f7']], 'Ход белых. Захвати оппозицию королём.', 'оппозиция', 'opp'); },
+    function () { return holdWTask([[-1, 'e6'], [-6, 'd6'], [6, 'c2']], 'Ход белых. Задержи пешку королём.'); }
+  ];
+  window.__kostT.pe = { pe1: PE1, pe2: PE2, pe5: PE5, pe6: PE6 };
+  curated('pe1', PE1); curated('pe2', PE2); curated('pe5', PE5); curated('pe6', PE6);
+  ['pe1', 'pe2', 'pe5', 'pe6'].forEach(function (id) { var Lx = LESS[id]; Lx.levels = { pe1: 10, pe2: 10, pe5: 21, pe6: 37 }[id]; });
+
+  (function () {
+    var a = LESS.pe5, b = LESS.pe6;
+    if (a && a.slides) {
+      a.slides.splice(a.slides.length - 0 > 0 ? a.slides.length : 0, 0, { h: 'Блокирующее поле', p: ['<b>Блокирующее поле</b> — это клетка прямо перед пешкой. Если на ней стоит король защитника, пешка не может сделать шаг вперёд. Здесь чёрный король стоит на e4 и закрывает путь пешке e3.', '<b>Запомни.</b> Белые стараются прогнать короля с блокирующего поля, а чёрные стараются на него встать.'], fen: '8/8/8/8/4k3/4P3/8/4K3 w - - 0 1', hl: [36], hint: 'Чёрный король на e4 стоит перед пешкой e3.' });
+      a.d = 'Король рядом с полем превращения и блокирующие поля: помогаем пешке пройти или не даём ей пройти.';
+    }
+    if (b && b.slides) {
+      b.slides.splice(b.slides.length, 0, { h: 'Запасной ход пешкой', p: ['Бывает так, что короли уже стоят в оппозиции, но ходить должен тот, кому оппозиция невыгодна. Тогда помогает <b>запасной ход пешкой</b>. Здесь белые играют d4, и теперь чёрному королю приходится уступать.', '<b>Запомни.</b> Один лишний ход пешкой может передать очередь хода сопернику.'], fen: '8/3k4/8/3K4/8/3P4/8/8 w - - 0 1', hl: [11, 27], hint: 'Короли на d7 и d5, пешка на d3.' });
+    }
+  })();
+})();
+
 /* Диплом: имя вводится на странице, дата ставится сама, файл скачивается в PDF (без внешних библиотек) */
 (function () {
   var VAR = {
