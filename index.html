@@ -11739,6 +11739,45 @@ var MT = [{"fen": "4R1rk/1p4qp/pb6/7N/1P6/Pb5P/1B4P1/7K w - - 0 1", "s": ["b2g7"
   GROUPS.splice(gi < 0 ? GROUPS.length : gi + 1, 0, { n: 'Вскрытое нападение', ids: ['disc'] });
 })();
 
+/* ===== Связка: дополнительные позиции (проверены движком) ===== */
+(function () {
+  var D = {"w": [["r1b1k1nr/ppp2ppp/2qp4/2b5/4P3/2N2P2/PPP3PP/R1BQKB1R w - - 0 1", "f1b5", "c"], ["r2qkb1r/pppb1ppp/2n5/1B2P3/5B2/2Q2N2/PP3PPP/R3K2R b - - 0 1", "f8b4", "c"], ["r1bqk2r/ppp2ppp/1bnp1n2/1B6/3PP3/5N2/PP3PPP/RNBQ1RK1 w - - 0 1", "d4d5", "a"], ["8/Qbq1n2k/1p3ppp/2p5/2B1P3/1P6/PB3PPP/6K1 w - - 0 1", "c4a6", "a"], ["5rk1/p5p1/8/2Ppq3/4p2p/2Pb3P/PP4P1/R2QR1K1 w - - 0 1", "d1d3", "w"], ["r1bq1knr/p1pp2pp/1pn1p3/4Pp2/2P5/2P1BQ2/PP3PPP/2KR1BNR w - - 0 1", "f3c6", "w"]], "m1": ["r1q1k3/1r2n3/1p1pQ2p/p3pP2/P1P1P3/1P3B2/3R3P/6RK w - - 0 1", "2r5/pR3ppp/k1P2n2/r7/8/R4B2/P4PPP/5K2 w - - 0 1", "8/6n1/p3pkp1/1p6/r5PK/P4P1P/1P1rR3/4RB2 b - - 0 1", "r3kb1r/pppbqpp1/6n1/4n2p/2PN3P/P5B1/1P1NPPP1/R2QKB1R b - - 0 1"], "m2": ["r1q2r1k/5pp1/4p1p1/pp6/3B1Q2/1BP5/PP4PP/5RK1 w - - 0 1", "2kr1b1r/1p3pp1/Bn5p/2pP1q2/Q3p3/2N5/PP3PPP/R4RK1 w - - 0 1", "rn2r1k1/ppp4p/5np1/1Q1p2N1/5bb1/2N5/PPPB1PPP/2K2B1R b - - 0 1"]};
+  function ucis(m) { return 'abcdefgh'[m.f & 7] + (8 - (m.f >> 3)) + 'abcdefgh'[m.t & 7] + (8 - (m.t >> 3)); }
+  function who(pos) { return pos.turn === 1 ? 'белых' : 'чёрных'; }
+  function mates(pos) { return E.legal(pos).filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; }); }
+  function isKey(pos, m) { var np = E.make(pos, m), st = E.status(np); if (st === 'mate' || st === 'stalemate') return false; var rs = E.legal(np); return rs.length > 0 && rs.every(function (x) { return mates(E.make(np, x)).length > 0; }); }
+  var SAY = { c: 'Создай связку и выиграй фигуру.', a: 'Нападай на связанную фигуру.', w: 'Выиграй фигуру на связке.' };
+  function win(e) {
+    var pos = E.fromFEN(e[0]);
+    return { pos: pos, say: 'Ход ' + who(pos) + '. ' + SAY[e[2]], sub: 'связка',
+      ok: function (m) { return ucis(m).slice(0, 4) === e[1]; },
+      good: function () { return 'Верно! Связанная фигура не может защищаться, и соперник теряет материал.'; },
+      bad: function () { return 'Так фигуру не выиграть. Найди фигуру, за которой на линии стоит король или ферзь.'; } };
+  }
+  function m1(f) {
+    var pos = E.fromFEN(f);
+    return { pos: pos, say: 'Поставь мат в один ход. Ход ' + who(pos) + '.', sub: 'мат со связкой',
+      ok: function (m, b, np) { return E.status(np) === 'mate'; },
+      good: function () { return 'Мат! Связанная фигура не смогла помочь своему королю.'; },
+      bad: function () { return 'Это не мат. Посмотри, какая фигура связана и не может защищаться.'; } };
+  }
+  function m2(f) {
+    var pos = E.fromFEN(f);
+    return { pos: pos, say: 'Мат в два хода. Ход ' + who(pos) + '.', sub: 'мат со связкой',
+      ok: function (m, b) { return isKey(b, m); },
+      good: function () { return 'Верно! Что бы ни ответил соперник, следующим ходом будет мат.'; },
+      bad: function () { return 'У соперника есть защита. Ищи другой ход.'; } };
+  }
+  var X = [];
+  D.w.forEach(function (e) { X.push(function () { return win(e); }); });
+  D.m1.forEach(function (f) { X.push(function () { return m1(f); }); });
+  D.m2.forEach(function (f) { X.push(function () { return m2(f); }); });
+  var o = LESS.pin, n0 = o.levels, g0 = o.gen;
+  var N = { id: o.id, t: o.t, d: o.d, run: o.run, slides: o.slides, levels: n0 + X.length, gen: function (lv) { return lv <= n0 ? g0(lv) : X[lv - n0 - 1](); } };
+  LESS.pin = N;
+  window.__pin2T = { n: X.length, gen: N.gen, base: n0 };
+})();
+
 /* ===== Итоговая работа за первый год: 20 заданий по всем темам, 80% для диплома ===== */
 (function () {
   var KEY = 'ukc_exam', N = 20;
@@ -12484,6 +12523,27 @@ var MT = [{"fen": "4R1rk/1p4qp/pb6/7N/1P6/Pb5P/1B4P1/7K w - - 0 1", "s": ["b2g7"
     };
   }
   window.__thrT = { A: A, B: B, n1: n1, n2: n2, D5: D5, D6M1: D6M1, D6M2: D6M2, K64: K64, isKey: isKey, isThreat: isThreat, mates: mates, ucis: ucis };
+})();
+
+/* ===== Мат в 2 хода: жертва ферзя, ладьи, слона, коня (позиции проверены движком) ===== */
+(function () {
+  var D = [["r4rk1/ppp3p1/3p2Q1/1b3p1B/7R/6P1/PP3PKP/4q3 w - - 0 1", "Q"], ["8/8/1R6/p7/kp4rr/3R4/PP1K2PP/8 w - - 0 1", "R"], ["2Q2qk1/1p4pp/p7/5P1B/2pP1r2/3b2K1/PP5P/8 w - - 0 1", "B"], ["2r1kbr1/2p2ppp/p1p5/3NpqB1/5P2/8/PPP3PP/2KR3R w - - 0 1", "N"], ["rn4rk/1p2np1p/2p1pPpQ/4R3/8/1P5P/Pq4P1/1B3R1K w - - 0 1", "Q"], ["8/p2p1k2/3Ppp2/8/4qP1p/8/2Q3RP/1r4NK b - - 0 1", "R"], ["4BQ2/7k/5p1p/8/4rqPK/8/8/8 w - - 0 1", "B"], ["3R4/5ppk/rpq1r1np/2p5/P7/4PN2/5PPP/R2Q2K1 w - - 0 1", "N"], ["5rk1/q4p1p/5Pp1/8/1Q6/7P/6P1/3R3K w - - 0 1", "Q"], ["6k1/pp3p1p/3p1p2/2p1r3/2P1r1P1/P7/1P1QnPP1/3R1R1K b - - 0 1", "R"], ["r2k1b1r/pp3ppp/8/1BBp1nq1/8/6P1/PP3P1P/2R1R1K1 w - - 0 1", "B"], ["6k1/R5p1/1p5p/8/3rN3/5PPb/PPr4P/4R1K1 w - - 0 1", "N"], ["5Qbk/p6p/2p5/4b2q/2P5/1PB5/P6P/7K w - - 0 1", "Q"], ["8/p1k5/B1p5/2Pp1p2/P2Pb2p/6r1/3Q1RPK/1r6 b - - 0 1", "R"]];
+  var NM = { Q: 'ферзя', R: 'ладьи', B: 'слона', N: 'коня' };
+  function who(pos) { return pos.turn === 1 ? 'белых' : 'чёрных'; }
+  function mates(pos) { return E.legal(pos).filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; }); }
+  function isKey(pos, m) { var np = E.make(pos, m), st = E.status(np); if (st === 'mate' || st === 'stalemate') return false; var rs = E.legal(np); return rs.length > 0 && rs.every(function (x) { return mates(E.make(np, x)).length > 0; }); }
+  function task(e) {
+    var pos = E.fromFEN(e[0]);
+    return { pos: pos, say: 'Мат в два хода. Ход ' + who(pos) + '.', sub: 'жертва ' + NM[e[1]],
+      ok: function (m, b) { return isKey(b, m); },
+      good: function () { return 'Верно! Жертва ' + NM[e[1]] + ' ведёт к мату: что бы ни ответил соперник, следующим ходом будет мат.'; },
+      bad: function (m, b, np) { return E.status(np) === 'mate' ? 'Тут мат ставится не сразу. Ищи ход, после которого мат неизбежен.' : 'У соперника есть защита. Попробуй отдать фигуру, чтобы заставить короля уйти на плохое поле.'; } };
+  }
+  var B = LESS.rm2, n0 = B.levels, g0 = B.gen;
+  B.levels = n0 + D.length;
+  B.gen = function (lv) { return lv <= n0 ? g0(lv) : task(D[lv - n0 - 1]); };
+  B.slides = B.slides.concat([{ h: 'Жертва ради мата', p: ['Иногда выгодно отдать даже ферзя. После жертвы король вынужден взять фигуру или уйти на плохое поле, и следующим ходом ты ставишь мат.', 'Нажми «Показать»: ферзь берёт ладью с шахом, король берёт ферзя, и ладья ставит мат.'], demo: { fen: '5rk1/q4p1p/5Pp1/8/1Q6/7P/6P1/3R3K w - - 0 1', steps: ['b4f8|Ферзь берёт ладью с шахом: это жертва.', 'g8f8|Король вынужден взять ферзя.', 'd1d8|Ладья ставит мат!'] } }]);
+  window.__sacT = { n: D.length, base: n0, gen: B.gen };
 })();
 
 /* ===== Задачи из пособий вставлены в существующие уроки «Шах» и «Мат» (позиции проверены движком) ===== */
