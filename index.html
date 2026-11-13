@@ -12527,7 +12527,7 @@ var MT = [{"fen": "4R1rk/1p4qp/pb6/7N/1P6/Pb5P/1B4P1/7K w - - 0 1", "s": ["b2g7"
 
 /* ===== Мат в 2 хода: жертва ферзя, ладьи, слона, коня (позиции проверены движком) ===== */
 (function () {
-  var D = [["r4rk1/ppp3p1/3p2Q1/1b3p1B/7R/6P1/PP3PKP/4q3 w - - 0 1", "Q"], ["8/8/1R6/p7/kp4rr/3R4/PP1K2PP/8 w - - 0 1", "R"], ["2Q2qk1/1p4pp/p7/5P1B/2pP1r2/3b2K1/PP5P/8 w - - 0 1", "B"], ["2r1kbr1/2p2ppp/p1p5/3NpqB1/5P2/8/PPP3PP/2KR3R w - - 0 1", "N"], ["rn4rk/1p2np1p/2p1pPpQ/4R3/8/1P5P/Pq4P1/1B3R1K w - - 0 1", "Q"], ["8/p2p1k2/3Ppp2/8/4qP1p/8/2Q3RP/1r4NK b - - 0 1", "R"], ["4BQ2/7k/5p1p/8/4rqPK/8/8/8 w - - 0 1", "B"], ["3R4/5ppk/rpq1r1np/2p5/P7/4PN2/5PPP/R2Q2K1 w - - 0 1", "N"], ["5rk1/q4p1p/5Pp1/8/1Q6/7P/6P1/3R3K w - - 0 1", "Q"], ["6k1/pp3p1p/3p1p2/2p1r3/2P1r1P1/P7/1P1QnPP1/3R1R1K b - - 0 1", "R"], ["r2k1b1r/pp3ppp/8/1BBp1nq1/8/6P1/PP3P1P/2R1R1K1 w - - 0 1", "B"], ["6k1/R5p1/1p5p/8/3rN3/5PPb/PPr4P/4R1K1 w - - 0 1", "N"], ["5Qbk/p6p/2p5/4b2q/2P5/1PB5/P6P/7K w - - 0 1", "Q"], ["8/p1k5/B1p5/2Pp1p2/P2Pb2p/6r1/3Q1RPK/1r6 b - - 0 1", "R"]];
+  var W = [["r4rk1/ppp3p1/3p2Q1/1b3p1B/7R/6P1/PP3PKP/4q3 w - - 0 1", "Q"], ["8/8/1R6/p7/kp4rr/3R4/PP1K2PP/8 w - - 0 1", "R"], ["2Q2qk1/1p4pp/p7/5P1B/2pP1r2/3b2K1/PP5P/8 w - - 0 1", "B"], ["2r1kbr1/2p2ppp/p1p5/3NpqB1/5P2/8/PPP3PP/2KR3R w - - 0 1", "N"], ["rn4rk/1p2np1p/2p1pPpQ/4R3/8/1P5P/Pq4P1/1B3R1K w - - 0 1", "Q"], ["4BQ2/7k/5p1p/8/4rqPK/8/8/8 w - - 0 1", "B"], ["3R4/5ppk/rpq1r1np/2p5/P7/4PN2/5PPP/R2Q2K1 w - - 0 1", "N"], ["5rk1/q4p1p/5Pp1/8/1Q6/7P/6P1/3R3K w - - 0 1", "Q"], ["r2k1b1r/pp3ppp/8/1BBp1nq1/8/6P1/PP3P1P/2R1R1K1 w - - 0 1", "B"], ["6k1/R5p1/1p5p/8/3rN3/5PPb/PPr4P/4R1K1 w - - 0 1", "N"], ["5Qbk/p6p/2p5/4b2q/2P5/1PB5/P6P/7K w - - 0 1", "Q"]], BK = [["8/p2p1k2/3Ppp2/8/4qP1p/8/2Q3RP/1r4NK b - - 0 1", "R"], ["6k1/pp3p1p/3p1p2/2p1r3/2P1r1P1/P7/1P1QnPP1/3R1R1K b - - 0 1", "R"], ["8/p1k5/B1p5/2Pp1p2/P2Pb2p/6r1/3Q1RPK/1r6 b - - 0 1", "R"]];
   var NM = { Q: 'ферзя', R: 'ладьи', B: 'слона', N: 'коня' };
   function who(pos) { return pos.turn === 1 ? 'белых' : 'чёрных'; }
   function mates(pos) { return E.legal(pos).filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; }); }
@@ -12539,11 +12539,15 @@ var MT = [{"fen": "4R1rk/1p4qp/pb6/7N/1P6/Pb5P/1B4P1/7K w - - 0 1", "s": ["b2g7"
       good: function () { return 'Верно! Жертва ' + NM[e[1]] + ' ведёт к мату: что бы ни ответил соперник, следующим ходом будет мат.'; },
       bad: function (m, b, np) { return E.status(np) === 'mate' ? 'Тут мат ставится не сразу. Ищи ход, после которого мат неизбежен.' : 'У соперника есть защита. Попробуй отдать фигуру, чтобы заставить короля уйти на плохое поле.'; } };
   }
+  var SL = { h: 'Жертва ради мата', p: ['Иногда выгодно отдать даже ферзя. После жертвы король вынужден взять фигуру или уйти на плохое поле, и следующим ходом ты ставишь мат.', 'Нажми «Показать»: ферзь берёт ладью с шахом, король берёт ферзя, и ладья ставит мат.'], demo: { fen: '5rk1/q4p1p/5Pp1/8/1Q6/7P/6P1/3R3K w - - 0 1', steps: ['b4f8|Ферзь берёт ладью с шахом: это жертва.', 'g8f8|Король вынужден взять ферзя.', 'd1d8|Ладья ставит мат!'] } };
+  /* основной урок «Мат в два хода»: позиции с ходом белых идут в его банк */
+  var M = LESS.m2;
+  if (M && M.bank) { W.forEach(function (e) { M.bank.push(e[0]); }); M.levels = M.levels + W.length; M.d = 'Найди первый ход: после него мат неизбежен. ' + M.levels + ' позиций, в конце с жертвами ферзя, ладьи, слона и коня.'; M.slides = M.slides.concat([SL]); }
+  /* урок из практики: позиции, где ход чёрных */
   var B = LESS.rm2, n0 = B.levels, g0 = B.gen;
-  B.levels = n0 + D.length;
-  B.gen = function (lv) { return lv <= n0 ? g0(lv) : task(D[lv - n0 - 1]); };
-  B.slides = B.slides.concat([{ h: 'Жертва ради мата', p: ['Иногда выгодно отдать даже ферзя. После жертвы король вынужден взять фигуру или уйти на плохое поле, и следующим ходом ты ставишь мат.', 'Нажми «Показать»: ферзь берёт ладью с шахом, король берёт ферзя, и ладья ставит мат.'], demo: { fen: '5rk1/q4p1p/5Pp1/8/1Q6/7P/6P1/3R3K w - - 0 1', steps: ['b4f8|Ферзь берёт ладью с шахом: это жертва.', 'g8f8|Король вынужден взять ферзя.', 'd1d8|Ладья ставит мат!'] } }]);
-  window.__sacT = { n: D.length, base: n0, gen: B.gen };
+  B.levels = n0 + BK.length;
+  B.gen = function (lv) { return lv <= n0 ? g0(lv) : task(BK[lv - n0 - 1]); };
+  window.__sacT = { n: BK.length, base: n0, gen: B.gen, m2n: M && M.levels };
 })();
 
 /* ===== Задачи из пособий вставлены в существующие уроки «Шах» и «Мат» (позиции проверены движком) ===== */
