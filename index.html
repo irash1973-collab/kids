@@ -13357,6 +13357,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
       var pos = P.pos, b = P.b, s = P.s, atk = -1, n = 0, q;
       for (q = 0; q < 64; q++) if (b[q] < 0 && Math.abs(b[q]) !== 6 && att(b, q, s)) { if (atk < 0) atk = q; n++; }
       if (n !== 1) continue;
+      if ((KNOWN[code] || [2, 3, 4, 5]).indexOf(Math.abs(b[atk])) < 0) continue; /* нападает только фигура, ходы которой ребёнок уже знает */
       if (att(b, P.bk, s)) continue;
       if (att(b, s, atk)) continue; /* наша фигура сама может съесть нападающую: это не «спасение» */
       /* фигура не связана с королём и свой король не под шахом */
@@ -13454,6 +13455,8 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
       for (y = 0; y < 64; y++) if (b[y] < 0 && Math.abs(b[y]) !== 6) { if (att(b, s, y)) ok[y] = 1; else no++; }
       var n = Object.keys(ok).length; if (n < 1 || n > 2 || no < 2) continue;
       if (E.inCheck(pos)) continue;
+      var prot = false; Object.keys(ok).forEach(function (y2) { for (var z = 0; z < 64; z++) if (b[z] < 0 && z !== +y2 && att(b, z, +y2)) prot = true; });
+      if (prot) continue; /* съедаемую фигуру никто не защищает */
       var hl = {}; 
       return {
         pos: pos, hl: hl,
@@ -13467,7 +13470,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     return null;
   }
 
-  var KINDS = { R: ['yn', 'eat', 'route', 'yn'], B: ['yn', 'safe', 'eat', 'route'], Q: ['yn', 'safe', 'eat', 'route'], N: ['yn', 'safe', 'eat', 'route'], K: ['yn', 'eat', 'route', 'yn'], P: ['yn', 'eat', 'yn', 'eat'] };
+  var KINDS = { R: ['yn', 'eat', 'route', 'yn'], B: ['yn', 'eat', 'route', 'yn'], Q: ['yn', 'eat', 'route', 'yn'], N: ['yn', 'eat', 'route', 'yn'], K: ['yn', 'eat', 'route', 'yn'], P: ['yn', 'eat', 'yn', 'eat'] };
   ['R', 'B', 'Q', 'N', 'K', 'P'].forEach(function (code) {
     var L = LESS['p' + code]; if (!L) return;
     var oldRun = L.run, oldGen = L.gen, n0 = L.levels, X = 20;
