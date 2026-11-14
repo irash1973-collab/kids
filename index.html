@@ -1071,6 +1071,25 @@ body:has(.ctr-prompt) .board[data-board="bw"]{--sq-light:#fff3d3;--sq-dark:#5d8e
 .gan { font-size: 84px; border: 0; background: rgba(255,255,255,.12); border-radius: 24px; cursor: pointer; animation: ghop 1.8s ease-in-out infinite; }
 .gan.hit { animation: ghit .6s ease-out !important; }
 @media (max-width: 560px) { .gan { font-size: 56px; } .gbox { font-size: 130px; } .gkey { height: 200px; } }
+
+.gimg { width: 230px; max-width: 58vw; height: auto; display: block; border-radius: 18px; }
+.gimg.gsm { width: 130px; margin: 0 auto 8px; }
+.gbox { font-size: 0; }
+
+.gbox .gimg { animation: gglow 1.6s ease-in-out infinite alternate; }
+@keyframes gglow { from { filter: brightness(1) saturate(1.1) drop-shadow(0 0 8px #ffc107); transform: scale(1) } to { filter: brightness(1.18) saturate(1.5) drop-shadow(0 0 28px #ff9800); transform: scale(1.06) } }
+.gsp { position: absolute; font-style: normal; font-size: 30px; pointer-events: none; animation: gtw 2.2s ease-in-out infinite; }
+@keyframes gtw { 0%,100% { transform: translateY(0) scale(.6); opacity: .3 } 50% { transform: translateY(-26px) scale(1.2); opacity: 1 } }
+
+.gpet { background: none; border: 0; cursor: pointer; position: absolute; left: 50%; top: 50%; width: min(62%, 300px); margin: 0; padding: 0; transform: translate(-50%,-50%); animation: gpb 1.3s ease-in-out infinite; }
+.gpet img { width: 100%; display: block; filter: drop-shadow(0 8px 10px rgba(0,0,0,.25)); }
+.gpet.hit img { animation: gph .6s ease; }
+@keyframes gpb { 0%,100% { transform: translate(-50%,-50%) rotate(-4deg) } 50% { transform: translate(-50%,-56%) rotate(4deg) scale(1.05) } }
+@keyframes gph { 50% { transform: scale(1.25) rotate(10deg) } }
+
+.gscg { position: absolute; inset: 8px 8px 44px; display: flex; align-items: center; justify-content: center; }
+.gscg img { max-width: 100%; max-height: 100%; border-radius: 18px; box-shadow: 0 6px 24px rgba(0,0,0,.4); animation: gpb2 3s ease-in-out infinite; }
+@keyframes gpb2 { 50% { transform: scale(1.03) } }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -3727,7 +3746,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var r = mkRng(hstr(L.id + lv)), T = uniqTask(L.id, lv, function (k, rr) { return L.gen(k, rr); });
     if (!T) { host.innerHTML = '<div class="slide"><p>Не получилось создать упражнение. Открой его ещё раз.</p></div>'; return; }
     if (T.q) { runYN(host, L, lv, T, finish); return; }
-    var side = T.pos.turn, S = { pos: T.pos, sel: null, targets: [], last: T.last || null, hint: null, flip: side === -1, coords: true, mark: {}, hl: T.hl || null };
+    var side = T.pos.turn, S = { pos: T.pos, sel: null, targets: [], last: T.last || null, hint: null, flip: side === -1, coords: true, mark: T.mark || {}, hl: T.hl || null };
     var mistakes = 0, busy = false, done = false, helped = false, before = T.pos;
     var okf = T.ok || function () { return true; };
     host.innerHTML = say(av('simba'), 'Задание ' + lv, T.say || L.say, T.sub || '') + boardHTML() + '<div id="promo" class="promo" hidden></div><div class="msg" id="msg" role="status" aria-live="polite"></div>' +
@@ -13327,10 +13346,11 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   }
 
   /* ---------- «Спаси фигуру» ---------- */
+  var KNOWN = { B: [3, 4], Q: [3, 4, 5], N: [2, 3, 4, 5], K: [2, 3, 4, 5], P: [1, 2, 3, 4, 5] };
   function genSafe(code, r) {
     var PV = { R: 4, B: 3, Q: 5, N: 2 };
     for (var tr = 0; tr < 4000; tr++) {
-      var at = pickA(r, [2, 3, 4, 5, 1]), ex = [-at];
+      var at = pickA(r, KNOWN[code] || [2, 3, 4, 5]), ex = [-at];
       if (r() < 0.35) ex.push(pickA(r, [-1, -2]));
       var P = scatter(r, code, ex); if (!P) continue;
       var pos = P.pos, b = P.b, s = P.s, atk = -1, n = 0, q;
@@ -13421,7 +13441,32 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     return null;
   }
 
-  var KINDS = { R: ['yn', 'safe', 'who', 'route'], B: ['yn', 'safe', 'who', 'route'], Q: ['yn', 'safe', 'who', 'route'], N: ['yn', 'safe', 'who', 'route'], K: ['yn', 'who', 'route', 'yn'], P: ['yn', 'who', 'yn', 'who'] };
+
+  /* ---------- «Съешь, что можно» (только своя фигура, без чужих ходов) ---------- */
+  function genEat(code, r) {
+    var HV = { R: 4, B: 3, Q: 5, N: 2, K: 6, P: 1 }, pool = [1, 2, 3].filter(function (v) { return v !== HV[code]; });
+    for (var tr = 0; tr < 3000; tr++) {
+      var nb = 3 + rr(r, 2), ex = []; for (var q = 0; q < nb; q++) ex.push(-pickA(r, pool));
+      if (r() < .4) ex.push(pickA(r, [1, 2]));
+      var P = scatter(r, code, ex); if (!P) continue;
+      var pos = P.pos, b = P.b, s = P.s, ok = {}, no = 0, y;
+      for (y = 0; y < 64; y++) if (b[y] < 0 && Math.abs(b[y]) !== 6) { if (att(b, s, y)) ok[y] = 1; else no++; }
+      var n = Object.keys(ok).length; if (n < 1 || n > 2 || no < 2) continue;
+      if (E.inCheck(pos)) continue;
+      var hl = {}; 
+      return {
+        pos: pos, hl: hl,
+        say: 'Ладья'.replace('Ладья', { R: 'Ладья', B: 'Слон', Q: 'Ферзь', N: 'Конь', K: 'Король', P: 'Пешка' }[code]) + ' может съесть ' + (n === 1 ? 'одну из чёрных фигур' : 'любую из двух чёрных фигур') + '. Найди ' + (n === 1 ? 'её' : 'их') + ' и съешь.',
+        sub: 'остальные чёрные фигуры сейчас съесть нельзя',
+        ok: function (m) { return m.f === s && !!ok[m.t]; },
+        good: function () { return 'Верно! Ты съел фигуру.'; },
+        bad: function (m) { return m.f !== s ? 'Ходить надо ' + INS2[code] + '.' : 'Эту фигуру ' + INS2[code] + ' съесть нельзя. Посмотри, до каких чёрных фигур можно дойти ' + INS2[code] + '.'; }
+      };
+    }
+    return null;
+  }
+
+  var KINDS = { R: ['yn', 'eat', 'route', 'yn'], B: ['yn', 'safe', 'eat', 'route'], Q: ['yn', 'safe', 'eat', 'route'], N: ['yn', 'safe', 'eat', 'route'], K: ['yn', 'eat', 'route', 'yn'], P: ['yn', 'eat', 'yn', 'eat'] };
   ['R', 'B', 'Q', 'N', 'K', 'P'].forEach(function (code) {
     var L = LESS['p' + code]; if (!L) return;
     var oldRun = L.run, oldGen = L.gen, n0 = L.levels, X = 20;
@@ -13430,11 +13475,11 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     L.gen = function (lv, r) {
       if (lv <= n0) return oldGen ? oldGen(lv, r) : null;
       var k = lv - n0, kind = KINDS[code][(k - 1) % 4], t = null;
-      for (var a = 0; a < 3 && !t; a++) t = kind === 'yn' ? genYN(code, r) : kind === 'safe' ? genSafe(code, r) : kind === 'who' ? genWho(code, r) : genRoute(code, r);
+      for (var a = 0; a < 3 && !t; a++) t = kind === 'yn' ? genYN(code, r) : kind === 'safe' ? genSafe(code, r) : kind === 'eat' ? genEat(code, r) : kind === 'who' ? genWho(code, r) : genRoute(code, r);
       return t;
     };
   });
-  window.__moveT = { genYN: genYN, genSafe: genSafe, genWho: genWho, genRoute: genRoute };
+  window.__moveT = { genYN: genYN, genSafe: genSafe, genWho: genWho, genEat: genEat, genRoute: genRoute };
 })();
 
 /* ===== Защита от мата: отдельный урок (позиции из мат-в-1 банков, ход защищающегося; проверено движком) ===== */
@@ -13535,6 +13580,16 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   };
 })();
 
+/* картинки подарков лежат отдельными файлами рядом с сайтом и подгружаются при открытии */
+var GIFT_IMGS = ['gbox01.gif', 'gbox02.gif', 'gbox03.gif', 'gbox04.gif'];
+var GIFT_IMG = GIFT_IMGS[0];
+function giftImg() { return GIFT_IMGS[Math.floor(Math.random() * GIFT_IMGS.length)]; }
+(function () { setTimeout(function () { GIFT_IMGS.forEach(function (u) { var i = new Image(); i.src = u; }); }, 4000); })();
+
+var PETS = ['gpet01.gif', 'gpet02.gif', 'gpet03.gif', 'gpet04.gif', 'gpet05.gif', 'gpet06.gif', 'gpet07.gif', 'gpet08.gif', 'gpet09.gif', 'gpet10.gif', 'gpet11.gif', 'gpet12.gif'];
+
+var SCGIF = ['gscn01.gif', 'gscn02.gif', 'gscn03.gif', 'gscn04.gif', 'gscn05.gif', 'gscn06.gif', 'gscn07.gif', 'gscn08.gif', 'gscn09.gif', 'gscn10.gif', 'gscn11.gif', 'gscn12.gif', 'gscn13.gif', 'gscn14.gif', 'gscn15.gif', 'gscn16.gif', 'gscn17.gif'];
+
 /* ===== Комната подарков: сюрпризы для малышей, открыта всегда ===== */
 (function () {
   var HK = ['simba', 'tima', 'yasmin', 'arni', 'fox', 'prof', 'king'];
@@ -13552,7 +13607,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   function offer(title) {
     var old = document.getElementById('gOffer'); if (old) old.remove();
     var d = document.createElement('div'); d.id = 'gOffer'; d.className = 'goffer';
-    d.innerHTML = '<div class="gobox"><div class="gbig">🎁</div><b>Урок «' + esc(title) + '» пройден!</b><p>Для тебя подарок!</p><a class="btn go" href="#gift">Открыть подарок</a> <button class="btn alt" type="button" id="gOffX">Потом</button></div>';
+    d.innerHTML = '<div class="gobox"><img class="gimg gsm" src="' + giftImg() + '" alt=""><b>Урок «' + esc(title) + '» пройден!</b><p>Для тебя подарок!</p><a class="btn go" href="#gift">Открыть подарок</a> <button class="btn alt" type="button" id="gOffX">Потом</button></div>';
     document.body.appendChild(d); sfx('win'); try { confetti(120); } catch (e) {}
     d.querySelector('a').onclick = function () { d.remove(); };
     d.querySelector('#gOffX').onclick = function () { d.remove(); };
@@ -13607,8 +13662,10 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   PNT.forEach(function (s, i) { CAT.push({ k: 'paint', v: i, n: s.n }); });
   PNO.forEach(function (s, i) { CAT.push({ k: 'piano', v: i, n: s.n }); });
   ZOO.forEach(function (s, i) { CAT.push({ k: 'zoo', v: i, n: s.n }); });
+  SCGIF.forEach(function (s, i) { CAT.push({ k: 'scene', v: i, n: 'Картинка' }); });
+  PETS.forEach(function (s, i) { CAT.push({ k: 'pet', v: i, n: 'Друг' }); });
   CAT.forEach(function (c, i) { c.id = i; });
-  var KIND = { fire: '🎆 Фейерверк', dance: '🕺 Танец', alive: '🌈 Картинка', balls: '🎈 Шарики', paint: '🖌️ Рисуй', piano: '🎹 Пианино', zoo: '🐾 Зверята' };
+  var KIND = { fire: '🎆 Фейерверк', dance: '🕺 Танец', alive: '🌈 Картинка', balls: '🎈 Шарики', paint: '🖌️ Рисуй', piano: '🎹 Пианино', zoo: '🐾 Зверята', pet: '🧸 Друзья', scene: '🏰 Сказка' };
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function nextGift(kind) {
     var bag = lsGet('ukc_gbag', null);
@@ -13630,12 +13687,14 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     var st = document.getElementById('gstage');
     function closed() {
       clr(); st.className = 'gstage';
-      st.innerHTML = '<button class="gbox' + (earned ? ' gold' : '') + '" type="button" id="gbx" aria-label="Открыть подарок"><span>🎁</span></button><p class="gtap">Нажми на подарок!</p>';
+      st.innerHTML = '<button class="gbox' + (earned ? ' gold' : '') + '" type="button" id="gbx" aria-label="Открыть подарок"><img class="gimg" src="' + giftImg() + '" alt=""></button><p class="gtap">Нажми на подарок!</p>';
       document.getElementById('gbx').onclick = function () { play(nextGift()); };
+      melody([523, 659, 784, 1047, 784, 1047], .2, 'triangle', .14); later2(function () { melody([1047, 1319, 1568], .16, 'sine', .1); }, 2600);
+      for (var q = 0; q < 8; q++) { var sp = document.createElement('i'); sp.className = 'gsp'; sp.textContent = ['✨', '⭐', '💫'][q % 3]; sp.style.cssText = 'left:' + (8 + q * 11) + '%;top:' + (12 + (q * 37) % 60) + '%;animation-delay:' + (-q * .45) + 's'; st.appendChild(sp); }
     }
     function play(g) {
       clr(); st.className = 'gstage open'; sfx('good'); st.innerHTML = '';
-      var f = { fire: fire, dance: dance, alive: alive, balls: balls, paint: paint, piano: piano, zoo: zoo }[g.k]; f(st, g.v);
+      var f = { fire: fire, dance: dance, alive: alive, balls: balls, paint: paint, piano: piano, zoo: zoo, pet: pet, scene: scene }[g.k]; f(st, g.v);
       var cap = document.createElement('div'); cap.className = 'gcap'; cap.textContent = KIND[g.k] + ' · ' + g.n; st.appendChild(cap);
       var back = document.createElement('button'); back.className = 'btn alt gback'; back.type = 'button'; back.textContent = '🎁 Ещё подарок'; back.onclick = function () { play(nextGift()); }; st.appendChild(back);
       var cn = view.querySelector('.gcount'); if (cn) cn.textContent = 'Открыто подарков: ' + lsGet('ukc_gseen', []).length + ' из ' + CAT.length;
@@ -13717,6 +13776,17 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     st.querySelector('.gkeys').addEventListener('pointerdown', function (e) { var b = e.target.closest('.gkey'); if (b) hit(b); });
     var keys = st.querySelectorAll('.gkey'), m = [0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0], i = 0;
     timers.push(setInterval(function () { if (!st.isConnected || i >= m.length) return; hit(keys[m[i]]); i++; }, 420));
+  }
+  function scene(st, v) {
+    st.insertAdjacentHTML('beforeend', '<div class="gscg"><img src="' + SCGIF[v] + '" alt=""></div><p class="gtap">Ой, картинка ожила!</p>');
+    for (var q = 0; q < 8; q++) { var sp = document.createElement('i'); sp.className = 'gsp'; sp.textContent = ['✨', '⭐', '💫'][q % 3]; sp.style.cssText = 'left:' + (6 + q * 12) + '%;top:' + (10 + (q * 37) % 60) + '%;animation-delay:' + (-q * .45) + 's'; st.appendChild(sp); }
+    melody(MEL[(v + 3) % MEL.length].slice(0, 10), .22, 'sine', .13);
+  }
+  function pet(st, v) {
+    st.insertAdjacentHTML('beforeend', '<button type="button" class="gpet" id="gpt"><img src="' + PETS[v] + '" alt=""></button><p class="gtap" id="gpz">Привет! Нажми на меня!</p>');
+    for (var q = 0; q < 8; q++) { var sp = document.createElement('i'); sp.className = 'gsp'; sp.textContent = ['✨', '⭐', '💫'][q % 3]; sp.style.cssText = 'left:' + (6 + q * 12) + '%;top:' + (10 + (q * 37) % 60) + '%;animation-delay:' + (-q * .45) + 's'; st.appendChild(sp); }
+    melody(MEL[v % MEL.length].slice(0, 8), .2, 'triangle', .14);
+    document.getElementById('gpt').onclick = function () { var b = this; b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit'); if (!muted) { tone(660, 0, .12, 'square', .1); tone(990, .1, .2, 'triangle', .16); } document.getElementById('gpz').textContent = SAY[Math.floor(Math.random() * SAY.length)]; };
   }
   function zoo(st, v) {
     var S = ZOO[v % ZOO.length];
