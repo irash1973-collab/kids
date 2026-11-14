@@ -1006,6 +1006,71 @@ body:has(.ctr-prompt) .board[data-board="bw"]{--sq-light:#fff3d3;--sq-dark:#5d8e
 
 #comp{left:6px;bottom:6px}#comp img{width:42px;height:42px;border-width:2px}#comp .cx{width:18px;height:18px;font-size:12px;top:-6px}
 @media (min-width: 900px) { body:has(.cols) #comp .cb { display: none !important; } body:has(.cols) #comp img { width: 44px; height: 44px; } }
+
+.gb9,.gbchip.gb9{--gc:#0f9d8a;--gb:#e8faf7;--gd:#0b6f61}
+/* ===== Комната подарков ===== */
+.gstat { margin: 8px 0 14px; padding: 10px 14px; border-radius: 14px; background: #eef5ff; font-weight: 700; color: #1f3a66; }
+.gstat.gold { background: linear-gradient(90deg,#fff3c4,#ffe082); color: #7a4b00; box-shadow: 0 0 0 3px #ffc107 inset; }
+.gstage { position: relative; min-height: 420px; border-radius: 22px; background: radial-gradient(circle at 50% 40%, #fff7e0, #ffe9b8); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px; overflow: hidden; }
+.gstage.open { background: #1c1b4a; padding: 0 0 52px; }
+.gbox { border: 0; background: none; cursor: pointer; font-size: 170px; line-height: 1; animation: gboxb 1.2s ease-in-out infinite; filter: drop-shadow(0 10px 8px rgba(0,0,0,.25)); }
+.gbox.gold { filter: drop-shadow(0 0 22px #ffc107) drop-shadow(0 10px 8px rgba(0,0,0,.25)); }
+@keyframes gboxb { 0%,100% { transform: translateY(0) rotate(-3deg) } 50% { transform: translateY(-18px) rotate(3deg) } }
+.gtap { font-weight: 800; font-size: 20px; margin: 8px 0 0; text-align: center; }
+.gstage.open .gtap { color: #fff; position: absolute; left: 0; right: 0; bottom: 56px; }
+.gback { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); }
+.gpick { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.gcv { width: 100%; max-width: 900px; height: 420px; touch-action: manipulation; }
+.gdance { position: relative; text-align: center; padding: 30px 0 60px; }
+.gdance img { width: 220px; height: 220px; border-radius: 50%; border: 6px solid #fff; background: #fff; cursor: pointer; animation: gdn .9s ease-in-out infinite alternate; }
+.gdance img.jump { animation: gjp .6s ease-out, gdn .9s .6s ease-in-out infinite alternate; }
+@keyframes gdn { from { transform: rotate(-8deg) translateY(0) } to { transform: rotate(8deg) translateY(-14px) } }
+@keyframes gjp { 0% { transform: translateY(0) scale(1) } 40% { transform: translateY(-90px) scale(1.15) rotate(360deg) } 100% { transform: translateY(0) scale(1) } }
+.gbub { display: inline-block; background: #fff; border: 3px solid #1b1a19; border-radius: 18px; padding: 8px 16px; font-weight: 900; font-size: 22px; margin-bottom: 12px; }
+.gnotes { color: #ffeb3b; font-size: 40px; letter-spacing: 12px; animation: gnt 1.4s ease-in-out infinite; }
+@keyframes gnt { 0%,100% { transform: translateY(0); opacity: .6 } 50% { transform: translateY(-14px); opacity: 1 } }
+.gscene { position: relative; width: 100%; max-width: 720px; height: 380px; background: linear-gradient(#8fd3ff 0%, #d6f1ff 60%); overflow: hidden; border-radius: 0; }
+.gsun { position: absolute; right: 30px; top: 14px; font-size: 80px; animation: gspin 14s linear infinite; }
+@keyframes gspin { to { transform: rotate(360deg) } }
+.gcl { position: absolute; font-size: 64px; animation: gcl 22s linear infinite; }
+.gcl.c1 { top: 24px; left: -80px; } .gcl.c2 { top: 80px; left: -80px; animation-duration: 32s; animation-delay: -12s; font-size: 48px; }
+@keyframes gcl { to { transform: translateX(900px) } }
+.gbird { position: absolute; top: 120px; left: 10%; font-size: 36px; animation: gbd 6s ease-in-out infinite alternate; }
+@keyframes gbd { from { transform: translate(0,0) } to { transform: translate(420px,-40px) } }
+.ghill { position: absolute; left: -10%; right: -10%; bottom: -80px; height: 230px; border-radius: 50% 50% 0 0; background: #5cc36b; }
+.gfl { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; font-size: 30px; letter-spacing: 14px; }
+.gpc { position: absolute; bottom: 70px; width: 96px; height: 96px; border: 0; background: none; cursor: pointer; padding: 0; }
+.gpc svg { width: 100%; height: 100%; }
+.gpc.g-n { left: 10%; animation: ghop 1.2s ease-in-out infinite; } .gpc.g-r { left: 36%; animation: gsl 3s ease-in-out infinite alternate; }
+.gpc.g-p { left: 60%; animation: gwb 1.4s ease-in-out infinite alternate; } .gpc.g-k { left: 80%; animation: gwb 1s ease-in-out infinite alternate; }
+@keyframes ghop { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-46px) } }
+@keyframes gsl { from { transform: translateX(-30px) } to { transform: translateX(60px) } }
+@keyframes gwb { from { transform: rotate(-10deg) } to { transform: rotate(10deg) } }
+.gpc.hit { animation: ghit .6s ease-out !important; }
+@keyframes ghit { 0% { transform: scale(1) } 40% { transform: scale(1.5) translateY(-60px) rotate(180deg) } 100% { transform: scale(1) } }
+.gball { position: relative; width: 100%; max-width: 760px; height: 400px; }
+.gbl { position: absolute; width: 74px; height: 92px; border: 0; border-radius: 50% 50% 48% 48%; cursor: pointer; box-shadow: inset -8px -8px 0 rgba(0,0,0,.14), inset 8px 8px 0 rgba(255,255,255,.35); animation: gfl 3s ease-in-out infinite alternate; }
+.gbl::after { content: ''; position: absolute; left: 50%; bottom: -26px; width: 2px; height: 26px; background: rgba(255,255,255,.7); }
+.gbl.pop { transform: scale(1.6); opacity: 0; transition: .18s; animation: none; }
+@keyframes gfl { from { transform: translateY(0) } to { transform: translateY(-22px) } }
+.goffer { position: fixed; inset: 0; z-index: 90; background: rgba(20,10,70,.55); display: grid; place-items: center; }
+.gobox { background: #fff; border-radius: 24px; padding: 20px 26px; text-align: center; max-width: 360px; box-shadow: 0 10px 0 rgba(0,0,0,.25); }
+.gobox .gbig { font-size: 90px; animation: gboxb 1.2s ease-in-out infinite; }
+#giftFab { position: fixed; right: 58px; bottom: 8px; width: 38px; height: 38px; border-radius: 50%; background: #ffc107; display: grid; place-items: center; font-size: 22px; text-decoration: none; z-index: 41; box-shadow: 0 3px 0 rgba(0,0,0,.25); animation: gboxb 2s ease-in-out infinite; }
+.card .gico { font-size: 56px; }
+.gcap { position: absolute; top: 10px; left: 0; right: 0; text-align: center; color: #fff; font-weight: 800; font-size: 16px; opacity: .85; pointer-events: none; }
+.gcount { display: inline-block; margin-left: 10px; font-weight: 800; opacity: .8; }
+.gdance img.ds { animation: gspin2 1.6s linear infinite; } .gdance img.dw { animation: gdn .5s ease-in-out infinite alternate; } .gdance img.db { animation: gbn .6s ease-in-out infinite; }
+@keyframes gspin2 { to { transform: rotate(360deg) } } @keyframes gbn { 0%,100% { transform: scale(1,1) translateY(0) } 50% { transform: scale(1.12,.9) translateY(-30px) } }
+.gbl.em { background: none !important; box-shadow: none; font-size: 56px; width: 64px; height: 64px; line-height: 1; } .gbl.em::after { display: none; }
+.gpaint { touch-action: none; cursor: crosshair; }
+.gkeys { display: flex; gap: 8px; width: 100%; max-width: 760px; padding: 0 10px; margin-top: 30px; }
+.gkey { flex: 1; height: 260px; border: 4px solid #fff; border-radius: 0 0 16px 16px; font-size: 26px; font-weight: 900; color: #fff; cursor: pointer; }
+.gkey.on { transform: translateY(8px); filter: brightness(1.4); }
+.gzoo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 50px 24px 10px; }
+.gan { font-size: 84px; border: 0; background: rgba(255,255,255,.12); border-radius: 24px; cursor: pointer; animation: ghop 1.8s ease-in-out infinite; }
+.gan.hit { animation: ghit .6s ease-out !important; }
+@media (max-width: 560px) { .gan { font-size: 56px; } .gbox { font-size: 130px; } .gkey { height: 200px; } }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -1036,6 +1101,7 @@ body:has(.ctr-prompt) .board[data-board="bw"]{--sq-light:#fff3d3;--sq-dark:#5d8e
       <a href="#board" data-r="board">Доска</a>
       <a href="#games" data-r="games">Игротека</a>
       <a href="#cartoons" data-r="cartoons">Мультики</a>
+      <a href="#gift" data-r="gift">🎁 Подарки</a>
       <a href="#awards" data-r="awards">Награды</a>
     </nav>
     <nav class="nav y2nav" aria-label="Второй год обучения">
@@ -2934,7 +3000,29 @@ if (typeof module !== 'undefined') module.exports = Eng;
     ex.tg = ex.stars.slice(); return ex;
   }
   function fixEdge(ex) { if (ex && ex.st && ex.st.enemies) for (var q in ex.st.enemies) { var v = ex.st.enemies[q], y = q >> 3; if ((y === 0 || y === 7) && Math.abs(v) === 1) ex.st.enemies[q] = v * 2; } return ex; }
-  function genPiece(code, lv, seedx) { return fixEdge(genPiece0(code, lv, seedx)); }
+  var RCH = { R: [2, 2, 2, 3, 2, 3, 3, 2, 3, 3], Q: [2, 2, 2, 3, 2, 3, 3, 2, 3, 3], B: [2, 2, 3, 2, 3, 3, 4, 3, 4, 4], N: [2, 2, 3, 3, 2, 3, 4, 3, 4, 4] };
+  var RCT = [['🧱', '⭐', 'звезды'], ['🌳', '🍎', 'яблока'], ['🪨', '🐰', 'зайчика'], ['🌊', '🏝️', 'острова'], ['☁️', '☀️', 'солнышка'], ['🔥', '🧊', 'льдинки'], ['🐝', '🍯', 'мёда'], ['🌵', '💎', 'сокровища'], ['🍫', '🍬', 'конфеты'], ['💣', '🏁', 'финиша']];
+  function genReach(code, lv, seedx) {
+    var idx = lv > 40 ? lv - 41 : (lv / 2 + 3) % 10, N = RCH[code][idx], th = RCT[(idx + (lv > 40 ? 0 : Math.floor(lv / 10))) % 10];
+    for (var a1 = 0; a1 < 800; a1++) {
+      var r = mkRng(hstr('rch' + code + lv + '_' + (seedx || 0)) + a1 * 911), st = { walls: {}, enemies: {} }, s = Math.floor(r() * 64), f = Math.floor(r() * 64);
+      if (s === f) continue;
+      if (code === 'B' && ((((s & 7) + (s >> 3)) & 1) !== (((f & 7) + (f >> 3)) & 1))) continue;
+      var d = bfs(code, s, st).d[f], nw = 0;
+      while (d !== N && nw < 16) {
+        if (d !== undefined && d > N) break;
+        var w = Math.floor(r() * 64); if (w === s || w === f || st.walls[w]) continue;
+        st.walls[w] = true; nw++; d = bfs(code, s, st).d[f];
+      }
+      if (d !== N) continue;
+      var ex = { type: 'maze', code: code, st: st, start: s, stars: [], tg: [], flag: f, lv: lv, opt: N };
+      ex.theme = { text: 'Доберись до ' + th[2] + ' ' + th[1] + ' за ' + N + ' ' + (N < 5 ? 'хода' : 'ходов') + '. Это самый короткий путь: меньше не получится. ' + (nw ? 'Препятствия ' + th[0] + ' обходи.' : 'Подумай, с какого поля ходить дальше.'), wall: th[0], flag: th[1] };
+      return ex;
+    }
+    return null;
+  }
+  window.__genPiece = function (c, l, s) { return genPiece(c, l, s); };
+  function genPiece(code, lv, seedx) { if (code !== 'P' && RCH[code] && ((lv >= 41 && lv <= 50) || (lv >= 12 && lv <= 40 && lv % 2 === 0))) return genReach(code, lv, seedx); return fixEdge(genPiece0(code, lv, seedx)); }
   function genPiece0(code, lv, seedx) {
     if (code !== 'P' && lv > 30) {
       for (var a0 = 0; a0 < 600; a0++) {
@@ -3011,7 +3099,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var e = Math.floor(r() * 64); if (used[e]) continue;
       if (code === 'B' && col(e) !== col(start)) continue;
       if (code === 'K' && Math.max(Math.abs((e & 7) - (start & 7)), Math.abs((e >> 3) - (start >> 3))) > 3) continue;
-      used[e] = 1; st.enemies[e] = -(2 + Math.floor(r() * 3) % 3 + (r() < .3 ? 1 : 0)); if (Math.abs(st.enemies[e]) > 5) st.enemies[e] = -3; ex.tg.push(e);
+      used[e] = 1; var HV = { N: 2, B: 3, R: 4, Q: 5, K: 6 }, pool = [1, 2, 3].filter(function (v) { return v !== HV[code]; }); st.enemies[e] = -pool[Math.floor(r() * pool.length)]; ex.tg.push(e);
     }
     if (ex.tg.length < n) return null;
     var names = { R: 'ладьёй', B: 'слоном', Q: 'ферзём', N: 'конём', K: 'королём' };
@@ -3689,7 +3777,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     draw();
   }
   function runYN(host, L, lv, T, finish) {
-    var S = { pos: T.pos, nochk: !!T.nochk, sel: null, targets: [], last: T.last || null, hint: null, flip: false, coords: true, mark: {}, hl: T.hl || null }, mistakes = 0, done = false;
+    var S = { pos: T.pos, nochk: !!T.nochk, sel: null, targets: [], last: T.last || null, hint: null, flip: false, coords: true, mark: T.mark || {}, hl: T.hl || null }, mistakes = 0, done = false;
     var obt = T.opts ? T.opts.map(function (o, i) { return '<button data-o="' + i + '">' + o + '</button>'; }).join('') : '<button data-o="1">Да</button><button data-o="0">Нет</button>';
     host.innerHTML = say(av('prof'), 'Вопрос ' + lv, T.q, T.opts ? 'выбери ответ' : 'ответь «Да» или «Нет»') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + obt + '</div>';
     var msg = document.getElementById('msg');
@@ -13106,7 +13194,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     var old = L.run, n0 = L.levels, id = L.id;
     L.levels = n0 + 10;
     L.run = function (host, LL, lv, finish) {
-      if (lv <= n0) return old(host, LL, lv, finish);
+      if (lv <= n0 + 10) return old(host, LL, lv, finish);
       return runTask(host, LL, lv, finish);
     };
     L.gen = function (lv, r) { return genCap(code, lv - n0, r); };
@@ -13114,7 +13202,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     var add = { h: 'Съешь фигуру', p: ['В конце урока учитель просит съесть фигуру ' + INS[code] + ': «Съешь ' + ACC[3] + '». Выбери ' + INS[code].replace('ой', 'у').replace('ём', 'я').replace('ом', '').slice(0) + ' и нажми на ту клетку, где стоит нужная фигура. Другие фигуры есть на доске, но их брать не нужно. Задания ' + (n0 + 1) + '–' + (n0 + 10) + '.'], fen: '8/8/8/3b4/8/8/8/' + { R: 'R', B: 'B', Q: 'Q', N: 'N' }[code] + '3k3 w - - 0 1' };
     add.p = ['После упражнений учитель даёт новое задание: съесть названную фигуру. На доске стоят несколько чужих фигур, но брать нужно только ту, которую просит учитель. Выбери свою фигуру и нажми на клетку с нужной целью. Задания ' + (n0 + 1) + '–' + (n0 + 10) + '.'];
     add.fen = { R: '8/8/8/3b4/8/8/8/R3K2k w - - 0 1', B: '8/8/8/3n4/8/8/8/B3K2k w - - 0 1', Q: '8/8/8/3r4/8/8/8/Q3K2k w - - 0 1', N: '8/8/3r4/8/4N3/8/8/4K2k w - - 0 1' }[code];
-    if (sl >= 0) L.slides.splice(sl, 0, add); else L.slides.push(add);
+    /* слайд «Съешь фигуру» убран: уровни 41–50 теперь «доберись за N ходов» */
   });
 })();
 
@@ -13249,6 +13337,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
       for (q = 0; q < 64; q++) if (b[q] < 0 && Math.abs(b[q]) !== 6 && att(b, q, s)) { if (atk < 0) atk = q; n++; }
       if (n !== 1) continue;
       if (att(b, P.bk, s)) continue;
+      if (att(b, s, atk)) continue; /* наша фигура сама может съесть нападающую: это не «спасение» */
       /* фигура не связана с королём и свой король не под шахом */
       var b2 = new Int8Array(b); b2[s] = 0; if (E.inCheck(mkPos(b2))) continue;
       /* ни одна другая белая фигура не под боем */
@@ -13321,7 +13410,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
       if (ng < 1 || ng > 4 || mv.length - ng < 3) continue;
       var hl = {}; hl[t] = 1; var tn = SQN(t);
       return {
-        pos: pos, hl: hl,
+        pos: pos, hl: hl, mark: (function () { var o = {}; o[t] = 'star'; return o; })(),
         say: 'Звезда ★ на поле ' + tn + ' (оно подсвечено). Сделай ход так, чтобы следующим ходом ' + INS2[code] + ' попасть на звезду.',
         sub: 'сразу на звезду не пойти',
         ok: function (m) { return m.f === s && !!good[m.t]; },
@@ -13348,6 +13437,77 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   window.__moveT = { genYN: genYN, genSafe: genSafe, genWho: genWho, genRoute: genRoute };
 })();
 
+/* ===== Защита от мата: отдельный урок (позиции из мат-в-1 банков, ход защищающегося; проверено движком) ===== */
+(function () {
+  var SRC = ["8/8/8/p2Pp1p1/1b2Pk1p/5r1P/4K3/6R1 w - - 0 1", "7R/5r2/7p/1p1P2p1/4rqPk/5P2/PP5P/2R3K1 w - - 0 1", "6r1/6pk/R7/4PR2/p4P2/5K2/4rP1p/5b2 w - - 0 1", "5qrk/1b5p/p2p3Q/1p2pP2/4P3/P1NP4/1P6/1K5R w - - 0 1", "6k1/4qpp1/2p1p2p/2PpQP2/1P2n3/2B4P/6P1/6K1 w - - 0 1", "8/8/1R4p1/4KPkp/7r/8/8/8 w - - 0 1", "6k1/rR3ppp/8/2p5/8/1P4P1/1r3P1P/6K1 w - - 0 1", "1k5r/1p3Q1p/p5p1/1p2P3/2rP3q/4KB2/P6P/7R w - - 0 1", "8/8/B5p1/p1pp1kP1/4bP2/P1P1K3/8/8 w - - 0 1", "4r1rk/1p6/p7/2pPqp2/P1P5/7P/1P1Q4/1B4RK w - - 0 1", "7k/4R2p/3rp1pB/p7/3r1b2/8/P2p2PP/3R3K w - - 0 1", "6k1/4R3/6Kp/8/8/8/7r/8 w - - 0 1", "3b2k1/pp5p/2n1q1pQ/8/5P2/PP2P3/1BP3P1/6K1 w - - 0 1", "5rk1/pQ4bp/1q2Nnp1/4n3/8/7P/P1R2PPK/8 w - - 0 1", "8/5p2/4p1p1/7k/5P2/5KP1/2rp4/3R4 w - - 0 1", "4r2k/p5qp/5Q2/4R3/8/3r2P1/5PP1/6K1 w - - 0 1", "4R3/1br4k/6p1/3p3p/1P1B4/2p5/6PP/6K1 w - - 0 1", "r5k1/pp3pp1/7p/3pQ3/8/1PP2q2/P4PR1/7K w - - 0 1", "R7/2pk1p1r/3p1BnP/2nPp1P1/4r3/4R3/1K6/8 w - - 0 1", "2kr3r/pp4Qp/2n3p1/4p3/3q4/8/1R3PPP/5RK1 w - - 0 1", "5r2/pp1B2R1/8/3p4/3P1k2/2PK1p2/Pr6/8 w - - 0 1", "8/p7/7p/6p1/2P2b1k/P6P/1q6/6QK w - - 0 1", "r5k1/5pp1/p2b3p/7N/3Q1B2/7P/b4PPK/4q3 w - - 0 1", "4r1k1/4Rppp/R7/3n4/2P5/2n2B2/Pr4PP/6K1 w - - 0 1", "8/3R3p/1r4pk/8/3P1P2/1p1qP3/1Q6/4K3 w - - 0 1", "r6r/pR3ppp/2p5/3kP1N1/2pP4/7P/P2K1PP1/8 w - - 0 1", "8/8/8/5prp/8/5KPR/5P2/5k2 w - - 0 1", "2kr1r2/p4Qpp/8/2P5/3qbB2/1P6/P5PP/5R1K w - - 0 1", "6rk/1pp1R3/7b/p6p/3P4/2P1p3/qPB3PP/5RK1 w - - 0 1", "8/5b2/p6k/P2p2p1/5q1p/2QB4/5P2/6K1 w - - 0 1", "4R3/6pk/6p1/8/3p4/1PbP1PK1/q1n1R3/8 w - - 0 1", "1Q6/5ppk/4p1p1/P2n4/R7/6PP/5P1K/2r2q2 w - - 0 1", "r2k1r2/1pq4p/p3Q1p1/2PB4/8/P2P4/6PP/5RK1 w - - 0 1", "7Q/3krp2/4p1p1/1p1pP1P1/3q4/P1R5/5PK1/8 w - - 0 1", "5Qrk/8/1p5p/2p5/P7/2q4P/6P1/7K w - - 0 1", "4r3/pp1bq3/3p3k/4b1pP/1P2Q3/P3BP2/5K2/7R w - - 0 1", "2kr4/3q4/8/7p/Q4B2/6PP/5P1K/8 w - - 0 1", "4r3/pp2Pk2/3nr2p/4Q3/8/8/5P2/6RK w - - 0 1", "4r2k/2b3p1/4q1Qp/8/6RP/P5PK/8/8 w - - 0 1", "Q7/p1p1kp1p/1q2pnp1/8/7b/1P1R3P/P1P3P1/5K2 w - - 0 1", "2r1b1k1/pp4b1/2n1pPQ1/q2p4/8/2P5/PP3P2/1R2K3 w - - 0 1", "8/8/1R6/3pp3/1p3krP/8/2BK1P2/1r6 w - - 0 1", "6k1/1n6/2p1R2p/3p2NN/6p1/5PK1/r7/8 w - - 0 1", "2Q5/1p5p/kpp5/6p1/P4p2/2P4P/1P2q1P1/4rRK1 w - - 0 1", "6k1/6p1/7p/p7/8/2P4P/Pr3qQ1/6RK w - - 0 1", "1r2Nk2/1r2R1p1/5p1p/2p3qP/p1Q3P1/1P3P2/P7/K7 w - - 0 1", "r6k/pp6/1qp1BrPp/8/1nP4P/2B3P1/1P6/1K1R4 w - - 0 1", "3kr3/pb1p2pp/8/1p1pN3/3n4/BP6/P5PP/2R4K w - - 0 1", "7k/4R2p/5Rb1/3r4/1p2N3/1P2K3/1r5P/8 w - - 0 1", "8/p3r1k1/1p3qpp/2pQ1p2/1PBp4/P6P/2P3PK/8 w - - 0 1", "6rk/pp4pp/8/1q2N3/3Q4/3P3P/1P1K4/8 w - - 0 1", "2r3k1/6Pp/p3p1nq/1p3Q2/3B4/8/P6P/5bK1 w - - 0 1", "3Bnr2/1R6/2p1q1k1/2Pp2p1/3Pp2p/4P1QP/6PK/8 w - - 0 1", "7Q/ppk1r3/2p4p/8/4pP2/6Pq/PPP3bP/2KR4 w - - 0 1", "5r1k/p2Q3p/3p1p2/3P4/2p1P2q/6R1/P6P/7K w - - 0 1", "r3rk2/p5Rp/1n6/3pB3/8/8/P5PP/4K2R w K - 0 1", "8/7p/5pp1/7k/5Q2/3KP1P1/q6P/8 w - - 0 1", "r4k2/pp2pp2/1n4p1/8/4q3/1BQ5/PP3PP1/R4K2 w - - 0 1", "7k/p4Kp1/2p4p/1p2Q2P/2p1rP2/P7/4r3/8 w - - 0 1", "6rk/1p2b3/1qp1Q3/p2pP3/P3p3/1P6/7P/R6K w - - 0 1", "6k1/7q/4Pp1Q/2P5/8/1rn5/p4PPP/3R2K1 w - - 0 1", "1Q6/5pk1/6p1/4p1q1/3r4/1P1B1P2/1PPr4/1K5R w - - 0 1", "8/pR2bp2/2k1p1q1/2rp4/5Q2/1P6/PB6/K7 w - - 0 1", "7Q/5b2/1n6/5p2/3pkP2/8/4K3/1q6 w - - 0 1", "r5r1/p4p1k/2pq1P2/6Q1/8/8/PPP3PP/5RK1 w - - 0 1", "8/p4p1k/4pQ1P/1p1pP1p1/3P1q2/P7/1r3PK1/7R w - - 0 1", "5krr/1p3p2/p1p2Q2/2P5/1P6/P7/4q1B1/5RK1 w - - 0 1", "r7/pp1R4/4rNpk/8/5p1P/5n2/PPP5/2K4R w - - 0 1", "7r/ppq2Q2/7k/5ppB/4p3/1P6/P4bP1/7K w - - 0 1", "3r1rk1/p4R2/1p1q1Qpp/8/8/6P1/5PP1/4R1K1 w - - 0 1", "5rk1/7p/6p1/2p1Q3/2P5/2B5/5P2/6K1 b - - 0 1", "7k/7p/4B3/8/8/7P/5BPK/8 b - - 0 1", "2k5/2B3p1/1K5p/7P/6p1/3B4/8/8 b - - 0 1", "8/5R2/kp6/8/PP6/1K6/3B4/8 b - - 0 1", "k7/1p5p/PK6/5p2/5Bp1/1P4P1/8/8 b - - 0 1", "8/2B5/2p3p1/1pkp1nP1/7P/2KP4/1P6/8 b - - 0 1", "2k5/1p4R1/p6R/8/8/P1K5/6P1/8 b - - 0 1", "2k5/7R/R7/8/3p4/P2P4/2P2K2/8 b - - 0 1", "4k1r1/R7/3PP2p/1p2K3/p5P1/P6P/8/8 b - - 0 1", "6Q1/5K2/8/p7/P6k/7P/8/8 b - - 0 1", "1n6/p7/kpp1Q3/5P2/PP1P4/2P1K3/6PP/8 b - - 0 1", "2k5/5R2/1KNp4/8/4r3/8/5p2/8 b - - 0 1", "1k2N1n1/3p4/8/1bp5/R7/4P3/2PB4/4K1NB b - - 0 1", "6k1/1Q6/7p/3R3P/1n1P4/8/3K2P1/8 b - - 0 1", "2k5/4R3/5Rr1/4p2B/8/4P3/P6P/1K6 b - - 0 1", "3k4/p6Q/1R6/8/P2KPB2/7P/P1P5/RN3B2 b - - 0 1", "2k5/5R2/8/7p/5p1P/1P4R1/2K1N2n/2B2B2 b - - 0 1", "2k5/5R2/8/7p/5N1P/1P4R1/2K5/2B2n2 b - - 0 1", "7k/5p2/2b5/3R4/6Q1/8/2P5/5KN1 b - - 0 1", "8/3k4/3p4/2p3b1/p7/3qp3/2PB3P/3K2NR w - - 0 1", "2k2b2/7p/3r3n/2P5/4p2P/4P3/4r2P/6KR w - - 0 1", "8/p7/k7/r7/Q7/7K/8/8 b - - 0 1", "8/8/8/8/8/8/1K4p1/3Q2rk b - - 0 1", "8/4K3/8/8/1Q6/8/n4R2/kn6 b - - 0 1", "8/6N1/Q7/1p3q2/2p2P1K/4n1P1/P1k4P/8 w - - 0 1", "8/8/5K2/7k/6p1/4Q3/4p3/8 b - - 0 1", "5k2/3p4/6K1/3N4/8/8/8/7R b - - 0 1", "k7/3P2R1/8/8/7K/8/8/4N3 b - - 0 1", "7k/5Ppp/8/8/8/8/8/K7 b - - 0 1", "8/ppK5/k7/8/3Q4/8/8/8 b - - 0 1", "8/4Q3/8/8/8/5Kpk/7p/8 b - - 0 1", "7k/4BB1p/8/8/8/8/4K3/8 b - - 0 1", "1k6/p1p5/K7/8/8/5R2/8/8 b - - 0 1", "8/8/8/2K3Q1/8/8/pn6/k7 b - - 0 1", "7k/7p/8/8/5K2/1B6/3B4/8 b - - 0 1", "8/8/1K6/8/8/5N2/4N1p1/7k b - - 0 1", "6k1/4K1pp/8/2Q5/8/8/8/8 b - - 0 1", "7k/6pp/3RK3/8/8/8/8/8 b - - 0 1", "8/4Pk1K/8/4Q3/3R4/8/8/3n4 b - - 0 1", "8/5R2/8/8/5Kpk/7p/8/3Q4 b - - 0 1", "1R6/1Q6/8/1n6/kb6/8/K7/8 b - - 0 1", "3Q4/7k/2K3pp/1R6/8/8/8/8 b - - 0 1", "8/6R1/1pQ5/k7/b7/2K5/8/8 b - - 0 1", "8/8/8/8/8/3Q4/R1p2K2/rk6 b - - 0 1", "8/6Q1/7p/8/8/7B/6p1/2K4k b - - 0 1", "8/1Q6/B2K4/8/k7/pn6/8/8 b - - 0 1", "8/8/3N4/8/5k2/4p2b/4Kp2/8 w - - 0 1", "8/8/8/8/5b2/5kn1/r7/4R1K1 w - - 0 1", "8/5Q2/7k/3R4/8/8/2b5/4K1N1 b - - 0 1", "8/8/6Q1/k7/pp6/7R/4K3/8 b - - 0 1", "8/3R4/4R3/2K4k/6pp/8/8/8 b - - 0 1", "8/1R6/6p1/5P1k/5K1p/8/8/8 b - - 0 1", "Q5nk/6p1/8/8/8/1K3R2/8/8 b - - 0 1", "1Q4nk/6p1/8/5K2/8/8/8/6R1 b - - 0 1", "8/1R6/8/3K4/8/8/1p6/kq2Q3 b - - 0 1", "8/7R/8/8/2K5/k7/rb4R1/8 b - - 0 1", "8/8/8/8/8/Q7/ppK5/k5B1 b - - 0 1", "kb4R1/p4B2/5K2/8/8/8/8/8 b - - 0 1", "k7/qp6/8/Q7/8/5R2/K7/8 b - - 0 1", "8/8/4R1b1/6pk/8/5K2/8/2R5 b - - 0 1", "6k1/5pqp/5Q2/6R1/8/8/6K1/8 b - - 0 1", "8/R7/8/8/8/1Q6/bpP1K3/k7 b - - 0 1", "k7/np6/4P3/7R/R7/8/2K5/8 b - - 0 1", "8/6K1/7r/1R4pk/6p1/8/8/3Q4 b - - 0 1", "4k3/2KNp1p1/6p1/8/8/8/2B5/8 b - - 0 1", "8/8/5p2/3B1P1K/8/4k3/8/6qn w - - 0 1", "8/8/8/8/1p6/kr6/1nK4Q/6R1 b - - 0 1", "4B3/6B1/8/8/p7/k1K3p1/p7/8 b - - 0 1", "5bkr/7p/7Q/8/5K2/8/4B3/8 b - - 0 1", "8/6K1/8/8/p7/k7/pr4R1/2Q5 b - - 0 1", "8/1p6/7k/4P3/2N3R1/4R3/2P5/4K3 b - - 0 1", "8/8/7k/4P3/1pNR4/6R1/2P5/4K3 b - - 0 1", "6k1/5p2/8/4P2r/8/3N2P1/2r5/4K3 w - - 0 1", "7k/5p2/8/3R4/b5Q1/8/2P5/4K1N1 b - - 0 1", "3n4/6k1/8/4p3/6p1/6r1/r7/3K2N1 w - - 0 1", "1n6/3p1k1r/B7/8/P7/8/4r3/2K5 w - - 0 1", "4B3/8/3BK3/r4pk1/8/6PP/8/8 b - - 0 1", "6B1/8/Q7/2B1k1p1/7R/2N5/5K2/R7 b - - 0 1", "6k1/5p2/7r/4P3/5N2/3p2P1/2r5/4K3 w - - 0 1", "1n3k2/3p3r/b7/1B6/P7/8/4r3/2K5 w - - 0 1", "4k3/2Q2p2/8/R7/3P4/2P5/2b5/2R2K2 b - - 0 1", "8/8/6pn/4Kpkp/8/6P1/4B2P/8 b - - 0 1", "5k2/1b6/4Q3/1pP3Rp/8/1P6/5P2/5K2 b - - 0 1", "4k3/1ppb4/3p1p2/6r1/8/2P5/r7/4K3 w - - 0 1", "8/1ppbk3/3p1p2/6r1/2P5/8/r7/4K3 w - - 0 1", "2q5/3k4/6p1/4P3/1b3P2/3K2nr/4P3/8 w - - 0 1", "8/8/8/p7/P2Pk3/2P5/4P1PQ/3K1B2 b - - 0 1", "2r3n1/8/5k2/4p3/4P1P1/6RN/1q6/3K4 w - - 0 1", "1k6/1p6/5p2/R7/2P5/8/3QP2R/1N3K2 b - - 0 1", "k7/p1P2p2/p4p2/3K4/8/3P3N/r7/8 b - - 0 1", "6k1/Q7/n6R/5pp1/8/5P1R/3P1P2/6K1 b - - 0 1", "5k2/1R6/8/1P1P2P1/5p2/8/4P3/RnK3N1 b - - 0 1", "8/4r1n1/2R5/8/5p2/4pP2/3kB2P/4NK2 b - - 0 1", "5b2/1qp1kb2/3p2P1/8/6p1/8/2p2K2/7r w - - 0 1", "8/8/p3pk1p/3p4/RP3KPP/2r5/8/8 w - - 0 1"];
+  function mates(pos) { return E.legal(pos).filter(function (m) { return E.status(E.make(pos, m)) === 'mate'; }); }
+  function who(pos) { return pos.turn === 1 ? 'белых' : 'чёрных'; }
+  function defs(pos) { return E.legal(pos).filter(function (m) { return mates(E.make(pos, m)).length === 0; }); }
+  function kind(pos, m, froms) {
+    if (Math.abs(pos.b[m.f]) === 6) return 'king';
+    if (froms.indexOf(m.t) >= 0) return 'take';
+    return 'block';
+  }
+  var NAME = { king: 'уйти королём', take: 'съесть нападающую фигуру', block: 'закрыть путь (поставить фигуру между или защитить поле мата)' };
+  var HEAD = { any: 'Тебе угрожают матом в один ход. Защитись.', king: 'Тебе угрожают матом в один ход. Защитись: уведи короля.', take: 'Тебе угрожают матом в один ход. Защитись: съешь нападающую фигуру.', block: 'Тебе угрожают матом в один ход. Защитись: закрой путь или прикрой поле мата.' };
+  function task(pos, mode, froms) {
+    return {
+      pos: pos, say: HEAD[mode] + ' Ход ' + who(pos) + '.', sub: 'найди ход, после которого мата нет',
+      ok: function (m, b, np) { return mates(np).length === 0 && (mode === 'any' || kind(b, m, froms) === mode); },
+      good: function (m, b) { var k = kind(b, m, froms); return 'Верно! Угроза мата отражена. Ты выбрал способ: ' + NAME[k] + '.'; },
+      bad: function (m, b, np) {
+        if (mates(np).length) return 'Мат всё ещё возможен. Посмотри, куда собирается поставить мат соперник, и закрой этот путь.';
+        return 'Это тоже защита, но здесь нужен другой способ: ' + NAME[mode] + '.';
+      }
+    };
+  }
+  var easy = [], mid = [];
+  SRC.forEach(function (fen) {
+    var p0 = E.fromFEN(fen), pos = { b: p0.b.slice ? p0.b.slice() : p0.b, turn: p0.turn, ep: p0.ep, cast: p0.cast, hm: p0.hm, fm: p0.fm };
+    pos = E.fromFEN(fen);
+    /* сторона, которой мат, - та, чей ход в исходной позиции; защищается соперник */
+    var ms = mates(pos); if (!ms.length) { /* уже позиция защитника (из банка «защитись») */
+      var dm = defs(pos); var tm = E.legal(pos).length; if (dm.length < 1 || dm.length > 4 || tm < 3 || E.inCheck(pos)) return;
+      var opp = E.fromFEN(fen.replace(/ [wb] /, pos.turn === 1 ? ' b ' : ' w ')); var mm0 = mates(opp);
+      if (!mm0.length) return; add(pos, mm0); return; }
+    var fl = fen.replace(/ [wb] /, pos.turn === 1 ? ' b ' : ' w ').replace(/ [-KQkqa-h0-9]+ [-a-h0-9]+ \d+ \d+$/, ' - - 0 1');
+    var def; try { def = E.fromFEN(fl); } catch (e) { return; }
+    if (E.inCheck(def)) return;
+    var d = defs(def); if (d.length < 1 || d.length > 4 || E.legal(def).length < 3) return;
+    add(def, ms);
+    function add(dp, mm) {
+      var froms = []; mm.forEach(function (m) { if (froms.indexOf(m.f) < 0) froms.push(m.f); });
+      var swap = E.fromFEN(E.toFEN(dp).replace(/ [wb] /, dp.turn === 1 ? ' b ' : ' w '));
+      var mm2 = mates(swap); froms = []; mm2.forEach(function (m) { if (froms.indexOf(m.f) < 0) froms.push(m.f); });
+      var sol = defs(dp), ks = {}; sol.forEach(function (m) { ks[kind(dp, m, froms)] = 1; });
+      var n = E.legal(dp).length;
+      var rec = { pos: dp, froms: froms, ks: ks, sol: sol.length };
+      (sol.length <= 2 ? easy : mid).push(rec);
+      if (Object.keys(ks).length > 1 && sol.length > 1) {
+        Object.keys(ks).forEach(function (k) { var only = sol.filter(function (m) { return kind(dp, m, froms) === k; }).length; if (only >= 1 && only < sol.length) mid.push({ pos: dp, froms: froms, mode: k }); });
+      }
+    }
+  });
+  var T = [];
+  easy.forEach(function (r) { T.push(function () { return task(r.pos, 'any', r.froms); }); });
+  mid.forEach(function (r) { T.push(function () { return task(r.pos, r.mode || 'any', r.froms); }); });
+  var S1 = '6k1/5ppp/8/8/8/8/5PPP/3R2K1 b - - 0 1', S2 = 'r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 1', S3 = '6k1/5ppp/8/3n4/8/8/5PPP/R5K1 b - - 0 1';
+  function sq(s) { return (8 - +s[1]) * 8 + 'abcdefgh'.indexOf(s[0]); }
+  var SL = [
+    { h: 'Что такое угроза мата', p: ['Соперник приготовил <b>мат в один ход</b>: если ты ничего не сделаешь, он поставит мат следующим ходом. Здесь белая ладья угрожает пойти на d8 и поставить мат. Отмечено поле d8.', 'Перед каждым ходом спрашивай себя: «Что хочет сделать соперник? Нет ли у него мата в один ход?»'], fen: S1, hl: [sq('d8')], hint: 'Отмечено поле, куда соперник поставит мат.' },
+    { h: 'Первый способ: съесть нападающего', p: ['Белые угрожают ферзём взять f7 и поставить мат. Ферзь стоит на h5, и чёрный конь f6 может его <b>съесть</b>. Угрозы больше нет. Нападающую фигуру лучше всего просто убрать, если это не опасно.'], fen: S2, hl: [sq('h5')], hint: 'Отмечена нападающая фигура.' },
+    { h: 'Второй способ: закрыть путь или прикрыть поле', p: ['Если съесть нельзя, <b>закрой дорогу</b> фигурой или <b>защити поле</b>, на которое хочет попасть соперник. Белая ладья угрожает пойти на a8 и поставить мат. Конь d5 может пойти на b6 или c7 и прикрыть поле a8: если ладья придёт туда, конь её съест.'], fen: S3, hl: [sq('b6'), sq('c7'), sq('a8')], hint: 'Конь прикрывает поле a8.' },
+    { h: 'Третий способ: дать королю дорогу', p: ['Когда король заперт своими пешками, мат ставится легко. Сделай <b>форточку</b>: сдвинь пешку, чтобы у короля появилось поле для отхода. Здесь хорошо пойти пешкой h7-h6 или g7-g6.'], fen: S1, hl: [sq('h6'), sq('g6')], hint: 'Пешка открывает королю поле.' },
+    { h: 'Запомни: как защититься от мата', p: ['<b>1.</b> Найди, куда соперник хочет поставить мат. <b>2.</b> Можно ли съесть нападающую фигуру? <b>3.</b> Можно ли закрыть линию или защитить поле? <b>4.</b> Можно ли увести короля или сделать ему форточку? <b>5.</b> Проверь, что после твоего хода мата в один ход нет.'], fen: S2, hl: [sq('h5'), sq('f7')], hint: 'Угроза: ферзь h5 и поле f7.' }
+  ];
+  var L = { id: 'defm', t: 'Защита от мата', d: 'Тебе угрожают матом в один ход. Как съесть нападающего, закрыть путь или увести короля.', run: runTask, slides: SL, gen: function (lv) { var f = T[lv - 1]; return f ? f() : null; } };
+  Object.defineProperty(L, 'levels', { get: function () { return T.length; } });
+  LESS.defm = L;
+  var gi = -1; GROUPS.forEach(function (g, i) { if (g.n === 'Мат') gi = i; });
+  GROUPS.splice(gi < 0 ? GROUPS.length : gi + 1, 0, { n: 'Защита от мата', ids: ['defm'] });
+  window.__defm = { n: function () { return T.length; }, gen: L.gen };
+})();
+
 // Уроки по цветным блокам: знакомство, фигуры, ценность и защита, правила, мат, тактика, пешечные окончания, повторение
 (function () {
   var B = [
@@ -13356,6 +13516,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     { k: 3, ic: '🛡️', n: 'Ценность и защита', ids: ['values', 'trades', 'attdef', 'lg_pawn'] },
     { k: 4, ic: '📘', n: 'Правила игры', ids: ['opening', 'castle', 'ep', 'promo', 'check', 'mate', 'draws', 'drawq', 'stalemate', 'rules', 'notation'] },
     { k: 5, ic: '👑', n: 'Мат', ids: ['baby', 'mkinds', 'mq', 'mr', 'mrr', 'm2', 'mh', 'rm1', 'rm2', 'gmQ', 'gmR', 'gmRR', 'gmQR'] },
+    { k: 9, ic: '🛡️', n: 'Защита от мата', ids: ['defm'] },
     { k: 6, ic: '⚔️', n: 'Тактика', ids: ['forkN', 'forkQ', 'forkR', 'forkB', 'forkP', 'forkK', 'pin', 'disc', 'gain', 'traps'] },
     { k: 7, ic: '♟️', n: 'Пешечные окончания', ids: ['pe1', 'pe2', 'pe3', 'pe4', 'pe5', 'pe6', 'pe7', 'pe9'] },
     { k: 8, ic: '🔁', n: 'Повторение', ids: ['review'] }
@@ -13372,6 +13533,204 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     first.parentNode.insertBefore(s, first);
     s.onclick = function (e) { var a = e.target.closest('a'); if (!a) return; e.preventDefault(); var el = document.getElementById(a.getAttribute('href').slice(1)); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
   };
+})();
+
+/* ===== Комната подарков: сюрпризы для малышей, открыта всегда ===== */
+(function () {
+  var HK = ['simba', 'tima', 'yasmin', 'arni', 'fox', 'prof', 'king'];
+  var TYPES = [{ k: 'fire', ic: '🎆', n: 'Фейерверк' }, { k: 'dance', ic: '🕺', n: 'Танец' }, { k: 'alive', ic: '🌈', n: 'Картинка' }, { k: 'balls', ic: '🎈', n: 'Шарики' }];
+  var timers = [];
+  function today() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function work() { var w = lsGet('ukc_gwork', {}); return w.d === today() ? (w.n || 0) : 0; }
+  var oldSave = saveLv;
+  saveLv = function (L, lv, stars) {
+    var r = oldSave(L, lv, stars);
+    if (r && r.first) { lsSet('ukc_gwork', { d: today(), n: work() + 1 }); }
+    if (r && r.full) setTimeout(function () { if ((location.hash || '').indexOf('#lesson') === 0) offer(L.t); }, 2600);
+    return r;
+  };
+  function offer(title) {
+    var old = document.getElementById('gOffer'); if (old) old.remove();
+    var d = document.createElement('div'); d.id = 'gOffer'; d.className = 'goffer';
+    d.innerHTML = '<div class="gobox"><div class="gbig">🎁</div><b>Урок «' + esc(title) + '» пройден!</b><p>Для тебя подарок!</p><a class="btn go" href="#gift">Открыть подарок</a> <button class="btn alt" type="button" id="gOffX">Потом</button></div>';
+    document.body.appendChild(d); sfx('win'); try { confetti(120); } catch (e) {}
+    d.querySelector('a').onclick = function () { d.remove(); };
+    d.querySelector('#gOffX').onclick = function () { d.remove(); };
+  }
+  function clr() { timers.forEach(function (t) { clearTimeout(t); clearInterval(t); }); timers = []; }
+  function later2(f, ms) { var t = setTimeout(f, ms); timers.push(t); return t; }
+  function melody(notes, step, type, vol) { if (muted) return; notes.forEach(function (f, i) { if (f) tone(f, i * step, step * 1.6, type || 'triangle', vol || 0.15); }); }
+  var ODE = [659, 659, 698, 784, 784, 698, 659, 587, 523, 523, 587, 659, 659, 587, 587];
+  var PENT = [523, 587, 659, 784, 880, 1047, 1175];
+  var SAY = ['Молодец!', 'Ты умница!', 'Ура!', 'Какой ты хороший шахматист!', 'Я тебя люблю!', 'Давай ещё!'];
+  var COL = ['#ff5252', '#ffb300', '#4caf50', '#2196f3', '#9c27b0', '#ff7043', '#26c6da', '#ec407a'];
+
+  /* ---------- каталог: много разных подарков, без повторов, пока не покажем все ---------- */
+  var MEL = [
+    [659, 659, 698, 784, 784, 698, 659, 587, 523, 523, 587, 659, 659, 587, 587],
+    [523, 523, 784, 784, 880, 880, 784, 0, 698, 698, 659, 659, 587, 587, 523],
+    [523, 587, 659, 523, 523, 587, 659, 523, 659, 698, 784, 0, 659, 698, 784],
+    [659, 587, 523, 587, 659, 659, 659, 0, 587, 587, 587, 0, 659, 784, 784],
+    [659, 659, 659, 0, 659, 659, 659, 0, 659, 784, 523, 587, 659],
+    [392, 659, 392, 659, 392, 659, 587, 523, 587, 523, 440, 392],
+    [523, 659, 784, 1047, 784, 659, 523, 0, 587, 698, 880, 1175, 880, 698, 587],
+    [784, 784, 880, 784, 1047, 988, 0, 784, 784, 880, 784, 1175, 1047]
+  ];
+  var FSTY = [
+    { n: 'Радужный салют', col: COL, shape: 'dot' }, { n: 'Сердечки', col: ['#ff4081', '#ff80ab', '#f50057'], shape: 'heart' },
+    { n: 'Золотые звёзды', col: ['#ffd54f', '#ffca28', '#fff59d'], shape: 'star' }, { n: 'Синий салют', col: ['#40c4ff', '#00b0ff', '#80d8ff', '#fff'], shape: 'dot' },
+    { n: 'Зелёные искры', col: ['#69f0ae', '#00e676', '#b9f6ca'], shape: 'star' }, { n: 'Конфетти-пушка', col: COL, shape: 'sq' },
+    { n: 'Розовые сердечки', col: ['#f48fb1', '#ce93d8', '#fff'], shape: 'heart' }, { n: 'Огненный салют', col: ['#ff6e40', '#ffab40', '#ff3d00', '#ffd740'], shape: 'dot' }
+  ];
+  var DST = [{ n: 'прыгает', c: 'dj' }, { n: 'крутится', c: 'ds' }, { n: 'качается', c: 'dw' }, { n: 'подпрыгивает', c: 'db' }];
+  var SCN = [
+    { n: 'Шахматная полянка', sky: 'linear-gradient(#8fd3ff,#d6f1ff 60%)', gr: '#5cc36b', fl: '🌼 🌷 🌸 🌼 🌷', top: ['☀️', '☁️', '☁️'], fly: '🦋' },
+    { n: 'Подводный мир', sky: 'linear-gradient(#26c6da,#006064)', gr: '#ffcc80', fl: '🐚 🪸 🐠 🪸 🐚', top: ['🫧', '🫧', '🫧'], fly: '🐟' },
+    { n: 'Космос', sky: 'linear-gradient(#1a0b4a,#4a148c)', gr: '#9575cd', fl: '⭐ 🪐 ✨ 🌙 ⭐', top: ['🌙', '⭐', '✨'], fly: '🚀' },
+    { n: 'Зимняя сказка', sky: 'linear-gradient(#b3e5fc,#e1f5fe)', gr: '#fafafa', fl: '⛄ 🎄 ❄️ 🎄 ⛄', top: ['❄️', '☁️', '❄️'], fly: '🐦' },
+    { n: 'Сладкая страна', sky: 'linear-gradient(#ffcdd2,#fff3e0)', gr: '#f8bbd0', fl: '🍭 🧁 🍬 🍰 🍭', top: ['🌈', '☁️', '🍬'], fly: '🎈' },
+    { n: 'Ночной город', sky: 'linear-gradient(#0d1b4a,#283593)', gr: '#37474f', fl: '🏠 🌳 🏡 🌳 🏠', top: ['🌕', '⭐', '☁️'], fly: '🦉' }
+  ];
+  var BAL = [{ n: 'Шарики', e: '', r: 50 }, { n: 'Звёздочки', e: '⭐', r: 50 }, { n: 'Пузыри', e: '🫧', r: 50 }, { n: 'Рыбки', e: '🐠', r: 40 }, { n: 'Сердечки', e: '💖', r: 50 }, { n: 'Конфетки', e: '🍬', r: 50 }];
+  var PNT = [{ n: 'Радужная кисть', m: 'rain' }, { n: 'Звёздная кисть', m: 'star' }, { n: 'Огненная кисть', m: 'fire' }, { n: 'Морская кисть', m: 'sea' }];
+  var PNO = [{ n: 'Радужное пианино', k: COL.slice(0, 8) }, { n: 'Тёплое пианино', k: ['#ff8a65', '#ffb74d', '#ffd54f', '#aed581', '#4db6ac', '#4fc3f7', '#9575cd', '#f06292'] }, { n: 'Сладкое пианино', k: ['#f8bbd0', '#e1bee7', '#c5cae9', '#b3e5fc', '#b2dfdb', '#c8e6c9', '#fff9c4', '#ffe0b2'] }, { n: 'Морское пианино', k: ['#006064', '#00838f', '#0097a7', '#00acc1', '#26c6da', '#4dd0e1', '#80deea', '#b2ebf2'] }];
+  var ZOO = [
+    { n: 'Ферма', a: ['🐶', '🐱', '🐮', '🐷', '🐑', '🐔'] }, { n: 'Лес', a: ['🐻', '🦊', '🐰', '🦌', '🐿️', '🦉'] },
+    { n: 'Саванна', a: ['🦁', '🐘', '🦒', '🦓', '🐒', '🦛'] }, { n: 'Океан', a: ['🐳', '🐬', '🐙', '🦀', '🐢', '🐠'] },
+    { n: 'Птицы', a: ['🦜', '🦆', '🐧', '🦩', '🦢', '🐥'] }, { n: 'Насекомые', a: ['🐝', '🐞', '🦋', '🐛', '🐜', '🦗'] }
+  ];
+  var CAT = [];
+  FSTY.forEach(function (s, i) { CAT.push({ k: 'fire', v: i, n: s.n }); });
+  HK.forEach(function (h, i) { DST.forEach(function (d, j) { CAT.push({ k: 'dance', v: i * 4 + j, n: 'Танец' }); }); });
+  SCN.forEach(function (s, i) { CAT.push({ k: 'alive', v: i, n: s.n }); });
+  BAL.forEach(function (s, i) { CAT.push({ k: 'balls', v: i, n: s.n }); });
+  PNT.forEach(function (s, i) { CAT.push({ k: 'paint', v: i, n: s.n }); });
+  PNO.forEach(function (s, i) { CAT.push({ k: 'piano', v: i, n: s.n }); });
+  ZOO.forEach(function (s, i) { CAT.push({ k: 'zoo', v: i, n: s.n }); });
+  CAT.forEach(function (c, i) { c.id = i; });
+  var KIND = { fire: '🎆 Фейерверк', dance: '🕺 Танец', alive: '🌈 Картинка', balls: '🎈 Шарики', paint: '🖌️ Рисуй', piano: '🎹 Пианино', zoo: '🐾 Зверята' };
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function nextGift(kind) {
+    var bag = lsGet('ukc_gbag', null);
+    if (!bag || !bag.length || bag.some(function (x) { return x >= CAT.length; })) bag = shuffle(CAT.map(function (c) { return c.id; }));
+    var idx = -1;
+    for (var i = 0; i < bag.length; i++) if (!kind || CAT[bag[i]].k === kind) { idx = i; break; }
+    if (idx < 0) { bag = shuffle(CAT.map(function (c) { return c.id; })); for (i = 0; i < bag.length; i++) if (!kind || CAT[bag[i]].k === kind) { idx = i; break; } }
+    var id = bag.splice(idx, 1)[0]; lsSet('ukc_gbag', bag);
+    var seen = lsGet('ukc_gseen', []); if (seen.indexOf(id) < 0) { seen.push(id); lsSet('ukc_gseen', seen); }
+    return CAT[id];
+  }
+  function room() {
+    clr();
+    var n = work(), earned = n > 0, seen = lsGet('ukc_gseen', []).length;
+    view.innerHTML = '<div class="row"><a class="btn alt" href="#">← Главная</a></div><h2>🎁 Комната подарков</h2>' +
+      '<div class="gstat' + (earned ? ' gold' : '') + '">' + (earned ? '🌟 Подарок за твою работу! Сегодня ты решил заданий: ' + n : 'Подарок на сегодня. Он открывается всегда. А если ты порешаешь задания, он засияет золотом!') + ' <span class="gcount">Открыто подарков: ' + seen + ' из ' + CAT.length + '</span></div>' +
+      '<div id="gstage" class="gstage"></div>' +
+      '<div class="gpick" id="gpick">' + Object.keys(KIND).map(function (k) { return '<button class="btn alt" type="button" data-t="' + k + '">' + KIND[k] + '</button>'; }).join('') + '</div>';
+    var st = document.getElementById('gstage');
+    function closed() {
+      clr(); st.className = 'gstage';
+      st.innerHTML = '<button class="gbox' + (earned ? ' gold' : '') + '" type="button" id="gbx" aria-label="Открыть подарок"><span>🎁</span></button><p class="gtap">Нажми на подарок!</p>';
+      document.getElementById('gbx').onclick = function () { play(nextGift()); };
+    }
+    function play(g) {
+      clr(); st.className = 'gstage open'; sfx('good'); st.innerHTML = '';
+      var f = { fire: fire, dance: dance, alive: alive, balls: balls, paint: paint, piano: piano, zoo: zoo }[g.k]; f(st, g.v);
+      var cap = document.createElement('div'); cap.className = 'gcap'; cap.textContent = KIND[g.k] + ' · ' + g.n; st.appendChild(cap);
+      var back = document.createElement('button'); back.className = 'btn alt gback'; back.type = 'button'; back.textContent = '🎁 Ещё подарок'; back.onclick = function () { play(nextGift()); }; st.appendChild(back);
+      var cn = view.querySelector('.gcount'); if (cn) cn.textContent = 'Открыто подарков: ' + lsGet('ukc_gseen', []).length + ' из ' + CAT.length;
+    }
+    document.getElementById('gpick').onclick = function (e) { var b = e.target.closest('button'); if (b) play(nextGift(b.getAttribute('data-t'))); };
+    closed();
+  }
+
+  function fire(st, v) {
+    var S = FSTY[v % FSTY.length], c = document.createElement('canvas'); c.className = 'gcv'; st.appendChild(c);
+    var W = c.width = Math.min(900, st.clientWidth || 600), H = c.height = 420, x = c.getContext('2d'), P = [];
+    function burst(px, py) {
+      var col = S.col[Math.floor(Math.random() * S.col.length)];
+      for (var i = 0; i < 46; i++) { var a = Math.random() * 6.283, s = 1.5 + Math.random() * 4.2; P.push({ x: px, y: py, vx: Math.cos(a) * s, vy: Math.sin(a) * s, l: 1, c: Math.random() < .3 ? '#fff176' : col }); }
+      if (!muted) { tone(180 + Math.random() * 200, 0, 0.12, 'square', 0.08); tone(PENT[Math.floor(Math.random() * PENT.length)], 0.05, 0.3, 'triangle', 0.14); }
+    }
+    function loop() { if (!c.isConnected) return; x.fillStyle = 'rgba(10,8,40,.28)'; x.fillRect(0, 0, W, H);
+      P = P.filter(function (p) { return p.l > 0; });
+      P.forEach(function (p) { p.x += p.vx; p.y += p.vy; p.vy += .06; p.vx *= .99; p.l -= .012; x.globalAlpha = Math.max(0, p.l); x.fillStyle = p.c;
+        if (S.shape === 'sq') x.fillRect(p.x, p.y, 6, 6); else if (S.shape === 'dot') { x.beginPath(); x.arc(p.x, p.y, 2.6, 0, 6.283); x.fill(); } else { x.font = '15px sans-serif'; x.fillText(S.shape === 'heart' ? '❤' : '★', p.x, p.y); } });
+      x.globalAlpha = 1; requestAnimationFrame(loop); }
+    x.fillStyle = '#0a0828'; x.fillRect(0, 0, W, H); loop();
+    c.addEventListener('pointerdown', function (e) { var r = c.getBoundingClientRect(); burst((e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height); });
+    melody(MEL[v % MEL.length], .3); var k = 0; timers.push(setInterval(function () { if (c.isConnected && k++ < 14) burst(60 + Math.random() * (W - 120), 60 + Math.random() * 200); }, 650));
+    var h = document.createElement('p'); h.className = 'gtap'; h.textContent = 'Нажимай на небо: пусть будет салют!'; st.appendChild(h);
+  }
+  function dance(st, v) {
+    var k = HK[Math.floor(v / 4) % HK.length], d = DST[v % 4], m = MEL[(v * 3 + 1) % MEL.length];
+    st.insertAdjacentHTML('beforeend', '<div class="gdance"><div class="gbub" id="gbub">' + HER[k] + ' ' + d.n + '!</div><img id="ghero" class="' + d.c + '" src="' + IMG[k] + '" alt=""><div class="gnotes" aria-hidden="true">♪ ♫ ♪ ♫</div></div><p class="gtap">Нажми на героя!</p>');
+    var img = document.getElementById('ghero'), bub = document.getElementById('gbub');
+    melody(m.concat(m), .26);
+    img.onclick = function () { img.classList.remove('jump'); void img.offsetWidth; img.classList.add('jump'); bub.textContent = SAY[Math.floor(Math.random() * SAY.length)]; if (!muted) { tone(PENT[Math.floor(Math.random() * 5)], 0, .25, 'triangle', .18); tone(1047, .12, .3, 'sine', .15); } };
+  }
+  var HER = { simba: 'Симба', tima: 'Тима', yasmin: 'Ясмин', arni: 'Арни', fox: 'Хитринка', prof: 'Профессор', king: 'Король' };
+  function alive(st, v) {
+    var S = SCN[v % SCN.length], Pp = [[2, 'g-n', 523], [4, 'g-r', 659], [1, 'g-p', 784], [6, 'g-k', 880]];
+    st.insertAdjacentHTML('beforeend', '<div class="gscene" style="background:' + S.sky + '"><div class="gsun">' + S.top[0] + '</div><div class="gcl c1">' + S.top[1] + '</div><div class="gcl c2">' + S.top[2] + '</div><div class="gbird">' + S.fly + '</div><div class="ghill" style="background:' + S.gr + '"></div>' +
+      Pp.map(function (p) { return '<button type="button" class="gpc ' + p[1] + '" data-f="' + p[2] + '" aria-label="Фигура">' + pcHTML(p[0]) + '</button>'; }).join('') +
+      '<div class="gfl" aria-hidden="true">' + S.fl + '</div></div><p class="gtap">Нажимай на фигурки!</p>');
+    st.querySelector('.gscene').onclick = function (e) { var b = e.target.closest('.gpc'); if (!b) return; b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit'); if (!muted) { var f = +b.getAttribute('data-f'); tone(f, 0, .3, 'triangle', .18); tone(f * 1.5, .1, .3, 'sine', .12); } };
+    melody([523, 659, 784, 659, 523, 659, 784, 1047].map(function (f) { return f * (1 + (v % 3) * 0.0); }), .32, 'sine', .1);
+  }
+  function balls(st, v) {
+    var S = BAL[v % BAL.length];
+    st.insertAdjacentHTML('beforeend', '<div class="gball" id="gball"></div><p class="gtap" id="gbt">Лопай ' + S.n.toLowerCase() + ' пальцем!</p>');
+    var box = document.getElementById('gball'), left = 0;
+    function spawn() {
+      box.innerHTML = ''; left = 12;
+      for (var i = 0; i < 12; i++) { var b = document.createElement('button'); b.type = 'button'; b.className = 'gbl' + (S.e ? ' em' : ''); b.setAttribute('aria-label', S.n);
+        b.style.cssText = 'left:' + (4 + (i % 6) * 15.5) + '%;top:' + (6 + Math.floor(i / 6) * 40 + Math.random() * 10) + '%;' + (S.e ? '' : 'background:' + COL[i % COL.length] + ';') + 'animation-delay:' + (-Math.random() * 3) + 's';
+        if (S.e) b.textContent = S.e;
+        b.onclick = function () { if (this.classList.contains('pop')) return; this.classList.add('pop'); var el = this; setTimeout(function () { el.remove(); }, 180); if (!muted) tone(PENT[Math.floor(Math.random() * PENT.length)], 0, .22, 'triangle', .2); left--; if (left <= 0) { sfx('win'); try { confetti(80); } catch (e) {} document.getElementById('gbt').textContent = 'Ура! Всё собрано!'; later2(spawn, 1600); } };
+        box.appendChild(b); }
+    }
+    spawn();
+  }
+  function paint(st, v) {
+    var S = PNT[v % PNT.length], c = document.createElement('canvas'); c.className = 'gcv gpaint'; st.appendChild(c);
+    var W = c.width = Math.min(900, st.clientWidth || 600), H = c.height = 420, x = c.getContext('2d'), down = false, hue = 0, last = null;
+    x.fillStyle = S.m === 'sea' ? '#0d47a1' : '#12113a'; x.fillRect(0, 0, W, H);
+    function pt(e) { var r = c.getBoundingClientRect(); return { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height }; }
+    function dot(p) {
+      hue = (hue + 7) % 360;
+      if (S.m === 'rain') { x.fillStyle = 'hsl(' + hue + ',90%,60%)'; x.beginPath(); x.arc(p.x, p.y, 13, 0, 6.283); x.fill(); }
+      else if (S.m === 'star') { x.font = (16 + Math.random() * 18) + 'px sans-serif'; x.fillText(Math.random() < .5 ? '⭐' : '✨', p.x - 10, p.y + 8); }
+      else if (S.m === 'fire') { x.fillStyle = 'hsl(' + (10 + Math.random() * 45) + ',100%,55%)'; x.beginPath(); x.arc(p.x + (Math.random() - .5) * 14, p.y + (Math.random() - .5) * 14, 5 + Math.random() * 9, 0, 6.283); x.fill(); }
+      else { x.font = '26px sans-serif'; x.fillText(['🐠', '🫧', '🐚', '🪸', '🐟'][Math.floor(Math.random() * 5)], p.x - 12, p.y + 10); }
+      if (!muted && Math.random() < .35) tone(PENT[Math.floor(hue / 52) % PENT.length], 0, .12, 'sine', .08);
+    }
+    c.addEventListener('pointerdown', function (e) { down = true; try { c.setPointerCapture(e.pointerId); } catch (x2) {} dot(pt(e)); });
+    c.addEventListener('pointermove', function (e) { if (down) dot(pt(e)); });
+    c.addEventListener('pointerup', function () { down = false; });
+    var h = document.createElement('p'); h.className = 'gtap'; h.textContent = 'Води пальцем и рисуй волшебство!'; st.appendChild(h);
+  }
+  function piano(st, v) {
+    var S = PNO[v % PNO.length], F = [523, 587, 659, 698, 784, 880, 988, 1047];
+    st.insertAdjacentHTML('beforeend', '<div class="gkeys">' + F.map(function (f, i) { return '<button type="button" class="gkey" data-f="' + f + '" style="background:' + S.k[i] + '" aria-label="нота">' + (i + 1) + '</button>'; }).join('') + '</div><p class="gtap">Играй! Нажимай на клавиши.</p>');
+    function hit(b) { b.classList.add('on'); setTimeout(function () { b.classList.remove('on'); }, 160); if (!muted) { var f = +b.getAttribute('data-f'); tone(f, 0, .45, 'triangle', .22); } }
+    st.querySelector('.gkeys').addEventListener('pointerdown', function (e) { var b = e.target.closest('.gkey'); if (b) hit(b); });
+    var keys = st.querySelectorAll('.gkey'), m = [0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0], i = 0;
+    timers.push(setInterval(function () { if (!st.isConnected || i >= m.length) return; hit(keys[m[i]]); i++; }, 420));
+  }
+  function zoo(st, v) {
+    var S = ZOO[v % ZOO.length];
+    st.insertAdjacentHTML('beforeend', '<div class="gzoo">' + S.a.map(function (a, i) { return '<button type="button" class="gan" data-i="' + i + '" style="animation-delay:' + (-i * .3) + 's">' + a + '</button>'; }).join('') + '</div><p class="gtap" id="gzt">Нажми на зверька!</p>');
+    st.querySelector('.gzoo').addEventListener('click', function (e) { var b = e.target.closest('.gan'); if (!b) return; b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit'); if (!muted) { var i = +b.getAttribute('data-i'); tone(260 + i * 90, 0, .16, 'square', .1); tone(520 + i * 120, .1, .2, 'triangle', .16); } document.getElementById('gzt').textContent = SAY[Math.floor(Math.random() * SAY.length)]; });
+  }
+  window.__gift = function () { room(); };
+
+  /* кнопка 🎁 везде, карточка на главной */
+  var oldHome = home;
+  home = function () { oldHome(); var c = view.querySelector('a.card'); if (c && c.parentNode && !view.querySelector('a.card[href="#gift"]')) { var a = document.createElement('a'); a.className = 'card'; a.href = '#gift'; a.innerHTML = '<span class="ch gico">🎁</span><span class="big">Подарки</span><p>Фейерверк, танцы, шарики и ожившие картинки. Открывай, когда захочешь!</p>'; c.parentNode.insertBefore(a, c); } };
+  var fb = document.createElement('a'); fb.id = 'giftFab'; fb.href = '#gift'; fb.setAttribute('aria-label', 'Подарки'); fb.textContent = '🎁'; document.body.appendChild(fb);
+  function vis() { fb.style.display = (location.hash || '') === '#gift' ? 'none' : ''; }
+  window.addEventListener('hashchange', vis); vis();
 })();
 
 /* ===== защита от «невозможных» позиций во всех упражнениях (лишние слоны, два слона одного цвета и т.п.) ===== */
@@ -14130,7 +14489,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   function route() {
     clearTimers(); view.onclick = null;
     var parts = (location.hash || '#home').slice(1).split('/'), r = parts[0];
-    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons', 'coords', 'games', 'diploma', 'exam', 'parents'].indexOf(r) < 0) r = 'home';
+    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons', 'coords', 'games', 'diploma', 'exam', 'parents', 'gift'].indexOf(r) < 0) r = 'home';
     document.body.classList.toggle('y2', r === 'y2'); document.body.classList.toggle('home', r === 'home');
     var m = document.getElementById('modal'); if (m) m.remove();
     document.body.classList.toggle('onboard', r === 'board');
@@ -14145,6 +14504,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     else if (r === 'awards') { awards(); if (window.__dipCard) window.__dipCard(); }
     else if (r === 'diploma') window.__diploma();
     else if (r === 'exam') window.__exam(parts);
+    else if (r === 'gift') window.__gift(parts);
     else if (r === 'parents') window.__parents();
     else if (r === 'cartoons') cartoons();
     else if (r === 'coords') window.__coords(parts);
