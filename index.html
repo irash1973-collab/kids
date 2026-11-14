@@ -274,6 +274,13 @@ a.card:hover { border-color: var(--red); }
 .sq.l .co { color: #4a4745; }
 .sq:not(.l) .co { color: #ffffff; text-shadow: 0 0 2px #1b1a19; }
 .sq .co.r { top: 2px; left: 3px; } .sq .co.f { bottom: 1px; right: 3px; }
+.boardbox { --ax: 20px; }
+.boardbox.hasax { padding: 0 0 var(--ax) var(--ax); }
+.axis { position: absolute; display: flex; font-weight: 900; font-size: 15px; color: #2b2a29; pointer-events: none; user-select: none; }
+.axis i { flex: 1; display: grid; place-items: center; font-style: normal; line-height: 1; }
+.ax-r { left: 0; top: 4px; bottom: calc(var(--ax) + 4px); width: var(--ax); flex-direction: column; }
+.ax-f { left: calc(var(--ax) + 4px); right: 4px; bottom: 0; height: var(--ax); }
+.boardbox::after { width: 22px !important; height: 22px !important; right: -10px !important; bottom: -10px !important; }
 .course h3 { margin: 16px 0 6px; }
 .lgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
 .lcard { display: flex; flex-direction: column; gap: 6px; text-align: left; text-decoration: none; color: var(--ink); background: var(--card); border: 2px solid var(--line); border-radius: 20px; padding: 14px 16px; }
@@ -989,6 +996,15 @@ body:has(.ctr-prompt) .board[data-board="bw"]{--sq-light:#fff3d3;--sq-dark:#5d8e
 
 .brandlogo{height:58px;width:auto;border-radius:12px;background:#fff;margin-right:10px;vertical-align:middle;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .brand{display:inline-flex;align-items:center}
+.gk-cards{display:grid;gap:8px;max-width:460px;margin:10px auto}.gk-card{height:86px;border-radius:14px;border:3px solid #fff;background:linear-gradient(135deg,#ff7eb3,#ffb347);font-size:32px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25);padding:2px}.gk-card.up{background:#fff;color:#222;border-color:#f5b800}.gk-card.done{background:#d7f7d0;border-color:#3cb043;cursor:default}.gk-card .pcs{width:62px;height:62px}.gk-card svg.mb{width:68px;height:68px;border-radius:4px}.gk-card b{font-size:19px}
+.gk-pz-top{text-align:center;margin:6px 0}.gk-pz-th{width:96px;height:96px;border-radius:10px;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.3)}.gk-pz{display:grid;gap:3px;max-width:440px;margin:8px auto;background:#fff;padding:3px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.25)}.gk-pzc{padding:0;border:3px solid transparent;border-radius:6px;background:none;cursor:pointer;line-height:0;overflow:hidden}.gk-pzc svg{width:100%;height:auto;display:block}.gk-pzc.ok{border-color:#3cb043}.gk-pzc.sel{border-color:#f5b800;transform:scale(.94)}
+.blkstrip{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}.gbchip{padding:6px 12px;border-radius:999px;color:#fff;font-weight:700;text-decoration:none;font-size:14px;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.gb{border-radius:16px;padding:10px 12px 14px;margin:16px 0;border:3px solid var(--gc,#999);background:var(--gb,#fff)}.gb>h3{margin:-10px -12px 10px;padding:9px 14px;border-radius:12px 12px 0 0;background:var(--gc,#999);color:#fff;font-size:20px}.gb>h3 .note{color:rgba(255,255,255,.9)}.gb .lcard{border-color:var(--gc,#999)}.gb .lcard .big{color:var(--gd,#222)}
+.gb1,.gbchip.gb1{--gc:#f2a900;--gb:#fff8e1;--gd:#9a6a00}.gb2,.gbchip.gb2{--gc:#e0343a;--gb:#fff0f0;--gd:#b01c22}.gb3,.gbchip.gb3{--gc:#2e9e4f;--gb:#effaf1;--gd:#1f7a3a}.gb4,.gbchip.gb4{--gc:#2f7fd6;--gb:#eef5ff;--gd:#1f5ca8}.gb5,.gbchip.gb5{--gc:#8a4fd1;--gb:#f6f0ff;--gd:#6a37a8}.gb6,.gbchip.gb6{--gc:#ee7a1c;--gb:#fff3e8;--gd:#b95a0c}.gb7,.gbchip.gb7{--gc:#8a5a2b;--gb:#fbf3ea;--gd:#6b4420}.gb8,.gbchip.gb8{--gc:#6b7280;--gb:#f4f5f7;--gd:#4b5563}
+.gbchip{background:var(--gc)}
+.parents{background:#fff;border:3px solid #2f7fd6;border-radius:18px;padding:14px 16px;margin:18px 0}.parents h2{margin:6px 0 8px}.parents h3{margin:14px 0 4px}.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:10px 0}.pc{border-radius:12px;padding:8px 10px;color:#222;border-left:8px solid var(--c)}.pc h3{margin:0 0 3px;font-size:16px}.pc p{margin:0;font-size:14px}.pc1{--c:#f2a900;background:#fff8e1}.pc2{--c:#e0343a;background:#fff0f0}.pc3{--c:#2e9e4f;background:#effaf1}.pc4{--c:#2f7fd6;background:#eef5ff}.pc5{--c:#8a4fd1;background:#f6f0ff}.pc6{--c:#ee7a1c;background:#fff3e8}.pc7{--c:#8a5a2b;background:#fbf3ea}.pwarn{background:#fff3c4;border:2px solid #f5b800;border-radius:12px;padding:10px 12px;margin:12px 0}
+
+#comp{left:6px;bottom:6px}#comp img{width:42px;height:42px;border-width:2px}#comp .cx{width:18px;height:18px;font-size:12px;top:-6px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2101,7 +2117,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     applyTheme();
     var hh = location.hash || '', hlOn = !!lsGet('ukc_g', {}).hl, tgMode = document.body.classList.contains('y2') ? 'soft' : (!hlOn ? 'none' : (S.teach ? 'bright' : 'soft'));
     el.dataset.tg = tgMode;
-    var checkSq = E.inCheck(S.pos) ? E.kingSq(S.pos.b, S.pos.turn) : -1;
+    var checkSq = (!S.nochk && E.inCheck(S.pos)) ? E.kingSq(S.pos.b, S.pos.turn) : -1;
     var html = '';
     for (var k = 0; k < 64; k++) {
       var i = S.flip ? 63 - k : k, x = i % 8, y = (i / 8) | 0, v = S.pos.b[i];
@@ -2118,15 +2134,21 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (mk === 'wall') cls += ' wall';
       var emo = typeof mk === 'string' && (mk.charAt(0) === 'e' || mk.charAt(0) === 'w') && mk.charAt(1) === ':' ? mk.slice(2) : '';
       if (emo && mk.charAt(0) === 'w') cls += ' ewall';
-      if (S.coords !== false) {
-        if (x === (S.flip ? 7 : 0)) co += '<i class="co r">' + (8 - y) + '</i>';
-        if (y === (S.flip ? 0 : 7)) co += '<i class="co f">' + 'abcdefgh'[x] + '</i>';
-      }
       var label = (v ? (v > 0 ? 'белый ' : 'чёрный ') + PNAME[Math.abs(v)] : mk === 'wall' ? 'стена' : mk === 'star' ? 'звезда' : mk === 'flag' ? 'флажок' : 'пустое поле') + ', ' + SQN(i);
       html += '<button class="' + cls + '" data-i="' + i + '" aria-label="' + label + '">' +
         (v ? pcHTML(v) : '') + (bdg ? '<span class="bdg b-' + bdg.cls + '">' + bdg.s + '</span>' : '') + (emo ? '<span class="mk em">' + emo + '</span>' : mk === 'star' ? '<span class="mk">★</span>' : mk === 'flag' ? '<span class="mk fl">⚑</span>' : '') + co + '</button>';
     }
     el.innerHTML = html; applyAnim(el, S);
+    var bxx = el.parentNode;
+    if (bxx && bxx.classList && bxx.classList.contains('boardbox')) {
+      Array.prototype.forEach.call(bxx.querySelectorAll(':scope > .axis'), function (n) { bxx.removeChild(n); });
+      var ax = S.coords !== false; bxx.classList.toggle('hasax', ax);
+      if (ax) {
+        var rs = '', fs = '', q;
+        for (q = 0; q < 8; q++) { rs += '<i>' + (S.flip ? q + 1 : 8 - q) + '</i>'; fs += '<i>' + 'abcdefgh'[S.flip ? 7 - q : q] + '</i>'; }
+        bxx.insertAdjacentHTML('beforeend', '<div class="axis ax-r" aria-hidden="true">' + rs + '</div><div class="axis ax-f" aria-hidden="true">' + fs + '</div>');
+      }
+    }
     el.onclick = function (e) { var b = e.target.closest('.sq'); if (b) onClick(+b.dataset.i); };
   }
   function movesFrom(pos, i) { return E.legal(pos).filter(function (m) { return m.f === i; }); }
@@ -2166,7 +2188,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<a class="card" href="#lessons"><img class="ch" src="' + IMG.prof + '" alt=""><span class="big">Уроки</span><p>История шахмат, доска, ходы фигур со звёздочками и лабиринтами, шах, мат и ловушки.</p><span class="pill">' + lessonSummary() + '</span></a>' +
       '</div>' +
       '<section><h2>Наши герои</h2><div class="heroes" style="margin-top:12px">' + hh + '</div>' +
-      '<p class="note" style="margin-top:10px">Герои из книги «Шахматная страна».</p></section>' + videoCard() + clubPromo();
+      '<p class="note" style="margin-top:10px">Герои из книги «Шахматная страна».</p></section>' + videoCard() + parentsBlock() + clubPromo();
     var knb = document.getElementById('knb'); if (knb) knb.onclick = openProfile;
   }
   /* ---------- Профиль: имя и сохранение прогресса ---------- */
@@ -2215,6 +2237,23 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function cartoons() {
     view.innerHTML = '<h2>Мультики: знакомство с фигурами</h2><p class="note">Смотри, как живут шахматные фигуры. Нажми на кнопку «играть» у видео.</p><div class="vgrid">' + CARTOONS.map(vcard).join('') + SOON.map(function (n) { return '<div class="vcard soon"><h3>' + esc(n) + '</h3><div class="vsoon">Скоро</div><p class="note">Мультик про фигуру скоро появится.</p></div>'; }).join('') + '</div>';
   }
+  function parentsBlock() {
+    return '<section class="parents"><span class="tag">Для родителей</span><h2>Первый год обучения: что даёт курс</h2>' +
+      '<p><b>Уровень.</b> От новичка до 4-го разряда (при хорошей работе и до 3-го). Курс рассчитан на детей, которые только начинают играть.</p>' +
+      '<div class="pgrid">' +
+      '<div class="pc pc1"><h3>🌟 Знакомство</h3><p>Шахматная доска, история, фигуры и их расстановка.</p></div>' +
+      '<div class="pc pc2"><h3>♞ Фигуры и их ходы</h3><p>Ладья, слон, ферзь, конь, король, пешка.</p></div>' +
+      '<div class="pc pc3"><h3>🛡️ Ценность и защита</h3><p>Сколько стоит каждая фигура, как нападать и защищаться, выгодные и невыгодные размены.</p></div>' +
+      '<div class="pc pc4"><h3>📘 Правила игры</h3><p>Рокировка, взятие на проходе, превращение пешки, шах, мат, ничья, запись партии.</p></div>' +
+      '<div class="pc pc5"><h3>👑 Мат</h3><p>Мат ферзём, ладьёй, двумя ладьями, мат в 1 и 2 хода.</p></div>' +
+      '<div class="pc pc6"><h3>⚔️ Тактика</h3><p>Двойной удар, связка, вскрытое нападение, выигрыш фигуры.</p></div>' +
+      '<div class="pc pc7"><h3>♟️ Пешечные окончания</h3><p>Правило квадрата, оппозиция, проведение пешки в ферзи.</p></div>' +
+      '</div>' +
+      '<h3>Сколько нужно пройти</h3><p>Чтобы подойти к 4-му разряду, достаточно пройти около <b>80% упражнений</b> и сдать итоговый тест. Звёзды и баллы показывают, как идут успехи. Хорошо заниматься <b>3–4 раза в неделю по 20–30 минут</b>.</p>' +
+      '<h3>Как заниматься</h3><p>Идите по блокам по порядку: сначала объяснение, потом упражнения. Подсказка снижает оценку, а задание с показанным ответом не засчитывается: пусть ребёнок решает сам. Если не получилось, лучше вернуться к заданию позже.</p>' +
+      '<div class="pwarn"><b>Важно.</b> Многие темы довольно сложные, и без профессиональной помощи разобраться в них трудно. Поэтому лучше заниматься <b>вместе с тренером</b>: он объяснит трудное, проверит понимание и вовремя исправит ошибки.</div>' +
+      '<p><a class="btn go" href="https://wa.me/994503850617" target="_blank" rel="noopener">Написать в WhatsApp</a> <a class="btn alt" href="https://www.upgradechessclub.com" target="_blank" rel="noopener">Сайт клуба</a></p></section>';
+  }
   function clubPromo() {
     var logo = '<svg class="uplogo" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fff" stroke="#d7261e" stroke-width="3"/><use href="#pb1" x="10" y="12" width="34" height="34"/><path d="M48 44V18M40 26l8-9 8 9" fill="none" stroke="#d7261e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     return '<section class="clubpromo"><div class="cph">' + logo + '<div><span class="tag">UpGrade Chess Club</span><h2>Хочешь играть ещё лучше?</h2></div></div>' +
@@ -2227,7 +2266,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<div class="cpbox"><h3>Хорошо играешь? Попробуй настоящие турниры!</h3>' +
       '<p>По выходным у нас проходят <b>международные турниры онлайн</b> на профессиональной шахматной платформе <b>Lichess</b>. Играть можно из любой страны: вступай в наш клуб и проверь свою силу!</p>' +
       '<div class="row"><a class="btn go" href="https://lichess.org/team/upgrade-shaxmat-klubu" target="_blank" rel="noopener">Наш клуб на Lichess</a><a class="btn alt" href="https://www.upgradechessclub.com" target="_blank" rel="noopener">Сайт клуба</a></div></div>' +
-      '<h3>Мы в интернете</h3><div class="row cpsoc"><a class="btn alt" href="https://www.instagram.com/upgrade_chess_club" target="_blank" rel="noopener">Instagram</a><a class="btn alt" href="https://www.facebook.com/upgradechessclub" target="_blank" rel="noopener">Facebook</a><a class="btn alt" href="https://www.youtube.com/@upgradechess" target="_blank" rel="noopener">YouTube</a></div></section>';
+      '<h3>Мы в интернете</h3><div class="row cpsoc"><a class="btn alt" href="https://www.instagram.com/upgrade_chess_club" target="_blank" rel="noopener">Instagram</a><a class="btn alt" href="https://www.facebook.com/upgradechessclub" target="_blank" rel="noopener">Facebook</a><a class="btn alt" href="https://www.youtube.com/@upgradechess" target="_blank" rel="noopener">YouTube</a><a class="btn alt" href="https://wa.me/994503850617" target="_blank" rel="noopener">WhatsApp</a><a class="btn alt" href="https://t.me/Upgradechessclub" target="_blank" rel="noopener">Telegram</a><a class="btn alt" href="https://www.chess.com/club/upgrade-chess-club-for-juniors" target="_blank" rel="noopener">Chess.com</a><a class="btn alt" href="https://worldchess.com/ru/community/upgrade-chess-club" target="_blank" rel="noopener">FIDE World Chess Arena</a></div></section>';
   }
 
   /* ---------- Награды ---------- */
@@ -2748,7 +2787,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     } else {
       (code === 'R' ? D8.slice(0, 4) : code === 'B' ? D8.slice(4) : D8).forEach(function (d) {
         var nx = x + d[0], ny = y + d[1];
-        while (ok(nx, ny)) { out.push(ny * 8 + nx); nx += d[0]; ny += d[1]; }
+        while (ok(nx, ny)) { out.push(ny * 8 + nx); if (en[ny * 8 + nx]) break; nx += d[0]; ny += d[1]; }
       });
     }
     return out;
@@ -2907,7 +2946,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     for (var attempt = 0; attempt < 300; attempt++) {
       var r = mkRng(hstr('pc' + code + lv + '_' + (seedx || 0)) + attempt * 977), maze = lv > 15, k = maze ? Math.ceil((lv - 15) * 2 / 3) : Math.ceil(lv * 2 / 3), ex;
-      var hunt = code !== 'P' && (code === 'K' ? lv % 2 === 0 && lv > 4 : lv % 4 === 0);
+      var hunt = code !== 'P' && (code === 'K' ? [8, 14, 20, 26].indexOf(lv) >= 0 : [8, 16, 24].indexOf(lv) >= 0);
       if (code === 'P') ex = genPawn(r, maze, k); else if (hunt) ex = genHunt(code, r, k); else ex = genLone(code, r, maze, k);
       if (ex && solveEx(ex)) { var th0 = ex.theme; ex.code = code; ex.lv = lv; ex.opt = solveEx(ex).len; if (hunt) ex.theme = th0; else if (code !== 'P') ex.theme = lvTheme(code, lv, ex); return ex; }
     }
@@ -3249,7 +3288,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function lessons() {
     var h = '', st = lessonStats();
     GROUPS.forEach(function (g) {
-      h += '<section class="course"><h3>' + esc(g.n) + ' <small class="note">(' + lessonsOf(g.ids) + ' из ' + g.ids.length + ')</small></h3><div class="lgrid">';
+      h += '<section class="course gb gb' + (g.k || 0) + '" id="blk' + (g.k || 0) + '"><h3>' + (g.ic ? g.ic + ' ' : '') + esc(g.n) + ' <small class="note">(' + lessonsOf(g.ids) + ' из ' + g.ids.length + ')</small></h3><div class="lgrid">';
       g.ids.forEach(function (id) {
         var L = LESS[id], n = L.levels || 1, done = 0; for (var i = 1; i <= n; i++) if (lvDone(id, i)) done++;
         h += '<a class="lcard' + (done === n ? ' done' : '') + '" href="#lesson/' + id + '"><span class="big">' + esc(L.t) + '</span><p>' + esc(L.d) + '</p>' +
@@ -3269,7 +3308,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
   function lessonPage(id, lv) {
     var L = LESS[id]; if (!L) { lessons(); return; }
-    var isBall = /^g[cp][A-Z]$/.test(L.id), head = '<div class="row"><a class="btn alt" href="' + (isBall ? '#games' : '#lessons') + '">' + (isBall ? '← Игротека' : '← Все уроки') + '</a></div><h2>' + esc(L.t) + '</h2>';
+    var isBall = /^g[cp][A-Z]$/.test(L.id) || L.id === 'pawns', head = '<div class="row"><a class="btn alt" href="' + (isBall ? '#games' : '#lessons') + '">' + (isBall ? '← Игротека' : '← Все уроки') + '</a></div><h2>' + esc(L.t) + '</h2>';
     var lr = '';
     if (L.levels) {
       lr = '<div class="lvrow" role="group" aria-label="Упражнения">' + (L.slides ? '<a class="lvn' + (lv === 0 ? ' cur' : '') + '" href="#lesson/' + id + '" aria-label="Объяснение" style="display:grid;place-items:center;text-decoration:none">📖</a>' : '');
@@ -3286,13 +3325,28 @@ if (typeof module !== 'undefined') module.exports = Eng;
     if (lv === 0 && L.slides) { showSlides(host, L, 0); return; }
     if (!L.levels) { showSlides(host, L, 0); return; }
     if (lv < 1) lv = 1; if (lv > L.levels) lv = L.levels;
+    window.__help = { h: 0, a: 0, done: false };
     var finish = function (stars) {
+      var H = window.__help || { h: 0, a: 0 }; H.done = true;
+      if (H.a || stars <= 0) {
+        /* ответ показан или задание не решено сам: ни звёзд, ни баллов */
+        var fb = document.createElement('div'); fb.className = 'slide resbox';
+        sfx('bad');
+        var mm = host.querySelector('#msg') || host.querySelector('#sm'); if (mm) { mm.className = 'msg bad'; mm.textContent = H.a ? 'Ты не решил это задание сам. Ответ был показан, поэтому звёзды и баллы не засчитаны.' : 'Три ошибки. Задание не решено, звёзды и баллы не засчитаны.'; }
+        fb.innerHTML = '<h3>Не решил, попробуй ещё раз</h3><p>Задание решают сами, без показанного ответа. Нажми «Ещё раз», и у тебя получится!</p><div class="row">' + (lv < L.levels ? '<a class="btn alt" href="#lesson/' + id + '/' + (lv + 1) + '">Дальше</a>' : '') + '<a class="btn" href="#lesson/' + id + '/' + lv + '" id="again">Ещё раз</a></div>';
+        var anc0 = host.querySelector('#msg'); if (anc0) anc0.parentNode.insertBefore(fb, anc0.nextSibling); else host.appendChild(fb); fb.scrollIntoView({ block: 'nearest' });
+        fb.querySelector('#again').onclick = function (e) { e.preventDefault(); lessonPage(id, lv); };
+        return;
+      }
+      var helpNote = '';
+      if (H.h >= 2) { stars = Math.min(stars, 1); helpNote = '<p class="note">Ты пользовался подсказками, поэтому звёзд меньше. Попробуй в следующий раз без подсказок!</p>'; }
+      else if (H.h === 1) { stars = Math.min(stars, 2); helpNote = '<p class="note">Ты пользовался подсказкой, поэтому звёзд меньше.</p>'; }
       var r = saveLv(L, lv, stars), box = document.createElement('div'); box.className = 'slide resbox';
       sfx('win'); confetti(60 + stars * 30);
       if (r.gain) addPts(r.gain, 'за упражнение');
       var nm = r.full ? lessonMedal() : [];
       box.innerHTML = '<h3>' + esc(praise()) + '</h3><div class="bigstars" aria-label="' + stars + ' из 3 звёзд">' + [1, 2, 3].map(function (i) { return '<span style="animation-delay:' + (i * 0.2) + 's">' + starSvg(i <= stars) + '</span>'; }).join('') + '</div>' +
-        (r.full ? '<p><b>Урок пройден! +30 баллов</b></p>' : '') +
+        helpNote + (r.full ? '<p><b>Урок пройден! +30 баллов</b></p>' : '') +
         '<div class="row">' + (lv < L.levels ? '<a class="btn" href="#lesson/' + id + '/' + (lv + 1) + '">Дальше</a>' : '<a class="btn" href="#lessons">К урокам</a>') + '<a class="btn alt" href="#lesson/' + id + '/' + lv + '" id="again">Ещё раз</a></div>';
       var anc = host.querySelector('#msg'); if (anc) anc.parentNode.insertBefore(box, anc.nextSibling); else host.appendChild(box); box.scrollIntoView({ block: 'nearest' });
       if (r.full) { addPts(30, 'за весь урок'); }
@@ -3597,9 +3651,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (okf(m, before, np)) {
         done = true; draw();
         setMsg(helped ? 'Вот правильный ход: ' + notation(m, before) + '. ' + (T.good ? T.good(m, before, np) : '') + ' Теперь реши другое сама!' : (T.good ? T.good(m, before, np) : 'Верно!'), 'good');
-        if (!helped) finish(mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1);
+        finish(helped ? 0 : mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1);
       } else {
         mistakes++; busy = true; sfx('bad'); draw(); setMsg(T.bad ? T.bad(m, before, np) : 'Не то. Попробуй ещё!', 'bad');
+        if (mistakes >= 3) { done = true; later(function () { finish(0); }, 1200); return; }
         later(function () { S.pos = before; S.last = T.last || null; busy = false; draw(); }, 1700);
       }
     }
@@ -3633,7 +3688,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     draw();
   }
   function runYN(host, L, lv, T, finish) {
-    var S = { pos: T.pos, sel: null, targets: [], last: T.last || null, hint: null, flip: false, coords: true, mark: {}, hl: T.hl || null }, mistakes = 0, done = false;
+    var S = { pos: T.pos, nochk: !!T.nochk, sel: null, targets: [], last: T.last || null, hint: null, flip: false, coords: true, mark: {}, hl: T.hl || null }, mistakes = 0, done = false;
     var obt = T.opts ? T.opts.map(function (o, i) { return '<button data-o="' + i + '">' + o + '</button>'; }).join('') : '<button data-o="1">Да</button><button data-o="0">Нет</button>';
     host.innerHTML = say(av('prof'), 'Вопрос ' + lv, T.q, T.opts ? 'выбери ответ' : 'ответь «Да» или «Нет»') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + obt + '</div>';
     var msg = document.getElementById('msg');
@@ -3642,7 +3697,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var b = e.target.closest('button'); if (!b || done) return;
       var right = T.opts ? (+b.dataset.o === T.right) : (b.dataset.o === '1') === T.ans;
       if (right) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + T.expl; sfx('good'); finish(mistakes === 0 ? 3 : 2); }
-      else { b.className = 'bad'; mistakes++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Подумай ещё раз. Подсказка: ' + (T.hint || 'вспомни правило из урока.'); }
+      else { b.className = 'bad'; mistakes++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Подумай ещё раз. Подсказка: ' + (T.hint || 'вспомни правило из урока.'); if (mistakes >= 3) { done = true; later(function () { finish(0); }, 1200); } }
     };
   }
 
@@ -4104,7 +4159,64 @@ if (typeof module !== 'undefined') module.exports = Eng;
       document.getElementById('again').onclick = function () { lessonPage(L.id, lv); };
       draw();
     }
-    LESS.pawns = { id: 'pawns', t: 'Пешечные бои', d: 'Сразись с пешками: доведи свою пешку до края раньше соперника.', levels: 10, run: runPawns, slides: [
+    /* ---- уровни 11–14: пешки, король и фигуры на начальных местах; игра по настоящим правилам до мата ---- */
+    var CH = [
+      { fen: 'r3k3/pppppppp/8/8/8/8/PPPPPPPP/R3K3 w - - 0 1', name: 'пешки, король и ладья', lv: 15 },
+      { fen: '2b1kb2/pppppppp/8/8/8/8/PPPPPPPP/2B1KB2 w - - 0 1', name: 'пешки, король и два слона', lv: 16 },
+      { fen: '3qk3/pppppppp/8/8/8/8/PPPPPPPP/3QK3 w - - 0 1', name: 'пешки, король и ферзь', lv: 17 },
+      { fen: '1n2k1n1/pppppppp/8/8/8/8/PPPPPPPP/1N2K1N1 w - - 0 1', name: 'пешки, король и два коня', lv: 18 }
+    ];
+    function runChess(host, L, lv, finish) {
+      var C = CH[lv - 11], p0 = E.fromFEN(C.fen); E.clear();
+      var you = 1, G, over = false, busy = false;
+      function fresh() { E.clear(); G = { pos: p0, hh: [E.hashOf(p0)], keys: {}, sel: null, targets: [], last: null, hint: null, flip: you === -1, coords: true, mark: {}, hl: null }; G.keys[E.key(p0)] = 1; over = false; busy = false; }
+      fresh();
+      host.innerHTML = say(av('arni'), 'Бой ' + lv + ': ' + C.name, 'Играем по настоящим правилам: у каждого ' + C.name + '. Фигуры стоят на своих местах. Выбери цвет: белыми или чёрными. Выигрывает тот, кто поставит мат. Не зевай и береги фигуры!', 'уровень ' + (lv - 10) + ' из 4') +
+        '<div class="seg" id="side" role="group" aria-label="Цвет фигур"><button data-c="1" aria-pressed="true">Играю белыми</button><button data-c="-1" aria-pressed="false">Играю чёрными</button></div>' + boardHTML() + '<div id="promo" class="promo" hidden></div><div class="msg" id="msg" role="status" aria-live="polite">Твой ход.</div><div class="row"><button class="btn alt" id="again">Начать заново</button></div>';
+      var msg = document.getElementById('msg');
+      function setMsg(x, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = x; }
+      function draw() { drawBoard(G, click); }
+      function apply(m) {
+        var before = G.pos; G.pos = E.make(before, m); G.last = { f: m.f, t: m.t }; G.anim = animOf(before, m); G.sel = null; G.targets = []; moveSound(before, m, G.pos);
+        var k = E.key(G.pos); G.keys[k] = (G.keys[k] || 0) + 1; G.hh.push(E.hashOf(G.pos));
+      }
+      function check() {
+        var st = E.status(G.pos);
+        if (st === 'mate') { over = true; draw(); if (G.pos.turn === -you) { setMsg('Мат! Ты победил!', 'good'); finish(3); } else { sfx('bad'); setMsg('Мат. Робот победил. Нажми «Начать заново» и сыграй ещё!', 'bad'); } return true; }
+        var d = st === 'stalemate' ? 'Пат: ходить некуда, но шаха нет. Это ничья.' : E.insufficient(G.pos) ? 'Ничья: мало фигур для мата.' : G.pos.half >= 100 ? 'Ничья по правилу 50 ходов.' : G.keys[E.key(G.pos)] >= 3 ? 'Ничья: позиция повторилась три раза.' : '';
+        if (d) { over = true; draw(); setMsg(d + ' Нажми «Начать заново» и попробуй выиграть.', ''); return true; }
+        return false;
+      }
+      function robot() {
+        busy = true; draw(); setMsg('Соперник думает…');
+        later(function () {
+          var m = E.bestMove(G.pos, C.lv, G.hh.slice(0, -1)); if (m) apply(m);
+          busy = false; draw(); if (check()) return;
+          setMsg(E.inCheck(G.pos) ? 'Тебе шах! Защити короля.' : 'Твой ход.', E.inCheck(G.pos) ? 'bad' : '');
+        }, 450);
+      }
+      function play(m) { document.getElementById('promo').hidden = true; apply(m); draw(); if (check()) return; if (E.inCheck(G.pos)) setMsg('Шах!'); robot(); }
+      function click(i) {
+        if (busy || over) return;
+        var v = G.pos.b[i];
+        if (G.sel != null && G.targets.indexOf(i) >= 0) {
+          var cands = movesFrom(G.pos, G.sel).filter(function (x) { return x.t === i; });
+          if (cands.length > 1) {
+            var el = document.getElementById('promo'); el.hidden = false; el.innerHTML = '<p>Во что превратить пешку?</p>' + cands.map(function (c, k) { return '<button data-i="' + k + '" aria-label="' + PNAME[c.p] + '">' + pcHTML(c.p) + '</button>'; }).join('');
+            el.onclick = function (e) { var b = e.target.closest('button'); if (b) play(cands[+b.dataset.i]); }; return;
+          }
+          play(cands[0]); return;
+        }
+        if (v * you > 0) { G.sel = i; G.targets = movesFrom(G.pos, i).map(function (m) { return m.t; }); } else { G.sel = null; G.targets = []; }
+        draw();
+      }
+      function sync() { Array.prototype.forEach.call(document.querySelectorAll('#side button'), function (b) { b.setAttribute('aria-pressed', String(+b.dataset.c === you)); }); }
+      function start() { later(function () {}, 0); fresh(); document.getElementById('promo').hidden = true; sync(); setMsg(you === 1 ? 'Твой ход. Ты играешь белыми.' : 'Соперник ходит первым. Ты играешь чёрными.'); draw(); if (you === -1) robot(); }
+      document.getElementById('side').onclick = function (e) { var b = e.target.closest('button'); if (!b) return; you = +b.dataset.c; start(); };
+      document.getElementById('again').onclick = function () { start(); };
+      sync(); draw();
+    }
+    LESS.pawns = { id: 'pawns', t: 'Пешечные бои', d: 'Сразись с роботом: сначала одни пешки, потом пешки с королём и ладьёй, слонами, ферзём, конями.', levels: 14, run: function (h, L, lv, f) { return lv > 10 ? runChess(h, L, lv, f) : runPawns(h, L, lv, f); }, slides: [
       { h: 'Пешечный бой', p: ['В этой игре нет королей и фигур, только пешки. Белые ходят снизу вверх, чёрные сверху вниз. <b>Выигрывает тот, чья пешка первой дойдёт до последней горизонтали.</b> Если у игрока нет ходов, он проигрывает.', 'Пешки ходят вперёд, с начальной позиции могут пройти две клетки, а бьют по диагонали. Береги свои пешки и ищи удобный момент!'], fen: '8/pppppppp/8/8/8/8/PPPPPPPP/8 w - - 0 1' }
     ] };
     var ids = GROUPS[2].ids, at = ids.indexOf('promo'); ids.splice(at + 1, 0, 'pawns');
@@ -4978,7 +5090,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
           { h: 'Свои фигуры не перепрыгнуть', p: ['Через <b>свои фигуры</b> слон не прыгает и на их клетки встать не может. Слон d4 останавливается перед своими пешками f6 и b2. Подсвеченные клетки показывают, куда он может пойти.'], fen: '4k3/8/5P2/8/3B4/8/1P6/4K3 w - - 0 1', hl: [sqIdx('e5'), sqIdx('c5'), sqIdx('b6'), sqIdx('a7'), sqIdx('e3'), sqIdx('f2'), sqIdx('g1'), sqIdx('c3')] },
           { h: 'Чужую фигуру можно взять', p: ['Фигуру <b>соперника</b> слон может взять и встать на её клетку, но перепрыгнуть и идти дальше нельзя. Здесь он может взять пешки f6 и b2, но не больше.'], fen: '4k3/8/5p2/8/3B4/8/1p6/4K3 w - - 0 1', hl: [sqIdx('e5'), sqIdx('f6'), sqIdx('c5'), sqIdx('b6'), sqIdx('a7'), sqIdx('e3'), sqIdx('f2'), sqIdx('g1'), sqIdx('c3'), sqIdx('b2')] },
           { h: 'Слон берёт: несколько примеров', p: ['Смотри три взятия подряд по диагонали. <b>За один ход можно съесть только одну фигуру.</b>'], show: { code: 'B', at: 'a1', enemies: ['c3', 'f6', 'h8'], seq: ['c3|Первое взятие.', 'f6|Следующим ходом: второе.', 'h8|И третье. Каждый ход — одно взятие.'] } },
-          { h: 'Ещё взятия слоном', p: ['Слон берёт и «назад», и в другую сторону. Смотри.'], show: { code: 'B', at: 'h1', enemies: ['e4', 'b7', 'd5'], seq: ['e4|Вперёд-влево.', 'b7|Дальше по той же диагонали.', 'd5|Назад-вправо, на другую диагональ.'] } }
+          { h: 'Ещё взятия слоном', p: ['Слон берёт и «назад», и в другую сторону. Через фигуры он не прыгает: берёт ту, что стоит ближе.'], show: { code: 'B', at: 'h1', enemies: ['e4', 'c2', 'a4'], seq: ['e4|Вперёд-влево по диагонали.', 'c2|Назад-влево, на другую диагональ.', 'a4|Опять вперёд-влево, на другую диагональ.'] } }
         );
       }
       if (code === 'Q') {
@@ -6385,13 +6497,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var pos = randPos(r, wc, bc, 1); if (!pos || !compact(pos.b, 4)) continue;
       var wk = E.kingSq(pos.b, 1), ch = attackers(pos.b, wk, -1); if (E.inCheck(mkPos(pos.b, -1))) continue;
       if (want ? ch.length !== 1 : ch.length !== 0) continue;
-      var shown = mkPos(pos.b, -1);
+      var shown = mkPos(pos.b, 1);
       if (kind === 'who') {
         var names = []; for (i = 0; i < 64; i++) if (pos.b[i] < 0 && pos.b[i] !== -6) names.push(NOM[-pos.b[i]]);
         var right = names.indexOf(NOM[-pos.b[ch[0]]]);
-        return { pos: shown, q: 'Белому королю шах. Какая чёрная фигура его атакует?', opts: names.map(function (x) { return x.charAt(0).toUpperCase() + x.slice(1); }), right: right, expl: 'Шах даёт ' + NOM[-pos.b[ch[0]]] + ': она нападает на короля.', hint: 'проведи ход каждой чёрной фигуры и посмотри, какая из них может «съесть» короля.' };
+        return { pos: shown, nochk: true, q: 'Белому королю шах. Какая чёрная фигура его атакует?', opts: names.map(function (x) { return x.charAt(0).toUpperCase() + x.slice(1); }), right: right, expl: 'Шах даёт ' + NOM[-pos.b[ch[0]]] + ': она нападает на короля.', hint: 'проведи ход каждой чёрной фигуры и посмотри, какая из них может «съесть» короля.' };
       }
-      return { pos: shown, q: 'Белому королю сейчас шах?', ans: want, expl: want ? 'Да: ' + NOM[-pos.b[ch[0]]] + ' нападает на короля.' : 'Нет: ни одна чёрная фигура не нападает на короля.', hint: 'проверь каждую чёрную фигуру: может ли она сходить на клетку короля? Помни, что фигуры не перепрыгивают через другие.' };
+      return { pos: shown, nochk: true, q: 'Белому королю сейчас шах?', ans: want, expl: want ? 'Да: ' + NOM[-pos.b[ch[0]]] + ' нападает на короля.' : 'Нет: ни одна чёрная фигура не нападает на короля.', hint: 'проверь каждую чёрную фигуру: может ли она сходить на клетку короля? Помни, что фигуры не перепрыгивают через другие.' };
     }
     return null;
   }
@@ -8708,8 +8820,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     mObs.observe(document.body, { childList: true, subtree: true, characterData: true });
 
     /* --- кнопка «Прочитать вслух» --- */
-    var rb = document.createElement('button'); rb.type = 'button'; rb.id = 'readAloud'; rb.className = 'btn alt'; rb.textContent = '🔊 Прочитать'; rb.setAttribute('aria-label', 'Прочитать задание вслух');
-    rb.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:50;display:none';
+    var rb = document.createElement('button'); rb.type = 'button'; rb.id = 'readAloud'; rb.className = 'btn alt'; rb.textContent = '🔊'; rb.title = 'Прочитать вслух'; rb.setAttribute('aria-label', 'Прочитать задание вслух');
+    rb.style.cssText = 'position:fixed;right:8px;bottom:8px;z-index:50;display:none;width:38px;height:38px;min-height:0;padding:0;border-radius:50%;font-size:18px;line-height:1;opacity:.85';
     document.body.appendChild(rb);
     rb.onclick = function () { var t = currentText(); if (t) speakG(t, true); };
     function showRb() { var h = location.hash || ''; rb.style.display = (!isY2() && /^#(lesson|play|puzzle|live|review)/.test(h) && typeof window.speechSynthesis !== 'undefined') ? 'block' : 'none'; }
@@ -8938,7 +9050,7 @@ lessons = function () {
     GROUPS.forEach(function (g) {
       var ids = g.ids.filter(function (id) { return tab === 't' ? !!LESS[id].slides : !!LESS[id].levels; });
       if (!ids.length) return;
-      h += '<section class="course"><h3>' + esc(g.n) + ' <small class="note">(' + lessonsOf(g.ids) + ' из ' + g.ids.length + ')</small></h3><div class="lgrid">';
+      h += '<section class="course gb gb' + (g.k || 0) + '" id="blk' + (g.k || 0) + '"><h3>' + (g.ic ? g.ic + ' ' : '') + esc(g.n) + ' <small class="note">(' + lessonsOf(g.ids) + ' из ' + g.ids.length + ')</small></h3><div class="lgrid">';
       ids.forEach(function (id) {
         var L = LESS[id], n = L.levels || 0, d = 0, first = 0; for (var i = 1; i <= n; i++) { if (lvDone(id, i)) d++; else if (!first) first = i; }
         var href = tab === 't' ? '#lesson/' + id : '#lesson/' + id + '/' + (first || 1);
@@ -9506,6 +9618,12 @@ L.slides=slides;
         return '<a class="lcard" href="#lesson/' + id + '"><span class="big">' + (ic[id] || '⚽') + ' ' + esc(LS[id].t) + '</span><p>' + esc(LS[id].d) + '</p></a>';
       }).join('') + '</div></section>';
     }
+    if (window.__T.LESS.pawns) {
+      var LS2 = window.__T.LESS;
+      h += '<section class="course"><h3>Пешечные бои <small class="note">Играй против робота: у каждого по восемь пешек, побеждает тот, кто проведёт пешку в ферзи.</small></h3><div class="lgrid">' + ['pawns'].filter(function (id) { return LS2[id]; }).map(function (id) {
+        return '<a class="lcard" href="#lesson/' + id + '"><span class="big">' + (id === 'pawns' ? '♟️' : '🤖') + ' ' + esc(LS2[id].t) + '</span><p>' + esc(LS2[id].d) + '</p></a>';
+      }).join('') + '</div></section>';
+    }
     GROUPS_GK.forEach(function (G) {
       var L = GK.games.filter(function (g) { return g.group === G.id; }); if (!L.length) return;
       h += '<section class="course"><h3>' + esc(G.t) + ' <small class="note">' + esc(G.d) + '</small></h3><div class="lgrid">' + L.map(function (g) {
@@ -9901,6 +10019,198 @@ L.slides=slides;
     }
   });
 })();
+
+// Игры: «Найди пару», «Найди ошибку», «Пазл-картинка»
+(function () {
+  var GK = window.__gk, rnd = GK.rnd;
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function setBoard(S, b) { S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; S.sel = null; S.targets = []; S.mark = {}; S.last = null; }
+  function noBoard() { Array.prototype.forEach.call(document.querySelectorAll('#bt,.bsize,.boardbox'), function (e) { e.style.display = 'none'; }); }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function miniBoard(sq) {
+    var s = '<svg class="mb" viewBox="0 0 80 80" aria-hidden="true">';
+    for (var i = 0; i < 64; i++) s += '<rect x="' + (i & 7) * 10 + '" y="' + (i >> 3) * 10 + '" width="10" height="10" fill="' + ((((i & 7) + (i >> 3)) & 1) ? '#7aa6da' : '#fff3d3') + '"/>';
+    s += '<circle cx="' + ((sq & 7) * 10 + 5) + '" cy="' + ((sq >> 3) * 10 + 5) + '" r="4.5" fill="#e0245e" stroke="#fff" stroke-width="1"/></svg>'; return s;
+  }
+  function sqName(i) { return 'abcdefgh'[i & 7] + (8 - (i >> 3)); }
+
+  /* ================= Найди пару ================= */
+  GK.add({
+    id: 'pairs', group: 'mem', ic: '🃏', t: 'Найди пару',
+    d: 'Переворачивай карточки и ищи одинаковые пары. Фигуры, названия и поля доски.',
+    rules: ['Нажми на карточку, потом на вторую. Если это пара, она останется открытой.', 'Не пара — карточки закроются, запоминай, где что лежит.', 'Сначала пары простые: белая и чёрная фигура. Потом: фигура и её название, поле и его картинка на доске.', 'Открыл все пары — получаешь бонус времени и новые карточки.'],
+    start: function (ctx) {
+      noBoard(); var round = 0;
+      function pool(r) {
+        var types = shuffle([1, 2, 3, 4, 5, 6]), P = [], i, k = 1;
+        function pc(t, key) { P.push([key, pcHTML(t)], [key, pcHTML(-t)]); }
+        function nm(t, key) { P.push([key, pcHTML(t)], [key, '<b>' + esc(cap(PNAME[t])) + '</b>']); }
+        function sqp(key) { var s = rnd(64); P.push([key, miniBoard(s)], [key, '<b>' + sqName(s) + '</b>']); }
+        if (r === 0) for (i = 0; i < 3; i++) pc(types[i], 'p' + types[i]);
+        else if (r === 1) for (i = 0; i < 4; i++) nm(types[i], 'n' + types[i]);
+        else if (r === 2) { for (i = 0; i < 3; i++) nm(types[i], 'n' + types[i]); sqp('s1'); sqp('s2'); }
+        else { var used = {}, c = 0; for (i = 0; i < 3; i++) nm(types[i], 'n' + types[i]); while (c < 3) { var s = rnd(64); if (used[s]) continue; used[s] = 1; c++; P.push(['s' + s, miniBoard(s)], ['s' + s, '<b>' + sqName(s) + '</b>']); } }
+        return shuffle(P);
+      }
+      function next() {
+        var P = pool(Math.min(round, 3)), n = P.length, cols = n <= 6 ? 3 : n === 8 ? 4 : n === 10 ? 5 : 4, open = [], left = n / 2, busy = false;
+        var h = '<div class="gk-cards" style="grid-template-columns:repeat(' + cols + ',1fr)">';
+        P.forEach(function (p, i) { h += '<button class="gk-card" data-i="' + i + '" aria-label="Карточка">❓</button>'; }); h += '</div>';
+        ctx.prompt('Найди все пары. Осталось пар: <b id="gkLeft">' + left + '</b>'); ctx.msg(round === 0 ? 'Белая и чёрная одинаковые фигуры — это пара.' : round === 1 ? 'Фигура и её название — это пара.' : 'Поле на картинке и его название — это пара.');
+        var box = ctx.extra(h), cards = box.querySelectorAll('.gk-card');
+        Array.prototype.forEach.call(cards, function (c) {
+          c.onclick = function () {
+            if (busy || c.classList.contains('done') || c.classList.contains('up')) return;
+            var i = +c.dataset.i; c.classList.add('up'); c.innerHTML = P[i][1]; open.push(i);
+            if (open.length < 2) return;
+            var a = open[0], b = open[1]; open = [];
+            if (P[a][0] === P[b][0]) {
+              cards[a].classList.add('done'); cards[b].classList.add('done'); left--; document.getElementById('gkLeft').textContent = left; ctx.ok('Пара!');
+              if (!left) { ctx.addTime(5000); ctx.bonus(10, 'Все пары найдены! +5 секунд'); round++; busy = true; ctx.later(next, 1000); }
+            } else {
+              busy = true; ctx.fail('Не пара. Запоминай!');
+              ctx.later(function () { [a, b].forEach(function (k) { cards[k].classList.remove('up'); cards[k].innerHTML = '❓'; }); busy = false; }, 900);
+            }
+          };
+        });
+      }
+      next();
+    }
+  });
+
+  /* ================= Найди ошибку ================= */
+  var START = [4, 2, 3, 5, 6, 3, 2, 4];
+  function startBoard() { var b = new Int8Array(64), i; for (i = 0; i < 8; i++) { b[i] = -START[i]; b[8 + i] = -1; b[48 + i] = 1; b[56 + i] = START[i]; } return b; }
+  function errStart() {
+    var b = startBoard(), k = rnd(6), side = rnd(2) ? 1 : -1, row = side > 0 ? 56 : 0, pr = side > 0 ? 48 : 8, f = rnd(8), ok = {}, why;
+    if (k === 0) { b[row + 3] = 6 * side; b[row + 4] = 5 * side; ok[row + 3] = 1; ok[row + 4] = 1; why = 'Король и ферзь поменялись местами. Ферзь стоит на поле своего цвета: белый на d1, чёрный на d8.'; }
+    else if (k === 1) { var t = [4, 2, 3, 5].filter(function (x) { return x !== Math.abs(b[row + f]); }); if (f === 3) t = [4, 2, 3]; if (f === 4) { f = 0; t = [2, 3, 5]; } b[row + f] = t[rnd(t.length)] * side; ok[row + f] = 1; why = 'Эта фигура здесь лишняя: у соперника на таком же поле стоит другая.'; }
+    else if (k === 2) { b[pr + f] = 0; ok[pr + f] = 1; why = 'Здесь потерялась пешка. Должно быть восемь пешек.'; }
+    else if (k === 3) { var s = 24 + rnd(16); b[s] = [2, 3, 4, 5][rnd(4)] * (rnd(2) ? 1 : -1); ok[s] = 1; why = 'Эта фигура стоит посреди доски. В начале партии так не бывает.'; }
+    else if (k === 4) { b[pr + f] = -side; ok[pr + f] = 1; why = 'Среди пешек одного цвета затесалась пешка другого цвета.'; }
+    else { var q = pr + f; b[q] = 0; b[q - 8 * side] = side; ok[q - 8 * side] = 1; ok[q] = 1; why = 'Пешка стоит не на второй горизонтали. В начале партии все пешки на своих местах.'; }
+    return { b: b, ok: ok, why: why, p: 'Это начальная расстановка. В ней одна ошибка. Найди её!' };
+  }
+  function errIllegal() {
+    var b = new Int8Array(64), k = rnd(3), wk = 40 + rnd(8) + 8 * rnd(2), bk = rnd(2) * 8 + rnd(8), i, n = 3 + rnd(3), ok = {}, why;
+    function adj(x, y) { return Math.max(Math.abs((x & 7) - (y & 7)), Math.abs((x >> 3) - (y >> 3))) <= 1; }
+    b[wk] = 6; b[bk] = -6;
+    for (i = 0; i < n; i++) { var s = GK.put(b, null, [1, 2, 3, 4, 5][rnd(5)], rnd(2) ? 1 : -1); }
+    if (k === 0) { var p = 0; while (p < 60) { var q = rnd(2) ? rnd(8) : 56 + rnd(8); if (!b[q] && !adj(q, wk) && !adj(q, bk)) { b[q] = rnd(2) ? 1 : -1; ok[q] = 1; break; } p++; } why = 'Пешка не может стоять на первой или последней горизонтали.'; if (!Object.keys(ok).length) return errIllegal(); }
+    else if (k === 1) { var tr = 0, w2; while (tr < 60) { w2 = rnd(64); if (!b[w2] && !adj(w2, bk) && !adj(w2, wk)) break; tr++; } if (b[w2] || adj(w2, bk) || adj(w2, wk)) return errIllegal(); b[w2] = 6; ok[w2] = 1; ok[wk] = 1; why = 'В партии у каждой стороны только один король.'; }
+    else { var near = [], d; for (d = 0; d < 64; d++) if (!b[d] && adj(d, bk) && d !== wk) near.push(d); if (!near.length) return errIllegal(); b[wk] = 0; var nw = near[rnd(near.length)]; b[nw] = 6; ok[nw] = 1; ok[bk] = 1; why = 'Короли не могут стоять рядом: король не может стать на поле под боем.'; }
+    return { b: b, ok: ok, why: why, p: 'Такая позиция не может быть в партии. Найди ошибку!' };
+  }
+  GK.add({
+    id: 'mistake', group: 'att', ic: '🔍', t: 'Найди ошибку',
+    d: 'На доске спрятана одна ошибка: лишняя фигура, перепутанные места или невозможная позиция. Найди её!',
+    rules: ['Смотри на доску внимательно. Нажми на то поле, где ошибка.', 'Сначала это начальная расстановка, где что-то перепутали.', 'Потом будут позиции, которых в партии быть не может.', 'После трёх неверных нажатий покажем ответ.'],
+    start: function (ctx) {
+      var cur, wrong, round = 0;
+      function next() {
+        cur = (round < 3 || rnd(2)) ? errStart() : errIllegal(); round++; wrong = 0;
+        setBoard(ctx.S, cur.b); ctx.draw(); ctx.prompt(cur.p); ctx.msg('Нажми на поле с ошибкой.');
+      }
+      ctx.click = function (i) {
+        var S = ctx.S; if (cur.over) return;
+        if (cur.ok[i]) { cur.over = true; S.mark = {}; S.mark[i] = 'e:✅'; ctx.ok('Нашёл! ' + cur.why); ctx.draw(); ctx.later(next, 2300); return; }
+        wrong++; S.mark = {}; S.mark[i] = 'e:❌'; ctx.bad('Здесь всё верно, ищи дальше.'); ctx.draw();
+        if (wrong >= 3) { cur.over = true; S.mark = {}; Object.keys(cur.ok).forEach(function (k) { S.mark[k] = 'e:✅'; }); ctx.msg('Ошибка вот здесь. ' + cur.why, 'bad'); ctx.draw(); ctx.later(next, 3000); return; }
+        ctx.later(function () { if (!cur.over) { S.mark = {}; ctx.draw(); } }, 600);
+      };
+      next();
+    }
+  });
+
+  /* ================= Пазл-картинка ================= */
+  function U(t, x, y, s) { return '<use href="#p' + (t > 0 ? 'w' : 'b') + Math.abs(t) + '" x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '"/>'; }
+  function R(x, y, w, h, c, rx) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + c + '"' + (rx ? ' rx="' + rx + '"' : '') + '/>'; }
+  function C(x, y, r, c) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '"/>'; }
+  function P(pts, c) { return '<polygon points="' + pts + '" fill="' + c + '"/>'; }
+  function E(x, y, rx, ry, c) { return '<ellipse cx="' + x + '" cy="' + y + '" rx="' + rx + '" ry="' + ry + '" fill="' + c + '"/>'; }
+  function flower(x, y, c) { return C(x, y, 7, c) + C(x, y - 7, 5, c) + C(x, y + 7, 5, c) + C(x - 7, y, 5, c) + C(x + 7, y, 5, c) + C(x, y, 4, '#ffd83a') + R(x - 1, y + 10, 2, 22, '#2d9b3a'); }
+  function cloud(x, y) { return E(x, y, 28, 11, '#fff') + E(x - 14, y - 8, 14, 11, '#fff') + E(x + 10, y - 11, 16, 13, '#fff'); }
+  var SCENES = [
+    function () { // замок
+      var s = R(0, 0, 300, 300, '#8fd3ff') + C(250, 48, 26, '#ffd83a') + C(250, 48, 34, 'rgba(255,216,58,.35)') + cloud(70, 55) + cloud(190, 100);
+      s += E(70, 300, 130, 90, '#58c45a') + E(250, 305, 120, 80, '#3fae4e');
+      s += R(95, 125, 110, 120, '#a9a9c4') + R(80, 105, 34, 140, '#8e8eb0') + R(186, 105, 34, 140, '#8e8eb0');
+      s += P('76,105 97,70 118,105', '#e0245e') + P('182,105 203,70 224,105', '#e0245e') + R(96, 56, 3, 16, '#444') + P('99,56 116,62 99,68', '#ffd83a');
+      s += R(128, 190, 44, 55, '#8a5a2b', 20) + R(120, 125, 12, 14, '#f4f4ff') + R(168, 125, 12, 14, '#f4f4ff') + R(144, 150, 12, 16, '#555a');
+      for (var i = 0; i < 10; i++) s += R(i * 30, 245 + ((i & 1) ? 0 : 0), 30, 28, (i & 1) ? '#222' : '#fff') + R(i * 30, 273, 30, 27, (i & 1) ? '#fff' : '#222');
+      return s;
+    },
+    function () { // ферзь на лугу
+      var s = R(0, 0, 300, 300, '#a6e3ff') + C(48, 50, 24, '#ffd83a') + cloud(200, 60) + cloud(120, 30);
+      s += E(80, 215, 150, 70, '#66cc66') + E(240, 225, 140, 60, '#4fb858') + R(0, 225, 300, 75, '#47b34f');
+      s += E(150, 262, 56, 10, 'rgba(0,0,0,.18)') + U(5, 85, 100, 130);
+      s += flower(30, 245, '#ff5fa2') + flower(75, 270, '#ff8a3d') + flower(235, 250, '#b05fff') + flower(272, 268, '#ff5fa2') + flower(195, 275, '#fff') + flower(130, 280, '#ffe14a');
+      s += C(250, 120, 6, '#ff5fa2') + C(262, 114, 6, '#ff5fa2') + C(256, 122, 2, '#222'); s += C(40, 130, 6, '#ff9a3d') + C(52, 124, 6, '#ff9a3d') + C(46, 132, 2, '#222');
+      return s;
+    },
+    function () { // конь в лесу
+      var s = R(0, 0, 300, 300, '#ffd6a5') + C(80, 70, 30, '#fff2a8') + P('0,200 70,100 140,200', '#9d7be0') + P('100,200 190,80 280,200', '#8561cf') + P('60,130 70,100 80,130', '#fff');
+      s += R(0, 190, 300, 110, '#4ca64c');
+      function tree(x, h) { return R(x - 5, 200, 10, 40, '#8a5a2b') + P((x - 28) + ',215 ' + x + ',' + (200 - h) + ' ' + (x + 28) + ',215', '#2d8a3a') + P((x - 24) + ',190 ' + x + ',' + (170 - h) + ' ' + (x + 24) + ',190', '#3fae4e'); }
+      s += tree(30, 60) + tree(270, 70) + tree(240, 35) + tree(60, 30);
+      s += E(150, 266, 50, 9, 'rgba(0,0,0,.2)') + U(-2, 90, 120, 130);
+      s += flower(25, 255, '#ff5fa2') + flower(270, 262, '#ff8a3d') + flower(210, 280, '#fff');
+      return s;
+    },
+    function () { // космос
+      var s = R(0, 0, 300, 300, '#1c1b4d');
+      for (var i = 0; i < 28; i++) s += C((i * 83) % 300, (i * 47) % 300, 1 + (i % 3) * 0.8, '#fff6b0');
+      s += C(230, 70, 38, '#ff9a3d') + '<ellipse cx="230" cy="70" rx="58" ry="12" fill="none" stroke="#ffd83a" stroke-width="5"/>' + C(60, 230, 46, '#5fa8ff') + C(48, 220, 10, '#8cc4ff') + C(75, 245, 14, '#3f85e0');
+      s += C(150, 150, 20, '#d9d9f2') + C(143, 144, 5, '#bdbde0') + C(158, 157, 4, '#bdbde0');
+      s += E(150, 290, 110, 26, '#8a8ab5') + U(6, 105, 170, 90) + P('250,230 262,255 238,255', '#e0245e') + R(244, 255, 12, 26, '#f4f4ff') + P('244,281 256,281 250,296', '#ffb000');
+      return s;
+    },
+    function () { // море
+      var s = R(0, 0, 300, 150, '#9fe0ff') + R(0, 150, 300, 150, '#2f9be0') + C(255, 45, 24, '#ffd83a') + cloud(80, 50);
+      for (var i = 0; i < 6; i++) s += '<path d="M' + (i * 55 - 10) + ',160 q14,-14 28,0 t28,0" fill="none" stroke="#fff" stroke-width="4"/>' + '<path d="M' + (i * 55 + 20) + ',220 q14,-14 28,0 t28,0" fill="none" stroke="#bfe8ff" stroke-width="4"/>';
+      s += P('120,160 120,70 195,150', '#fff') + P('112,160 112,86 70,150', '#ff5f5f') + R(108, 60, 4, 100, '#6b4a2a') + '<path d="M70,160 h150 l-22,34 h-106 z" fill="#8a5a2b"/>';
+      s += E(60, 250, 22, 12, '#ffb000') + P('82,250 100,238 100,262', '#ffb000') + C(48, 247, 3, '#222');
+      s += E(220, 265, 20, 11, '#ff5fa2') + P('200,265 184,254 184,276', '#ff5fa2') + C(228, 262, 3, '#222');
+      s += U(1, 215, 100, 70) + R(0, 280, 300, 20, '#e8c26a');
+      return s;
+    }
+  ];
+  GK.add({
+    id: 'jigsaw', group: 'mem', ic: '🧩', t: 'Пазл-картинка',
+    d: 'Собери красочную картинку из кусочков: замок, ферзь на лугу, конь в лесу, космос, море.',
+    rules: ['Картинка разрезана на кусочки и перемешана.', 'Нажми на один кусочек, потом на другой. Они поменяются местами.', 'Кусочек на своём месте получает зелёную рамку.', 'Собрал картинку — получаешь очки и время. Дальше кусочков становится больше.'],
+    start: function (ctx) {
+      noBoard(); var solved = 0, last = -1;
+      function next() {
+        var n = solved < 2 ? 2 : solved < 5 ? 3 : 4, sc, inner, order, sel = -1, i;
+        do { sc = rnd(SCENES.length); } while (sc === last && SCENES.length > 1); last = sc; inner = SCENES[sc]();
+        order = []; for (i = 0; i < n * n; i++) order.push(i);
+        do { shuffle(order); } while (order.every(function (v, k) { return v === k; }) || order.filter(function (v, k) { return v === k; }).length > (n === 2 ? 0 : 1));
+        var w = 300 / n;
+        function piece(p) { return '<svg viewBox="' + (p % n) * w + ' ' + Math.floor(p / n) * w + ' ' + w + ' ' + w + '" aria-hidden="true">' + inner + '</svg>'; }
+        function render() {
+          var h = '<div class="gk-pz-top"><svg class="gk-pz-th" viewBox="0 0 300 300" aria-label="Образец">' + inner + '</svg></div><div class="gk-pz" style="grid-template-columns:repeat(' + n + ',1fr)">';
+          order.forEach(function (p, k) { h += '<button class="gk-pzc' + (p === k ? ' ok' : '') + (sel === k ? ' sel' : '') + '" data-k="' + k + '" aria-label="Кусочек">' + piece(p) + '</button>'; });
+          h += '</div>'; var box = ctx.extra(h);
+          Array.prototype.forEach.call(box.querySelectorAll('.gk-pzc'), function (b) { b.onclick = function () { pick(+b.dataset.k); }; });
+        }
+        function pick(k) {
+          if (sel < 0) { sel = k; render(); return; }
+          if (sel === k) { sel = -1; render(); return; }
+          var t = order[sel]; order[sel] = order[k]; order[k] = t; sel = -1; sfx('move');
+          if (order.every(function (v, q) { return v === q; })) {
+            render(); solved++; ctx.ok('Картинка собрана!'); ctx.bonus(n * n * 4, 'Красота! Картинка собрана!'); ctx.addTime(8000); ctx.later(next, 1500);
+          } else render();
+        }
+        ctx.prompt('Собери картинку. Кусочков: <b>' + n * n + '</b>'); ctx.msg('Нажми на кусочек, потом на другой, чтобы поменять их местами.'); render();
+      }
+      next();
+    }
+  });
+})();
+
+// «Пешечные бои» живут в Игротеке, а не в списке уроков
+GROUPS.forEach(function (g) { g.ids = g.ids.filter(function (id) { return id !== 'pawns'; }); });
 
 /* Игра «Львы и яблоки»: ходы по очереди. Львы идут к тебе, не дай себя съесть, собери все яблоки. */
 (function () {
@@ -11629,7 +11939,9 @@ var SQR = (function () {
 /* ===== Двойной удар: ещё задачи (из пособий и проверенные движком), чтобы в каждом уроке было 30–40 заданий ===== */
 (function () {
   var F = window.__fork; if (!F) return;
-  var EX = {"Q":[{"fen":"5r2/5nk1/1q3pp1/1p1p4/5PQ1/2PP2P1/1PK3NP/R7 b - - 0 1","s":["b6f2"],"l":["b6f2","c2c1","f2g2"],"n":18},{"fen":"8/3q1kpp/Q1n5/2b1P3/1p6/1P3NBP/P5P1/5K2 w - - 0 1","s":["a6c4"],"l":["a6c4","d7e6","c4c5"],"n":16},{"fen":"6k1/6pp/p7/8/4q1p1/1PBN2P1/2P5/1K3B2 b - - 0 1","s":["e4f3"],"l":["e4f3","c3g7","g8g7"],"n":13},{"fen":"8/k2n4/pp1p4/2p2p1p/2Q4P/P1BP2P1/1P4K1/q7 w - - 0 1","s":["c4f7"],"l":["c4f7","a7b7","f7d7"],"n":17},{"fen":"2r2q1k/4bpp1/3p4/2pP3n/2P5/1P1Q4/1B3PPP/R5K1 w - - 0 1","s":["d3h3"],"l":["d3h3","c8d8","h3h5"],"n":19},{"fen":"4kqnr/p1r3pp/2p1p3/6B1/2NQ4/2P5/P4PPP/6K1 w - - 0 1","s":["d4d8"],"l":["d4d8","e8f7","d8c7"],"n":19},{"fen":"7r/pp5p/2p1k3/3p3Q/8/1PP4P/6PK/5r2 w - - 0 1","s":["h5e2"],"l":["h5e2","e6f6","e2f1"],"n":14},{"fen":"r1b1k2r/ppp2ppp/5n2/3q4/1b1P4/2N5/PP3PPP/R1BQKB1R w - - 0 1","s":["d1a4"],"l":["d1a4","c8d7","a4b4"],"n":26},{"fen":"r1bq2nr/pppp1kpp/8/2b5/3pP3/8/PPP2PPP/RNBQK2R w - - 0 1","s":["d1h5"],"l":["d1h5","f7e7","h5c5"],"n":27},{"fen":"2Q5/3np2p/3pkppB/2p5/2q5/7P/5bPK/8 w - - 0 1","s":["c8g8"],"l":["c8g8","e6e5","g8c4"],"n":15},{"fen":"8/p2p1k1p/3Pp3/4Ppq1/1p1b4/5K1P/PP2Q3/8 b - - 0 1","s":["g5h5"],"l":["g5h5","f3g3","h5e2"],"n":16},{"fen":"6rk/1pp5/7b/pP1pP2r/P6q/2PK1Pp1/R3R3/1Q3N2 b - - 0 1","s":["h4c4"],"l":["h4c4","d3c2","c4e2"],"n":20},{"fen":"8/5Q2/k7/4r3/3N4/8/5K2/2b5 w - - 0 1","s":["f7f6","f7c4"],"l":["f7f6","a6a5","f6e5"],"n":6},{"fen":"5Q2/2bb4/8/3K4/8/8/8/4k3 w - - 0 1","s":["f8e7"],"l":["f8e7","c7e5","e7d7"],"n":5},{"fen":"k7/8/8/r7/3Q4/4K3/8/8 w - - 0 1","s":["d4d8"],"l":["d4d8","a8a7","d8a5"],"n":4},{"fen":"8/5Q2/8/8/5K1P/3b4/2r5/1k6 w - - 0 1","s":["f7b3"],"l":["f7b3","c2b2","b3d3"],"n":6},{"fen":"8/5K2/8/4b3/6Q1/8/3r4/7k w - - 0 1","s":["g4e4"],"l":["g4e4","d2g2","e4e5"],"n":5},{"fen":"3Q4/6r1/8/8/8/k4B2/8/4K3 w - - 0 1","s":["d8f8"],"l":["d8f8","g7e7","f8e7"],"n":5},{"fen":"3K3n/8/8/1q4R1/2n2P2/1r6/1k6/3Q4 w - - 0 1","s":["d1d4"],"l":["d1d4","b2c2","d4h8"],"n":9},{"fen":"k7/8/8/8/2K5/7b/8/4Q3 w - - 0 1","s":["e1h1"],"l":["e1h1","a8b8","h1h3"],"n":4},{"fen":"3k4/8/6n1/8/4K3/8/7Q/8 w - - 0 1","s":["h2d6"],"l":["h2d6","d8e8","d6g6"],"n":4},{"fen":"5K2/3P4/4Q3/6k1/8/6n1/6r1/1b6 w - - 0 1","s":["e6d5"],"l":["e6d5","g5g4","d5g2"],"n":7},{"fen":"8/6b1/8/2k5/8/3K4/8/7Q w - - 0 1","s":["h1g1"],"l":["h1g1","g7d4","g1d4"],"n":4},{"fen":"6Q1/7K/8/8/3k4/8/8/4n3 w - - 0 1","s":["g8g1"],"l":["g8g1","d4e4","g1e1"],"n":4},{"fen":"8/8/8/3K2k1/4Q3/8/8/6n1 w - - 0 1","s":["e4e3","e4g2"],"l":["e4e3","g5h5","e3g1"],"n":4},{"fen":"7K/8/4Q3/8/1b6/8/8/5k2 w - - 0 1","s":["e6c4"],"l":["e6c4","f1g1","c4b4"],"n":4},{"fen":"3Q4/8/8/7b/4K3/2b5/8/6k1 w - - 0 1","s":["d8g5"],"l":["d8g5","h5g4","g5g4"],"n":5},{"fen":"K7/3r2b1/7k/8/8/1Q6/8/8 w - - 0 1","s":["b3h3","b3e6"],"l":["b3h3","h6g6","h3d7"],"n":5},{"fen":"8/8/8/4r3/2K5/Q7/6k1/4n3 w - - 0 1","s":["a3b2"],"l":["a3b2","e5e2","b2e2"],"n":5},{"fen":"6n1/1Q6/6K1/4b3/8/k7/8/8 w - - 0 1","s":["b7a8"],"l":["b7a8","a3b3","a8g8"],"n":5},{"fen":"3Q4/1k4b1/8/8/8/5K2/8/7n w - - 0 1","s":["d8d7","d8e7"],"l":["d8d7","b7b6","d7g7"],"n":5},{"fen":"4QB2/8/8/b7/7k/8/8/5K2 w - - 0 1","s":["e8a4"],"l":["e8a4","a5b4","f8b4"],"n":5},{"fen":"8/8/6K1/3r4/8/6Q1/3k4/8 w - - 0 1","s":["g3g2"],"l":["g3g2","d2d1","g2d5"],"n":4},{"fen":"2K5/8/8/8/7n/2Q5/8/3k4 w - - 0 1","s":["c3d4"],"l":["c3d4","d1e1","d4h4"],"n":4},{"fen":"r7/n7/2k2K2/8/3P4/8/8/3Q4 w - - 0 1","s":["d1h1","d1f3"],"l":["d1h1","c6d6","h1a8"],"n":6},{"fen":"8/6b1/1K6/8/p7/1n5k/3BR1r1/3Q4 w - - 0 1","s":["d1h1"],"l":["d1h1","h3g3","e2g2"],"n":9},{"fen":"8/7n/8/RK5n/4kp2/Q5r1/8/8 w - - 0 1","s":["a3e7"],"l":["a3e7","e4d4","e7h7"],"n":8},{"fen":"8/8/2p1Q3/n7/8/8/5K2/3k4 w - - 0 1","s":["e6e1"],"l":["e6e1","d1c2","e1a5"],"n":5},{"fen":"k3b3/8/8/8/2K5/3Q4/8/8 w - - 0 1","s":["d3d8","d3e4"],"l":["d3d8","a8a7","d8e8"],"n":4},{"fen":"4K3/8/3Q4/8/8/8/1b6/4k3 w - - 0 1","s":["d6b4"],"l":["d6b4","b2c3","b4c3"],"n":4},{"fen":"8/8/1k2K3/3Q4/7n/8/8/8 w - - 0 1","s":["d5d4","d5d8"],"l":["d5d4","b6c6","d4h4"],"n":4},{"fen":"4k2r/K7/8/2Q5/8/8/8/8 w - - 0 1","s":["c5e5","c5c8"],"l":["c5e5","e8f8","e5h8"],"n":4}],"R":[{"fen":"7r/6k1/5p2/2pP4/2P5/5P2/2R2K2/8 b - - 0 1","s":["h8h2"],"l":["h8h2","f2f1","h2c2"],"n":9},{"fen":"2kr4/8/p4p2/1p3P2/6P1/5R2/P1n2BK1/8 w - - 0 1","s":["f3c3"],"l":["f3c3","c8b8","c3c2"],"n":12},{"fen":"7n/8/8/7k/1p6/8/8/4K1R1 w - - 0 1","s":["g1h1"],"l":["g1h1","h5g5","h1h8"],"n":5},{"fen":"5b2/8/8/K6R/8/5n2/8/4k3 w - - 0 1","s":["h5f5"],"l":["h5f5","f8g7","f5f3"],"n":5},{"fen":"8/1n4k1/8/8/6n1/1N6/2KR4/8 w - - 0 1","s":["d2d7"],"l":["d2d7","g7g6","d7b7"],"n":6},{"fen":"8/8/2R4R/5K2/8/3n4/n2k4/8 w - - 0 1","s":["h6h2"],"l":["h6h2","d3f2","h2f2"],"n":6},{"fen":"8/1b5N/7R/8/1k6/3B2K1/8/8 w - - 0 1","s":["h6b6"],"l":["h6b6","b4a4","b6b7"],"n":6},{"fen":"8/1n1K4/6R1/8/1k6/8/8/8 w - - 0 1","s":["g6b6"],"l":["g6b6","b4c4","b6b7"],"n":4},{"fen":"8/8/5b2/8/2R5/p7/8/1K1k3n w - - 0 1","s":["c4c1"],"l":["c4c1","d1d2","c1h1"],"n":6},{"fen":"8/3R2Nb/8/8/K7/8/k5n1/8 w - - 0 1","s":["d7d2"],"l":["d7d2","a2a1","d2g2"],"n":6},{"fen":"5K2/2R5/6p1/8/1n6/8/1P6/4k2n w - - 0 1","s":["c7c1"],"l":["c7c1","e1e2","c1h1"],"n":7},{"fen":"4n3/p7/N1R5/8/8/2P1k3/8/7K w - - 0 1","s":["c6e6"],"l":["c6e6","e3f3","e6e8"],"n":7},{"fen":"8/1k1K4/8/8/2R5/1n6/8/8 w - - 0 1","s":["c4b4"],"l":["c4b4","b7a7","b4b3"],"n":4},{"fen":"1R6/8/R7/8/n1K4p/k7/8/8 w - - 0 1","s":["b8b3"],"l":["b8b3","a3a2","a6a4"],"n":6},{"fen":"8/8/8/2R5/8/4kr2/6K1/8 w - - 0 1","s":["c5c3"],"l":["c5c3","e3e2","c3f3"],"n":4},{"fen":"3R4/8/k4n2/8/3K4/8/8/8 w - - 0 1","s":["d8d6"],"l":["d8d6","a6a5","d6f6"],"n":4},{"fen":"8/4b3/8/5K2/8/4k3/8/1R6 w - - 0 1","s":["b1e1"],"l":["b1e1","e3f3","e1e7"],"n":4},{"fen":"8/1R3n2/8/8/2b5/3nK3/8/4k3 w - - 0 1","s":["b7b1"],"l":["b7b1","d3c1","b1c1"],"n":6},{"fen":"1R6/K7/4k2b/8/5p2/8/3B4/8 w - - 0 1","s":["b8b6"],"l":["b8b6","e6e5","b6h6"],"n":6},{"fen":"8/2KR4/8/8/8/8/b6k/8 w - - 0 1","s":["d7d2"],"l":["d7d2","h2h1","d2a2"],"n":4},{"fen":"7K/1n3B1P/6R1/1k5n/7p/6p1/8/8 w - - 0 1","s":["g6g5"],"l":["g6g5","b7c5","f7h5"],"n":9},{"fen":"6n1/8/3K4/8/8/3R4/8/2b2k2 w - - 0 1","s":["d3d1"],"l":["d3d1","f1f2","d1c1"],"n":5},{"fen":"1K6/8/8/8/5R2/1k5b/8/8 w - - 0 1","s":["f4f3"],"l":["f4f3","b3b2","f3h3"],"n":4},{"fen":"3r4/3p2n1/8/8/8/6k1/1K1R4/4R3 w - - 0 1","s":["e1g1"],"l":["e1g1","g3h3","g1g7"],"n":7},{"fen":"2R5/b4k2/8/8/8/2K5/8/8 w - - 0 1","s":["c8c7"],"l":["c8c7","f7f6","c7a7"],"n":4},{"fen":"7b/8/8/6R1/8/8/2K5/6nk w - - 0 1","s":["g5h5"],"l":["g5h5","g1h3","h5h8"],"n":5},{"fen":"1n6/5R2/k5n1/8/6Kp/8/8/8 w - - 0 1","s":["f7f6"],"l":["f7f6","b8c6","f6g6"],"n":6},{"fen":"3R4/2p3P1/7R/p7/5K2/pp6/4P3/k4n2 w - - 0 1","s":["d8d1"],"l":["d8d1","a1a2","d1f1"],"n":11},{"fen":"8/7n/8/8/1R6/8/8/4K2k w - - 0 1","s":["b4h4"],"l":["b4h4","h1g1","h4h7"],"n":4},{"fen":"8/8/k4b2/7K/8/8/3R4/8 w - - 0 1","s":["d2d6"],"l":["d2d6","a6a5","d6f6"],"n":4},{"fen":"8/6R1/1K6/8/5k2/8/8/5q2 w - - 0 1","s":["g7f7"],"l":["g7f7","f4g4","f7f1"],"n":4},{"fen":"8/8/3k3q/7n/3K4/R7/8/8 w - - 0 1","s":["a3a6"],"l":["a3a6","d6d7","a6h6"],"n":5}],"B":[{"fen":"2r1r2k/5ppB/p1qnp3/1p4PQ/2pP4/2P1n3/PP1N3P/R5K1 w - - 0 1","s":["h7e4"],"l":["h7e4","h8g8","e4c6"],"n":23},{"fen":"4K3/7b/1n1B4/8/7b/7p/5k2/8 w - - 0 1","s":["d6c5"],"l":["d6c5","f2g2","c5b6"],"n":7},{"fen":"4r3/8/3K4/7k/4B3/6p1/4R3/8 w - - 0 1","s":["e4f3"],"l":["e4f3","h5g5","e2e8"],"n":6},{"fen":"5n2/8/1K1n4/1P4B1/8/8/N6k/8 w - - 0 1","s":["g5f4"],"l":["g5f4","h2g2","f4d6"],"n":7},{"fen":"4qb2/1B1k4/8/8/r3B3/3K4/8/8 w - - 0 1","s":["b7c6","e4c6"],"l":["b7c6","d7e7","c6e8"],"n":7},{"fen":"3K4/8/8/8/1B3k2/8/7b/8 w - - 0 1","s":["b4d6"],"l":["b4d6","f4g4","d6h2"],"n":4},{"fen":"8/6K1/8/5k2/B7/7r/8/8 w - - 0 1","s":["a4d7"],"l":["a4d7","f5g5","d7h3"],"n":4},{"fen":"8/5q2/4k3/1B6/8/K7/8/8 w - - 0 1","s":["b5c4"],"l":["b5c4","e6f6","c4f7"],"n":4},{"fen":"8/8/6n1/8/4k3/7K/B7/8 w - - 0 1","s":["a2b1"],"l":["a2b1","e4f4","b1g6"],"n":4},{"fen":"8/1n6/8/8/8/5k1B/8/6K1 w - - 0 1","s":["h3g2"],"l":["h3g2","f3g3","g2b7"],"n":4},{"fen":"1r6/8/8/4k3/6K1/1n6/5B2/8 w - - 0 1","s":["f2g3"],"l":["f2g3","e5d5","g3b8"],"n":5},{"fen":"8/8/8/4k3/1K6/8/8/n1B5 w - - 0 1","s":["c1b2"],"l":["c1b2","e5f5","b2a1"],"n":4},{"fen":"4B3/8/r7/8/6K1/8/4k3/8 w - - 0 1","s":["e8b5"],"l":["e8b5","e2f2","b5a6"],"n":4},{"fen":"8/6B1/3k4/2b5/2K5/2R5/5p2/8 w - - 0 1","s":["g7f8"],"l":["g7f8","d6e6","f8c5"],"n":6},{"fen":"8/7k/8/8/2B5/8/2n5/7K w - - 0 1","s":["c4d3"],"l":["c4d3","h7g7","d3c2"],"n":4},{"fen":"3B4/8/8/8/8/4k3/8/1K4b1 w - - 0 1","s":["d8b6"],"l":["d8b6","e3f3","b6g1"],"n":4},{"fen":"2K5/8/1B3k2/8/7b/8/8/8 w - - 0 1","s":["b6d8"],"l":["b6d8","f6g6","d8h4"],"n":4},{"fen":"8/8/4k3/1K6/8/1n1B4/6p1/8 w - - 0 1","s":["d3c4"],"l":["d3c4","e6f6","c4b3"],"n":5},{"fen":"2B5/6K1/8/8/5B1n/8/8/4k3 w - - 0 1","s":["f4g3"],"l":["f4g3","e1f1","g3h4"],"n":5},{"fen":"4B3/8/8/8/4k3/8/2b5/5K2 w - - 0 1","s":["e8g6"],"l":["e8g6","e4f4","g6c2"],"n":4},{"fen":"8/2B5/5k2/8/7q/5K2/8/8 w - - 0 1","s":["c7d8"],"l":["c7d8","f6g6","d8h4"],"n":4},{"fen":"8/8/q1P5/8/2k5/8/p5B1/4K3 w - - 0 1","s":["g2f1"],"l":["g2f1","c4d4","f1a6"],"n":6},{"fen":"8/8/8/7n/B7/2K2k2/8/8 w - - 0 1","s":["a4d1"],"l":["a4d1","f3g3","d1h5"],"n":4},{"fen":"8/7B/8/8/2k5/5K2/b7/8 w - - 0 1","s":["h7g8"],"l":["h7g8","c4d4","g8a2"],"n":4},{"fen":"8/8/B7/5k2/8/7r/2K5/8 w - - 0 1","s":["a6c8"],"l":["a6c8","f5g5","c8h3"],"n":4},{"fen":"1K6/4k3/8/N2PB3/P6b/p7/4R3/8 w - - 0 1","s":["e5g3"],"l":["e5g3","e7f7","g3h4"],"n":9},{"fen":"4K3/7B/k7/8/8/8/8/5r2 w - - 0 1","s":["h7d3"],"l":["h7d3","a6b6","d3f1"],"n":4},{"fen":"8/3K4/1B2B3/8/8/2k5/8/4b3 w - - 0 1","s":["b6a5"],"l":["b6a5","c3d3","a5e1"],"n":5},{"fen":"n7/8/2k5/8/8/8/1K6/5B2 w - - 0 1","s":["f1g2"],"l":["f1g2","c6d6","g2a8"],"n":4},{"fen":"8/3B4/4K3/8/8/5k2/8/7n w - - 0 1","s":["d7c6"],"l":["d7c6","f3g3","c6h1"],"n":4},{"fen":"1k3B2/8/1K6/8/8/6r1/8/8 w - - 0 1","s":["f8d6"],"l":["f8d6","b8c8","d6g3"],"n":4}],"P":[{"fen":"8/3p4/3r1k2/1R6/4P3/6NR/6P1/6K1 w - - 0 1","s":["e4e5"],"l":["e4e5","f6e6","e5d6"],"n":9},{"fen":"5RB1/8/8/4r1k1/8/K4P2/8/3b4 w - - 0 1","s":["f3f4"],"l":["f3f4","g5h5","f4e5"],"n":7},{"fen":"8/3p3B/8/2k1r3/8/2KP4/3P4/8 w - - 0 1","s":["d3d4"],"l":["d3d4","c5d5","d4e5"],"n":7},{"fen":"8/8/1r1k4/8/2PK4/8/8/4R3 w - - 0 1","s":["c4c5"],"l":["c4c5","d6c6","c5b6"],"n":5},{"fen":"8/4P3/8/5r1k/8/6PK/8/8 w - - 0 1","s":["g3g4"],"l":["g3g4","h5g5","g4f5"],"n":5},{"fen":"5r1r/7P/1k4P1/6K1/3Np3/8/4N3/8 w - - 0 1","s":["g6g7"],"l":["g6g7","f8g8","h7g8q"],"n":9},{"fen":"8/8/3pn3/8/1k1r4/3P1prp/2PK4/8 w - - 0 1","s":["c2c3"],"l":["c2c3","b4a4","c3d4"],"n":10},{"fen":"K7/8/8/8/1r1k4/5R2/1pP1B3/8 w - - 0 1","s":["c2c3"],"l":["c2c3","d4c5","c3b4"],"n":7},{"fen":"6R1/3PKP2/8/5r1k/8/6P1/8/8 w - - 0 1","s":["g3g4"],"l":["g3g4","h5h4","g4f5"],"n":7},{"fen":"8/5k1r/2N5/6P1/6R1/8/8/1K6 w - - 0 1","s":["g5g6"],"l":["g5g6","f7g7","g6h7"],"n":6},{"fen":"8/8/8/8/4k1r1/8/4KP2/8 w - - 0 1","s":["f2f3"],"l":["f2f3","e4f4","f3g4"],"n":4},{"fen":"8/8/k1r5/5p2/KP6/8/8/8 w - - 0 1","s":["b4b5"],"l":["b4b5","a6b6","b5c6"],"n":5},{"fen":"8/2K5/4k1r1/R7/3R1P2/4p1p1/8/6b1 w - - 0 1","s":["f4f5"],"l":["f4f5","e6f6","f5g6"],"n":9},{"fen":"8/8/3k1r2/8/3PP3/8/8/2K5 w - - 0 1","s":["e4e5"],"l":["e4e5","d6e6","e5f6"],"n":5},{"fen":"8/8/8/8/8/1r1k4/8/2PK4 w - - 0 1","s":["c1c2"],"l":["c1c2","d3c3","c2b3"],"n":4},{"fen":"3K4/6P1/2r1k3/6R1/1P1P4/8/8/r7 w - - 0 1","s":["d4d5"],"l":["d4d5","e6d6","d5c6"],"n":8},{"fen":"5b2/8/2p5/8/k1q5/8/PP6/1K6 w - - 0 1","s":["b2b3"],"l":["b2b3","c4b3","a2b3"],"n":7},{"fen":"4r1k1/8/5PK1/8/5b2/1P2b3/8/8 w - - 0 1","s":["f6f7"],"l":["f6f7","g8f8","f7e8q"],"n":7},{"fen":"1N6/8/5P2/k1r5/8/KP6/3nP3/8 w - - 0 1","s":["b3b4"],"l":["b3b4","a5b5","b4c5"],"n":8},{"fen":"8/8/8/7r/2k1r3/8/2KPp1P1/8 w - - 0 1","s":["d2d3"],"l":["d2d3","c4d4","d3e4"],"n":7},{"fen":"8/6K1/b1k5/3RB3/PP2P3/8/8/8 w - - 0 1","s":["b4b5"],"l":["b4b5","a6b5","d5b5"],"n":8},{"fen":"3KR3/8/8/8/8/3k1r2/8/4P3 w - - 0 1","s":["e1e2"],"l":["e1e2","d3c3","e2f3"],"n":5},{"fen":"8/2K2R2/8/4r1k1/2p5/5PP1/3R3P/8 w - - 0 1","s":["f3f4"],"l":["f3f4","g5h5","f4e5"],"n":9},{"fen":"8/2k1r2p/R7/3P2K1/6P1/2p5/8/6r1 w - - 0 1","s":["d5d6"],"l":["d5d6","c7d7","d6e7"],"n":9},{"fen":"4r1r1/8/5P2/7p/1kN5/3P3K/8/8 w - - 0 1","s":["f6f7"],"l":["f6f7","e8f8","f7g8q"],"n":8},{"fen":"1k1b4/8/2P5/8/P1R2P2/2R5/K7/8 w - - 0 1","s":["c6c7"],"l":["c6c7","b8c8","c7d8q"],"n":8},{"fen":"8/6r1/3r1k2/N7/4PP2/8/p7/5K2 w - - 0 1","s":["e4e5"],"l":["e4e5","f6e6","e5d6"],"n":8},{"fen":"8/3B4/4P3/k1r3pP/3p4/KP6/8/8 w - - 0 1","s":["b3b4"],"l":["b3b4","a5b6","b4c5"],"n":9},{"fen":"8/8/3k1r2/1R6/K3P3/7n/8/3N4 w - - 0 1","s":["e4e5"],"l":["e4e5","d6e6","e5f6"],"n":7},{"fen":"8/2r1b3/P7/1K1P1N2/8/1R6/8/4k3 w - - 0 1","s":["d5d6"],"l":["d5d6","c7d7","d6e7"],"n":8}],"K":[{"fen":"1n6/1b6/3K3k/8/8/8/8/8 w - - 0 1","s":["d6c7"],"l":["d6c7","b7c6","c7b8"],"n":4},{"fen":"1k6/8/P7/8/8/6nb/8/6K1 w - - 0 1","s":["g1h2"],"l":["g1h2","h3f1","h2g3"],"n":5},{"fen":"8/8/8/8/3nb3/8/3K4/6k1 w - - 0 1","s":["d2e3"],"l":["d2e3","e4f3","e3d4"],"n":4},{"fen":"6n1/8/4n1K1/8/5k2/8/8/8 w - - 0 1","s":["g6f7"],"l":["g6f7","g8h6","f7e6"],"n":4},{"fen":"8/5K1n/2k5/5n2/8/8/8/8 w - - 0 1","s":["f7g6"],"l":["f7g6","h7g5","g6g5"],"n":4},{"fen":"8/P7/8/4k1bn/8/7K/7P/8 w - - 0 1","s":["h3g4"],"l":["h3g4","e5f6","g4h5"],"n":6},{"fen":"2N5/8/8/8/6K1/8/6nb/1k6 w - - 0 1","s":["g4h3"],"l":["g4h3","h2g1","h3g2"],"n":5},{"fen":"1nb2k2/8/1K6/8/8/4R3/8/8 w - - 0 1","s":["b6c7"],"l":["b6c7","c8d7","c7b8"],"n":5},{"fen":"8/8/8/n6p/k7/2bn4/8/3K4 w - - 0 1","s":["d1c2"],"l":["d1c2","a4b4","c2d3"],"n":6},{"fen":"8/8/8/8/k7/8/3K1n2/5b2 w - - 0 1","s":["d2e1"],"l":["d2e1","f1g2","e1f2"],"n":4},{"fen":"8/4n3/7p/2n1K3/7k/7n/7B/5B2 w - - 0 1","s":["e5d6"],"l":["e5d6","e7f5","d6c5"],"n":8},{"fen":"1k6/8/8/6p1/8/8/5b2/3K1n2 w - - 0 1","s":["d1e2"],"l":["d1e2","f2g1","e2f1"],"n":5},{"fen":"8/8/n1K5/8/2n5/8/4k3/8 w - - 0 1","s":["c6b5"],"l":["c6b5","a6b4","b5b4"],"n":4},{"fen":"1B6/5p2/1nb3k1/4R3/1K6/8/P7/8 w - - 0 1","s":["b4c5"],"l":["b4c5","c6d5","c5b6"],"n":8},{"fen":"8/1np5/8/1Kb5/6k1/8/5p2/8 w - - 0 1","s":["b5c6"],"l":["b5c6","c5d4","c6b7"],"n":6},{"fen":"8/8/6nb/8/2k3K1/8/8/8 w - - 0 1","s":["g4h5"],"l":["g4h5","h6f4","h5g6"],"n":4},{"fen":"8/6k1/8/8/6K1/8/2rp2nb/8 w - - 0 1","s":["g4h3"],"l":["g4h3","h2g1","h3g2"],"n":6},{"fen":"8/6bn/8/5K2/2k5/8/8/8 w - - 0 1","s":["f5g6"],"l":["f5g6","g7h8","g6h7"],"n":4},{"fen":"8/4B3/4b3/4n1K1/8/8/1k6/8 w - - 0 1","s":["g5f6"],"l":["g5f6","e6g4","f6e5"],"n":5},{"fen":"2k5/8/8/8/8/4n3/8/2n1K3 w - - 0 1","s":["e1d2"],"l":["e1d2","c8d8","d2e3"],"n":4},{"fen":"4k3/8/3p4/8/6P1/8/n1K5/b7 w - - 0 1","s":["c2b1"],"l":["c2b1","a1c3","b1a2"],"n":6},{"fen":"8/8/8/n7/8/K1n5/8/k7 w - - 0 1","s":["a3b4"],"l":["a3b4","a5b3","b4b3"],"n":4},{"fen":"8/4B2k/8/3b4/3n1K2/8/8/8 w - - 0 1","s":["f4e5"],"l":["f4e5","d5f3","e5d4"],"n":5},{"fen":"K1n5/2b5/8/8/8/8/8/k7 w - - 0 1","s":["a8b7"],"l":["a8b7","c7d6","b7c8"],"n":4},{"fen":"8/8/5nb1/8/5KP1/8/7k/8 w - - 0 1","s":["f4g5"],"l":["f4g5","f6g4","g5g6"],"n":5},{"fen":"7k/1K6/3b4/1p1n4/8/7p/8/8 w - - 0 1","s":["b7c6"],"l":["b7c6","d6e5","c6d5"],"n":6},{"fen":"8/8/8/5P2/4K3/8/2nb4/5kn1 w - - 0 1","s":["e4d3"],"l":["e4d3","d2e1","d3c2"],"n":6},{"fen":"8/8/7k/8/8/6bn/8/7K w - - 0 1","s":["h1g2"],"l":["h1g2","g3h4","g2h3"],"n":4},{"fen":"k7/8/8/8/8/8/4b3/4n1K1 w - - 0 1","s":["g1f2"],"l":["g1f2","e2f3","f2e1"],"n":4},{"fen":"3k4/4rr2/8/8/KP6/8/1bn5/6b1 w - - 0 1","s":["a4b3"],"l":["a4b3","b2c1","b3c2"],"n":8},{"fen":"8/1n6/8/8/4K1n1/P1k3b1/8/8 w - - 0 1","s":["e4f3"],"l":["e4f3","g3h2","f3g4"],"n":6},{"fen":"8/8/8/b1k1K1R1/8/4n3/7p/8 w - - 0 1","s":["e5e4"],"l":["e5e4","c5b4","e4e3"],"n":6},{"fen":"8/3r4/8/1bn5/8/2K5/k7/8 w - - 0 1","s":["c3b4"],"l":["c3b4","d7b7","b4c5"],"n":5},{"fen":"8/8/3K4/8/2bn4/8/8/5k2 w - - 0 1","s":["d6c5"],"l":["d6c5","c4d3","c5d4"],"n":4},{"fen":"8/6r1/8/1k6/8/2K1n3/N3b2p/8 w - - 0 1","s":["c3d2"],"l":["c3d2","g7g2","d2e3"],"n":7},{"fen":"6b1/4K1n1/8/8/8/4k3/8/8 w - - 0 1","s":["e7f8"],"l":["e7f8","g8h7","f8g7"],"n":4},{"fen":"3b4/1K1np3/8/1P6/8/8/8/2k5 w - - 0 1","s":["b7c8"],"l":["b7c8","d8b6","c8d7"],"n":6},{"fen":"6bn/8/4k2K/8/8/8/8/8 w - - 0 1","s":["h6g7"],"l":["h6g7","g8f7","g7h8"],"n":4},{"fen":"1b6/1k6/8/K1n4b/8/n7/4p3/8 w - - 0 1","s":["a5b4"],"l":["a5b4","b8c7","b4c5"],"n":7},{"fen":"8/8/8/2nP2p1/8/n1K5/8/3k4 w - - 0 1","s":["c3b4"],"l":["c3b4","c5d3","b4a3"],"n":6}],"N":[{"fen":"8/4r3/R4p1p/4k3/5NPP/5K2/8/8 w - - 0 1","s":["f4g6"],"l":["f4g6","e5d5","g6e7"],"n":9},{"fen":"7r/1R1bk3/p3pp1p/1p6/3p1N2/8/PP3PPP/6K1 w - - 0 1","s":["f4g6"],"l":["f4g6","e7f7","g6h8"],"n":17},{"fen":"4nrk1/pbq2p1p/1p2p1p1/6P1/2Pr2NQ/1P6/P1B2P1P/4R1K1 w - - 0 1","s":["g4h6","g4f6"],"l":["g4h6","g8h8","h4d4"],"n":23},{"fen":"r1bqkb1r/1p3p2/p1n1p1p1/3p3p/3NnP2/2P4B/PP4PP/RNBQR2K b - - 0 1","s":["e4f2"],"l":["e4f2","h1g1","f2d1"],"n":29},{"fen":"r4rk1/2pq1ppp/ppp1b3/4R3/4N3/3P2Q1/PPP2PPP/R5K1 w - - 0 1","s":["e4f6"],"l":["e4f6","g8h8","f6d7"],"n":24},{"fen":"r3k2r/7p/p2pNRp1/2pq4/1p2p3/1PP5/P5PP/RNB1Q1K1 w - - 0 1","s":["e6c7"],"l":["e6c7","e8d8","c7d5"],"n":23},{"fen":"rn3k1r/p2nqpp1/1pp1p2p/4P3/2pP1N2/5Q2/P1P2PPP/R1B1R1K1 w - - 0 1","s":["f4g6"],"l":["f4g6","f8e8","g6h8"],"n":27},{"fen":"5rk1/p5p1/2B1p1p1/2b5/8/2B1n1P1/PP5P/R5K1 b - - 0 1","s":["e3c2"],"l":["e3c2","c3d4","c2a1"],"n":16},{"fen":"1k6/ppp4p/2b2qp1/2p5/2P1nPB1/PQ2P1P1/1P4KP/1R3R2 b - - 0 1","s":["e4d2"],"l":["e4d2","g4f3","d2b3"],"n":22},{"fen":"r3r3/p4p1k/1pn4p/2pb1N2/4n2B/P7/1P3PPP/R3KB1R b - - 0 1","s":["e4g3"],"l":["e4g3","f5e3","g3h1"],"n":22},{"fen":"5nk1/6np/1pN1p1p1/p2p4/7P/1B6/Pr4PK/5R2 w - - 0 1","s":["c6e7"],"l":["c6e7","g8h8","f1f8"],"n":17},{"fen":"2rqr1k1/pp3p1p/3p2pn/3Pn3/1P2N2P/P3P3/1Q1N1PP1/R3K2R b - - 0 1","s":["e5d3"],"l":["e5d3","e1f1","d3b2"],"n":25},{"fen":"4b3/8/4N3/1k1K4/8/6P1/6p1/8 w - - 0 1","s":["e6c7"],"l":["e6c7","b5a5","c7e8"],"n":6},{"fen":"2n5/8/k1q5/3N4/3K4/8/8/8 w - - 0 1","s":["d5b4"],"l":["d5b4","a6b6","b4c6"],"n":5},{"fen":"1K6/8/8/8/1k6/4r3/8/N7 w - - 0 1","s":["a1c2"],"l":["a1c2","b4c4","c2e3"],"n":4},{"fen":"8/4k3/5N1b/4K3/8/8/8/8 w - - 0 1","s":["f6g8"],"l":["f6g8","e7f7","g8h6"],"n":4},{"fen":"3N4/6b1/8/8/3k2K1/8/8/8 w - - 0 1","s":["d8e6"],"l":["d8e6","d4e4","e6g7"],"n":4},{"fen":"8/6K1/8/1N6/2n5/8/4r3/1k6 w - - 0 1","s":["b5c3"],"l":["b5c3","b1c1","c3e2"],"n":5},{"fen":"N7/4k3/7b/8/4K2N/1n6/8/8 w - - 0 1","s":["h4f5"],"l":["h4f5","e7f7","f5h6"],"n":6},{"fen":"8/3q3p/N1n1k3/8/8/8/1K2p3/4n3 w - - 0 1","s":["a6c5"],"l":["a6c5","e6d6","c5d7"],"n":8},{"fen":"8/2k2PNK/5bB1/8/8/4P3/4P3/8 w - - 0 1","s":["g7e8"],"l":["g7e8","c7d7","e8f6"],"n":8},{"fen":"8/1K6/8/5k2/2N5/8/2b5/8 w - - 0 1","s":["c4e3"],"l":["c4e3","f5g5","e3c2"],"n":4},{"fen":"8/8/3b4/8/3N4/k7/4K3/8 w - - 0 1","s":["d4b5"],"l":["d4b5","a3b3","b5d6"],"n":4},{"fen":"8/3K2k1/1N1N1b2/1B6/4R3/4N1r1/8/8 w - - 0 1","s":["d6f5","e3f5"],"l":["d6f5","g7h7","f5g3"],"n":9}]}, CAP = {"Q": 40, "R": 40, "B": 40, "P": 40, "K": 36, "N": 40};
+  var EX = {"Q":[{"fen":"5r2/5nk1/1q3pp1/1p1p4/5PQ1/2PP2P1/1PK3NP/R7 b - - 0 1","s":["b6f2"],"l":["b6f2","c2c1","f2g2"],"n":18},{"fen":"8/3q1kpp/Q1n5/2b1P3/1p6/1P3NBP/P5P1/5K2 w - - 0 1","s":["a6c4"],"l":["a6c4","d7e6","c4c5"],"n":16},{"fen":"6k1/6pp/p7/8/4q1p1/1PBN2P1/2P5/1K3B2 b - - 0 1","s":["e4f3"],"l":["e4f3","c3g7","g8g7"],"n":13},{"fen":"8/k2n4/pp1p4/2p2p1p/2Q4P/P1BP2P1/1P4K1/q7 w - - 0 1","s":["c4f7"],"l":["c4f7","a7b7","f7d7"],"n":17},{"fen":"2r2q1k/4bpp1/3p4/2pP3n/2P5/1P1Q4/1B3PPP/R5K1 w - - 0 1","s":["d3h3"],"l":["d3h3","c8d8","h3h5"],"n":19},{"fen":"4kqnr/p1r3pp/2p1p3/6B1/2NQ4/2P5/P4PPP/6K1 w - - 0 1","s":["d4d8"],"l":["d4d8","e8f7","d8c7"],"n":19},{"fen":"7r/pp5p/2p1k3/3p3Q/8/1PP4P/6PK/5r2 w - - 0 1","s":["h5e2"],"l":["h5e2","e6f6","e2f1"],"n":14},{"fen":"r1b1k2r/ppp2ppp/5n2/3q4/1b1P4/2N5/PP3PPP/R1BQKB1R w - - 0 1","s":["d1a4"],"l":["d1a4","c8d7","a4b4"],"n":26},{"fen":"r1bq2nr/pppp1kpp/8/2b5/3pP3/8/PPP2PPP/RNBQK2R w - - 0 1","s":["d1h5"],"l":["d1h5","f7e7","h5c5"],"n":27},{"fen":"2Q5/3np2p/3pkppB/2p5/2q5/7P/5bPK/8 w - - 0 1","s":["c8g8"],"l":["c8g8","e6e5","g8c4"],"n":15},{"fen":"8/p2p1k1p/3Pp3/4Ppq1/1p1b4/5K1P/PP2Q3/8 b - - 0 1","s":["g5h5"],"l":["g5h5","f3g3","h5e2"],"n":16},{"fen":"6rk/1pp5/7b/pP1pP2r/P6q/2PK1Pp1/R3R3/1Q3N2 b - - 0 1","s":["h4c4"],"l":["h4c4","d3c2","c4e2"],"n":20},{"fen":"8/5Q2/k7/4r3/3N4/8/5K2/2b5 w - - 0 1","s":["f7f6","f7c4"],"l":["f7f6","a6a5","f6e5"],"n":6},{"fen":"5Q2/2bb4/8/3K4/8/8/8/4k3 w - - 0 1","s":["f8e7"],"l":["f8e7","c7e5","e7d7"],"n":5},{"fen":"k7/8/8/r7/3Q4/4K3/8/8 w - - 0 1","s":["d4d8"],"l":["d4d8","a8a7","d8a5"],"n":4},{"fen":"8/5Q2/8/8/5K1P/3b4/2r5/1k6 w - - 0 1","s":["f7b3"],"l":["f7b3","c2b2","b3d3"],"n":6},{"fen":"8/5K2/8/4b3/6Q1/8/3r4/7k w - - 0 1","s":["g4e4"],"l":["g4e4","d2g2","e4e5"],"n":5},{"fen":"3Q4/6r1/8/8/8/k4B2/8/4K3 w - - 0 1","s":["d8f8"],"l":["d8f8","g7e7","f8e7"],"n":5},{"fen":"3K3n/8/8/1q4R1/2n2P2/1r6/1k6/3Q4 w - - 0 1","s":["d1d4"],"l":["d1d4","b2c2","d4h8"],"n":9},{"fen":"k7/8/8/8/2K5/7b/8/4Q3 w - - 0 1","s":["e1h1"],"l":["e1h1","a8b8","h1h3"],"n":4},{"fen":"3k4/8/6n1/8/4K3/8/7Q/8 w - - 0 1","s":["h2d6"],"l":["h2d6","d8e8","d6g6"],"n":4},{"fen":"5K2/3P4/4Q3/6k1/8/6n1/6r1/1b6 w - - 0 1","s":["e6d5"],"l":["e6d5","g5g4","d5g2"],"n":7},{"fen":"8/6b1/8/2k5/8/3K4/8/7Q w - - 0 1","s":["h1g1"],"l":["h1g1","g7d4","g1d4"],"n":4},{"fen":"6Q1/7K/8/8/3k4/8/8/4n3 w - - 0 1","s":["g8g1"],"l":["g8g1","d4e4","g1e1"],"n":4},{"fen":"8/8/8/3K2k1/4Q3/8/8/6n1 w - - 0 1","s":["e4e3","e4g2"],"l":["e4e3","g5h5","e3g1"],"n":4},{"fen":"7K/8/4Q3/8/1b6/8/8/5k2 w - - 0 1","s":["e6c4"],"l":["e6c4","f1g1","c4b4"],"n":4},{"fen":"3Q4/8/8/7b/4K3/2b5/8/6k1 w - - 0 1","s":["d8g5"],"l":["d8g5","h5g4","g5g4"],"n":5},{"fen":"K7/3r2b1/7k/8/8/1Q6/8/8 w - - 0 1","s":["b3h3","b3e6"],"l":["b3h3","h6g6","h3d7"],"n":5},{"fen":"8/8/8/4r3/2K5/Q7/6k1/4n3 w - - 0 1","s":["a3b2"],"l":["a3b2","e5e2","b2e2"],"n":5},{"fen":"6n1/1Q6/6K1/4b3/8/k7/8/8 w - - 0 1","s":["b7a8"],"l":["b7a8","a3b3","a8g8"],"n":5},{"fen":"3Q4/1k4b1/8/8/8/5K2/8/7n w - - 0 1","s":["d8d7","d8e7"],"l":["d8d7","b7b6","d7g7"],"n":5},{"fen":"4QB2/8/8/b7/7k/8/8/5K2 w - - 0 1","s":["e8a4"],"l":["e8a4","a5b4","f8b4"],"n":5},{"fen":"8/8/6K1/3r4/8/6Q1/3k4/8 w - - 0 1","s":["g3g2"],"l":["g3g2","d2d1","g2d5"],"n":4},{"fen":"2K5/8/8/8/7n/2Q5/8/3k4 w - - 0 1","s":["c3d4"],"l":["c3d4","d1e1","d4h4"],"n":4},{"fen":"r7/n7/2k2K2/8/3P4/8/8/3Q4 w - - 0 1","s":["d1h1","d1f3"],"l":["d1h1","c6d6","h1a8"],"n":6},{"fen":"8/6b1/1K6/8/p7/1n5k/3BR1r1/3Q4 w - - 0 1","s":["d1h1"],"l":["d1h1","h3g3","e2g2"],"n":9},{"fen":"8/7n/8/RK5n/4kp2/Q5r1/8/8 w - - 0 1","s":["a3e7"],"l":["a3e7","e4d4","e7h7"],"n":8},{"fen":"8/8/2p1Q3/n7/8/8/5K2/3k4 w - - 0 1","s":["e6e1"],"l":["e6e1","d1c2","e1a5"],"n":5},{"fen":"k3b3/8/8/8/2K5/3Q4/8/8 w - - 0 1","s":["d3d8","d3e4"],"l":["d3d8","a8a7","d8e8"],"n":4},{"fen":"4K3/8/3Q4/8/8/8/1b6/4k3 w - - 0 1","s":["d6b4"],"l":["d6b4","b2c3","b4c3"],"n":4},{"fen":"8/8/1k2K3/3Q4/7n/8/8/8 w - - 0 1","s":["d5d4","d5d8"],"l":["d5d4","b6c6","d4h4"],"n":4},{"fen":"4k2r/K7/8/2Q5/8/8/8/8 w - - 0 1","s":["c5e5","c5c8"],"l":["c5e5","e8f8","e5h8"],"n":4}],"R":[{"fen":"7r/6k1/5p2/2pP4/2P5/5P2/2R2K2/8 b - - 0 1","s":["h8h2"],"l":["h8h2","f2f1","h2c2"],"n":9},{"fen":"2kr4/8/p4p2/1p3P2/6P1/5R2/P1n2BK1/8 w - - 0 1","s":["f3c3"],"l":["f3c3","c8b8","c3c2"],"n":12},{"fen":"7n/8/8/7k/1p6/8/8/4K1R1 w - - 0 1","s":["g1h1"],"l":["g1h1","h5g5","h1h8"],"n":5},{"fen":"5b2/8/8/K6R/8/5n2/8/4k3 w - - 0 1","s":["h5f5"],"l":["h5f5","f8g7","f5f3"],"n":5},{"fen":"8/1n4k1/8/8/6n1/1N6/2KR4/8 w - - 0 1","s":["d2d7"],"l":["d2d7","g7g6","d7b7"],"n":6},{"fen":"8/8/2R4R/5K2/8/3n4/n2k4/8 w - - 0 1","s":["h6h2"],"l":["h6h2","d3f2","h2f2"],"n":6},{"fen":"8/1b5N/7R/8/1k6/3B2K1/8/8 w - - 0 1","s":["h6b6"],"l":["h6b6","b4a4","b6b7"],"n":6},{"fen":"8/1n1K4/6R1/8/1k6/8/8/8 w - - 0 1","s":["g6b6"],"l":["g6b6","b4c4","b6b7"],"n":4},{"fen":"8/8/5b2/8/2R5/p7/8/1K1k3n w - - 0 1","s":["c4c1"],"l":["c4c1","d1d2","c1h1"],"n":6},{"fen":"8/3R2Nb/8/8/K7/8/k5n1/8 w - - 0 1","s":["d7d2"],"l":["d7d2","a2a1","d2g2"],"n":6},{"fen":"5K2/2R5/6p1/8/1n6/8/1P6/4k2n w - - 0 1","s":["c7c1"],"l":["c7c1","e1e2","c1h1"],"n":7},{"fen":"4n3/p7/N1R5/8/8/2P1k3/8/7K w - - 0 1","s":["c6e6"],"l":["c6e6","e3f3","e6e8"],"n":7},{"fen":"8/1k1K4/8/8/2R5/1n6/8/8 w - - 0 1","s":["c4b4"],"l":["c4b4","b7a7","b4b3"],"n":4},{"fen":"1R6/8/R7/8/n1K4p/k7/8/8 w - - 0 1","s":["b8b3"],"l":["b8b3","a3a2","a6a4"],"n":6},{"fen":"8/8/8/2R5/8/4kr2/6K1/8 w - - 0 1","s":["c5c3"],"l":["c5c3","e3e2","c3f3"],"n":4},{"fen":"3R4/8/k4n2/8/3K4/8/8/8 w - - 0 1","s":["d8d6"],"l":["d8d6","a6a5","d6f6"],"n":4},{"fen":"8/4b3/8/5K2/8/4k3/8/1R6 w - - 0 1","s":["b1e1"],"l":["b1e1","e3f3","e1e7"],"n":4},{"fen":"8/1R3n2/8/8/2b5/3nK3/8/4k3 w - - 0 1","s":["b7b1"],"l":["b7b1","d3c1","b1c1"],"n":6},{"fen":"1R6/K7/4k2b/8/5p2/8/3B4/8 w - - 0 1","s":["b8b6"],"l":["b8b6","e6e5","b6h6"],"n":6},{"fen":"8/2KR4/8/8/8/8/b6k/8 w - - 0 1","s":["d7d2"],"l":["d7d2","h2h1","d2a2"],"n":4},{"fen":"7K/1n3B1P/6R1/1k5n/7p/6p1/8/8 w - - 0 1","s":["g6g5"],"l":["g6g5","b7c5","f7h5"],"n":9},{"fen":"6n1/8/3K4/8/8/3R4/8/2b2k2 w - - 0 1","s":["d3d1"],"l":["d3d1","f1f2","d1c1"],"n":5},{"fen":"1K6/8/8/8/5R2/1k5b/8/8 w - - 0 1","s":["f4f3"],"l":["f4f3","b3b2","f3h3"],"n":4},{"fen":"3r4/3p2n1/8/8/8/6k1/1K1R4/4R3 w - - 0 1","s":["e1g1"],"l":["e1g1","g3h3","g1g7"],"n":7},{"fen":"2R5/b4k2/8/8/8/2K5/8/8 w - - 0 1","s":["c8c7"],"l":["c8c7","f7f6","c7a7"],"n":4},{"fen":"7b/8/8/6R1/8/8/2K5/6nk w - - 0 1","s":["g5h5"],"l":["g5h5","g1h3","h5h8"],"n":5},{"fen":"1n6/5R2/k5n1/8/6Kp/8/8/8 w - - 0 1","s":["f7f6"],"l":["f7f6","b8c6","f6g6"],"n":6},{"fen":"3R4/2p3P1/7R/p7/5K2/pp6/4P3/k4n2 w - - 0 1","s":["d8d1"],"l":["d8d1","a1a2","d1f1"],"n":11},{"fen":"8/7n/8/8/1R6/8/8/4K2k w - - 0 1","s":["b4h4"],"l":["b4h4","h1g1","h4h7"],"n":4},{"fen":"8/8/k4b2/7K/8/8/3R4/8 w - - 0 1","s":["d2d6"],"l":["d2d6","a6a5","d6f6"],"n":4},{"fen":"8/6R1/1K6/8/5k2/8/8/5q2 w - - 0 1","s":["g7f7"],"l":["g7f7","f4g4","f7f1"],"n":4},{"fen":"8/8/3k3q/7n/3K4/R7/8/8 w - - 0 1","s":["a3a6"],"l":["a3a6","d6d7","a6h6"],"n":5}],"B":[{"fen":"2r1r2k/5ppB/p1qnp3/1p4PQ/2pP4/2P1n3/PP1N3P/R5K1 w - - 0 1","s":["h7e4"],"l":["h7e4","h8g8","e4c6"],"n":23},{"fen":"4K3/7b/1n1B4/8/7b/7p/5k2/8 w - - 0 1","s":["d6c5"],"l":["d6c5","f2g2","c5b6"],"n":7},{"fen":"4r3/8/3K4/7k/4B3/6p1/4R3/8 w - - 0 1","s":["e4f3"],"l":["e4f3","h5g5","e2e8"],"n":6},{"fen":"5n2/8/1K1n4/1P4B1/8/8/N6k/8 w - - 0 1","s":["g5f4"],"l":["g5f4","h2g2","f4d6"],"n":7},{"fen":"4qb2/1B1k4/8/8/r3B3/3K4/8/8 w - - 0 1","s":["b7c6","e4c6"],"l":["b7c6","d7e7","c6e8"],"n":7},{"fen":"3K4/8/8/8/1B3k2/8/7b/8 w - - 0 1","s":["b4d6"],"l":["b4d6","f4g4","d6h2"],"n":4},{"fen":"8/6K1/8/5k2/B7/7r/8/8 w - - 0 1","s":["a4d7"],"l":["a4d7","f5g5","d7h3"],"n":4},{"fen":"8/5q2/4k3/1B6/8/K7/8/8 w - - 0 1","s":["b5c4"],"l":["b5c4","e6f6","c4f7"],"n":4},{"fen":"8/8/6n1/8/4k3/7K/B7/8 w - - 0 1","s":["a2b1"],"l":["a2b1","e4f4","b1g6"],"n":4},{"fen":"8/1n6/8/8/8/5k1B/8/6K1 w - - 0 1","s":["h3g2"],"l":["h3g2","f3g3","g2b7"],"n":4},{"fen":"1r6/8/8/4k3/6K1/1n6/5B2/8 w - - 0 1","s":["f2g3"],"l":["f2g3","e5d5","g3b8"],"n":5},{"fen":"8/8/8/4k3/1K6/8/8/n1B5 w - - 0 1","s":["c1b2"],"l":["c1b2","e5f5","b2a1"],"n":4},{"fen":"4B3/8/r7/8/6K1/8/4k3/8 w - - 0 1","s":["e8b5"],"l":["e8b5","e2f2","b5a6"],"n":4},{"fen":"8/6B1/3k4/2b5/2K5/2R5/5p2/8 w - - 0 1","s":["g7f8"],"l":["g7f8","d6e6","f8c5"],"n":6},{"fen":"8/7k/8/8/2B5/8/2n5/7K w - - 0 1","s":["c4d3"],"l":["c4d3","h7g7","d3c2"],"n":4},{"fen":"3B4/8/8/8/8/4k3/8/1K4b1 w - - 0 1","s":["d8b6"],"l":["d8b6","e3f3","b6g1"],"n":4},{"fen":"2K5/8/1B3k2/8/7b/8/8/8 w - - 0 1","s":["b6d8"],"l":["b6d8","f6g6","d8h4"],"n":4},{"fen":"8/8/4k3/1K6/8/1n1B4/6p1/8 w - - 0 1","s":["d3c4"],"l":["d3c4","e6f6","c4b3"],"n":5},{"fen":"2B5/6K1/8/8/5B1n/8/8/4k3 w - - 0 1","s":["f4g3"],"l":["f4g3","e1f1","g3h4"],"n":5},{"fen":"4B3/8/8/8/4k3/8/2b5/5K2 w - - 0 1","s":["e8g6"],"l":["e8g6","e4f4","g6c2"],"n":4},{"fen":"8/2B5/5k2/8/7q/5K2/8/8 w - - 0 1","s":["c7d8"],"l":["c7d8","f6g6","d8h4"],"n":4},{"fen":"8/8/q1P5/8/2k5/8/p5B1/4K3 w - - 0 1","s":["g2f1"],"l":["g2f1","c4d4","f1a6"],"n":6},{"fen":"8/8/8/7n/B7/2K2k2/8/8 w - - 0 1","s":["a4d1"],"l":["a4d1","f3g3","d1h5"],"n":4},{"fen":"8/7B/8/8/2k5/5K2/b7/8 w - - 0 1","s":["h7g8"],"l":["h7g8","c4d4","g8a2"],"n":4},{"fen":"8/8/B7/5k2/8/7r/2K5/8 w - - 0 1","s":["a6c8"],"l":["a6c8","f5g5","c8h3"],"n":4},{"fen":"1K6/4k3/8/N2PB3/P6b/p7/4R3/8 w - - 0 1","s":["e5g3"],"l":["e5g3","e7f7","g3h4"],"n":9},{"fen":"4K3/7B/k7/8/8/8/8/5r2 w - - 0 1","s":["h7d3"],"l":["h7d3","a6b6","d3f1"],"n":4},{"fen":"8/3K4/1B2B3/8/8/2k5/8/4b3 w - - 0 1","s":["b6a5"],"l":["b6a5","c3d3","a5e1"],"n":5},{"fen":"n7/8/2k5/8/8/8/1K6/5B2 w - - 0 1","s":["f1g2"],"l":["f1g2","c6d6","g2a8"],"n":4},{"fen":"8/3B4/4K3/8/8/5k2/8/7n w - - 0 1","s":["d7c6"],"l":["d7c6","f3g3","c6h1"],"n":4},{"fen":"1k3B2/8/1K6/8/8/6r1/8/8 w - - 0 1","s":["f8d6"],"l":["f8d6","b8c8","d6g3"],"n":4}],"P":[{"fen":"8/3p4/3r1k2/1R6/4P3/6NR/6P1/6K1 w - - 0 1","s":["e4e5"],"l":["e4e5","f6e6","e5d6"],"n":9},{"fen":"5RB1/8/8/4r1k1/8/K4P2/8/3b4 w - - 0 1","s":["f3f4"],"l":["f3f4","g5h5","f4e5"],"n":7},{"fen":"8/3p3B/8/2k1r3/8/2KP4/3P4/8 w - - 0 1","s":["d3d4"],"l":["d3d4","c5d5","d4e5"],"n":7},{"fen":"8/8/1r1k4/8/2PK4/8/8/4R3 w - - 0 1","s":["c4c5"],"l":["c4c5","d6c6","c5b6"],"n":5},{"fen":"8/4P3/8/5r1k/8/6PK/8/8 w - - 0 1","s":["g3g4"],"l":["g3g4","h5g5","g4f5"],"n":5},{"fen":"5r1r/7P/1k4P1/6K1/3Np3/8/4N3/8 w - - 0 1","s":["g6g7"],"l":["g6g7","f8g8","h7g8q"],"n":9},{"fen":"8/8/3pn3/8/1k1r4/3P1prp/2PK4/8 w - - 0 1","s":["c2c3"],"l":["c2c3","b4a4","c3d4"],"n":10},{"fen":"K7/8/8/8/1r1k4/5R2/1pP1B3/8 w - - 0 1","s":["c2c3"],"l":["c2c3","d4c5","c3b4"],"n":7},{"fen":"6R1/3PKP2/8/5r1k/8/6P1/8/8 w - - 0 1","s":["g3g4"],"l":["g3g4","h5h4","g4f5"],"n":7},{"fen":"8/5k1r/2N5/6P1/6R1/8/8/1K6 w - - 0 1","s":["g5g6"],"l":["g5g6","f7g7","g6h7"],"n":6},{"fen":"8/8/8/8/4k1r1/8/4KP2/8 w - - 0 1","s":["f2f3"],"l":["f2f3","e4f4","f3g4"],"n":4},{"fen":"8/8/k1r5/5p2/KP6/8/8/8 w - - 0 1","s":["b4b5"],"l":["b4b5","a6b6","b5c6"],"n":5},{"fen":"8/2K5/4k1r1/R7/3R1P2/4p1p1/8/6b1 w - - 0 1","s":["f4f5"],"l":["f4f5","e6f6","f5g6"],"n":9},{"fen":"8/8/3k1r2/8/3PP3/8/8/2K5 w - - 0 1","s":["e4e5"],"l":["e4e5","d6e6","e5f6"],"n":5},{"fen":"8/8/8/8/8/1r1k4/8/2PK4 w - - 0 1","s":["c1c2"],"l":["c1c2","d3c3","c2b3"],"n":4},{"fen":"3K4/6P1/2r1k3/6R1/1P1P4/8/8/r7 w - - 0 1","s":["d4d5"],"l":["d4d5","e6d6","d5c6"],"n":8},{"fen":"5b2/8/2p5/8/k1q5/8/PP6/1K6 w - - 0 1","s":["b2b3"],"l":["b2b3","c4b3","a2b3"],"n":7},{"fen":"4r1k1/8/5PK1/8/5b2/1P2b3/8/8 w - - 0 1","s":["f6f7"],"l":["f6f7","g8f8","f7e8q"],"n":7},{"fen":"1N6/8/5P2/k1r5/8/KP6/3nP3/8 w - - 0 1","s":["b3b4"],"l":["b3b4","a5b5","b4c5"],"n":8},{"fen":"8/8/8/7r/2k1r3/8/2KPp1P1/8 w - - 0 1","s":["d2d3"],"l":["d2d3","c4d4","d3e4"],"n":7},{"fen":"8/6K1/b1k5/3RB3/PP2P3/8/8/8 w - - 0 1","s":["b4b5"],"l":["b4b5","a6b5","d5b5"],"n":8},{"fen":"3KR3/8/8/8/8/3k1r2/8/4P3 w - - 0 1","s":["e1e2"],"l":["e1e2","d3c3","e2f3"],"n":5},{"fen":"8/2K2R2/8/4r1k1/2p5/5PP1/3R3P/8 w - - 0 1","s":["f3f4"],"l":["f3f4","g5h5","f4e5"],"n":9},{"fen":"8/2k1r2p/R7/3P2K1/6P1/2p5/8/6r1 w - - 0 1","s":["d5d6"],"l":["d5d6","c7d7","d6e7"],"n":9},{"fen":"4r1r1/8/5P2/7p/1kN5/3P3K/8/8 w - - 0 1","s":["f6f7"],"l":["f6f7","e8f8","f7g8q"],"n":8},{"fen":"1k1b4/8/2P5/8/P1R2P2/2R5/K7/8 w - - 0 1","s":["c6c7"],"l":["c6c7","b8c8","c7d8q"],"n":8},{"fen":"8/6r1/3r1k2/N7/4PP2/8/p7/5K2 w - - 0 1","s":["e4e5"],"l":["e4e5","f6e6","e5d6"],"n":8},{"fen":"8/3B4/4P3/k1r3pP/3p4/KP6/8/8 w - - 0 1","s":["b3b4"],"l":["b3b4","a5b6","b4c5"],"n":9},{"fen":"8/8/3k1r2/1R6/K3P3/7n/8/3N4 w - - 0 1","s":["e4e5"],"l":["e4e5","d6e6","e5f6"],"n":7},{"fen":"8/2r1b3/P7/1K1P1N2/8/1R6/8/4k3 w - - 0 1","s":["d5d6"],"l":["d5d6","c7d7","d6e7"],"n":8}],"K":[{"fen":"1n6/1b6/3K3k/8/8/8/8/8 w - - 0 1","s":["d6c7"],"l":["d6c7","b7c6","c7b8"],"n":4},{"fen":"1k6/8/P7/8/8/6nb/8/6K1 w - - 0 1","s":["g1h2"],"l":["g1h2","h3f1","h2g3"],"n":5},{"fen":"8/8/8/8/3nb3/8/3K4/6k1 w - - 0 1","s":["d2e3"],"l":["d2e3","e4f3","e3d4"],"n":4},{"fen":"6n1/8/4n1K1/8/5k2/8/8/8 w - - 0 1","s":["g6f7"],"l":["g6f7","g8h6","f7e6"],"n":4},{"fen":"8/5K1n/2k5/5n2/8/8/8/8 w - - 0 1","s":["f7g6"],"l":["f7g6","h7g5","g6g5"],"n":4},{"fen":"8/P7/8/4k1bn/8/7K/7P/8 w - - 0 1","s":["h3g4"],"l":["h3g4","e5f6","g4h5"],"n":6},{"fen":"2N5/8/8/8/6K1/8/6nb/1k6 w - - 0 1","s":["g4h3"],"l":["g4h3","h2g1","h3g2"],"n":5},{"fen":"1nb2k2/8/1K6/8/8/4R3/8/8 w - - 0 1","s":["b6c7"],"l":["b6c7","c8d7","c7b8"],"n":5},{"fen":"8/8/8/n6p/k7/2bn4/8/3K4 w - - 0 1","s":["d1c2"],"l":["d1c2","a4b4","c2d3"],"n":6},{"fen":"8/8/8/8/k7/8/3K1n2/5b2 w - - 0 1","s":["d2e1"],"l":["d2e1","f1g2","e1f2"],"n":4},{"fen":"8/4n3/7p/2n1K3/7k/7n/7B/5B2 w - - 0 1","s":["e5d6"],"l":["e5d6","e7f5","d6c5"],"n":8},{"fen":"1k6/8/8/6p1/8/8/5b2/3K1n2 w - - 0 1","s":["d1e2"],"l":["d1e2","f2g1","e2f1"],"n":5},{"fen":"8/8/n1K5/8/2n5/8/4k3/8 w - - 0 1","s":["c6b5"],"l":["c6b5","a6b4","b5b4"],"n":4},{"fen":"1B6/5p2/1nb3k1/4R3/1K6/8/P7/8 w - - 0 1","s":["b4c5"],"l":["b4c5","c6d5","c5b6"],"n":8},{"fen":"8/1np5/8/1Kb5/6k1/8/5p2/8 w - - 0 1","s":["b5c6"],"l":["b5c6","c5d4","c6b7"],"n":6},{"fen":"8/8/6nb/8/2k3K1/8/8/8 w - - 0 1","s":["g4h5"],"l":["g4h5","h6f4","h5g6"],"n":4},{"fen":"8/6k1/8/8/6K1/8/2rp2nb/8 w - - 0 1","s":["g4h3"],"l":["g4h3","h2g1","h3g2"],"n":6},{"fen":"8/6bn/8/5K2/2k5/8/8/8 w - - 0 1","s":["f5g6"],"l":["f5g6","g7h8","g6h7"],"n":4},{"fen":"8/4B3/4b3/4n1K1/8/8/1k6/8 w - - 0 1","s":["g5f6"],"l":["g5f6","e6g4","f6e5"],"n":5},{"fen":"2k5/8/8/8/8/4n3/8/2n1K3 w - - 0 1","s":["e1d2"],"l":["e1d2","c8d8","d2e3"],"n":4},{"fen":"4k3/8/3p4/8/6P1/8/n1K5/b7 w - - 0 1","s":["c2b1"],"l":["c2b1","a1c3","b1a2"],"n":6},{"fen":"8/8/8/n7/8/K1n5/8/k7 w - - 0 1","s":["a3b4"],"l":["a3b4","a5b3","b4b3"],"n":4},{"fen":"8/4B2k/8/3b4/3n1K2/8/8/8 w - - 0 1","s":["f4e5"],"l":["f4e5","d5f3","e5d4"],"n":5},{"fen":"K1n5/2b5/8/8/8/8/8/k7 w - - 0 1","s":["a8b7"],"l":["a8b7","c7d6","b7c8"],"n":4},{"fen":"8/8/5nb1/8/5KP1/8/7k/8 w - - 0 1","s":["f4g5"],"l":["f4g5","f6g4","g5g6"],"n":5},{"fen":"7k/1K6/3b4/1p1n4/8/7p/8/8 w - - 0 1","s":["b7c6"],"l":["b7c6","d6e5","c6d5"],"n":6},{"fen":"8/8/8/5P2/4K3/8/2nb4/5kn1 w - - 0 1","s":["e4d3"],"l":["e4d3","d2e1","d3c2"],"n":6},{"fen":"8/8/7k/8/8/6bn/8/7K w - - 0 1","s":["h1g2"],"l":["h1g2","g3h4","g2h3"],"n":4},{"fen":"k7/8/8/8/8/8/4b3/4n1K1 w - - 0 1","s":["g1f2"],"l":["g1f2","e2f3","f2e1"],"n":4},{"fen":"3k4/4rr2/8/8/KP6/8/1bn5/6b1 w - - 0 1","s":["a4b3"],"l":["a4b3","b2c1","b3c2"],"n":8},{"fen":"8/1n6/8/8/4K1n1/P1k3b1/8/8 w - - 0 1","s":["e4f3"],"l":["e4f3","g3h2","f3g4"],"n":6},{"fen":"8/8/8/b1k1K1R1/8/4n3/7p/8 w - - 0 1","s":["e5e4"],"l":["e5e4","c5b4","e4e3"],"n":6},{"fen":"8/3r4/8/1bn5/8/2K5/k7/8 w - - 0 1","s":["c3b4"],"l":["c3b4","d7b7","b4c5"],"n":5},{"fen":"8/8/3K4/8/2bn4/8/8/5k2 w - - 0 1","s":["d6c5"],"l":["d6c5","c4d3","c5d4"],"n":4},{"fen":"8/6r1/8/1k6/8/2K1n3/N3b2p/8 w - - 0 1","s":["c3d2"],"l":["c3d2","g7g2","d2e3"],"n":7},{"fen":"6b1/4K1n1/8/8/8/4k3/8/8 w - - 0 1","s":["e7f8"],"l":["e7f8","g8h7","f8g7"],"n":4},{"fen":"3b4/1K1np3/8/1P6/8/8/8/2k5 w - - 0 1","s":["b7c8"],"l":["b7c8","d8b6","c8d7"],"n":6},{"fen":"6bn/8/4k2K/8/8/8/8/8 w - - 0 1","s":["h6g7"],"l":["h6g7","g8f7","g7h8"],"n":4},{"fen":"1b6/1k6/8/K1n4b/8/n7/4p3/8 w - - 0 1","s":["a5b4"],"l":["a5b4","b8c7","b4c5"],"n":7},{"fen":"8/8/8/2nP2p1/8/n1K5/8/3k4 w - - 0 1","s":["c3b4"],"l":["c3b4","c5d3","b4a3"],"n":6}],"N":[{"fen":"8/4r3/R4p1p/4k3/5NPP/5K2/8/8 w - - 0 1","s":["f4g6"],"l":["f4g6","e5d5","g6e7"],"n":9},{"fen":"7r/1R1bk3/p3pp1p/1p6/3p1N2/8/PP3PPP/6K1 w - - 0 1","s":["f4g6"],"l":["f4g6","e7f7","g6h8"],"n":17},{"fen":"4nrk1/pbq2p1p/1p2p1p1/6P1/2Pr2NQ/1P6/P1B2P1P/4R1K1 w - - 0 1","s":["g4h6","g4f6"],"l":["g4h6","g8h8","h4d4"],"n":23},{"fen":"r1bqkb1r/1p3p2/p1n1p1p1/3p3p/3NnP2/2P4B/PP4PP/RNBQR2K b - - 0 1","s":["e4f2"],"l":["e4f2","h1g1","f2d1"],"n":29},{"fen":"r4rk1/2pq1ppp/ppp1b3/4R3/4N3/3P2Q1/PPP2PPP/R5K1 w - - 0 1","s":["e4f6"],"l":["e4f6","g8h8","f6d7"],"n":24},{"fen":"r3k2r/7p/p2pNRp1/2pq4/1p2p3/1PP5/P5PP/RNB1Q1K1 w - - 0 1","s":["e6c7"],"l":["e6c7","e8d8","c7d5"],"n":23},{"fen":"rn3k1r/p2nqpp1/1pp1p2p/4P3/2pP1N2/5Q2/P1P2PPP/R1B1R1K1 w - - 0 1","s":["f4g6"],"l":["f4g6","f8e8","g6h8"],"n":27},{"fen":"5rk1/p5p1/2B1p1p1/2b5/8/2B1n1P1/PP5P/R5K1 b - - 0 1","s":["e3c2"],"l":["e3c2","c3d4","c2a1"],"n":16},{"fen":"1k6/ppp4p/2b2qp1/2p5/2P1nPB1/PQ2P1P1/1P4KP/1R3R2 b - - 0 1","s":["e4d2"],"l":["e4d2","g4f3","d2b3"],"n":22},{"fen":"r3r3/p4p1k/1pn4p/2pb1N2/4n2B/P7/1P3PPP/R3KB1R b - - 0 1","s":["e4g3"],"l":["e4g3","f5e3","g3h1"],"n":22},{"fen":"5nk1/6np/1pN1p1p1/p2p4/7P/1B6/Pr4PK/5R2 w - - 0 1","s":["c6e7"],"l":["c6e7","g8h8","f1f8"],"n":17},{"fen":"2rqr1k1/pp3p1p/3p2pn/3Pn3/1P2N2P/P3P3/1Q1N1PP1/R3K2R b - - 0 1","s":["e5d3"],"l":["e5d3","e1f1","d3b2"],"n":25},{"fen":"4b3/8/4N3/1k1K4/8/6P1/6p1/8 w - - 0 1","s":["e6c7"],"l":["e6c7","b5a5","c7e8"],"n":6},{"fen":"2n5/8/k1q5/3N4/3K4/8/8/8 w - - 0 1","s":["d5b4"],"l":["d5b4","a6b6","b4c6"],"n":5},{"fen":"1K6/8/8/8/1k6/4r3/8/N7 w - - 0 1","s":["a1c2"],"l":["a1c2","b4c4","c2e3"],"n":4},{"fen":"8/4k3/5N1b/4K3/8/8/8/8 w - - 0 1","s":["f6g8"],"l":["f6g8","e7f7","g8h6"],"n":4},{"fen":"3N4/6b1/8/8/3k2K1/8/8/8 w - - 0 1","s":["d8e6"],"l":["d8e6","d4e4","e6g7"],"n":4},{"fen":"8/6K1/8/1N6/2n5/8/4r3/1k6 w - - 0 1","s":["b5c3"],"l":["b5c3","b1c1","c3e2"],"n":5},{"fen":"N7/4k3/7b/8/4K2N/1n6/8/8 w - - 0 1","s":["h4f5"],"l":["h4f5","e7f7","f5h6"],"n":6},{"fen":"8/3q3p/N1n1k3/8/8/8/1K2p3/4n3 w - - 0 1","s":["a6c5"],"l":["a6c5","e6d6","c5d7"],"n":8},{"fen":"8/2k2PNK/5bB1/8/8/4P3/4P3/8 w - - 0 1","s":["g7e8"],"l":["g7e8","c7d7","e8f6"],"n":8},{"fen":"8/1K6/8/5k2/2N5/8/2b5/8 w - - 0 1","s":["c4e3"],"l":["c4e3","f5g5","e3c2"],"n":4},{"fen":"8/8/3b4/8/3N4/k7/4K3/8 w - - 0 1","s":["d4b5"],"l":["d4b5","a3b3","b5d6"],"n":4},{"fen":"8/3K2k1/1N1N1b2/1B6/4R3/4N1r1/8/8 w - - 0 1","s":["d6f5","e3f5"],"l":["d6f5","g7h7","f5g3"],"n":9}]};
+  (function(){ for (var k in EX) EX[k] = EX[k].filter(function(e){ var r = e.fen.split(' ')[0].split('/'); return !/[pP]/.test(r[0] + r[7]); }); })();
+  var CAP = {"Q": 40, "R": 40, "B": 40, "P": 40, "K": 36, "N": 40};
   function hangs(fen) {
     var pos = E.fromFEN(fen), opp = { b: pos.b, turn: -pos.turn, castle: 0, ep: -1, half: 0 };
     return E.legal(opp).some(function (m) {
@@ -12801,6 +13113,262 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   });
 })();
 
+/* ===== Уроки про фигуры: новые виды упражнений (все ответы проверяет движок) =====
+   «Может ли пойти?» (да/нет), «Спаси фигуру», «Кто съест?», «Звезда за два хода» */
+(function () {
+  var NM = { R: 'ладья', B: 'слон', Q: 'ферзь', N: 'конь', K: 'король', P: 'пешка' };
+  var NMC = { R: 'Ладья', B: 'Слон', Q: 'Ферзь', N: 'Конь', K: 'Король', P: 'Пешка' };
+  var INS2 = { R: 'ладьёй', B: 'слоном', Q: 'ферзём', N: 'конём', K: 'королём', P: 'пешкой' };
+  var VAL = { R: 4, B: 3, Q: 5, N: 2, K: 6, P: 1 };
+  var HOW = { R: 'по вертикали и по горизонтали, на любое число клеток', B: 'по диагонали, на любое число клеток', Q: 'как ладья и слон вместе: по прямой и по диагонали', N: 'буквой «Г»: две клетки в одну сторону и одна вбок', K: 'на одну клетку в любую сторону' };
+  var ADJ = { R: 'Белая ладья', B: 'Белый слон', Q: 'Белый ферзь', N: 'Белый конь', K: 'Белый король', P: 'Белая пешка' };
+  var BLK = { 1: 'Чёрная пешка', 2: 'Чёрный конь', 3: 'Чёрный слон', 4: 'Чёрная ладья', 5: 'Чёрный ферзь' };
+  var MY = { R: 'твою ладью', B: 'твоего слона', Q: 'твоего ферзя', N: 'твоего коня' };
+  var ACCB = { 1: 'чёрную пешку', 2: 'чёрного коня', 3: 'чёрного слона', 4: 'чёрную ладью', 5: 'чёрного ферзя' };
+  function rr(r, n) { return Math.floor(r() * n); }
+  function pickA(r, a) { return a[rr(r, a.length)]; }
+  function cheb(a, b) { return Math.max(Math.abs((a & 7) - (b & 7)), Math.abs((a >> 3) - (b >> 3))); }
+  function flipP(pos) { return { b: pos.b, turn: -pos.turn, castle: 0, ep: -1, half: 0 }; }
+  function mkPos(b) { return { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; }
+  function sane(pos) { return !E.inCheck(pos) && !E.inCheck(flipP(pos)) && E.legal(pos).length > 0 && E.legal(flipP(pos)).length > 0; }
+  function geom(code, s, t) {
+    var dx = Math.abs((s & 7) - (t & 7)), dy = Math.abs((s >> 3) - (t >> 3));
+    if (code === 'R') return (dx === 0 || dy === 0);
+    if (code === 'B') return dx === dy;
+    if (code === 'Q') return dx === 0 || dy === 0 || dx === dy;
+    if (code === 'N') return dx * dy === 2;
+    if (code === 'K') return Math.max(dx, dy) === 1;
+    return false;
+  }
+  function blocked(b, s, t) {
+    var dx = Math.sign((t & 7) - (s & 7)), dy = Math.sign((t >> 3) - (s >> 3)), x = (s & 7) + dx, y = (s >> 3) + dy;
+    while ((y * 8 + x) !== t) { if (b[y * 8 + x]) return true; x += dx; y += dy; }
+    return false;
+  }
+  /* бьёт ли фигура на клетке from клетку t (без учёта связок и шахов) */
+  function att(b, from, t) {
+    var v = Math.abs(b[from]), fx = from & 7, fy = from >> 3, tx = t & 7, ty = t >> 3, dx = tx - fx, dy = ty - fy;
+    function clear() { var sx = Math.sign(dx), sy = Math.sign(dy), x = fx + sx, y = fy + sy; while (x !== tx || y !== ty) { if (b[y * 8 + x]) return false; x += sx; y += sy; } return true; }
+    if (v === 1) return dy === (b[from] > 0 ? -1 : 1) && Math.abs(dx) === 1;
+    if (v === 2) return Math.abs(dx) * Math.abs(dy) === 2;
+    if (v === 3) return dx !== 0 && Math.abs(dx) === Math.abs(dy) && clear();
+    if (v === 4) return (dx === 0 || dy === 0) && (dx || dy) && clear();
+    if (v === 5) return (dx || dy) && (dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy)) && clear();
+    if (v === 6) return Math.max(Math.abs(dx), Math.abs(dy)) === 1;
+    return false;
+  }
+  /* случайная расстановка: короли + фигура + прочее, без шаха */
+  function scatter(r, code, extra) {
+    for (var tr = 0; tr < 400; tr++) {
+      var b = new Int8Array(64), used = {};
+      function put(v, sq) { if (used[sq]) return -1; if (Math.abs(v) === 1 && ((sq >> 3) === 0 || (sq >> 3) === 7)) return -1; used[sq] = 1; b[sq] = v; return sq; }
+      var wk = rr(r, 64), bk = rr(r, 64); if (cheb(wk, bk) < 3) continue; put(6, wk); put(-6, bk);
+      var s = -1;
+      if (code !== 'K') { s = put({ R: 4, B: 3, Q: 5, N: 2, P: 1 }[code], rr(r, 64)); if (s < 0) continue; } else s = wk;
+      var ok = true;
+      (extra || []).forEach(function (v) { if (put(v, rr(r, 64)) < 0) ok = false; });
+      if (!ok) continue;
+      var pos = mkPos(b); if (!sane(pos)) continue;
+      return { pos: pos, b: b, s: s, wk: wk, bk: bk };
+    }
+    return null;
+  }
+
+  /* ---------- «Может ли пойти?» ---------- */
+  function genYN(code, r) {
+    for (var tr = 0; tr < 800; tr++) {
+      var nb = 1 + rr(r, 3), ex = [];
+      for (var q = 0; q < nb; q++) ex.push(pickA(r, [1, 1, 2, 3, -1, -1, -2, -3]));
+      var P = scatter(r, code, ex); if (!P) continue;
+      var pos = P.pos, b = P.b, s = P.s, mv = E.legal(pos).filter(function (m) { return m.f === s; }), dests = {};
+      if (!mv.length) continue;
+      mv.forEach(function (m) { dests[m.t] = 1; });
+      var want = r() < 0.5, t = -1, why = '';
+      if (want) {
+        var m0 = pickA(r, mv); t = m0.t;
+      } else {
+        var near = [], far = [];
+        for (var q2 = 0; q2 < 64; q2++) {
+          if (q2 === s || dests[q2]) continue;
+          if (code === 'P') { var dx = (q2 & 7) - (s & 7), dy = (s >> 3) - (q2 >> 3); if (Math.abs(dx) <= 1 && Math.abs(dy) <= 2) near.push(q2); else if (Math.abs(dx) <= 2 && Math.abs(dy) <= 3) far.push(q2); continue; }
+          if (geom(code, s, q2)) near.push(q2); else far.push(q2);
+        }
+        if (!near.length && !far.length) continue;
+        t = (near.length && (r() < 0.65 || !far.length)) ? pickA(r, near) : pickA(r, far);
+        /* проверка: причина должна быть простая и честная, без связок и шахов */
+        if (code === 'P') {
+          var dxx = (t & 7) - (s & 7), dyy = (s >> 3) - (t >> 3);
+          if (t > s && dxx === 0 && dyy === -1) why = 'Нет. Пешки назад не ходят.';
+          else if (dyy === 0) why = 'Нет. Пешка вбок не ходит.';
+          else if (dxx === 0 && dyy === 1) why = 'Нет. Впереди стоит фигура: пешка не может её съесть и не перепрыгивает.';
+          else if (dxx === 0 && dyy === 2) why = (s >> 3) !== 6 ? 'Нет. На две клетки пешка ходит только со второй горизонтали, с начального места.' : 'Нет. Перед пешкой стоит фигура: перепрыгивать нельзя.';
+          else if (Math.abs(dxx) === 1 && dyy === 1) why = b[t] > 0 ? 'Нет. На этой клетке стоит своя фигура: своих не берут.' : 'Нет. По диагонали пешка ходит только тогда, когда берёт чужую фигуру. Здесь никого нет.';
+          else if (Math.abs(dxx) === 1 && dyy === -1) why = 'Нет. Пешки назад не ходят.';
+          else why = 'Нет. Так пешка не ходит. Она идёт вперёд на одну клетку, с начального места можно на две, а берёт по диагонали вперёд.';
+          if (Math.abs(dxx) === 1 && dyy === 1 && b[t] < 0) continue;
+          if (dxx === 0 && dyy === 1 && !b[t]) continue;
+        } else if (b[t] > 0 && geom(code, s, t) && (code === 'N' || code === 'K' || !blocked(b, s, t))) {
+          why = 'Нет. На этой клетке стоит своя фигура: своих не берут.';
+        } else if (geom(code, s, t) && code !== 'N' && code !== 'K' && blocked(b, s, t)) {
+          why = 'Нет. На пути стоит фигура. ' + NMC[code] + ' через фигуры не перепрыгивает.';
+        } else if (!geom(code, s, t)) {
+          why = 'Нет. ' + NMC[code] + ' так не ходит. Она ходит ' + HOW[code] + '.';
+        } else if (code === 'K') {
+          var np2 = E.make(pos, { f: s, t: t, p: 0, fl: 0 });
+          continue;
+        } else continue;
+      }
+      var cap = want && b[t] < 0;
+      var expl = want ? ('Да. ' + NMC[code] + (code === 'P' ? ' ходит вперёд на одну клетку, с начального места на две, а берёт по диагонали вперёд.' : ' ходит ' + HOW[code] + '.') + (cap ? ' Здесь она ещё и берёт чужую фигуру.' : '')) : why;
+      if (want && code === 'P') {
+        var d1 = (t & 7) - (s & 7);
+        expl = d1 !== 0 ? 'Да. Пешка берёт по диагонали вперёд, и здесь стоит чужая фигура.' : (s >> 3) - (t >> 3) === 2 ? 'Да. С начального места пешка может пойти на две клетки.' : 'Да. Пешка ходит вперёд на одну клетку.';
+      }
+      return {
+        pos: pos, last: { f: s, t: t }, ans: want, expl: expl,
+        q: ADJ[code] + ' стоит на поле ' + SQN(s) + '. Может ли ' + (code === 'K' || code === 'B' || code === 'Q' || code === 'N' ? 'он' : 'она') + ' пойти на поле ' + SQN(t) + '? Эти два поля подсвечены.',
+        hint: 'вспомни, как ходит ' + NM[code] + ', и посмотри, нет ли фигур на пути.'
+      };
+    }
+    return null;
+  }
+
+  /* ---------- «Спаси фигуру» ---------- */
+  function genSafe(code, r) {
+    var PV = { R: 4, B: 3, Q: 5, N: 2 };
+    for (var tr = 0; tr < 4000; tr++) {
+      var at = pickA(r, [2, 3, 4, 5, 1]), ex = [-at];
+      if (r() < 0.35) ex.push(pickA(r, [-1, -2]));
+      var P = scatter(r, code, ex); if (!P) continue;
+      var pos = P.pos, b = P.b, s = P.s, atk = -1, n = 0, q;
+      for (q = 0; q < 64; q++) if (b[q] < 0 && Math.abs(b[q]) !== 6 && att(b, q, s)) { if (atk < 0) atk = q; n++; }
+      if (n !== 1) continue;
+      if (att(b, P.bk, s)) continue;
+      /* фигура не связана с королём и свой король не под шахом */
+      var b2 = new Int8Array(b); b2[s] = 0; if (E.inCheck(mkPos(b2))) continue;
+      /* ни одна другая белая фигура не под боем */
+      var hang = false; for (q = 0; q < 64; q++) if (b[q] > 0 && q !== s && b[q] !== 6) for (var z = 0; z < 64; z++) if (b[z] < 0 && att(b, z, q)) hang = true;
+      if (hang) continue;
+      var mv = E.legal(pos).filter(function (m) { return m.f === s; }), safe = {}, ns = 0, nu = 0;
+      mv.forEach(function (m) {
+        var np = E.make(pos, m), at2 = false;
+        for (var y = 0; y < 64; y++) if (np.b[y] < 0 && att(np.b, y, m.t)) at2 = true;
+        if (!at2) { safe[m.t] = 1; ns++; } else nu++;
+      });
+      if (ns < 2 || nu < 2) continue;
+      var attName = BLK[Math.abs(b[atk])], hl = {}; hl[atk] = 1;
+      return {
+        pos: pos, hl: hl,
+        say: attName + ' нападает на ' + MY[code] + '. Спаси ' + (code === 'R' ? 'её' : 'его') + ': пойди на поле, где ' + (code === 'R' ? 'её' : 'его') + ' не съедят.',
+        sub: 'нападающая фигура подсвечена',
+        ok: function (m) { return m.f === s && !!safe[m.t]; },
+        good: function () { return 'Верно! Это поле чёрные не бьют.'; },
+        bad: function (m) { return m.f !== s ? 'Ходить надо ' + INS2[code] + ', которой угрожают.' : 'Здесь ' + (code === 'R' ? 'её' : 'его') + ' съедят. Найди поле, которое чёрные не бьют.'; }
+      };
+    }
+    return null;
+  }
+
+  /* ---------- «Кто съест?» ---------- */
+  function genWho(code, r) {
+    var others = ['R', 'B', 'N', 'Q', 'K', 'P'].filter(function (c) { return c !== code; });
+    for (var tr = 0; tr < 3000; tr++) {
+      var oth = [pickA(r, others), pickA(r, others)]; if (oth[0] === oth[1] || oth.indexOf('K') >= 0) continue;
+      var ty = pickA(r, [1, 2, 3, 4]), b = new Int8Array(64), used = {}, ok = true, sq = {};
+      function put(v, q) { if (used[q]) return false; if (Math.abs(v) === 1 && ((q >> 3) === 0 || (q >> 3) === 7)) return false; used[q] = 1; b[q] = v; return true; }
+      var wk = rr(r, 64), bk = rr(r, 64); if (cheb(wk, bk) < 3 || !put(6, wk) || !put(-6, bk)) continue;
+      var ts = rr(r, 64); if (!put(-ty, ts)) continue;
+      var PV = { R: 4, B: 3, Q: 5, N: 2, P: 1, K: 6 };
+      var mine = -1; if (code === 'K') { mine = wk; } else { mine = rr(r, 64); if (!put(PV[code], mine)) continue; }
+      var mp = [];
+      oth.forEach(function (c) { var q = rr(r, 64); if (!put(PV[c], q)) ok = false; mp.push(q); });
+      if (!ok) continue;
+      var pos = mkPos(b); if (!sane(pos)) continue;
+      var caps = E.legal(pos).filter(function (m) { return m.t === ts; });
+      if (caps.length !== 1 || caps[0].f !== mine) continue;
+      var natt = 0; for (var zq = 0; zq < 64; zq++) if (b[zq] > 0 && att(b, zq, ts)) natt++; if (natt !== 1) continue;
+      var opp = E.legal(flipP(pos)); if (opp.some(function (m) { return b[m.t] > 0; })) continue;
+      var np = E.make(pos, caps[0]); if (E.legal(np).some(function (m) { return m.t === ts; })) { if (code !== 'K') { /* можно, но проще: безопасное взятие */ continue; } }
+      var tsq = ts;
+      return {
+        pos: pos,
+        say: 'Какая белая фигура может съесть ' + ACCB[ty] + '? Съешь её этой фигурой.',
+        sub: 'только одна фигура достаёт',
+        ok: function (m) { return m.t === tsq; },
+        good: function () { return 'Верно! Только ' + INS2[code] + ' можно достать до этой фигуры.'; },
+        bad: function (m, p) { return p.b[m.f] > 0 && Math.abs(p.b[m.f]) !== VAL[code] ? 'Эта фигура сюда не дотянется. Подумай, кто достаёт.' : 'Это не то поле. Нужно съесть ' + ACCB[ty] + '.'; }
+      };
+    }
+    return null;
+  }
+
+  /* ---------- «Звезда за два хода» ---------- */
+  function genRoute(code, r) {
+    for (var tr = 0; tr < 3000; tr++) {
+      var ex = []; var nb = rr(r, 4); for (var q = 0; q < nb; q++) ex.push(1);
+      var P = scatter(r, code, ex); if (!P) continue;
+      var pos = P.pos, b = P.b, s = P.s, t = rr(r, 64);
+      if (b[t] || t === s) continue;
+      var mv = E.legal(pos).filter(function (m) { return m.f === s; }), d1 = {}; mv.forEach(function (m) { d1[m.t] = 1; });
+      if (d1[t]) continue;
+      var good = {}, ng = 0;
+      mv.forEach(function (m) { var np = E.make(pos, m), w = flipP(np); if (E.legal(w).some(function (x) { return x.f === m.t && x.t === t; })) { good[m.t] = 1; ng++; } });
+      if (ng < 1 || ng > 4 || mv.length - ng < 3) continue;
+      var hl = {}; hl[t] = 1; var tn = SQN(t);
+      return {
+        pos: pos, hl: hl,
+        say: 'Звезда ★ на поле ' + tn + ' (оно подсвечено). Сделай ход так, чтобы следующим ходом ' + INS2[code] + ' попасть на звезду.',
+        sub: 'сразу на звезду не пойти',
+        ok: function (m) { return m.f === s && !!good[m.t]; },
+        good: function () { return 'Верно! С этого поля до звезды ' + tn + ' один ход.'; },
+        bad: function (m) { return m.f !== s ? 'Ходить надо ' + INS2[code] + '.' : 'С этого поля до звезды не дойти за один ход. Подумай, откуда ходят на ' + tn + '.'; }
+      };
+    }
+    return null;
+  }
+
+  var KINDS = { R: ['yn', 'safe', 'who', 'route'], B: ['yn', 'safe', 'who', 'route'], Q: ['yn', 'safe', 'who', 'route'], N: ['yn', 'safe', 'who', 'route'], K: ['yn', 'who', 'route', 'yn'], P: ['yn', 'who', 'yn', 'who'] };
+  ['R', 'B', 'Q', 'N', 'K', 'P'].forEach(function (code) {
+    var L = LESS['p' + code]; if (!L) return;
+    var oldRun = L.run, oldGen = L.gen, n0 = L.levels, X = 20;
+    L.levels = n0 + X;
+    L.run = function (host, LL, lv, finish) { return lv <= n0 ? oldRun(host, LL, lv, finish) : runTask(host, LL, lv, finish); };
+    L.gen = function (lv, r) {
+      if (lv <= n0) return oldGen ? oldGen(lv, r) : null;
+      var k = lv - n0, kind = KINDS[code][(k - 1) % 4], t = null;
+      for (var a = 0; a < 3 && !t; a++) t = kind === 'yn' ? genYN(code, r) : kind === 'safe' ? genSafe(code, r) : kind === 'who' ? genWho(code, r) : genRoute(code, r);
+      return t;
+    };
+  });
+  window.__moveT = { genYN: genYN, genSafe: genSafe, genWho: genWho, genRoute: genRoute };
+})();
+
+// Уроки по цветным блокам: знакомство, фигуры, ценность и защита, правила, мат, тактика, пешечные окончания, повторение
+(function () {
+  var B = [
+    { k: 1, ic: '🌟', n: 'Знакомство', ids: ['history', 'board', 'lg_board', 'meet'] },
+    { k: 2, ic: '♞', n: 'Фигуры и их ходы', ids: ['pR', 'pB', 'pQ', 'pN', 'pK', 'kingrules', 'pP', 'lg_pieces'] },
+    { k: 3, ic: '🛡️', n: 'Ценность и защита', ids: ['values', 'trades', 'attdef', 'lg_pawn'] },
+    { k: 4, ic: '📘', n: 'Правила игры', ids: ['opening', 'castle', 'ep', 'promo', 'check', 'mate', 'draws', 'drawq', 'stalemate', 'rules', 'notation'] },
+    { k: 5, ic: '👑', n: 'Мат', ids: ['baby', 'mkinds', 'mq', 'mr', 'mrr', 'm2', 'mh', 'rm1', 'rm2', 'gmQ', 'gmR', 'gmRR', 'gmQR'] },
+    { k: 6, ic: '⚔️', n: 'Тактика', ids: ['forkN', 'forkQ', 'forkR', 'forkB', 'forkP', 'forkK', 'pin', 'disc', 'gain', 'traps'] },
+    { k: 7, ic: '♟️', n: 'Пешечные окончания', ids: ['pe1', 'pe2', 'pe3', 'pe4', 'pe5', 'pe6', 'pe7', 'pe9'] },
+    { k: 8, ic: '🔁', n: 'Повторение', ids: ['review'] }
+  ];
+  var seen = {}; B.forEach(function (g) { g.ids = g.ids.filter(function (id) { seen[id] = 1; return LESS[id]; }); });
+  GROUPS.forEach(function (g) { g.ids.forEach(function (id) { if (!seen[id] && LESS[id]) { seen[id] = 1; B[B.length - 1].ids.splice(B[B.length - 1].ids.length, 0, id); } }); });
+  GROUPS.length = 0; B.forEach(function (g) { if (g.ids.length) GROUPS.push(g); });
+  var old = lessons;
+  lessons = function () {
+    old();
+    var first = view.querySelector('section.gb'); if (!first) return;
+    var s = document.createElement('nav'); s.className = 'blkstrip'; s.setAttribute('aria-label', 'Блоки уроков');
+    s.innerHTML = GROUPS.map(function (g) { return '<a class="gbchip gb' + g.k + '" href="#blk' + g.k + '">' + g.ic + ' ' + esc(g.n) + '</a>'; }).join('');
+    first.parentNode.insertBefore(s, first);
+    s.onclick = function (e) { var a = e.target.closest('a'); if (!a) return; e.preventDefault(); var el = document.getElementById(a.getAttribute('href').slice(1)); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  };
+})();
+
 /* ===== защита от «невозможных» позиций во всех упражнениях (лишние слоны, два слона одного цвета и т.п.) ===== */
 (function () {
   Object.keys(LESS).forEach(function (id) {
@@ -12894,6 +13462,15 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     row.style.display = hide ? 'none' : '';
   }
   setInterval(function () { try { gear(); gate(); } catch (e) {} }, 300);
+})();
+
+/* ===== Подсказки и показ ответа считаются: подсказка снижает звёзды, показанный ответ = нет звёзд и баллов ===== */
+(function () {
+  document.addEventListener('click', function (e) {
+    var H = window.__help; if (!H || H.done) return;
+    if (e.target.closest && e.target.closest('#ansB, #ansBtn')) { H.a = 1; return; }
+    if (e.target.closest && e.target.closest('#hintB, #hintBtn')) { H.h++; }
+  }, true);
 })();
 
 
