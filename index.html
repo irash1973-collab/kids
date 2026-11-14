@@ -543,7 +543,7 @@ body { padding-bottom: 96px; }
 @media (min-width: 900px) and (min-aspect-ratio: 1/1) {
   .cols { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 22px; align-items: start; }
   .colB { position: sticky; top: 6px; }
-  .cols .boardbox { width: var(--bwu, clamp(340px, calc(100vh - 255px), 680px)); }
+  .cols .boardbox { width: var(--bwu, clamp(340px, calc(100vh - 175px), 760px)); }
   .wrap:has(.cols) { max-width: min(1360px, 98vw); }
   .colT .snav { position: static; background: none; justify-content: flex-start; padding: 10px 0; }
 }
@@ -1005,6 +1005,7 @@ body:has(.ctr-prompt) .board[data-board="bw"]{--sq-light:#fff3d3;--sq-dark:#5d8e
 .parents{background:#fff;border:3px solid #2f7fd6;border-radius:18px;padding:14px 16px;margin:18px 0}.parents h2{margin:6px 0 8px}.parents h3{margin:14px 0 4px}.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:10px 0}.pc{border-radius:12px;padding:8px 10px;color:#222;border-left:8px solid var(--c)}.pc h3{margin:0 0 3px;font-size:16px}.pc p{margin:0;font-size:14px}.pc1{--c:#f2a900;background:#fff8e1}.pc2{--c:#e0343a;background:#fff0f0}.pc3{--c:#2e9e4f;background:#effaf1}.pc4{--c:#2f7fd6;background:#eef5ff}.pc5{--c:#8a4fd1;background:#f6f0ff}.pc6{--c:#ee7a1c;background:#fff3e8}.pc7{--c:#8a5a2b;background:#fbf3ea}.pwarn{background:#fff3c4;border:2px solid #f5b800;border-radius:12px;padding:10px 12px;margin:12px 0}
 
 #comp{left:6px;bottom:6px}#comp img{width:42px;height:42px;border-width:2px}#comp .cx{width:18px;height:18px;font-size:12px;top:-6px}
+@media (min-width: 900px) { body:has(.cols) #comp .cb { display: none !important; } body:has(.cols) #comp img { width: 44px; height: 44px; } }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -8762,6 +8763,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
         pv.slice().reverse().forEach(function (k) { T.insertBefore(k, T.firstChild); });
         wrap.appendChild(T); wrap.appendChild(B); P.appendChild(wrap);
         busy = false;
+        if (window.innerWidth >= 900 && !window.__noAutoScroll) setTimeout(function () {
+          var r = wrap.getBoundingClientRect(), top = r.top + window.pageYOffset - (document.querySelector('.colT h2') ? 64 : 10);
+          if (r.top > 60) window.scrollTo(0, Math.max(0, top));
+        }, 60);
       }
     }
     new MutationObserver(arrange).observe(view, { childList: true, subtree: true });
