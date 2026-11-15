@@ -2395,7 +2395,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
   var SOON = [];
   function vcard(c) { return '<div class="vcard"><h3>' + esc(c.t) + '</h3><video controls preload="metadata" playsinline aria-label="' + esc(c.t) + '"><source src="' + c.f + '#t=0.5" type="video/mp4"></video><p class="note">' + esc(c.d) + '</p></div>'; }
   function videoCard() {
-    return '<section class="vidcard"><h2>Мультик: пешка</h2>' + vcard(CARTOONS[0]).replace('<h3>' + esc(CARTOONS[0].t) + '</h3>', '') + '<p style="text-align:center"><a class="btn alt" href="#cartoons">Все мультики →</a></p></section>';
+    return '<section class="vidcard"><h2>Познакомься с героями шахмат</h2>' + vcard(CARTOONS[2]).replace('<h3>' + esc(CARTOONS[2].t) + '</h3>', '') + '<p style="text-align:center"><a class="btn alt" href="#cartoons">Все мультики →</a></p></section>';
   }
   function cartoons() {
     view.innerHTML = '<h2>Мультики: знакомство с фигурами</h2><p class="note">Смотри, как живут шахматные фигуры. Нажми на кнопку «играть» у видео.</p><div class="vgrid">' + CARTOONS.map(vcard).join('') + SOON.map(function (n) { return '<div class="vcard soon"><h3>' + esc(n) + '</h3><div class="vsoon">Скоро</div><p class="note">Мультик про фигуру скоро появится.</p></div>'; }).join('') + '</div>';
