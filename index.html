@@ -1166,6 +1166,18 @@ body.home .card p { font-size: 14px; margin: 2px 0 6px; }
 @media (max-width: 560px) { .cpgrid { grid-template-columns: 1fr; } body.home .hero { padding-bottom: 150px; } }
 .cards .card:nth-child(n+6) { --bd: #8a5cd0; --tt: #4a2a8a; --sh: #c9b3ee; }
 .cards .card:nth-child(7) { --bd: #e0577a; --tt: #8f1f3f; --sh: #f3b0c2; }
+
+/* портреты соперников и часы справа */
+.y2ava { overflow: hidden; background: #fff; padding: 0; display: block; flex: 0 0 auto; border: 2px solid #fff; box-shadow: 0 0 0 2px #1e3a5f33; }
+.y2ava.big { width: 72px; height: 72px; }
+.y2cap > b { display: flex; align-items: center; gap: 10px; }
+@media (min-width: 900px) {
+  .cols:has(.y2clk) { grid-template-columns: auto minmax(300px, 1fr); }
+  .cols:has(.y2clk) > .colT { order: 2; }
+  .cols:has(.y2clk) > .colB { order: 1; }
+}
+.y2clk span { font-size: 22px; padding: 10px 12px; }
+.y2cap .y2ava.big { width: 72px !important; height: 72px !important; min-width: 72px; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -5971,7 +5983,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
           if (check('w')) return;
           busy = true; sm('Компьютер думает…');
           later(function () {
-            var bm = E.bestMove(cur, 26, hh), b1 = cur; if (!bm) { busy = false; return; }
+            var bm = E.bestMove(cur, 26, hh), b1 = cur; if (!bm) { var lg = E.legal(cur); bm = lg[0]; } if (!bm) { busy = false; return; }
             cur = E.make(cur, bm); S.pos = cur; S.last = { f: bm.f, t: bm.t }; S.anim = animOf(b1, bm); hh.push(E.hashOf(cur)); moveSound(b1, bm, cur); busy = false; draw();
             if (check('b')) return; sm(E.inCheck(cur) ? 'Тебе шах!' : 'Твой ход.', E.inCheck(cur) ? 'bad' : '');
           }, 500); return;
@@ -7770,16 +7782,35 @@ if (typeof module !== 'undefined') module.exports = Eng;
     /* сила соперника: 4 разряд начинает слабо, но не подставляет всё подряд, к концу играет уверенно; 3, 2, 1 разряды играют нормально */
     function yLv(o) {
       var base = lvOf(o.rt), m = base, k = o.i / 99;
-      if (o.t === 0) m = 9 + Math.round(k * 6);
-      else if (o.t === 1) m = 16 + Math.round(k * 3);
-      else if (o.t === 2) m = 19 + Math.round(k * 2);
-      else if (o.t === 3) m = 21 + Math.round(k * 2);
+      if (o.t === 0) m = 10 + Math.round(k * 6);
+      else if (o.t === 1) m = 16 + Math.round(k * 4);
+      else if (o.t === 2) m = 20 + Math.round(k * 2);
+      else if (o.t === 3) m = 22 + Math.round(k * 2);
       return Math.max(base, Math.min(30, m));
     }
     function gst() { var g = lsGet('ukc_y2g', null); if (!g || typeof g !== 'object') g = { r: 1000, w: 0, d: 0, l: 0, done: {} }; if (!g.done) g.done = {}; return g; }
     function tierWins(g, t) { var n = 0; for (var i = 0; i < 100; i++) if (g.done[t + ':' + i] === 1) n++; return n; }
     function tierOpen(g, t) { return openAll || t === 0 || tierWins(g, t - 1) >= 10; }
-    function ava2(o) { return '<span class="y2ava" style="background:hsl(' + ((o.i * 37 + o.t * 61 + 200) % 360) + ' 35% 42%)">' + esc(o.n[0]) + '</span>'; }
+    /* нарисованные портреты соперников: у каждого своё лицо (кожа, волосы, глаза, очки, шапка, бантик) */
+    var SKIN = { 'Азербайджан': ['#f1c8a0', '#e8b98a'], 'Россия': ['#fbdcc3', '#f4cfae'], 'Турция': ['#efc29b', '#e3b088'], 'Казахстан': ['#f0cba3', '#e6bb90'], 'Германия': ['#fde3cf', '#f7d3b8'], 'Япония': ['#f9dcbf', '#f2cfae'], 'Индия': ['#c68a5c', '#b07446'], 'Испания': ['#f3c9a2', '#e9b98c'], 'Грузия': ['#efc59f', '#e5b690'] };
+    var HAIR = ['#2b1d14', '#3d2616', '#6a3f1d', '#a8742e', '#d9a441', '#1b1b1f', '#8a3b1e'], BG = ['#cfe8ff', '#ffe1c9', '#d9f2d0', '#f6d5ef', '#fff0b8', '#d9d4ff', '#c9f0ec', '#ffd6d6'];
+    function ava2(o, big) {
+      var r = r32(o.t * 977 + o.i * 131 + 5), pk = function (a) { return a[Math.floor(r() * a.length)]; };
+      var sk = pk(SKIN[o.c] || SKIN['Россия']), hc = o.c === 'Германия' && r() < .5 ? pk(['#d9a441', '#e6c15a', '#a8742e']) : pk(HAIR), bg = pk(BG), fem = o.fem, sty = Math.floor(r() * 3), eye = pk(['#2b3a67', '#3b2a1a', '#2c6e49', '#1b1b1f']), gl = r() < .28, cap = !fem && r() < .22, bow = fem && r() < .5, fr = r() < .25, cheek = pk(['#f29b8f', '#f4a7a0']);
+      var capc = pk(['#e53935', '#1e88e5', '#43a047', '#fb8c00', '#8e24aa']), bowc = pk(['#e91e63', '#ff7043', '#7e57c2', '#26a69a']);
+      var hairBack = fem ? (sty === 0 ? '<rect x="12" y="20" width="40" height="34" rx="14" fill="' + hc + '"/>' : sty === 1 ? '<circle cx="14" cy="38" r="9" fill="' + hc + '"/><circle cx="50" cy="38" r="9" fill="' + hc + '"/>' : '<rect x="14" y="22" width="36" height="28" rx="14" fill="' + hc + '"/>') : '';
+      var hairTop = cap ? '<path d="M13 28 Q32 6 51 28 Z" fill="' + capc + '"/><rect x="10" y="26" width="30" height="5" rx="2.5" fill="' + capc + '"/>' : (fem ? '<path d="M14 30 Q32 6 50 30 Q42 20 32 21 Q22 20 14 30Z" fill="' + hc + '"/>' : sty === 0 ? '<path d="M14 30 Q15 9 32 9 Q49 9 50 30 Q44 20 32 20 Q20 20 14 30Z" fill="' + hc + '"/>' : sty === 1 ? '<path d="M14 31 Q12 10 32 8 Q52 10 50 31 Q47 17 36 18 Q26 14 14 31Z" fill="' + hc + '"/>' : '<path d="M14 30 Q18 8 32 10 Q46 8 50 30 Q40 22 30 21 Q20 22 14 30Z" fill="' + hc + '"/><circle cx="32" cy="9" r="4" fill="' + hc + '"/>');
+      var svg = '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><rect width="64" height="64" fill="' + bg + '"/>' + hairBack +
+        '<path d="M10 64 Q12 48 32 48 Q52 48 54 64Z" fill="' + pk(['#e53935', '#1e88e5', '#43a047', '#fb8c00', '#8e24aa', '#00897b', '#3949ab']) + '"/><rect x="28" y="42" width="8" height="8" fill="' + sk + '"/>' +
+        '<ellipse cx="32" cy="32" rx="17" ry="19" fill="' + sk + '"/>' + hairTop +
+        '<circle cx="25" cy="33" r="2.4" fill="' + eye + '"/><circle cx="39" cy="33" r="2.4" fill="' + eye + '"/><circle cx="25.8" cy="32.2" r=".8" fill="#fff"/><circle cx="39.8" cy="32.2" r=".8" fill="#fff"/>' +
+        '<circle cx="21" cy="39" r="3" fill="' + cheek + '" opacity=".55"/><circle cx="43" cy="39" r="3" fill="' + cheek + '" opacity=".55"/>' +
+        '<path d="M26 41 Q32 47 38 41" stroke="#8a3b2e" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+        (fr ? '<circle cx="28" cy="37" r=".7" fill="#a0603a"/><circle cx="32" cy="38" r=".7" fill="#a0603a"/><circle cx="36" cy="37" r=".7" fill="#a0603a"/>' : '') +
+        (gl ? '<circle cx="25" cy="33" r="5.5" fill="none" stroke="#333" stroke-width="1.4"/><circle cx="39" cy="33" r="5.5" fill="none" stroke="#333" stroke-width="1.4"/><path d="M30.5 33 H33.5" stroke="#333" stroke-width="1.4"/>' : '') +
+        (bow ? '<path d="M44 16 L52 12 L52 22Z M44 16 L36 12 L36 22Z" fill="' + bowc + '" transform="translate(-4 0)"/><circle cx="40" cy="16" r="2.4" fill="' + bowc + '"/>' : '') + '</svg>';
+      return '<span class="y2ava' + (big ? ' big' : '') + '">' + svg + '</span>';
+    }
     function games() {
       var g = gst();
       var rows = TIERS.map(function (t, i) {
@@ -7818,7 +7849,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var pos = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: !meW, coords: true, mark: {}, hl: null }, tg = [], keys = {}, hm = 0, mv = [], over = false, busy = false, resigned = false, gen = Math.random();
       keys[E.key(pos)] = 1;
       var timed = tc && tc[1] > 0, T = { me: timed ? tc[1] * 60000 : 0, op: timed ? tc[1] * 60000 : 0 }, inc = timed ? tc[2] * 1000 : 0, turnMe = meW, lastTs = Date.now(), clkIv = null;
-      view.innerHTML = '<div class="y2head"><a class="btn alt" href="' + (cu ? '#y2/engine' : '#y2/games/' + t) + '">← Назад</a><h2>' + esc(o.full) + ' · ' + o.rt + '</h2></div><div class="y2task"><div class="y2cap"><b>' + ava2(o) + ' ' + esc(o.full) + '</b><span>' + (cu ? 'уровень силы ' + lv : o.age + ' лет · ' + esc(o.c)) + ' · вы играете ' + (meW ? 'белыми' : 'чёрными') + '</span><button class="y2gear" id="mnB" aria-label="Настройки" title="Настройки">⚙</button></div>' + boardHTML() + '<div class="y2clk"><span id="clO">' + esc(o.n) + '</span><span id="clM">Вы</span></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div class="y2score" id="pgn"></div><div class="row"><button class="btn alt" id="flB">⇅ Перевернуть доску</button><button class="btn alt" id="rsB">Сдаться</button><button class="btn alt" id="dwB">Предложить ничью</button></div><p class="y2fair">Честная игра: во время партии нельзя пользоваться подсказками, движком, другими программами и чужой помощью. Сайт отмечает, если вы уходите со страницы. Анализ откроется после партии.</p><div id="after"></div><div id="anP"></div></div>';
+      view.innerHTML = '<div class="y2head"><a class="btn alt" href="' + (cu ? '#y2/engine' : '#y2/games/' + t) + '">← Назад</a><h2>' + esc(o.full) + ' · ' + o.rt + '</h2></div><div class="y2task"><div class="y2cap"><b>' + ava2(o, true) + ' ' + esc(o.full) + '</b><span>' + (cu ? 'уровень силы ' + lv : o.age + ' лет · ' + esc(o.c)) + ' · вы играете ' + (meW ? 'белыми' : 'чёрными') + '</span><button class="y2gear" id="mnB" aria-label="Настройки" title="Настройки">⚙</button></div>' + boardHTML() + '<div class="y2clk"><span id="clO">' + esc(o.n) + '</span><span id="clM">Вы</span></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div class="y2score" id="pgn"></div><div class="row"><button class="btn alt" id="flB">⇅ Перевернуть доску</button><button class="btn alt" id="rsB">Сдаться</button><button class="btn alt" id="dwB">Предложить ничью</button></div><p class="y2fair">Честная игра: во время партии нельзя пользоваться подсказками, движком, другими программами и чужой помощью. Сайт отмечает, если вы уходите со страницы. Анализ откроется после партии.</p><div id="after"></div><div id="anP"></div></div>';
       var msg = document.getElementById('msg');
       function sm(x, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = x; }
       function draw() { S.targets = opt.hl ? tg : []; if (!opt.hl) S.last = S.last; drawBoard(S, click); }
@@ -12428,7 +12459,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
         cur = E.make(cur, m); moves++; S.pos = cur; S.last = { f: m.f, t: m.t }; S.sel = null; S.targets = []; hh.push(E.hashOf(cur)); moveSound(b0, m, cur); draw();
         if (check('w')) return; busy = true; sm('Компьютер думает…');
         later(function () {
-          var bm = E.bestMove(cur, 26, hh), b1 = cur; if (!bm) { busy = false; return; }
+          var bm = E.bestMove(cur, 26, hh), b1 = cur; if (!bm) { var lg = E.legal(cur); bm = lg[0]; } if (!bm) { busy = false; return; }
           cur = E.make(cur, bm); S.pos = cur; S.last = { f: bm.f, t: bm.t }; hh.push(E.hashOf(cur)); moveSound(b1, bm, cur); busy = false; draw();
           if (check('b')) return; sm(E.inCheck(cur) ? 'Тебе шах!' : 'Твой ход.', '');
         }, 450); return;
@@ -12748,7 +12779,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
           var jr = cfg.afterWhite ? cfg.afterWhite(b0, m, cur) : null; if (jr) { if (jr.win) win(jr.msg); else fail(jr.msg); return; }
           if (check(false)) return; busy = true; sm('Компьютер думает…');
           later(function () {
-            var bm = cfg.reply(cur, hh), b1 = cur; if (!bm) { busy = false; return; }
+            var bm = cfg.reply(cur, hh), b1 = cur; if (!bm) { var lg = E.legal(cur); bm = lg[0]; } if (!bm) { busy = false; return; }
             cur = E.make(cur, bm); S.pos = cur; S.last = { f: bm.f, t: bm.t }; hh.push(E.hashOf(cur)); moveSound(b1, bm, cur); busy = false; draw();
             if (check(true)) return; sm(E.inCheck(cur) ? 'Тебе шах!' : 'Твой ход.', E.inCheck(cur) ? 'bad' : '');
           }, 450); return;
