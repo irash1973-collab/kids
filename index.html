@@ -1136,6 +1136,36 @@ body:has(.ctr-prompt) .board[data-board="bw"]{--sq-light:#fff3d3;--sq-dark:#5d8e
 .aboutprog .apnew { align-self: flex-start; background: #fff; color: #e10600; font-weight: 900; font-size: 13px; letter-spacing: .5px; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
 @keyframes apglow { 50% { box-shadow: 0 0 0 8px rgba(225,6,0,.22), 0 8px 30px rgba(225,6,0,.35); } }
 @keyframes apwig { 0%,100% { transform: rotate(-8deg) } 50% { transform: rotate(8deg) scale(1.1) } }
+
+.aboutprog .apmemo { border: 4px solid #e10600; background: #fff6c2; border-radius: 18px; padding: 6px 18px 10px; margin: 14px 0 22px; }
+.aboutprog .apmemo h3 { color: #e10600; margin: 12px 0 8px; }
+.aboutprog .apmemo p { font-size: 17px; }
+
+/* --- компактная главная --- */
+body.home .hero { padding: 30px 36px 120px; min-height: 0; }
+body.home .hero h1 { font-size: clamp(30px, 4vw, 46px); max-width: 14em; }
+body.home .hero p { font-size: 17px; }
+body.home .hero p.motto { font-size: clamp(19px, 2.4vw, 25px); }
+body.home .cards { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+body.home .card { grid-template-columns: 64px 1fr; column-gap: 12px; padding: 12px 14px 14px 14px; box-shadow: 0 5px 0 var(--sh), 0 8px 14px rgba(35,26,94,.1); }
+body.home .card .ch { width: 64px; height: 64px; border-width: 3px; }
+body.home .card .big { font-size: 21px; }
+body.home .card p { font-size: 14px; margin: 2px 0 6px; }
+.clubpromo { padding: 12px 14px 12px; gap: 8px; }
+.clubpromo .uplogo { width: 46px; height: 46px; }
+.clubpromo h2 { font-size: 22px; }
+.clubpromo > p { font-size: 14.5px; }
+.cpgrid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cpcard { padding: 8px 8px 10px; gap: 3px; border-radius: 16px; }
+.cpcard h3 { font-size: 1.05em; } .cpico { font-size: 24px; } .cpcard .cpk { font-size: 13px; }
+.cpcard .btn { padding: 8px 6px; font-size: 14px; }
+.cpbox { padding: 10px 12px; gap: 6px; border-radius: 16px; }
+.cpbox h3 { font-size: 16px; } .cpbox p { font-size: 13.5px; }
+.cpsoc .btn { padding: 6px 10px; font-size: 13px; }
+.clubpromo > h3 { font-size: 15px; margin: 2px 0 0; }
+@media (max-width: 560px) { .cpgrid { grid-template-columns: 1fr; } body.home .hero { padding-bottom: 150px; } }
+.cards .card:nth-child(n+6) { --bd: #8a5cd0; --tt: #4a2a8a; --sh: #c9b3ee; }
+.cards .card:nth-child(7) { --bd: #e0577a; --tt: #8f1f3f; --sh: #f3b0c2; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2370,8 +2400,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function cartoons() {
     view.innerHTML = '<h2>Мультики: знакомство с фигурами</h2><p class="note">Смотри, как живут шахматные фигуры. Нажми на кнопку «играть» у видео.</p><div class="vgrid">' + CARTOONS.map(vcard).join('') + SOON.map(function (n) { return '<div class="vcard soon"><h3>' + esc(n) + '</h3><div class="vsoon">Скоро</div><p class="note">Мультик про фигуру скоро появится.</p></div>'; }).join('') + '</div>';
   }
+  function memoHtml() {
+    var P = window.__PAR || [];
+    return '<div class="apmemo"><h3>📌 Памятка для родителей</h3>' + P.map(function (t, k) { return '<p' + (k === 0 ? ' style="font-weight:700"' : '') + '>' + t + '</p>'; }).join('') + '<p style="font-weight:700;color:#e10600">Спасибо за ваше доверие и терпение! Команда UpGrade Chess Club.</p></div>';
+  }
   function parentsBlock() {
-    return '<details class="parents aboutprog" id="aboutprog"><summary><span class="apico">📖</span><span class="aptx"><span class="apnew">Важно прочитать родителям!</span><b>О программе обучения</b><small>Цели, уроки, нагрузка, роль тренера. Нажмите, чтобы прочитать</small></span><span class="apar">▾</span></summary><div class="apbody">' + ABOUT_HTML + '</div></details>';
+    return '<details class="parents aboutprog" id="aboutprog"><summary><span class="apico">📖</span><span class="aptx"><span class="apnew">Важно прочитать родителям!</span><b>Памятка для родителей и программа обучения</b><small>Как заниматься, цели, уроки, нагрузка, роль тренера. Нажмите, чтобы прочитать</small></span><span class="apar">▾</span></summary><div class="apbody">' + memoHtml() + ABOUT_HTML + '</div></details>';
   }
   function clubPromo() {
     var logo = '<svg class="uplogo" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fff" stroke="#d7261e" stroke-width="3"/><use href="#pb1" x="10" y="12" width="34" height="34"/><path d="M48 44V18M40 26l8-9 8 9" fill="none" stroke="#d7261e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -4209,7 +4243,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       ['a2 b2 f2 h2 e4 d3 c3 g3', 'a7 b7 f7 h7 e5 d6 c6 g6'],
       ['a2 b2 d2 f2 h2 c4 e3 g3', 'a7 b7 d7 f7 h7 c5 e6 g6'],
       ['a2 b2 g2 h2 d4 c3 e3 f3', 'a7 b7 g7 h7 d5 c6 e6 f6']
-    ], DEPTH = [2, 2, 2, 3, 3, 4, 4, 5, 5, 6], SLACK = [15, 12, 10, 0, 0, 0, 0, 0, 0, 0];
+    ], DEPTH = [6, 6, 6, 6, 6, 6, 6, 6, 6, 6], SLACK = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     function sq(n) { return (8 - +n[1]) * 8 + (n.charCodeAt(0) - 97); }
     function moves(b, s, ep) {
       var out = [], dir = s === 1 ? -8 : 8, home = s === 1 ? 6 : 1;
@@ -4331,7 +4365,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function robot() {
         busy = true; draw(); setMsg('Соперник думает…');
         later(function () {
-          var m = E.bestMove(G.pos, C.lv, G.hh.slice(0, -1)); if (m) apply(m);
+          var m = E.bestMove(G.pos, 26, G.hh.slice(0, -1)); if (m) apply(m);
           busy = false; draw(); if (check()) return;
           setMsg(E.inCheck(G.pos) ? 'Тебе шах! Защити короля.' : 'Твой ход.', E.inCheck(G.pos) ? 'bad' : '');
         }, 450);
@@ -5937,7 +5971,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
           if (check('w')) return;
           busy = true; sm('Компьютер думает…');
           later(function () {
-            var bm = E.bestMove(cur, 6, hh), b1 = cur; if (!bm) { busy = false; return; }
+            var bm = E.bestMove(cur, 26, hh), b1 = cur; if (!bm) { busy = false; return; }
             cur = E.make(cur, bm); S.pos = cur; S.last = { f: bm.f, t: bm.t }; S.anim = animOf(b1, bm); hh.push(E.hashOf(cur)); moveSound(b1, bm, cur); busy = false; draw();
             if (check('b')) return; sm(E.inCheck(cur) ? 'Тебе шах!' : 'Твой ход.', E.inCheck(cur) ? 'bad' : '');
           }, 500); return;
@@ -7096,7 +7130,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function comp() {
       busy = true; sm('Компьютер думает…');
       later(function () {
-        var m = null; try { m = E.bestMove(cur, 3, hh); } catch (e) { m = null; } if (!m) { busy = false; return; }
+        var m = null; try { m = E.bestMove(cur, 26, hh); } catch (e) { m = null; } if (!m) { busy = false; return; }
         var b0 = cur; cur = E.make(cur, m); S.pos = cur; S.last = { f: m.f, t: m.t }; S.anim = animOf(b0, m); hh.push(E.hashOf(cur)); moveSound(b0, m, cur); busy = false; draw();
         var s = E.status(cur);
         if (m.p) { lose('Чёрные превратили пешку первыми.'); return; }
@@ -12394,7 +12428,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
         cur = E.make(cur, m); moves++; S.pos = cur; S.last = { f: m.f, t: m.t }; S.sel = null; S.targets = []; hh.push(E.hashOf(cur)); moveSound(b0, m, cur); draw();
         if (check('w')) return; busy = true; sm('Компьютер думает…');
         later(function () {
-          var bm = E.bestMove(cur, 7, hh), b1 = cur; if (!bm) { busy = false; return; }
+          var bm = E.bestMove(cur, 26, hh), b1 = cur; if (!bm) { busy = false; return; }
           cur = E.make(cur, bm); S.pos = cur; S.last = { f: bm.f, t: bm.t }; hh.push(E.hashOf(cur)); moveSound(b1, bm, cur); busy = false; draw();
           if (check('b')) return; sm(E.inCheck(cur) ? 'Тебе шах!' : 'Твой ход.', '');
         }, 450); return;
@@ -12521,17 +12555,10 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     'Ни в коем случае не решайте задания за ребёнка: это не даёт результата и портит ребёнка. Каждое задание, найденное самим, это маленькая победа, и именно из таких побед растут уверенность и интерес к учёбе.',
     'В играх тоже не подсказывайте. Ребёнок должен сам стараться победить, учиться, возвращаться снова и снова и видеть свой прогресс. Проигрыш и ошибка здесь не беда, а часть обучения: каждая партия делает ребёнка сильнее.',
     'Занимайтесь понемногу, но регулярно: 15–20 минут в день лучше, чем два часа раз в неделю. Хвалите ребёнка за старание и внимательность, а не только за результат. Тогда он полюбит шахматы, а вместе с ними и учёбу.'];
+  window.__PAR = PAR;
   window.__parents = function () {
-    var v = document.getElementById('view');
-    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#home">← На главную</a></div><h2>📌 Памятка для родителей</h2><div class="slide" style="border:4px solid #e10600;background:#fff6c2;border-radius:18px;font-size:19px;line-height:1.5">' +
-      PAR.map(function (t, k) { return '<p' + (k === 0 ? ' style="font-weight:700"' : '') + '>' + t + '</p>'; }).join('') + '<p style="font-weight:700;color:#e10600">Спасибо за ваше доверие и терпение! Команда UpGrade Chess Club.</p></div>';
-  };
-  var oldHome = home;
-  home = function () {
-    oldHome();
-    var v = document.getElementById('view'); if (!v) return; var d = document.createElement('div');
-    d.innerHTML = '<a href="#parents" style="display:block;margin:14px 0;padding:14px 18px;border:4px solid #e10600;background:#fff6c2;border-radius:18px;text-decoration:none;color:#111"><b style="color:#e10600;font-size:20px">📌 Памятка для родителей</b><br>Сайт создан для ребят, которые хотят научиться играть в шахматы. Пожалуйста, не подсказывайте ребёнку: так он учится лучше. Нажмите, чтобы прочитать.</a>';
-    v.insertBefore(d, v.children[1] || null);
+    location.replace('#home');
+    setTimeout(function () { var d = document.getElementById('aboutprog'); if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 350);
   };
   window.__exam = page;
   var oldLessons = lessons;
@@ -12740,7 +12767,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     return { title: c.t, tip: c.tip, limit: 50, say: 'Ты играешь белыми. Поставь мат чёрному королю. Нельзя ставить пат, повторять позицию три раза и играть дольше 50 ходов. Компьютер защищается всерьёз!', sub: 'мат',
       pos: function (lv, r) { return mgPos(c.pcs, r); },
       judge: function (cur) { var st = E.status(cur); if (st === 'mate') return { win: true, msg: 'Мат! Ты поставил мат за ' + '' + 'несколько ходов. Молодец!' }; if (st === 'stalemate') return { msg: 'Пат! Это ничья, мат не поставлен.' }; if (E.insufficient(cur)) return { msg: 'Фигур не осталось: мат уже не поставить.' }; return null; },
-      reply: function (cur, hh) { return E.bestMove(cur, 7, hh); } };
+      reply: function (cur, hh) { return E.bestMove(cur, 26, hh); } };
   }
   function pawnCfg() {
     return { title: 'Проведи пешку в ферзи', tip: 'Король должен идти впереди пешки, а не за ней. Сначала подведи короля к пешке, потом веди пешку вместе с королём. Если чёрный король стоит прямо перед пешкой, помни про оппозицию.', limit: 50,
