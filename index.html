@@ -12400,9 +12400,11 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
 
 /* ===== Итоговая работа за первый год: 20 заданий по всем темам, 80% для диплома ===== */
 (function () {
-  var KEY = 'ukc_exam', N = 20;
+  var KEY = 'ukc_exam', N = 20; /* N пересчитывается ниже по числу тем */
   /* 20 тем: у каждой свой урок; в трёх ячейках урок выбирается случайно */
-  var SLOTS = [['squares'], ['lg_pieces'], ['kingrules'], ['values'], ['trades'], ['attdef'], ['castle'], ['ep'], ['promo'], ['check'], ['mate'], ['baby'], ['draws'], ['stalemate'], ['mkinds'], ['m2'], ['forkN', 'forkQ', 'forkR', 'forkB', 'forkP'], ['pin'], ['pe3', 'pe4', 'pe5', 'pe6', 'pe7'], ['G:Q', 'G:R', 'G:RR', 'G:QR']];
+  var SLOTS = [['squares'], ['lg_pieces'], ['kingrules'], ['values'], ['trades'], ['attdef'], ['castle'], ['ep'], ['promo'], ['check'], ['mate'], ['baby'], ['draws'], ['stalemate'], ['mkinds'], ['m2'], ['forkN', 'forkQ', 'forkR', 'forkB', 'forkP'], ['pin'], ['pe3', 'pe4', 'pe5', 'pe6', 'pe7'], ['G:Q', 'G:R', 'G:RR', 'G:QR'],
+    ['disc'], ['gain'], ['defm'], ['rm1'], ['rm2'], ['mh'], ['forkK'], ['pe1', 'pe2', 'pe9'], ['drawq'], ['lg_pawn'], ['lg_board'], ['board']];
+  N = SLOTS.length;
   /* допуск: имя + не меньше 80% упражнений в каждом уроке первого года (или скрытое «Открыть всё») */
   function req() {
     var name = (lsGet('ukc_name', '') || '').trim(), miss = [], total = 0, ok = 0;
@@ -12489,7 +12491,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   }
   function lockedPage(r) {
     var v = document.getElementById('view');
-    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#lessons">← Уроки</a></div><h2>🏁 Завершающий тестовый урок</h2><div class="slide"><p class="msg good" style="font-size:18px"><span style="display:block"><b>🎓 Зачем этот тест?</b> Решишь все 20 заданий и получишь <b>сертификат (диплом) об окончании первого года обучения</b> с твоим именем. Его можно <b>скачать в формате PDF</b> и распечатать.</span></p>' +
+    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#lessons">← Уроки</a></div><h2>🏁 Завершающий тестовый урок</h2><div class="slide"><p class="msg good" style="font-size:18px"><span style="display:block"><b>🎓 Зачем этот тест?</b> Решишь все ' + N + ' заданий и получишь <b>сертификат (диплом) об окончании первого года обучения</b> с твоим именем. Его можно <b>скачать в формате PDF</b> и распечатать.</span></p>' +
       '<p>Тест откроется, когда ты напишешь своё имя (кнопка «Профиль») и пройдёшь все уроки первого года: в каждом нужно решить не меньше 80% упражнений. Готово уроков: <b>' + r.ok + ' из ' + r.total + '</b>.</p>' +
       '<div class="row"><a class="btn go" href="#lessons">К урокам</a></div></div>';
   }
@@ -12499,9 +12501,9 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     if (lsGet('ukc_all', false) && parts && parts[1] === 'coach') { coachRun(makeSetNoSave(), 0); return; }
     var v = document.getElementById('view'), s = st();
     v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#lessons">← Уроки</a></div><h2>🏁 Завершающий тестовый урок</h2>' +
-      '<div class="slide"><p class="msg good" style="font-size:18px"><span style="display:block"><b>🎓 Зачем этот тест?</b> Решишь все 20 заданий и получишь <b>сертификат (диплом) об окончании первого года обучения</b> с твоим именем. Его можно <b>скачать в формате PDF</b>, распечатать и показать родителям и друзьям.</span></p><p>Это завершающая работа за весь первый год. В ней <b>20 заданий</b> по разным темам: клетки, ходы фигур, шах и мат, рокировка, двойной удар, связка и другие.</p>' +
+      '<div class="slide"><p class="msg good" style="font-size:18px"><span style="display:block"><b>🎓 Зачем этот тест?</b> Решишь все ' + N + ' заданий и получишь <b>сертификат (диплом) об окончании первого года обучения</b> с твоим именем. Его можно <b>скачать в формате PDF</b>, распечатать и показать родителям и друзьям.</span></p><p>Это завершающая работа за весь первый год. В ней <b>' + N + ' заданий</b> по разным темам: клетки, ходы фигур, шах и мат, рокировка, двойной удар, связка и другие.</p>' +
       '<p><b>Решай сам, без подсказок и без помощи взрослых.</b> Диплом нужен тебе, пусть он будет честным. Подсказок и «показать ответ» в тесте нет.</p>' +
-      '<p>У каждого задания одна попытка: ошибся, и задание не засчитано. Тест дойдёт до конца, и ты увидишь свой результат. Чтобы получить диплом, нужно решить <b>все 20 заданий (100%)</b>.</p>' +
+      '<p>У каждого задания одна попытка: ошибся, и задание не засчитано. Тест дойдёт до конца, и ты увидишь свой результат. Чтобы получить диплом, нужно решить <b>все ' + N + ' заданий (100%)</b>.</p>' +
       '<p>Если что-то не получилось, не расстраивайся: мы покажем, какие уроки повторить, и ты разберёшь свои ошибки. Следующий тест будет из <b>новых заданий</b>.</p>' +
       (s.pass ? '<p class="msg good">Ты уже сдал(а) завершающий тест. Диплом ждёт тебя!</p>' : (s.best ? '<p class="note">Лучший результат: ' + s.best + ' из ' + N + '.</p>' : '')) +
       '<p><label style="font-size:18px;cursor:pointer"><input type="checkbox" id="exPr" style="width:22px;height:22px;vertical-align:middle"> Обещаю решать сам(а), без подсказок</label></p>' +
@@ -12597,7 +12599,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     oldLessons();
     var v = document.getElementById('view'); if (!v) return; var r = req(), s = st(), d = document.createElement('section'); d.className = 'course';
     var body = s.pass ? '<p>Ты сдал(а) завершающий тест. Диплом ждёт тебя!</p><a class="btn go" href="#diploma">🎓 Получить диплом</a>' :
-      r.unlocked ? '<p>Ты прошёл(а) все уроки. Сдай тест из 20 заданий и получи сертификат (диплом) об окончании первого года: его можно скачать в PDF.</p><div class="row" style="margin-top:10px"><a class="btn go" href="#exam">Сдать завершающий тест</a></div>' :
+      r.unlocked ? '<p>Ты прошёл(а) все уроки. Сдай тест из ' + N + ' заданий и получи сертификат (диплом) об окончании первого года: его можно скачать в PDF.</p><div class="row" style="margin-top:10px"><a class="btn go" href="#exam">Сдать завершающий тест</a></div>' :
       '<p><b>🎓 В конце ты получишь сертификат (диплом) в формате PDF, его можно скачать и распечатать.</b></p><p>Это последний урок первого года. Он откроется, когда ты напишешь своё имя (кнопка «Профиль») и пройдёшь все уроки: в каждом нужно решить не меньше 80% упражнений. Готово уроков: <b>' + r.ok + ' из ' + r.total + '</b>.</p><div class="row" style="margin-top:10px"><a class="btn alt" href="#exam">🔒 Что осталось сделать</a></div>';
     d.innerHTML = '<h3 style="color:#e10600">🏁 Завершающий тестовый урок</h3><div class="slide" style="border:4px solid #e10600;background:#fff1ef;border-radius:18px">' + body + '</div>';
     v.appendChild(d);
@@ -12607,7 +12609,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   window.__diploma = function () {
     if (window.__examPassed()) { oldDip(); return; }
     var v = document.getElementById('view');
-    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#awards">← Награды</a></div><h2>🎓 Диплом</h2><div class="slide"><p>Диплом выдаётся тем, кто закончил первый год обучения и сдал <b>итоговую работу</b>: 20 заданий по всем темам, нужно решить все. Диплом (сертификат) можно скачать в формате PDF.</p><div class="row"><a class="btn go" href="#exam">📝 Сдать итоговую работу</a></div></div>';
+    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#awards">← Награды</a></div><h2>🎓 Диплом</h2><div class="slide"><p>Диплом выдаётся тем, кто закончил первый год обучения и сдал <b>итоговую работу</b>: ' + N + ' заданий по всем темам, нужно решить все. Диплом (сертификат) можно скачать в формате PDF.</p><div class="row"><a class="btn go" href="#exam">📝 Сдать итоговую работу</a></div></div>';
   };
   window.__dipCard = function () {
     var v = document.getElementById('view'); if (!v) return; var d = document.createElement('div'), ok = window.__examPassed();
