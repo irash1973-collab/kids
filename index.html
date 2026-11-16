@@ -158,6 +158,9 @@ a.card:hover { border-color: var(--red); }
 .dots { display: flex; gap: 6px; flex-wrap: wrap; }
 .dots button { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--line); background: var(--card); font-weight: 800; font-size: 14px; }
 .dots button.cur { border-color: var(--red); }
+.dots button.okk { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
+.dots button.bdd { background: #d62828; border-color: #d62828; color: #fff; }
+.dots button.cur { background: #f08a24; border-color: #f08a24; color: #fff; }
 .dots button.done { background: var(--yellow); border-color: #c98f00; color: #1b1a19; }
 
 .world { display: flex; flex-direction: column; gap: 10px; }
@@ -297,6 +300,7 @@ a.card:hover { border-color: var(--red); }
 .lvn { width: 46px; height: 46px; border-radius: 14px; border: 2px solid var(--line); background: var(--card); font-weight: 800; font-size: 17px; color: var(--ink); }
 .lvn.ok { background: #1f8a4c; color: #fff; border-color: #1f8a4c; }
 .lvn.cur { border-color: var(--red); box-shadow: 0 0 0 3px var(--yellow); }
+.lvn.bd { background: #d62828; color: #fff; border-color: #d62828; }
 .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
 .opts button { padding: 14px; border-radius: 16px; border: 2px solid var(--line); background: var(--card); font-size: 20px; font-weight: 800; color: var(--ink); }
 .opts button.good { background: #1f8a4c; color: #fff; } .opts button.bad { background: var(--red); color: #fff; }
@@ -1188,6 +1192,19 @@ body.home .card p { font-size: 14px; margin: 2px 0 6px; }
 
 .coachlk{color:inherit;opacity:.55;font-size:.85em;text-decoration:none}.coachlk:hover{opacity:1;text-decoration:underline}
 body.coachon::after{content:"Режим тренера";position:fixed;left:8px;bottom:8px;background:#2b2350;color:#fff;font:700 11px system-ui;padding:3px 8px;border-radius:10px;opacity:.7;z-index:50;pointer-events:none}
+
+/* ===== аккуратная шапка задания ===== */
+.lvbar{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:6px 0 4px;font-size:15px;color:#2b2350}
+.lvbar .lvsc{font-size:13px;opacity:.75}
+.lvrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.lvrow .lvn{width:34px!important;height:34px!important;border-radius:50%!important;font-size:14px!important}
+.lvrow .lvn.cur{background:#f08a24;color:#fff;border-color:#f08a24;box-shadow:none}
+.lvrow .lvn.ok.cur{background:#1f8a4c}
+.lvrow .lvn.bd.cur{background:#d62828}
+.coachlk{display:none!important}
+body.coachon::after{display:none!important}
+.lvic{display:flex;gap:6px;margin-left:auto}.lvbar{align-items:center}.lvic .gearB{padding:4px 12px;font-size:18px}.lvrow.lvhide{display:none}
+.lvfoot{margin:14px 0 4px;font-weight:800;color:#2b2350;text-align:center;font-size:15px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2528,6 +2545,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var seg = '';
     var LINEK = { M: 1, W: 1 }, cur2 = lsGet('ukc_pzc', { M: 0, W: 0 }), step = 0, uciOf = function (m) { return 'abcdefgh'[m.f & 7] + (8 - (m.f >> 3)) + 'abcdefgh'[m.t & 7] + (8 - (m.t >> 3)); };
     function lineMv(pos, s) { var ms = E.legal(pos); for (var i = 0; i < ms.length; i++) if (uciOf(ms[i]) === s.slice(0, 4)) return ms[i]; return null; }
+    var pres = lsGet('ukc_pzres', {});
+    function setRes(k, i, v) { pres[k] = pres[k] || {}; pres[k][i] = v; lsSet('ukc_pzres', pres); }
+    function curIdx() { return kind === 'C' ? cur : LINEK[kind] ? cur2[kind] % (((window.__PZ || {})[kind] || [0]).length) : -1; }
     function sideName() { return S.pos.turn === 1 ? 'белых' : 'чёрных'; }
     PKINDS.forEach(function (k) { seg += '<button data-k="' + k[0] + '" aria-pressed="' + (k[0] === kind) + '">' + k[1] + '</button>'; });
     view.innerHTML =
@@ -2539,6 +2559,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
     function counter() {
       var el = document.getElementById('cnt');
+      var rs = pres[kind] || {}, okn = 0, bdn = 0; Object.keys(rs).forEach(function (q) { if (rs[q] === 1) okn++; else if (rs[q] === 2) bdn++; });
+      if (LINEK[kind] || kind === 'C') { el.textContent = 'Решено: ' + okn + (okn + bdn ? ' · Успех ' + Math.round(100 * okn / (okn + bdn)) + '%' : ''); return; }
       el.textContent = LINEK[kind] ? 'Решено: ' + (pz[kind] || 0) : kind === 'C' ? 'Решено: ' + cnt(solved) + ' из ' + PUZZLES.length : 'Решено: ' + pz[kind] + (kind === 'X' ? '' : ' · мат ' + PGEN[kind]);
     }
     function dots() {
@@ -2547,13 +2569,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var h = '';
       if (LINEK[kind]) {
         var bk = (window.__PZ || {})[kind] || [];
-        bk.forEach(function (p, i) { var c = cur2[kind] % bk.length; h += '<button data-i="' + i + '" class="' + (i === c ? 'cur ' : '') + (i < cur2[kind] ? 'done' : '') + '" aria-label="Задача ' + (i + 1) + '">' + (i + 1) + '</button>'; });
+        bk.forEach(function (p, i) { var c = cur2[kind] % bk.length; var rr = (pres[kind] || {})[i]; h += '<button data-i="' + i + '" class="' + (i === c ? 'cur ' : '') + (rr === 1 ? 'okk' : rr === 2 ? 'bdd' : '') + '" aria-label="Задача ' + (i + 1) + (rr === 1 ? ', решена' : rr === 2 ? ', не решена' : '') + '">' + (i + 1) + '</button>'; });
         d.innerHTML = h;
         d.onclick = function (e) { var b = e.target.closest('button'); if (b && !busy) { cur2[kind] = +b.dataset.i; lsSet('ukc_pzc', cur2); load(0); } };
         return;
       }
       PUZZLES.forEach(function (p, i) {
-        h += '<button data-i="' + i + '" class="' + (i === cur ? 'cur ' : '') + (solved[i] ? 'done' : '') + '" aria-label="Задача ' + (i + 1) + (solved[i] ? ', решена' : '') + '">' + (i + 1) + '</button>';
+        var rc = (pres.C || {})[i]; h += '<button data-i="' + i + '" class="' + (i === cur ? 'cur ' : '') + (solved[i] || rc === 1 ? 'okk' : rc === 2 ? 'bdd' : '') + '" aria-label="Задача ' + (i + 1) + (solved[i] ? ', решена' : '') + '">' + (i + 1) + '</button>';
       });
       d.innerHTML = h;
       d.onclick = function (e) { var b = e.target.closest('button'); if (b && !busy) load(+b.dataset.i); };
@@ -2582,7 +2604,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     function lineFinish() {
       var was = earnedIds(); done = true; busy = false;
-      if (!shown) { pz[kind] = (pz[kind] || 0) + 1; lsSet('ukc_pz', pz); } counter();
+      if (!shown) { pz[kind] = (pz[kind] || 0) + 1; lsSet('ukc_pz', pz); } setRes(kind, curIdx(), shown ? 2 : 1); counter();
       if (!shown) addPts(usedHelp ? 4 : 10, 'за задачу');
       var nm = newMedals(was); sfx('good'); if (!shown) confetti(nm.length ? 140 : 45);
       setMsg(kind === 'M' ? 'Мат! Ты решил задачу в два хода. Молодец!' : 'Верно! Ты выиграл ' + P.tgt + '. Молодец!', 'good');
@@ -2623,7 +2645,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (st === 'mate') {
         var was = earnedIds();
         done = true;
-        if (kind === 'C') { solved[cur] = true; lsSet('ukc_solved', solved); } else { pz[kind]++; lsSet('ukc_pz', pz); }
+        if (kind === 'C') { solved[cur] = true; lsSet('ukc_solved', solved); setRes('C', cur, 1); } else { pz[kind]++; lsSet('ukc_pz', pz); }
         counter();
         addPts(usedHelp ? 4 : 10, 'за задачу');
         var nm = newMedals(was);
@@ -2666,6 +2688,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       later(function () {
         var pc = PNAME[Math.abs(S.pos.b[m.f])];
         S.pos = E.make(S.pos, { f: m.f, t: m.t, p: m.p ? 5 : 0, fl: m.fl }); S.hint = null; S.targets = []; S.last = { f: m.f, t: m.t };
+        if (kind === 'C') { setRes('C', cur, 2); }
         sfx('good'); done = true; busy = false;
         setMsg('Ответ: ' + pc + ' на ' + SQN(m.t) + ' — это мат! Решение показано: за эту задачу баллов нет.', 'bad');
         var nb = document.getElementById('nextBtn'); nb.hidden = false; nb.textContent = 'Дальше'; nb.focus();
@@ -3492,6 +3515,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
   /* ================= ИНТЕРФЕЙС УРОКОВ ================= */
   var LESS = {}, GROUPS = [];
+  var lesFail = lsGet('ukc_lesfail', {});
+  function lvFail(id, lv) { return !!(lesFail[id] && lesFail[id][lv]); }
+  function setFail(id, lv, v) { lesFail[id] = lesFail[id] || {}; if (v) lesFail[id][lv] = 1; else delete lesFail[id][lv]; lsSet('ukc_lesfail', lesFail); }
   function lvDone(id, lv) { return !!(les[id] && les[id][lv]); }
   function lessonFull(L) { var n = L.levels || 1; for (var i = 1; i <= n; i++) if (!lvDone(L.id, i)) return false; return true; }
   function lessonStats() { var t = 0, d = 0; GROUPS.forEach(function (g) { g.ids.forEach(function (id) { t++; if (lessonFull(LESS[id])) d++; }); }); return { total: t, done: d }; }
@@ -3527,13 +3553,18 @@ if (typeof module !== 'undefined') module.exports = Eng;
       lr = '<div class="lvrow" role="group" aria-label="Упражнения">' + (L.slides ? '<a class="lvn' + (lv === 0 ? ' cur' : '') + '" href="#lesson/' + id + '" aria-label="Объяснение" style="display:grid;place-items:center;text-decoration:none">📖</a>' : '');
       for (var i = 1; i <= L.levels; i++) lr += '<a class="lvn' + (lvDone(id, i) ? ' ok' : '') + (i === lv ? ' cur' : '') + '" href="#lesson/' + id + '/' + i + '" style="display:grid;place-items:center;text-decoration:none">' + i + '</a>';
       lr += '</div>';
-      var lvO = lsGet('ukc_lvopen', false), dn = 0; for (var k2 = 1; k2 <= L.levels; k2++) if (lvDone(id, k2)) dn++;
-      lr = lr.replace('class="lvrow"', 'class="lvrow' + (lvO ? '' : ' lvhide') + '"');
-      lr = '<div class="seg lvtg"><button type="button" class="btn alt" id="lvTg" aria-expanded="' + lvO + '">' + (lv ? 'Задание ' + lv + ' из ' + L.levels : 'Задания') + ' · выполнено ' + dn + ' ' + (lvO ? '▴' : '▾') + '</button></div>' + lr;
+      var dn = 0, fl = 0; for (var k2 = 1; k2 <= L.levels; k2++) { if (lvDone(id, k2)) dn++; else if (lvFail(id, k2)) fl++; }
+      lr = lr.replace(/class="lvn( ok)?( cur)?"/g, function (m0, a0, b0) { return m0; });
+      for (var k3 = 1; k3 <= L.levels; k3++) if (!lvDone(id, k3) && lvFail(id, k3)) lr = lr.replace('class="lvn' + (k3 === lv ? ' cur' : '') + '" href="#lesson/' + id + '/' + k3 + '"', 'class="lvn bd' + (k3 === lv ? ' cur' : '') + '" href="#lesson/' + id + '/' + k3 + '"');
+      lr = '<div class="lvbar"><b>' + (lv ? 'Задание ' + lv + ' из ' + L.levels : 'Задания') + '</b><span class="lvsc">Решено ' + dn + (dn + fl ? ' · Успех ' + Math.round(100 * dn / (dn + fl)) + '%' : '') + '</span><span class="lvic"><button type="button" class="btn alt gearB" id="lvTg" title="Список заданий" aria-label="Список заданий" aria-expanded="false">▦</button></span></div>' + lr;
+      lr = lr.replace('class="lvrow"', 'class="lvrow lvhide"');
     }
-    view.innerHTML = head + lr + '<div id="ex"></div>';
+    view.innerHTML = head + lr + '<div id="ex"></div>' + (L.levels ? '<div class="lvfoot"></div>' : '');
+    function updScore() { if (!L.levels) return; var d1 = 0, f1 = 0; for (var q = 1; q <= L.levels; q++) { if (lvDone(id, q)) d1++; else if (lvFail(id, q)) f1++; } var t1 = 'Решено ' + d1 + ' из ' + L.levels + (d1 + f1 ? ' · Успех: ' + Math.round(100 * d1 / (d1 + f1)) + '%' : ''); var e1 = view.querySelector('.lvsc'); if (e1) e1.textContent = t1; var e2 = view.querySelector('.lvfoot'); if (e2) e2.textContent = t1; }
+    updScore();
     var tg = document.getElementById('lvTg');
-    if (tg) tg.onclick = function () { var row = view.querySelector('.lvrow'), o = row.classList.contains('lvhide'); row.classList.toggle('lvhide', !o); lsSet('ukc_lvopen', o); tg.setAttribute('aria-expanded', String(o)); tg.textContent = tg.textContent.replace(/[▴▾]$/, o ? '▴' : '▾'); };
+    if (tg) tg.onclick = function () { var row0 = view.querySelector('.lvrow'); if (row0) { var o0 = row0.classList.contains('lvhide'); row0.classList.toggle('lvhide', !o0); tg.setAttribute('aria-expanded', String(o0)); } return; };
+    if (false) tg.onclick = function () { var row = view.querySelector('.lvrow'), o = row.classList.contains('lvhide'); row.classList.toggle('lvhide', !o); lsSet('ukc_lvopen', o); tg.setAttribute('aria-expanded', String(o)); tg.textContent = tg.textContent.replace(/[▴▾]$/, o ? '▴' : '▾'); };
     var host = document.getElementById('ex');
     if (lv === 0 && L.slides) { showSlides(host, L, 0); return; }
     if (!L.levels) { showSlides(host, L, 0); return; }
@@ -3544,6 +3575,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var H = window.__help || { h: 0, a: 0 }; H.done = true;
       if (H.a || stars <= 0) {
         /* ответ показан или задание не решено сам: ни звёзд, ни баллов */
+        setFail(id, lv, true); updScore(); var cb = view.querySelector('.lvn.cur'); if (cb && !cb.classList.contains('ok')) cb.classList.add('bd');
         var fb = document.createElement('div'); fb.className = 'slide resbox';
         sfx('bad');
         var mm = host.querySelector('#msg') || host.querySelector('#sm'); if (mm && !H.a) { mm.className = 'msg bad'; mm.textContent = 'Три ошибки. Задание не решено, звёзды и баллы не засчитаны.'; }
@@ -3556,7 +3588,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var helpNote = '';
       if (H.h >= 2) { stars = Math.min(stars, 1); helpNote = '<p class="note">Ты пользовался подсказками, поэтому звёзд меньше. Попробуй в следующий раз без подсказок!</p>'; }
       else if (H.h === 1) { stars = Math.min(stars, 2); helpNote = '<p class="note">Ты пользовался подсказкой, поэтому звёзд меньше.</p>'; }
-      var r = saveLv(L, lv, stars), box = document.createElement('div'); box.className = 'slide resbox';
+      setFail(id, lv, false); var r = saveLv(L, lv, stars); updScore(); var box = document.createElement('div'); box.className = 'slide resbox';
       sfx('win'); confetti(60 + stars * 30);
       if (r.gain) addPts(r.gain, 'за упражнение');
       var nm = r.full ? lessonMedal() : [];
@@ -8806,7 +8838,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function paint(b) {
       if (!b) return;
       var coach = false; try { coach = localStorage.getItem('ukc_coach') === '1'; } catch (e) {}
-      var open = coach || tries >= lim, tx = open ? (coach && tries < lim ? 'Показать решение (тренер)' : 'Показать решение') : 'Решение откроется после ' + (lim - tries) + ' ' + (lim - tries === 1 ? 'ошибки' : 'ошибок');
+      var open = true, tx = 'Показать правильный ход';
       if (b.disabled !== !open) b.disabled = !open;
       if (b.textContent !== tx) b.textContent = tx;
     }
@@ -8827,26 +8859,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }).observe(view, { childList: true, subtree: true, characterData: true });
   })();
 
-/* ---------- режим тренера: код в подвале, потом решение открыто во всех заданиях ---------- */
-(function () {
-  var CODE = '7391';
-  function on() { try { return localStorage.getItem('ukc_coach') === '1'; } catch (e) { return false; } }
-  function set(v) { try { if (v) localStorage.setItem('ukc_coach', '1'); else localStorage.removeItem('ukc_coach'); } catch (e) {} }
-  function mount() {
-    var p = document.querySelector('.site-link'); if (!p || p.querySelector('.coachlk')) return;
-    var a = document.createElement('a'); a.href = '#'; a.className = 'coachlk'; a.textContent = on() ? ' · режим тренера: вкл (выключить)' : ' · для тренера';
-    a.onclick = function (e) {
-      e.preventDefault();
-      if (on()) { set(false); a.textContent = ' · для тренера'; document.body.classList.remove('coachon'); if (window.__scanAns) window.__scanAns(); return; }
-      var c = window.prompt('Код тренера:');
-      if (c === CODE) { set(true); a.textContent = ' · режим тренера: вкл (выключить)'; document.body.classList.add('coachon'); if (window.__scanAns) window.__scanAns(); }
-      else if (c !== null) window.alert('Неверный код.');
-    };
-    p.appendChild(a);
-    document.body.classList.toggle('coachon', on());
-  }
-  mount(); setInterval(mount, 1500);
-})();
+
 
   /* ===== Живые шахматы: 20 уровней, фигуры с лицами, голосами и движением ===== */
   (function () {
@@ -14221,13 +14234,13 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
 
 /* ===== Первый год: подсказки спрятаны за шестерёнку, анализ на компьютере открывается только после решения ===== */
 (function () {
-  function isTask() { return !!(document.getElementById('hintB') || (document.getElementById('hintBtn') && !document.getElementById('newBtn'))); }
+  function isTask() { return !!(document.getElementById('hintB') || document.getElementById('ansB') || (document.getElementById('hintBtn') && !document.getElementById('newBtn'))); }
   function solved() {
     var m = document.getElementById('msg') || document.getElementById('sm'), nb = document.getElementById('nextBtn') || document.getElementById('nxB');
     return !!((m && /(^|\s)good(\s|$)/.test(m.className)) || (nb && !nb.hidden && nb.offsetParent !== null) || (window.__help && window.__help.done));
   }
   function gear() {
-    var h = document.getElementById('hintB') || document.getElementById('hintBtn'); if (!h || h.dataset.gear) return;
+    var h = document.getElementById('hintB') || document.getElementById('hintBtn') || document.getElementById('ansB'); if (!h || h.dataset.gear) return;
     if (document.getElementById('newBtn') || document.getElementById('mnB')) return;
     var a = document.getElementById('ansB') || document.getElementById('ansBtn'), row = h.parentNode;
     h.dataset.gear = '1';
@@ -14238,7 +14251,8 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     var f = document.createElement('button'); f.className = 'btn alt'; f.type = 'button'; f.textContent = 'Перевернуть доску';
     f.onclick = function () { pop.hidden = true; if (window.__curFlip) window.__curFlip(); else { var b = document.getElementById('flipBtn') || document.getElementById('flB'); if (b) b.click(); } };
     if (document.getElementById('flipBtn') || document.getElementById('flB') || window.__curFlip) pop.appendChild(f);
-    row.insertBefore(g, row.firstChild); row.parentNode.insertBefore(pop, row.nextSibling);
+    var lb = document.querySelector('.lvbar .lvic');
+    if (lb) { lb.appendChild(g); lb.parentNode.parentNode.insertBefore(pop, lb.parentNode.nextSibling); } else { row.insertBefore(g, row.firstChild); row.parentNode.insertBefore(pop, row.nextSibling); }
     g.onclick = function (e) { e.stopPropagation(); pop.hidden = !pop.hidden; };
     pop.onclick = function (e) { if (e.target.closest('button')) setTimeout(function () { pop.hidden = true; }, 50); };
     document.addEventListener('click', function cl(e) { if (!document.body.contains(pop)) { document.removeEventListener('click', cl); return; } if (!pop.hidden && !e.target.closest('#gearPop')) pop.hidden = true; });
