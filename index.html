@@ -3943,6 +3943,16 @@ if (typeof module !== 'undefined') module.exports = Eng;
     };
     draw();
   }
+  function ynAnswer(host, ri, expl, finish) {
+    var o = host.querySelector('#opts'), m = host.querySelector('#msg'); if (!o || !m || host.querySelector('#ansB')) return;
+    o.insertAdjacentHTML('afterend', '<div class="row"><button class="btn alt" id="ansB" type="button">Показать правильный ответ</button></div>');
+    host.querySelector('#ansB').onclick = function () {
+      var bs = o.querySelectorAll('button'); if (o.dataset.done) return; o.dataset.done = '1';
+      for (var q = 0; q < bs.length; q++) { if (bs[q].dataset.o === String(ri)) bs[q].className = 'good'; bs[q].disabled = true; }
+      if (window.__help) window.__help.a = 1;
+      m.className = 'msg bad'; m.textContent = 'Правильный ответ показан. ' + (expl || ''); sfx('bad'); finish(0);
+    };
+  }
   function runYN(host, L, lv, T, finish) {
     var S = { pos: T.pos, nochk: !!T.nochk, sel: null, targets: [], last: T.last || null, hint: null, flip: false, coords: true, mark: T.mark || {}, hl: T.hl || null }, mistakes = 0, done = false;
     var obt = T.opts ? T.opts.map(function (o, i) { return '<button data-o="' + i + '">' + o + '</button>'; }).join('') : '<button data-o="1">Да</button><button data-o="0">Нет</button>';
@@ -4298,7 +4308,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function runQuiz(host, L, lv, finish) {
       var q = QS[(lv - 1) % QS.length], mistakes = 0, done = false;
       host.innerHTML = say(av('prof'), 'Вопрос ' + lv, q[0], 'ответь «Да» или «Нет»') + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts"><button data-o="1">Да</button><button data-o="0">Нет</button></div>';
-      var msg = document.getElementById('msg');
+      var msg = document.getElementById('msg'); ynAnswer(host, q[1] ? 1 : 0, q[2], finish);
       document.getElementById('opts').onclick = function (e) {
         var b = e.target.closest('button'); if (!b || done) return;
         if ((b.dataset.o === '1') === q[1]) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + q[2]; sfx('good'); finish(mistakes === 0 ? 3 : 2); }
@@ -4994,7 +5004,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         }
         function redraw(click) { drawBoard(S, click || function () {}); }
         if (t.mode === 'opts') {
-          redraw();
+          redraw(); ynAnswer(host, t.ans, t.expl, finish);
           document.getElementById('opts').onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; if (b.dataset.o === t.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; bad('Подумай ещё раз.'); } };
         } else if (t.mode === 'click') {
           redraw(function (i) { if (done) return; if (i === t.cell) { S.mark = {}; S.mark[i] = 'star'; redraw(); win(); } else bad('Это поле ' + SQW(i) + '. Ищем ' + SQW(t.cell) + '.'); });
@@ -5210,7 +5220,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         var q = QS[(lv - 1) % QS.length], mistakes = 0, done = false, S = null;
         host.innerHTML = say(av('prof'), 'Вопрос ' + lv, q[0], 'ответь «Да» или «Нет»') + (q[3] ? boardHTML() : '') + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts"><button data-o="1">Да</button><button data-o="0">Нет</button></div>';
         if (q[3]) { S = { pos: E.fromFEN(q[3]), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }; drawBoard(S, function () {}); }
-        var msg = document.getElementById('msg');
+        var msg = document.getElementById('msg'); ynAnswer(host, q[1] ? 1 : 0, q[2], finish);
         document.getElementById('opts').onclick = function (e) {
           var b = e.target.closest('button'); if (!b || done) return;
           if ((b.dataset.o === '1') === q[1]) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + q[2]; sfx('good'); finish(mistakes === 0 ? 3 : 2); }
@@ -5476,7 +5486,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function win() { done = true; sfx('good'); sm('Верно! ' + (q.expl || ''), 'good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); }
       function bad() { mist++; sfx('bad'); sm('Подумай ещё. ' + (q.why || ''), 'bad'); }
       drawBoard(S, function (i) { if (done || q.opts) return; if (q.ok(i)) { S.mark = {}; S.mark[i] = 'star'; drawBoard(S, function () {}); win(); } else bad(); });
-      var ob = document.getElementById('opts');
+      var ob = document.getElementById('opts'); if (ob) ynAnswer(host, q.ans, q.expl, finish);
       if (ob) ob.onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; if (b.dataset.o === q.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; bad(); } };
     }
     function boardArr() { return new Array(64).fill(''); }
@@ -6300,6 +6310,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var q = RV[(lv - 1) % RV.length], mist = 0, done = false;
       host.innerHTML = say(av('prof'), 'Повторение ' + lv, q[0], 'ответь «Да» или «Нет»') + (q[3] ? boardHTML() : '') + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts"><button data-o="1">Да</button><button data-o="0">Нет</button></div>';
       if (q[3]) drawBoard({ pos: E.fromFEN(q[3]), sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: null }, function () {});
+      ynAnswer(host, q[1] ? 1 : 0, q[2], finish);
       document.getElementById('opts').onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; var msg = document.getElementById('msg'); if ((b.dataset.o === '1') === q[1]) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + q[2]; sfx('good'); finish(mist === 0 ? 3 : 2); } else { b.className = 'bad'; mist++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Подумай ещё раз. Вернись к уроку по этой теме.'; } };
     }
     LESS.review = { id: 'review', t: 'Итоговое повторение', d: 'Вопросы по всему первому году: фигуры, правила, мат, ничья, размены.', levels: RV.length, run: runRev, slides: [{ h: 'Проверь себя', p: ['Здесь вопросы по всему, что ты выучил: ходы фигур, правила, мат, пат, ничья, размены. Если ошибся, вернись к уроку и повтори. Удачи!'], fen: START0 }] };
@@ -7715,7 +7726,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     drawBoard(S, onClick);
     if (q.mode === 'seq') { if (q.targets.length > 1 || lv > 1) prog(); }
     else if (q.mode === 'all') prog();
-    var ob = document.getElementById('opts');
+    var ob = document.getElementById('opts'); if (ob) ynAnswer(host, q.ans, q.expl, finish);
     if (ob) ob.onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; if (b.dataset.o === q.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; bad('Нет. ' + (q.hint || 'Подумай ещё.')); } };
   }
   L.levels = 30; L.kind = 'board'; L.run = run;
@@ -9575,7 +9586,7 @@ L.slides=slides;
   function runV(host,Lx,lv,finish){
     var q=task(lv),mist=0,done=false;
     host.innerHTML=say(av('prof'),'Профессор',q.text,Lx.t+' · '+lv)+'<div class="pq">'+q.pic+'</div>'+legend()+'<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts pgo" id="opts">'+q.opts.map(function(o){return '<button data-o="'+o+'">'+((q.oh&&q.oh[o])||o)+'</button>'}).join('')+'</div>';
-    var msg=document.getElementById('msg');
+    var msg=document.getElementById('msg');ynAnswer(host,q.ans,q.expl,finish);
     function sm(t,k){msg.className='msg'+(k?' '+k:'');msg.textContent=t;}
     document.getElementById('opts').onclick=function(e){var b=e.target.closest('button');if(!b||done)return;
       if(b.dataset.o===q.ans){b.className='good';done=true;sfx('good');sm('Верно! '+q.expl,'good');finish(mist===0?3:mist===1?2:1);}
