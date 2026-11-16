@@ -160,7 +160,6 @@ a.card:hover { border-color: var(--red); }
 .dots button.cur { border-color: var(--red); }
 .dots button.okk { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
 .dots button.bdd { background: #d62828; border-color: #d62828; color: #fff; }
-.dots button.cur { background: #f08a24; border-color: #f08a24; color: #fff; }
 .dots button.done { background: var(--yellow); border-color: #c98f00; color: #1b1a19; }
 
 .world { display: flex; flex-direction: column; gap: 10px; }
@@ -1198,13 +1197,14 @@ body.coachon::after{content:"Режим тренера";position:fixed;left:8px;
 .lvbar .lvsc{font-size:13px;opacity:.75}
 .lvrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .lvrow .lvn{width:34px!important;height:34px!important;border-radius:50%!important;font-size:14px!important}
-.lvrow .lvn.cur{background:#f08a24;color:#fff;border-color:#f08a24;box-shadow:none}
-.lvrow .lvn.ok.cur{background:#1f8a4c}
-.lvrow .lvn.bd.cur{background:#d62828}
 .coachlk{display:none!important}
 body.coachon::after{display:none!important}
 .lvic{display:flex;gap:6px;margin-left:auto}.lvbar{align-items:center}.lvic .gearB{padding:4px 12px;font-size:18px}.lvrow.lvhide{display:none}
 .lvfoot{margin:14px 0 4px;font-weight:800;color:#2b2350;text-align:center;font-size:15px}
+.lvrow .lvn.cur{border-color:#2b2350;box-shadow:0 0 0 3px #2b2350}
+.lvn.hn{background:#f08a24;color:#fff;border-color:#f08a24}
+.dots button.cur{background:var(--card);border-color:#2b2350!important;color:#1b1a19;box-shadow:0 0 0 2px #2b2350}.dots button.okk.cur{background:#1f8a4c;color:#fff}.dots button.bdd.cur{background:#d62828;color:#fff}.dots button.hnn.cur{background:#f08a24;color:#fff}
+.dots button.hnn{background:#f08a24;border-color:#f08a24;color:#fff}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2559,8 +2559,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
     function counter() {
       var el = document.getElementById('cnt');
-      var rs = pres[kind] || {}, okn = 0, bdn = 0; Object.keys(rs).forEach(function (q) { if (rs[q] === 1) okn++; else if (rs[q] === 2) bdn++; });
-      if (LINEK[kind] || kind === 'C') { el.textContent = 'Решено: ' + okn + (okn + bdn ? ' · Успех ' + Math.round(100 * okn / (okn + bdn)) + '%' : ''); return; }
+      var rs = pres[kind] || {}, okn = 0, bdn = 0, hn3 = 0; Object.keys(rs).forEach(function (q) { if (rs[q] === 1) okn++; else if (rs[q] === 3) { okn++; hn3++; } else if (rs[q] === 2) bdn++; });
+      if (LINEK[kind] || kind === 'C') { el.textContent = 'Решено: ' + okn + (okn + bdn ? ' · Успех ' + Math.round(100 * (okn - hn3 * 0.5) / (okn + bdn)) + '%' : ''); return; }
       el.textContent = LINEK[kind] ? 'Решено: ' + (pz[kind] || 0) : kind === 'C' ? 'Решено: ' + cnt(solved) + ' из ' + PUZZLES.length : 'Решено: ' + pz[kind] + (kind === 'X' ? '' : ' · мат ' + PGEN[kind]);
     }
     function dots() {
@@ -2569,13 +2569,13 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var h = '';
       if (LINEK[kind]) {
         var bk = (window.__PZ || {})[kind] || [];
-        bk.forEach(function (p, i) { var c = cur2[kind] % bk.length; var rr = (pres[kind] || {})[i]; h += '<button data-i="' + i + '" class="' + (i === c ? 'cur ' : '') + (rr === 1 ? 'okk' : rr === 2 ? 'bdd' : '') + '" aria-label="Задача ' + (i + 1) + (rr === 1 ? ', решена' : rr === 2 ? ', не решена' : '') + '">' + (i + 1) + '</button>'; });
+        bk.forEach(function (p, i) { var c = cur2[kind] % bk.length; var rr = (pres[kind] || {})[i]; h += '<button data-i="' + i + '" class="' + (i === c ? 'cur ' : '') + (rr === 1 ? 'okk' : rr === 2 ? 'bdd' : rr === 3 ? 'hnn' : '') + '" aria-label="Задача ' + (i + 1) + (rr === 1 ? ', решена' : rr === 2 ? ', не решена' : '') + '">' + (i + 1) + '</button>'; });
         d.innerHTML = h;
         d.onclick = function (e) { var b = e.target.closest('button'); if (b && !busy) { cur2[kind] = +b.dataset.i; lsSet('ukc_pzc', cur2); load(0); } };
         return;
       }
       PUZZLES.forEach(function (p, i) {
-        var rc = (pres.C || {})[i]; h += '<button data-i="' + i + '" class="' + (i === cur ? 'cur ' : '') + (solved[i] || rc === 1 ? 'okk' : rc === 2 ? 'bdd' : '') + '" aria-label="Задача ' + (i + 1) + (solved[i] ? ', решена' : '') + '">' + (i + 1) + '</button>';
+        var rc = (pres.C || {})[i]; h += '<button data-i="' + i + '" class="' + (i === cur ? 'cur ' : '') + (rc === 3 ? 'hnn' : rc === 2 ? 'bdd' : solved[i] || rc === 1 ? 'okk' : '') + '" aria-label="Задача ' + (i + 1) + (solved[i] ? ', решена' : '') + '">' + (i + 1) + '</button>';
       });
       d.innerHTML = h;
       d.onclick = function (e) { var b = e.target.closest('button'); if (b && !busy) load(+b.dataset.i); };
@@ -2604,7 +2604,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     function lineFinish() {
       var was = earnedIds(); done = true; busy = false;
-      if (!shown) { pz[kind] = (pz[kind] || 0) + 1; lsSet('ukc_pz', pz); } setRes(kind, curIdx(), shown ? 2 : 1); counter();
+      if (!shown) { pz[kind] = (pz[kind] || 0) + 1; lsSet('ukc_pz', pz); } setRes(kind, curIdx(), shown ? 2 : usedHelp ? 3 : 1); counter();
       if (!shown) addPts(usedHelp ? 4 : 10, 'за задачу');
       var nm = newMedals(was); sfx('good'); if (!shown) confetti(nm.length ? 140 : 45);
       setMsg(kind === 'M' ? 'Мат! Ты решил задачу в два хода. Молодец!' : 'Верно! Ты выиграл ' + P.tgt + '. Молодец!', 'good');
@@ -2645,7 +2645,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (st === 'mate') {
         var was = earnedIds();
         done = true;
-        if (kind === 'C') { solved[cur] = true; lsSet('ukc_solved', solved); setRes('C', cur, 1); } else { pz[kind]++; lsSet('ukc_pz', pz); }
+        if (kind === 'C') { solved[cur] = true; lsSet('ukc_solved', solved); setRes('C', cur, usedHelp ? 3 : 1); } else { pz[kind]++; lsSet('ukc_pz', pz); }
         counter();
         addPts(usedHelp ? 4 : 10, 'за задачу');
         var nm = newMedals(was);
@@ -3516,8 +3516,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
   /* ================= ИНТЕРФЕЙС УРОКОВ ================= */
   var LESS = {}, GROUPS = [];
   var lesFail = lsGet('ukc_lesfail', {});
-  function lvFail(id, lv) { return !!(lesFail[id] && lesFail[id][lv]); }
-  function setFail(id, lv, v) { lesFail[id] = lesFail[id] || {}; if (v) lesFail[id][lv] = 1; else delete lesFail[id][lv]; lsSet('ukc_lesfail', lesFail); }
+  function lvFail(id, lv) { return !!(lesFail[id] && lesFail[id][lv] === 1); }
+  function lvHint(id, lv) { return !!(lesFail[id] && lesFail[id][lv] === 2); }
+  function pctOf(d, h, f) { return (d + h + f) ? Math.round(100 * (d - h + h * 0.5) / (d + f)) : 0; }
+  function setFail(id, lv, v) { lesFail[id] = lesFail[id] || {}; if (v) lesFail[id][lv] = (v === true ? 1 : v); else delete lesFail[id][lv]; lsSet('ukc_lesfail', lesFail); }
   function lvDone(id, lv) { return !!(les[id] && les[id][lv]); }
   function lessonFull(L) { var n = L.levels || 1; for (var i = 1; i <= n; i++) if (!lvDone(L.id, i)) return false; return true; }
   function lessonStats() { var t = 0, d = 0; GROUPS.forEach(function (g) { g.ids.forEach(function (id) { t++; if (lessonFull(LESS[id])) d++; }); }); return { total: t, done: d }; }
@@ -3551,16 +3553,16 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var lr = '';
     if (L.levels) {
       lr = '<div class="lvrow" role="group" aria-label="Упражнения">' + (L.slides ? '<a class="lvn' + (lv === 0 ? ' cur' : '') + '" href="#lesson/' + id + '" aria-label="Объяснение" style="display:grid;place-items:center;text-decoration:none">📖</a>' : '');
-      for (var i = 1; i <= L.levels; i++) lr += '<a class="lvn' + (lvDone(id, i) ? ' ok' : '') + (i === lv ? ' cur' : '') + '" href="#lesson/' + id + '/' + i + '" style="display:grid;place-items:center;text-decoration:none">' + i + '</a>';
+      for (var i = 1; i <= L.levels; i++) lr += '<a class="lvn' + (lvDone(id, i) ? (lvHint(id, i) ? ' hn' : ' ok') : '') + (i === lv ? ' cur' : '') + '" href="#lesson/' + id + '/' + i + '" style="display:grid;place-items:center;text-decoration:none">' + i + '</a>';
       lr += '</div>';
-      var dn = 0, fl = 0; for (var k2 = 1; k2 <= L.levels; k2++) { if (lvDone(id, k2)) dn++; else if (lvFail(id, k2)) fl++; }
+      var dn = 0, fl = 0, hh = 0; for (var k2 = 1; k2 <= L.levels; k2++) { if (lvDone(id, k2)) { dn++; if (lvHint(id, k2)) hh++; } else if (lvFail(id, k2)) fl++; }
       lr = lr.replace(/class="lvn( ok)?( cur)?"/g, function (m0, a0, b0) { return m0; });
       for (var k3 = 1; k3 <= L.levels; k3++) if (!lvDone(id, k3) && lvFail(id, k3)) lr = lr.replace('class="lvn' + (k3 === lv ? ' cur' : '') + '" href="#lesson/' + id + '/' + k3 + '"', 'class="lvn bd' + (k3 === lv ? ' cur' : '') + '" href="#lesson/' + id + '/' + k3 + '"');
-      lr = '<div class="lvbar"><b>' + (lv ? 'Задание ' + lv + ' из ' + L.levels : 'Задания') + '</b><span class="lvsc">Решено ' + dn + (dn + fl ? ' · Успех ' + Math.round(100 * dn / (dn + fl)) + '%' : '') + '</span><span class="lvic"><button type="button" class="btn alt gearB" id="lvTg" title="Список заданий" aria-label="Список заданий" aria-expanded="false">▦</button></span></div>' + lr;
+      lr = '<div class="lvbar"><b>' + (lv ? 'Задание ' + lv + ' из ' + L.levels : 'Задания') + '</b><span class="lvsc">Решено ' + dn + (dn + fl ? ' · Успех ' + Math.round(100 * (dn - hh * 0.5) / (dn + fl)) + '%' : '') + '</span><span class="lvic"><button type="button" class="btn alt gearB" id="lvTg" title="Список заданий" aria-label="Список заданий" aria-expanded="false">▦</button></span></div>' + lr;
       lr = lr.replace('class="lvrow"', 'class="lvrow lvhide"');
     }
     view.innerHTML = head + lr + '<div id="ex"></div>' + (L.levels ? '<div class="lvfoot"></div>' : '');
-    function updScore() { if (!L.levels) return; var d1 = 0, f1 = 0; for (var q = 1; q <= L.levels; q++) { if (lvDone(id, q)) d1++; else if (lvFail(id, q)) f1++; } var t1 = 'Решено ' + d1 + ' из ' + L.levels + (d1 + f1 ? ' · Успех: ' + Math.round(100 * d1 / (d1 + f1)) + '%' : ''); var e1 = view.querySelector('.lvsc'); if (e1) e1.textContent = t1; var e2 = view.querySelector('.lvfoot'); if (e2) e2.textContent = t1; }
+    function updScore() { if (!L.levels) return; var d1 = 0, f1 = 0, h1 = 0; for (var q = 1; q <= L.levels; q++) { if (lvDone(id, q)) { d1++; if (lvHint(id, q)) h1++; } else if (lvFail(id, q)) f1++; } var t1 = 'Решено ' + d1 + ' из ' + L.levels + (d1 + f1 ? ' · Успех: ' + Math.round(100 * (d1 - h1 * 0.5) / (d1 + f1)) + '%' : ''); var e1 = view.querySelector('.lvsc'); if (e1) e1.textContent = t1; var e2 = view.querySelector('.lvfoot'); if (e2) e2.textContent = t1; }
     updScore();
     var tg = document.getElementById('lvTg');
     if (tg) tg.onclick = function () { var row0 = view.querySelector('.lvrow'); if (row0) { var o0 = row0.classList.contains('lvhide'); row0.classList.toggle('lvhide', !o0); tg.setAttribute('aria-expanded', String(o0)); } return; };
@@ -3586,9 +3588,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
         return;
       }
       var helpNote = '';
-      if (H.h >= 2) { stars = Math.min(stars, 1); helpNote = '<p class="note">Ты пользовался подсказками, поэтому звёзд меньше. Попробуй в следующий раз без подсказок!</p>'; }
+      if (H.h >= 1) { stars = Math.min(stars, 1); helpNote = '<p class="note">Ты пользовался подсказками, поэтому звёзд меньше. Попробуй в следующий раз без подсказок!</p>'; }
       else if (H.h === 1) { stars = Math.min(stars, 2); helpNote = '<p class="note">Ты пользовался подсказкой, поэтому звёзд меньше.</p>'; }
-      setFail(id, lv, false); var r = saveLv(L, lv, stars); updScore(); var box = document.createElement('div'); box.className = 'slide resbox';
+      setFail(id, lv, (window.__help && window.__help.h > 0) ? 2 : false); var r = saveLv(L, lv, stars); updScore(); var box = document.createElement('div'); box.className = 'slide resbox';
       sfx('win'); confetti(60 + stars * 30);
       if (r.gain) addPts(r.gain, 'за упражнение');
       var nm = r.full ? lessonMedal() : [];
