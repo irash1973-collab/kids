@@ -1243,6 +1243,14 @@ body.home .hero p.motto { max-width: 37%; }
 @media (max-width: 700px) { body.home .hero p.motto { max-width: none; } }
 .cpmini .cph .tag { display: block; }
 .cpmini .cpt { margin: 0; font-size: 14px; } .cpmini .cpsoc { gap: 6px; margin: 0; } .cpmini .cpsoc .btn { padding: 6px 11px; font-size: 13px; }
+/* блок Логика */
+.lgvis { margin: 8px 0; } .lgrow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.lgp { display: inline-block; width: 52px; height: 52px; background: #f6e7c1; border-radius: 10px; } .lgp svg { width: 100%; height: 100%; }
+.lgs { width: 50px; height: 50px; } .lgq { display: inline-grid; place-items: center; width: 50px; height: 50px; border: 3px dashed #e10600; border-radius: 10px; font-weight: 800; color: #e10600; font-size: 26px; }
+.lgn { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; } .lgn i { font-style: normal; font-weight: 800; }
+.lgcmp b { display: block; margin: 8px 0 4px; } .lgnum { font-size: 28px; font-weight: 800; letter-spacing: 2px; }
+.lgob { padding: 6px 12px !important; }
+.gb12,.gbchip.gb12{--gc:#7c4dff;--gb:#f1ecff;--gd:#4d2bb8}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -12148,7 +12156,7 @@ var SQR = (function () {
     v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#awards">← Награды</a></div><h2>🎓 Мой диплом</h2>' +
       '<p class="note">Когда закончишь первый год обучения, получи диплом. Впиши своё имя, дата поставится сама. Потом нажми «Скачать PDF».</p>' +
       '<div class="row" style="gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0"><label>Язык диплома: <select id="dpL"><option value="ru">Русский</option><option value="en">English</option></select></label>' +
-      '<label>Имя: <input id="dpN" type="text" maxlength="40" autocomplete="off" style="font-size:18px;padding:8px 12px;border-radius:12px;border:3px solid #e10600;min-width:260px" placeholder="Например: Али Мамедов"></label>' +
+      '<label>Имя и фамилия: <input id="dpN" type="text" maxlength="50" autocomplete="off" style="font-size:18px;padding:8px 12px;border-radius:12px;border:3px solid #e10600;min-width:260px" placeholder="Например: Али Мамедов"></label>' +
       '<button class="btn" id="dpGo">⬇ Скачать PDF</button></div><p class="msg" id="dpMsg" role="status"></p>' +
       '<canvas id="dpC" style="width:100%;max-width:980px;height:auto;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.25)"></canvas>';
     var cv = document.getElementById('dpC'), nm = document.getElementById('dpN'), sl = document.getElementById('dpL'), msg = document.getElementById('dpMsg');
@@ -12730,12 +12738,12 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   /* диплом открывается только после сданной работы */
   var oldDip = window.__diploma;
   window.__diploma = function () {
-    if (window.__examPassed()) { oldDip(); return; }
+    if (window.__examPassed() || lsGet('ukc_all', false)) { oldDip(); return; }
     var v = document.getElementById('view');
     v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#awards">← Награды</a></div><h2>🎓 Диплом</h2><div class="slide"><p>Диплом выдаётся тем, кто закончил первый год обучения и сдал <b>итоговую работу</b>: ' + N + ' заданий по всем темам, нужно решить все. Диплом (сертификат) можно скачать в формате PDF.</p><div class="row"><a class="btn go" href="#exam">📝 Сдать итоговую работу</a></div></div>';
   };
   window.__dipCard = function () {
-    var v = document.getElementById('view'); if (!v) return; var d = document.createElement('div'), ok = window.__examPassed();
+    var v = document.getElementById('view'); if (!v) return; var d = document.createElement('div'), ok = window.__examPassed() || !!lsGet('ukc_all', false);
     d.innerHTML = ok ? '<a class="btn" href="#diploma" style="display:block;margin:16px 0;text-align:center;font-size:20px">🎓 Получить диплом об окончании первого года</a>' :
       '<a class="btn" href="#exam" style="display:block;margin:16px 0;text-align:center;font-size:20px">📝 Итоговая работа за первый год: сдай и получи диплом</a>';
     v.appendChild(d);
@@ -12868,9 +12876,9 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   var oldL = lessons;
   lessons = function () {
     oldL();
-    var secs = document.querySelectorAll('#view section.course.gb'), all = qst();
+    var all = qst();
     GROUPS.forEach(function (g, gi) {
-      var sec = secs[gi]; if (!sec) return; var r = ready(g); if (!r.ids.length) return;
+      var sec = document.getElementById('blk' + (g.k || 0)); if (!sec || sec.className.indexOf('gb') < 0) return; var r = ready(g); if (!r.ids.length) return;
       var s = all[g.n] || {}, d = document.createElement('div'); d.className = 'qzrow';
       d.innerHTML = '<a class="btn ' + (s.pass ? 'alt' : r.open ? 'go' : 'alt') + '" href="#quiz/' + gi + '">' + (s.pass ? '✅ Контрольная сдана (' + s.best + ' из ' + NQ + ')' : r.open ? '📝 Контрольная работа по теме' : '🔒 Контрольная работа (откроется после темы)') + '</a>';
       sec.appendChild(d);
@@ -14027,12 +14035,164 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   GROUPS.splice(gi < 0 ? GROUPS.length : gi + 1, 0, { n: 'Защита фигуры', ids: ['defp'] });
 })();
 
+/* ===== Блок «Логика»: задания в духе «Логической страны» (узоры, лишнее, счёт, числа, загадки) ===== */
+(function () {
+  var NAMES = ['Ясмин', 'Тима', 'Хитринка', 'Симба'];
+  var KIND = { 1: 'пешка', 2: 'конь', 3: 'слон', 4: 'ладья', 5: 'ферзь', 6: 'король' };
+  var KGEN = { 1: 'пешек', 2: 'коней', 3: 'слонов', 4: 'ладей', 5: 'ферзей', 6: 'королей' };
+  var PTS = { 1: 1, 2: 3, 3: 3, 4: 5, 5: 9 };
+  var COLS = ['#ff7a3d', '#3b82f6', '#22a45d', '#f5c400', '#e23d3d'];
+  function R(r, a, b) { return a + Math.floor(r() * (b - a + 1)); }
+  function P(r, a) { return a[Math.floor(r() * a.length)]; }
+  function sh(a, r) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function pc(v) { return '<span class="lgp">' + pcHTML(v) + '</span>'; }
+  function shape(s) {
+    var c = s.c, f = 'fill="' + c + '" stroke="#333" stroke-width="2"', o = '';
+    if (s.t === 'c') o = '<circle cx="22" cy="22" r="17" ' + f + '/>';
+    else if (s.t === 's') o = '<rect x="6" y="6" width="32" height="32" rx="3" ' + f + '/>';
+    else if (s.t === 't') o = '<polygon points="22,4 40,38 4,38" ' + f + '/>';
+    else o = '<polygon points="22,3 27,16 41,17 30,26 34,40 22,32 10,40 14,26 3,17 17,16" ' + f + '/>';
+    return '<svg class="lgs" viewBox="0 0 44 44" aria-hidden="true">' + o + '</svg>';
+  }
+  function row(h) { return '<div class="lgrow">' + h.join('') + '</div>'; }
+  function qmark() { return '<span class="lgq">?</span>'; }
+  function nums(r, ans, lo, hi) { var s = {}, a = [ans]; s[ans] = 1; var g = 0; while (a.length < 4 && g++ < 80) { var v = ans + R(r, -3, 3); if (v < lo || v > hi || s[v]) continue; s[v] = 1; a.push(v); } return sh(a, r).map(String); }
+  var T = {};
+  /* узоры: фигурки или шахматные фигуры */
+  T.pat = function (r, d) {
+    var pieces = r() < 0.4, pool = pieces ? [{ v: 2 }, { v: 3 }, { v: 4 }, { v: 5 }, { v: -2 }, { v: -3 }, { v: -4 }, { v: 1 }] : [{ t: 'c', c: COLS[0] }, { t: 's', c: COLS[1] }, { t: 't', c: COLS[2] }, { t: '*', c: COLS[3] }, { t: 'c', c: COLS[1] }, { t: 's', c: COLS[4] }, { t: 't', c: COLS[0] }, { t: '*', c: COLS[1] }];
+    function disp(x) { return pieces ? pc(x.v) : shape(x); } function key(x) { return pieces ? 'v' + x.v : x.t + x.c; }
+    var n = d === 1 ? 2 : d === 2 ? R(r, 2, 3) : 3, base = sh(pool, r).slice(0, n), unit = [];
+    if (d >= 3) { unit = [base[0], base[0], base[1]]; if (n === 3 && r() < .5) unit = [base[0], base[1], base[2]]; } else if (n === 2) unit = [base[0], base[1]]; else unit = base.slice(0, 3);
+    var seq = [], L = 6 + (d > 2 ? 1 : 0); for (var i = 0; i < L; i++) seq.push(unit[i % unit.length]);
+    var ans = unit[L % unit.length], wrong = [], used = {}; used[key(ans)] = 1;
+    sh(pool, r).forEach(function (x) { if (wrong.length < 3 && !used[key(x)]) { used[key(x)] = 1; wrong.push(x); } });
+    var all = sh([ans].concat(wrong), r), ai = all.indexOf(ans);
+    return { vis: row(seq.map(disp).concat([qmark()])), text: 'Что будет дальше в узоре?', optsH: all.map(disp), ans: String(ai), why: 'Найди, что повторяется, и продолжи по порядку.' };
+  };
+  /* лишняя фигурка */
+  T.odd = function (r, d) {
+    var k = d === 1 ? 0 : R(r, 0, d >= 3 ? 3 : 2), items = [], ans, why;
+    if (k === 0) { var a = P(r, [2, 3, 4, 5]), b = P(r, [2, 3, 4, 5].filter(function (x) { return x !== a; })); items = [a, a, a, b]; ans = 3; why = 'Три одинаковые фигуры, а одна другая.'; }
+    else if (k === 1) { var a2 = P(r, [2, 3, 4, 5]); items = [a2, a2, a2, -a2]; ans = 3; why = 'Три фигуры одного цвета, одна другого.'; }
+    else if (k === 2) { var x = P(r, [3, 4]); items = x === 3 ? [3, 3, 3, 4] : [4, 4, 4, 3]; ans = 3; why = 'Слон и ладья ходят по-разному, поэтому в тройке одна фигура другая.'; }
+    else { var pawn = [1, 1, 1, P(r, [2, 3, 4, 5])]; items = pawn; ans = 3; why = 'Три пешки и одна фигура.'; }
+    var order = sh([0, 1, 2, 3], r), shown = order.map(function (i) { return items[i]; }), pos = order.indexOf(ans);
+    return { vis: '<div class="lgrow">' + shown.map(function (v, i) { return '<span class="lgn"><i>' + (i + 1) + '</i>' + pc(v) + '</span>'; }).join('') + '</div>', text: 'Какая фигурка лишняя? Выбери номер.', opts: ['1', '2', '3', '4'], ans: String(pos + 1), why: why };
+  };
+  /* считай фигуры */
+  T.cnt = function (r, d) {
+    var kinds = d === 1 ? [1, 2, 3] : [1, 2, 3, 4, 5], n = d === 1 ? 6 : d === 2 ? 8 : 10, seq = [], i;
+    for (i = 0; i < n; i++) seq.push(P(r, kinds) * (r() < 0.5 ? 1 : -1));
+    var target = Math.abs(P(r, seq)), c = seq.filter(function (v) { return Math.abs(v) === target; }).length;
+    return { vis: row(seq.map(pc)), text: 'Сосчитай фигуры. Сколько здесь ' + KGEN[target] + '?', opts: nums(r, c, 0, 12), ans: String(c), why: 'Считай по очереди, пальцем показывая на каждую.' };
+  };
+  /* чего не хватает */
+  T.miss = function (r, d) {
+    var back = [4, 2, 3, 5, 6, 3, 2, 4], white = r() < .5, s = white ? 1 : -1, k;
+    if (d >= 2 && r() < .3) { var pa = []; for (k = 0; k < 8; k++) pa.push(pc(s)); var hole = R(r, 0, 7); pa[hole] = qmark(); return { vis: row(pa), text: 'Это ряд пешек в начале партии. Сколько пешек в этом ряду всего?', opts: ['6', '7', '8', '9'], ans: '8', why: 'В начале партии у каждого игрока 8 пешек.' }; }
+    var h = R(r, 0, 7), cells = back.map(function (v, i) { return i === h ? qmark() : pc(v * s); });
+    return { vis: row(cells), text: 'Это фигуры ' + (white ? 'белых' : 'чёрных') + ' в начале партии. Какой фигуры не хватает?', opts: sh(['ладья', 'конь', 'слон', 'ферзь', 'король'], r).slice(0, 5), ans: KIND[back[h]], why: 'В начале партии за ладьями стоят кони, потом слоны, а в центре ферзь и король.', five: true };
+  };
+  /* кто сильнее */
+  T.cmp = function (r, d) {
+    function grp() { var n = R(r, 2, d === 1 ? 3 : 5), a = []; for (var i = 0; i < n; i++) a.push(P(r, d === 1 ? [1, 2, 3] : [1, 2, 3, 4, 5])); return a; }
+    var a, b, sa, sb, g = 0; do { a = grp(); b = grp(); sa = a.reduce(function (x, v) { return x + PTS[v]; }, 0); sb = b.reduce(function (x, v) { return x + PTS[v]; }, 0); g++; } while ((sa === sb && r() < .8) && g < 30);
+    var ans = sa > sb ? 'белые' : sa < sb ? 'чёрные' : 'поровну';
+    return { vis: '<div class="lgcmp"><b>Белые:</b> ' + row(a.map(function (v) { return pc(v); })) + '<b>Чёрные:</b> ' + row(b.map(function (v) { return pc(-v); })) + '</div>', text: 'Кто сильнее по очкам: белые или чёрные? (пешка 1, конь и слон по 3, ладья 5, ферзь 9)', opts: ['белые', 'чёрные', 'поровну'], ans: ans, why: 'У белых ' + sa + ', у чёрных ' + sb + '. Сложи очки каждой фигуры.' };
+  };
+  /* числа и порядок */
+  T.num = function (r, d) {
+    var k = R(r, 0, d === 1 ? 1 : 3);
+    if (k <= 1) { var st = P(r, d === 1 ? [1, 2, 5] : [2, 3, 4, 5, 10]), s0 = R(r, 1, 9), seq = [], i; for (i = 0; i < 5; i++) seq.push(s0 + st * i); var an = s0 + st * 5; return { vis: '<div class="lgnum">' + seq.join(' · ') + ' · <span class="lgq">?</span></div>', text: 'Продолжи ряд чисел. Какое число следующее?', opts: nums(r, an, 0, 80), ans: String(an), why: 'Посмотри, на сколько растёт каждое число.' }; }
+    var nm = sh(NAMES, r), A = nm[0], B = nm[1], C = nm[2];
+    if (k === 2) return { text: A + ' старше, чем ' + B + ', а ' + B + ' старше, чем ' + C + '. Кто младше всех?', opts: [A, B, C], ans: C, why: 'Самый старший ' + A + ', потом ' + B + ', а младше всех ' + C + '.' };
+    var mid = ['король', 'ферзь', 'ладья'], r3 = sh(mid, r);
+    return { text: 'Король, ферзь и ладья стоят в ряд. Король слева от ферзя, ладья справа от ферзя. Кто посередине?', opts: ['король', 'ферзь', 'ладья'], ans: 'ферзь', why: 'Порядок слева направо: король, ферзь, ладья.' };
+  };
+  /* загадки и задачи из «Логической страны» */
+  var W = [
+    ['Сколько коней у белых и чёрных вместе в начале партии?', '4', ['2', '4', '6', '8'], 'У каждого по 2 коня: 2 + 2 = 4.'],
+    ['Сколько слонов на доске в начале партии?', '4', ['2', '4', '6', '8'], 'У белых 2 слона и у чёрных 2.'],
+    ['Сколько полей на двух горизонталях?', '16', ['8', '12', '16', '18'], 'В одной горизонтали 8 полей: 8 + 8 = 16.'],
+    ['Какая фигура ходит и как ладья, и как слон?', 'ферзь', ['король', 'конь', 'ферзь', 'пешка'], 'Ферзь ходит по прямым и по диагоналям.'],
+    ['Король идёт с e1 на e4 по одному полю. Сколько ходов?', '3', ['2', '3', '4', '5'], 'e1 → e2 → e3 → e4: три хода.'],
+    ['Сколько фигур у белых, если побили ферзя и ладью?', '14', ['12', '13', '14', '15'], 'В начале у белых 16 фигур и пешек, минус две.'],
+    ['У тебя ладья и пешка. У соперника конь и слон. Кто сильнее по очкам?', 'поровну', ['я', 'соперник', 'поровну'], 'Ладья и пешка: 5 + 1 = 6. Конь и слон: 3 + 3 = 6.'],
+    ['Сколько полей атакует конь с c3 на пустой доске?', '8', ['4', '6', '8', '10'], 'С поля c3 конь прыгает ровно на 8 полей.'],
+    ['Какая фигура никогда не ходит назад?', 'пешка', ['ладья', 'слон', 'пешка', 'конь'], 'Пешки ходят только вперёд.'],
+    ['Сколько белых полей на одной горизонтали?', '4', ['2', '4', '6', '8'], 'Белые и чёрные поля чередуются: по 4.'],
+    ['Сколько чёрных полей на большой диагонали a1–h8?', '8', ['4', '6', '7', '8'], 'Вся диагональ a1–h8 из тёмных полей.'],
+    ['У Ясмин 5 фигур, а у Тимы на 2 больше. Сколько у Тимы?', '7', ['6', '7', '8', '3'], '5 + 2 = 7.'],
+    ['Тима потерял 3 пешки из 8. Сколько осталось?', '5', ['3', '4', '5', '6'], '8 − 3 = 5.'],
+    ['Какая фигура ходит буквой «Г»?', 'конь', ['слон', 'ладья', 'конь', 'король'], 'Конь ходит буквой «Г».'],
+    ['Слон стоит на светлом поле. Сможет ли он когда-нибудь попасть на тёмное?', 'нет', ['да', 'нет'], 'Слон всегда ходит по полям одного цвета.'],
+    ['Какие фигуры могут за один ход пройти всю диагональ a1–h8?', 'слон и ферзь', ['слон и ферзь', 'ладья и конь', 'король и пешка', 'конь и слон'], 'По диагонали далеко ходят слон и ферзь.'],
+    ['У Ясмин 3 пешки. Тима дал ей ещё 2. Сколько пешек стало у Ясмин?', '5', ['4', '5', '6', '1'], '3 + 2 = 5.'],
+    ['На доске 2 ладьи, 2 слона и 2 коня. Сколько всего фигур?', '6', ['4', '5', '6', '8'], '2 + 2 + 2 = 6.'],
+    ['Какая фигура не ходит назад: ладья, слон, пешка или конь?', 'пешка', ['ладья', 'слон', 'пешка', 'конь'], 'Назад не ходит только пешка.'],
+    ['Какая фигура самая ценная: ладья, слон, ферзь или конь?', 'ферзь', ['ладья', 'слон', 'ферзь', 'конь'], 'Ферзь стоит 9 очков.'],
+    ['Чего у одного игрока больше в начале партии: королей или пешек?', 'пешек', ['королей', 'пешек', 'поровну'], 'Король один, а пешек восемь.'],
+    ['Белые сделали ход, потом чёрные. Кто ходит теперь?', 'белые', ['белые', 'чёрные'], 'Ходы делают по очереди.'],
+    ['Ясмин выиграла 4 партии, потом ещё 3. Сколько партий она выиграла?', '7', ['6', '7', '8', '1'], '4 + 3 = 7.'],
+    ['Тима взял 2 пешки и коня. Сколько фигур он взял?', '3', ['2', '3', '4', '5'], '2 + 1 = 3.'],
+    ['Какая фигура стоит в углу доски в начале партии?', 'ладья', ['ладья', 'конь', 'слон', 'ферзь'], 'В углах стоят ладьи.'],
+    ['Сколько полей в центре доски?', '4', ['2', '4', '6', '8'], 'Центр: d4, e4, d5 и e5.'],
+    ['Сколько ног у двух настоящих коней (не шахматных)?', '8', ['4', '6', '8', '10'], 'У коня 4 ноги: 4 + 4 = 8.'],
+    ['Ясмин играет белыми, Тима чёрными. Кто ходит первым?', 'Ясмин', ['Ясмин', 'Тима'], 'Первыми всегда ходят белые.'],
+    ['Сколько фигур у белых в начале партии (вместе с пешками)?', '16', ['8', '14', '16', '32'], '8 фигур и 8 пешек.'],
+    ['Сколько пешек у чёрных, если одну побили?', '7', ['6', '7', '8', '9'], '8 − 1 = 7.'],
+    ['Слон стоит на белом поле и делает 3 хода. Какого цвета поле?', 'белое', ['белое', 'чёрное'], 'Слон не меняет цвет поля.'],
+    ['Конь стоит на белом поле и делает 1 ход. Какого цвета поле?', 'чёрное', ['белое', 'чёрное'], 'Конь с каждым ходом меняет цвет поля.'],
+    ['Партия только началась. Тима сделал первый ход белыми. Кто должен ходить теперь?', 'чёрные', ['белые', 'чёрные'], 'Теперь очередь чёрных.'],
+    ['Расставь по ценности, от меньшей к большей: ферзь, пешка, ладья, конь.', 'пешка, конь, ладья, ферзь', ['пешка, конь, ладья, ферзь', 'конь, пешка, ладья, ферзь', 'пешка, ладья, конь, ферзь', 'ферзь, ладья, конь, пешка'], 'Пешка 1, конь 3, ладья 5, ферзь 9.'],
+    ['Сколько клеток на шахматной доске?', '64', ['32', '48', '64', '81'], '8 × 8 = 64.'],
+    ['Сколько вертикалей на доске?', '8', ['6', '8', '10', '12'], 'Вертикали называются буквами a, b, c, d, e, f, g, h: их 8.'],
+    ['Какой знак пишут после хода, если объявлен шах?', '+', ['+', '#', '?', '!'], 'Шах записывают плюсом, мат решёткой #.'],
+    ['Ладья стоит на a1. Она пошла на a5, потом на e5. Где она теперь?', 'e5', ['a5', 'e1', 'e5', 'a1'], 'Сначала вверх до a5, потом вправо до e5.'],
+    ['Конь стоит на b1. Он пошёл на c3, потом на e4. Где он теперь?', 'e4', ['c3', 'e4', 'd3', 'b1'], 'Конь пошёл c3 → e4.'],
+    ['Сколько пешек у белых и чёрных вместе в начале партии?', '16', ['8', '12', '16', '32'], '8 + 8 = 16.'],
+    ['Ладья стоит на a1. За сколько ходов она дойдёт до h8?', '2', ['1', '2', '3', '4'], 'a1 → a8 → h8, или a1 → h1 → h8.'],
+    ['Сколько ходов у белого коня на b1 в начале партии?', '2', ['1', '2', '3', '4'], 'Он может на a3 и c3; на d2 стоит своя пешка.'],
+    ['Ясмин, Тима и Хитринка выбрали ладью, коня и слона. Ясмин выбрала не ладью и не коня. Тима выбрал не слона и не коня. Кто выбрал коня?', 'Хитринка', ['Ясмин', 'Тима', 'Хитринка'], 'Ясмин выбрала слона, Тима ладью, значит конь у Хитринки.'],
+    ['Что ценнее: одна ладья или две пешки?', 'ладья', ['ладья', 'две пешки', 'поровну'], 'Ладья 5 очков, две пешки 2 очка.'],
+    ['Сколько всего мест для игроков в пяти партиях, если в каждой играют двое?', '10', ['5', '8', '10', '12'], '5 × 2 = 10.'],
+    ['Сколько углов у шахматной доски?', '4', ['2', '4', '6', '8'], 'У квадрата 4 угла.'],
+    ['Что ценнее в шахматах: ладья или конь?', 'ладья', ['ладья', 'конь', 'поровну'], 'Ладья стоит 5 очков, конь 3.'],
+    ['Сколько ладей у одного игрока в начале партии?', '2', ['1', '2', '3', '4'], 'Две ладьи, в углах.']
+  ];
+  T.word = function (r, d, k) { var w = W[(k - 1) % W.length], o = w[2].slice(); if (/^\d+$/.test(w[1])) { o = sh(o, r); } else o = o.length > 2 && !/пешка, конь/.test(w[1]) ? sh(o, r) : o; return { text: w[0], opts: o, ans: w[1], why: w[3] }; };
+
+  function runLg(host, L, lv, finish) {
+    var q = uniqTask(L.id, lv, function (k, rr) { return T[L.kind](rr, Math.min(4, Math.ceil(k / L.step)), k); });
+    var mistakes = 0, done = false;
+    host.innerHTML = say(av('prof'), 'Профессор', q.text, 'логика ' + lv) + (q.vis ? '<div class="lgvis">' + q.vis + '</div>' : '') + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
+      '<div class="opts lgopts" id="opts">' + (q.optsH ? q.optsH.map(function (h, i) { return '<button data-o="' + i + '" class="lgob">' + h + '</button>'; }).join('') : q.opts.map(function (o) { return '<button data-o="' + o.replace(/"/g, '&quot;') + '">' + o + '</button>'; }).join('')) + '</div>';
+    var msg = document.getElementById('msg');
+    document.getElementById('opts').onclick = function (e) {
+      var b = e.target.closest('button'); if (!b || done) return;
+      if (b.dataset.o === q.ans) { done = true; b.className = 'good'; sfx('good'); msg.className = 'msg good'; msg.textContent = 'Верно! ' + (q.why || ''); finish(mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1); }
+      else { mistakes++; b.className = 'bad'; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Нет. ' + (q.why || 'Подумай ещё.'); }
+    };
+  }
+  var DEF = [
+    { id: 'lg_pat', t: 'Узоры', d: 'Что будет дальше в узоре? Фигурки и шахматные фигуры. 40 заданий.', kind: 'pat', n: 40, step: 10 },
+    { id: 'lg_odd', t: 'Лишняя фигурка', d: 'Какая фигурка лишняя? Ищи, чем одна отличается от остальных. 40 заданий.', kind: 'odd', n: 40, step: 10 },
+    { id: 'lg_cnt', t: 'Считай фигуры', d: 'Сколько здесь слонов, ладей, пешек? Считаем внимательно. 30 заданий.', kind: 'cnt', n: 30, step: 8 },
+    { id: 'lg_miss', t: 'Чего не хватает?', d: 'Какой фигуры не хватает в начальной расстановке. 24 задания.', kind: 'miss', n: 24, step: 8 },
+    { id: 'lg_cmp', t: 'Кто сильнее?', d: 'Сравниваем белые и чёрные фигуры по очкам. 30 заданий.', kind: 'cmp', n: 30, step: 8 },
+    { id: 'lg_num', t: 'Числа и порядок', d: 'Продолжи ряд чисел, кто старше, кто посередине. 30 заданий.', kind: 'num', n: 30, step: 8 },
+    { id: 'lg_word', t: 'Загадки и задачи', d: 'Весёлые шахматные задачи и загадки на счёт и внимание. ' + W.length + ' заданий.', kind: 'word', n: W.length, step: 100 }
+  ];
+  DEF.forEach(function (o) { LESS[o.id] = { id: o.id, t: o.t, d: o.d, levels: o.n, kind: o.kind, step: o.step, run: runLg }; GROUPS[0].ids.push(o.id); });
+})();
+
 // Уроки по цветным блокам: знакомство, фигуры, ценность и защита, правила, мат, тактика, пешечные окончания, повторение
 (function () {
   var B = [
-    { k: 1, ic: '🌟', n: 'Знакомство', ids: ['history', 'board', 'lg_board', 'meet'] },
-    { k: 2, ic: '♞', n: 'Фигуры и их ходы', ids: ['pR', 'pB', 'pQ', 'pN', 'pK', 'kingrules', 'pP', 'lg_pieces'] },
-    { k: 3, ic: '🛡️', n: 'Ценность и защита', ids: ['values', 'trades', 'attdef', 'lg_pawn'] },
+    { k: 1, ic: '🌟', n: 'Знакомство', ids: ['history', 'board', 'meet'] },
+    { k: 2, ic: '♞', n: 'Фигуры и их ходы', ids: ['pR', 'pB', 'pQ', 'pN', 'pK', 'kingrules', 'pP'] },
+    { k: 3, ic: '🛡️', n: 'Ценность и защита', ids: ['values', 'trades', 'attdef'] },
     { k: 4, ic: '📘', n: 'Правила игры', ids: ['opening', 'castle', 'ep', 'promo', 'check', 'mate', 'draws', 'drawq', 'stalemate', 'rules', 'notation'] },
     { k: 5, ic: '👑', n: 'Мат', ids: ['baby', 'mkinds', 'mq', 'mr', 'mrr', 'm2', 'mh', 'rm1', 'rm2', 'gmQ', 'gmR', 'gmRR', 'gmQR'] },
     { k: 9, ic: '🛡️', n: 'Защита от мата', ids: ['defm'] },
@@ -14040,6 +14200,7 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     { k: 11, ic: '🧱', n: 'Защита фигуры', ids: ['defp'] },
     { k: 6, ic: '⚔️', n: 'Тактика', ids: ['forkN', 'forkQ', 'forkR', 'forkB', 'forkP', 'forkK', 'pin', 'disc', 'gain', 'traps'] },
     { k: 7, ic: '♟️', n: 'Пешечные окончания', ids: ['pe1', 'pe2', 'pe3', 'pe4', 'pe5', 'pe6', 'pe7', 'pe9'] },
+    { k: 12, ic: '🧩', n: 'Логика', ids: ['lg_board', 'lg_pieces', 'lg_pawn', 'lg_pat', 'lg_odd', 'lg_cnt', 'lg_miss', 'lg_cmp', 'lg_num', 'lg_word'] },
     { k: 8, ic: '🔁', n: 'Повторение', ids: ['review'] }
   ];
   var seen = {}; B.forEach(function (g) { g.ids = g.ids.filter(function (id) { seen[id] = 1; return LESS[id]; }); });
