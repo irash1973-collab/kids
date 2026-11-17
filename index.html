@@ -12785,6 +12785,8 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
   }
   function page(parts) {
     var gi = +parts[1], g = GROUPS[gi]; if (!g) { location.hash = '#lessons'; return; }
+    if (lsGet('ukc_all', false) && parts[2] === 'pool') { pool(gi); return; }
+    if (lsGet('ukc_all', false) && parts[2] === 'coach') { var keep = lsGet(SEEN, {}), cs = makeSet(gi); lsSet(SEEN, keep); coach(gi, cs, 0); return; }
     var r = ready(g), v = document.getElementById('view'), s = qst()[g.n] || {};
     var head = '<div class="ctr-top"><a class="btn alt" href="#lessons">← Уроки</a></div><h2>📝 Контрольная работа: ' + esc(g.n) + '</h2>';
     if (!r.ids.length) { v.innerHTML = head + '<div class="slide"><p>В этой теме пока нет заданий для контрольной.</p></div>'; return; }
@@ -12795,8 +12797,26 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     v.innerHTML = head + '<div class="slide"><p>В контрольной <b>' + NQ + ' заданий</b> по этой теме, из разных уроков. Решай сам(а), подсказок нет. У каждого задания одна попытка. Дойди до конца: в конце увидишь результат и сможешь посмотреть свои ошибки.</p>' +
       '<p>Чтобы сдать контрольную, нужно решить не меньше <b>' + NEED + ' из ' + NQ + '</b> (80%). Если не получится, мы подскажем, какие уроки повторить, а в новой контрольной будут <b>другие задания</b>.</p>' +
       (s.pass ? '<p class="msg good">✅ Контрольная сдана! Лучший результат: ' + s.best + ' из ' + NQ + '.</p>' : (s.best ? '<p class="note">Лучший результат: ' + s.best + ' из ' + NQ + '.</p>' : '')) +
+      (lsGet('ukc_all', false) ? '<div class="msg" style="background:#eef;border:2px dashed #55a;padding:8px;border-radius:10px"><b>Для тренера</b> (видно, пока включено «Открыто всё»): <a class="btn alt" href="#quiz/' + gi + '/coach">👀 Пройти с подсказками</a> <a class="btn alt" href="#quiz/' + gi + '/pool">📋 Все задания контрольной</a></div>' : '') +
       '<div class="row"><button class="btn go" id="qzGo">Начать контрольную</button></div></div>';
     document.getElementById('qzGo').onclick = function () { run(gi, makeSet(gi), 0, []); };
+  }
+  function pool(gi) {
+    var g = GROUPS[gi], v = document.getElementById('view'), h = '<div class="ctr-top"><a class="btn alt" href="#quiz/' + gi + '">← Контрольная</a></div><h2>📋 Все задания контрольной: ' + esc(g.n) + '</h2><p class="note">В контрольную берётся по одному заданию из разных уроков темы, всего 10, и они не повторяются от попытки к попытке. Здесь весь запас. Нажми на номер: задание откроется в уроке, там есть подсказка и «показать ответ».</p>';
+    eligible(g).forEach(function (id) {
+      var L = LESS[id]; h += '<section class="course"><h3>' + esc(L.t) + '</h3><div class="row" style="flex-wrap:wrap;gap:4px">';
+      for (var i = minLv(id); i <= L.levels; i++) h += '<a class="btn alt" style="padding:4px 10px;min-width:38px" href="#lesson/' + id + '/' + i + '">' + i + '</a>';
+      h += '</div></section>';
+    });
+    v.innerHTML = h;
+  }
+  function coach(gi, set, i) {
+    var v = document.getElementById('view'); if (i >= set.length) { location.hash = '#quiz/' + gi; return; }
+    var q = set[i];
+    v.innerHTML = '<div class="ctr-top"><a class="btn alt" href="#quiz/' + gi + '">← Контрольная</a> <span class="count">Тренерский просмотр: ' + (i + 1) + ' из ' + set.length + ' · ' + esc(q.L.t) + ', задание ' + q.lv + '</span></div><div id="qzT"></div><div class="row"><button class="btn alt" id="cPrev"' + (i ? '' : ' disabled') + '>← Назад</button><button class="btn" id="cNext">Дальше →</button></div>';
+    try { q.L.run(document.getElementById('qzT'), q.L, q.lv, function () {}); } catch (e) {}
+    document.getElementById('cPrev').onclick = function () { coach(gi, set, i - 1); };
+    document.getElementById('cNext').onclick = function () { coach(gi, set, i + 1); };
   }
   function run(gi, set, i, log) {
     var v = document.getElementById('view'); if (!set.length) { page(['quiz', gi]); return; }
