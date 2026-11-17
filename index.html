@@ -1242,6 +1242,7 @@ body.home .hero h1, body.home .hero p, body.home .hero .namebox, body.home .hero
 body.home .hero p.motto { max-width: 37%; }
 @media (max-width: 700px) { body.home .hero p.motto { max-width: none; } }
 .cpmini .cph .tag { display: block; }
+.cpmini .cpt { margin: 0; font-size: 14px; } .cpmini .cpsoc { gap: 6px; margin: 0; } .cpmini .cpsoc .btn { padding: 6px 11px; font-size: 13px; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2497,14 +2498,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function soc(n, u) { return '<a class="btn alt" href="' + u + '" target="_blank" rel="noopener">' + n + '</a>'; }
     return '<section class="clubpromo cpmini"><div class="cph">' + logo + '<div><span class="tag">UpGrade Chess Club</span><h2>Хочешь играть ещё лучше?</h2><p>Учись в клубе: с самого начала и до профессионального уровня.</p></div></div>' +
       '<div class="cpgrid">' +
-      '<a class="cpcard" href="https://wa.me/994503850617" target="_blank" rel="noopener"><span class="cpico">🏙️</span><b>Баку</b><small>вживую</small></a>' +
-      '<a class="cpcard" href="https://wa.me/994503850617" target="_blank" rel="noopener"><span class="cpico">🌍</span><b>Весь мир</b><small>онлайн</small></a>' +
-      '<a class="cpcard" href="https://t.me/Chess911" target="_blank" rel="noopener"><span class="cpico">🏛️</span><b>Москва</b><small>вживую</small></a>' +
+      '<a class="cpcard" href="https://wa.me/994503850617" target="_blank" rel="noopener"><span class="cpico">🏙️</span><b>Баку</b><small>записаться · вживую</small></a>' +
+      '<a class="cpcard" href="https://wa.me/994503850617" target="_blank" rel="noopener"><span class="cpico">🌍</span><b>Весь мир</b><small>записаться · онлайн</small></a>' +
+      '<a class="cpcard" href="https://t.me/Chess911" target="_blank" rel="noopener"><span class="cpico">🏛️</span><b>Москва</b><small>записаться · вживую</small></a>' +
       '</div>' +
-      '<details class="cpmore"><summary>🏆 Турниры и наши страницы<span class="apar">▾</span></summary>' +
-      '<p class="cpt">По выходным у нас проходят <b>турниры онлайн</b> на платформе Lichess. Играть можно из любой страны!</p>' +
-      '<div class="row"><a class="btn go" href="https://lichess.org/team/upgrade-shaxmat-klubu" target="_blank" rel="noopener">Наш клуб на Lichess</a><a class="btn alt" href="https://www.upgradechessclub.com" target="_blank" rel="noopener">Сайт клуба</a></div>' +
-      '<div class="row cpsoc">' + soc('Instagram', 'https://www.instagram.com/upgrade_chess_club') + soc('Facebook', 'https://www.facebook.com/upgradechessclub') + soc('YouTube', 'https://www.youtube.com/@upgradechess') + soc('WhatsApp', 'https://wa.me/994503850617') + soc('Telegram', 'https://t.me/Upgradechessclub') + soc('Chess.com', 'https://www.chess.com/club/upgrade-chess-club-for-juniors') + soc('FIDE World Chess Arena', 'https://worldchess.com/ru/community/upgrade-chess-club') + '</div></details></section>';
+      '<p class="cpt">🏆 По выходным у нас <b>турниры онлайн</b> на Lichess. Играть можно из любой страны!</p>' +
+      '<div class="row cpsoc"><a class="btn go" href="https://lichess.org/team/upgrade-shaxmat-klubu" target="_blank" rel="noopener">Наш клуб на Lichess</a><a class="btn go" href="https://www.upgradechessclub.com" target="_blank" rel="noopener">Сайт клуба</a>' + soc('Instagram', 'https://www.instagram.com/upgrade_chess_club') + soc('Facebook', 'https://www.facebook.com/upgradechessclub') + soc('YouTube', 'https://www.youtube.com/@upgradechess') + soc('WhatsApp', 'https://wa.me/994503850617') + soc('Telegram', 'https://t.me/Upgradechessclub') + soc('Chess.com', 'https://www.chess.com/club/upgrade-chess-club-for-juniors') + soc('FIDE World Chess Arena', 'https://worldchess.com/ru/community/upgrade-chess-club') + '</div></section>';
   }
 
   /* ---------- Награды ---------- */
