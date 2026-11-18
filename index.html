@@ -8135,7 +8135,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
         '<a class="y2cell" href="#y2/speed"><i>04</i><b>Скорость</b><p>Задачи на время и гонка задач.</p><span>на время</span></a>' +
         '<a class="y2cell" href="#y2/tourney"><i>05</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица, рейтинг.</p><span>играть</span></a>' +
         '<a class="y2cell" href="#y2/extra"><i>06</i><b>Дополнительные задачи</b><p>Задачи по темам на сайте Lichess: начинай с самого лёгкого уровня.</p><span>открыть</span></a>' +
-        '<a class="y2cell" href="#y2/youtube"><i>07</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' + '</div><p class="y2note">Новые разделы и темы появляются по мере готовности.</p>';
+        '<a class="y2cell" href="#y2/youtube"><i>07</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' +
+        '<a class="y2cell" href="https://lichess.org/editor" target="_blank" rel="noopener noreferrer"><i>08</i><b>Редактор доски (Lichess)</b><p>Расставляй любые позиции и играй их против компьютера или друга. Откроется сайт Lichess.</p><span>открыть</span></a>' + '</div><p class="y2note">Новые разделы и темы появляются по мере готовности.</p>';
     }
     var CURR = [
       ['Повторение первого года', ['@review2']],
@@ -16165,7 +16166,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
   var GR = [
     ['Фазы партии', [['opening', 'Дебют'], ['middlegame', 'Миттельшпиль'], ['endgame', 'Эндшпиль'], ['pawnEndgame', 'Пешечный эндшпиль'], ['rookEndgame', 'Ладейный эндшпиль'], ['bishopEndgame', 'Слоновый эндшпиль'], ['knightEndgame', 'Коневой эндшпиль'], ['queenEndgame', 'Ферзевый эндшпиль']]],
     ['Маты', [['mateIn1', 'Мат в 1 ход'], ['mateIn2', 'Мат в 2 хода'], ['mateIn3', 'Мат в 3 хода'], ['mateIn4', 'Мат в 4 хода'], ['backRankMate', 'Мат по последней горизонтали'], ['smotheredMate', 'Спёртый мат'], ['doubleBishopMate', 'Мат двумя слонами'], ['anastasiasMate', 'Мат Анастасии'], ['arabianMate', 'Арабский мат'], ['bodenMate', 'Мат Бодена']]],
-    ['Тактика', [['fork', 'Двойной удар (вилка)'], ['pin', 'Связка'], ['skewer', 'Сквозной удар'], ['discoveredAttack', 'Открытое нападение'], ['discoveredCheck', 'Открытый шах'], ['doubleCheck', 'Двойной шах'], ['deflection', 'Отвлечение'], ['attraction', 'Завлечение'], ['interference', 'Перекрытие линии'], ['clearance', 'Освобождение поля и линии'], ['capturingDefender', 'Уничтожение защитника'], ['intermezzo', 'Промежуточный ход'], ['hangingPiece', 'Незащищённая фигура'], ['trappedPiece', 'Пойманная фигура'], ['attackingF2F7', 'Атака на f2 и f7'], ['kingsideAttack', 'Атака на королевском фланге'], ['queensideAttack', 'Атака на ферзевом фланге'], ['exposedKing', 'Оголённый король'], ['sacrifice', 'Жертва'], ['quietMove', 'Тихий ход'], ['zugzwang', 'Цугцванг'], ['advancedPawn', 'Проходная пешка'], ['promotion', 'Превращение пешки']]]
+    ['Тактика', [['fork', 'Двойной удар (вилка)'], ['pin', 'Связка'], ['skewer', 'Сквозной удар (линейный удар)'], ['xRayAttack', 'Рентген'], ['discoveredAttack', 'Открытое нападение'], ['discoveredCheck', 'Открытый шах'], ['doubleCheck', 'Двойной шах'], ['deflection', 'Отвлечение'], ['attraction', 'Завлечение'], ['interference', 'Перекрытие линии'], ['clearance', 'Освобождение поля и линии'], ['capturingDefender', 'Уничтожение защитника'], ['intermezzo', 'Промежуточный ход'], ['hangingPiece', 'Незащищённая фигура'], ['trappedPiece', 'Пойманная фигура'], ['attackingF2F7', 'Атака на f2 и f7'], ['kingsideAttack', 'Атака на королевском фланге'], ['queensideAttack', 'Атака на ферзевом фланге'], ['exposedKing', 'Оголённый король'], ['sacrifice', 'Жертва'], ['quietMove', 'Тихий ход'], ['zugzwang', 'Цугцванг'], ['advancedPawn', 'Проходная пешка'], ['promotion', 'Превращение пешки']]]
   ];
   window.__extra = function (id) {
     var Z = Y[id], v = document.getElementById('view');
@@ -16195,9 +16196,10 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
       '<a class="y2cell" href="#' + id + '/theory"><i>01</i><b>Теория</b><p>Уроки по темам: примеры, партии, задачи. Темы открываются по мере готовности.</p><span>скоро</span></a>' +
       '<a class="y2cell" href="#y2/practice"><i>02</i><b>Практика</b><p>Партии с виртуальными шахматистами и разыгрывание заданных позиций.</p><span>играть</span></a>' +
       '<a class="y2cell" href="#y2/progress"><i>03</i><b>Мой прогресс</b><p>Рейтинг, результаты, победы, ничьи и поражения.</p><span>смотреть</span></a>' +
-      '<a class="y2cell" href="#y2/tourney"><i>04</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица.</p><span>играть</span></a>' +
+            '<a class="y2cell" href="#y2/tourney"><i>04</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица.</p><span>играть</span></a>' +
       '<a class="y2cell" href="#' + id + '/extra"><i>05</i><b>Дополнительные задачи</b><p>Рекомендация: каждый день не меньше ' + Z.min + ' задач по темам на сайте Lichess.</p><span>открыть</span></a>' +
       '<a class="y2cell" href="#' + id + '/youtube"><i>06</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' +
+      '<a class="y2cell" href="https://lichess.org/editor" target="_blank" rel="noopener noreferrer"><i>07</i><b>Редактор доски (Lichess)</b><p>Расставляй любые позиции и играй их против компьютера или друга. Откроется сайт Lichess.</p><span>открыть</span></a>' +
       '</div>';
   };
 })();
