@@ -2514,11 +2514,15 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<a class="card" href="#puzzles"><img class="ch" src="' + IMG.fox + '" alt=""><span class="big">Задачи на мат</span><p>Мат ладьёй, ферзём, слоном, конём, пешкой. Задачи не кончаются.</p><span class="pill">Решено: ' + (pt + cnt(solved)) + '</span></a>' +
       '<a class="card" href="#awards"><img class="ch" src="' + IMG.king + '" alt=""><span class="big">Награды</span><p>Медали, кубки и звёзды за твои успехи.</p><span class="pill">Медалей: ' + got + ' из ' + mm.length + '</span></a>' +
       '<a class="card" href="#board"><img class="ch" src="' + IMG.tima + '" alt=""><span class="big">Доска и компьютер</span><p>Играй с другом на одном экране, расставляй позиции и разбирай партии: какие ходы были хорошие, а какие нет.</p><span class="pill">Друг против друга</span></a>' +
+      '<a class="card" href="#games"><img class="ch" src="' + IMG.arni + '" alt=""><span class="big">Игротека</span><p>Игры и тренажёры: пазлы, найди пару, найди ошибку, пешечные бои, найди поле.</p><span class="pill">Играть ▶</span></a>' +
+      '<a class="card" href="#lessons" id="cardLogic"><img class="ch" src="' + IMG.fox + '" alt=""><span class="big">Логика</span><p>Закономерности, найди лишнее, счёт, что пропущено, загадки.</p><span class="pill">10 тем</span></a>' +
+      '<a class="card" href="#y2/tourney"><img class="ch" src="' + IMG.king + '" alt=""><span class="big">Турнир на 1 час</span><p>Сыграй 1 час против 15 соперников, смотри таблицу и получи диплом.</p><span class="pill">🏆 Играть</span></a>' +
       '<a class="card" href="#cartoons"><img class="ch" src="' + IMG.simba + '" alt=""><span class="big">Мультики</span><p>Знакомство с фигурами: смотри, как они ходят и живут.</p></a>' +
       '<a class="card" href="#lessons"><img class="ch" src="' + IMG.prof + '" alt=""><span class="big">Уроки</span><p>История шахмат, доска, ходы фигур со звёздочками и лабиринтами, шах, мат и ловушки.</p><span class="pill">' + lessonSummary() + '</span></a>' +
       '</div>' +
       '<section><h2>Наши герои</h2><div class="heroes" style="margin-top:12px">' + hh + '</div>' +
       '<p class="note" style="margin-top:10px">Герои из книги «Шахматная страна».</p></section>' + videoCard() + parentsBlock() + clubPromo();
+    var cl = document.getElementById('cardLogic'); if (cl) cl.addEventListener('click', function () { lsSet('ukc_toc', 'p'); setTimeout(function () { var e = document.getElementById('blk12'); if (e) e.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 600); });
     var knb = document.getElementById('knb'); if (knb) knb.onclick = openProfile;
   }
   /* ---------- Профиль: имя и сохранение прогресса ---------- */
