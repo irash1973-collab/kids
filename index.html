@@ -1428,6 +1428,12 @@ body.home .hero p.motto { max-width: 37%; }
 .y2sh{margin:14px 0 6px;font-size:15px;color:#31507a;letter-spacing:.04em;text-transform:uppercase}
 
 .toclead{font-size:15px;line-height:1.5;margin:4px 0 12px;max-width:760px}
+
+.yrd.y3,.yrd.y4{background:#27324a;border:3px solid #27324a;color:#fff;border-radius:10px;box-shadow:0 5px 0 #161d2e;opacity:1}.yrd.y3 .yrk,.yrd.y4 .yrk{color:#e3b43c}.yrd.y3 p,.yrd.y4 p{color:#d7e1ee}
+
+.y2tags{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}.y2tag{text-decoration:none;font-size:14px;padding:8px 12px;min-height:0}
+
+.y2load{background:#fff;border:1px solid #d9e2ee;border-left:5px solid #c62828;border-radius:12px;padding:12px 16px;margin:12px 0}.y2load h3{margin:0 0 6px}.y2load ul{margin:6px 0 0;padding-left:20px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2611,7 +2617,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
       pathRibbon(pts) +
       '<div class="stage"><img src="' + IMG.yasmin + '" alt=""><img src="' + IMG.tima + '" alt=""><img src="' + IMG.simba + '" alt=""></div>' +
       '<span class="spark" style="top:14px;right:22px">⭐</span><span class="spark" style="top:60px;right:150px;animation-delay:-.7s">✨</span><span class="spark" style="top:110px;right:14px;animation-delay:-1.3s">♟</span></div>' +
-      '<section class="yrdoors"><a class="yrd y1" href="#lessons"><span class="yrk">Первый год обучения</span><b>Знакомство с шахматами</b><p>Доска, фигуры, правила, шах и мат, первые задачи и игра с героями книги.</p><span class="yrgo">Начать ▶</span></a><a class="yrd y2" href="#y2"><span class="yrk">Второй год обучения</span><b>Тактика, дебюты, практика</b><p>Партии мастеров, задачи профессионального уровня, анализ движком, игры с сильными соперниками.</p><span class="yrgo">Перейти ▶</span></a></section>' +
+      '<section class="yrdoors"><a class="yrd y1" href="#lessons"><span class="yrk">Первый год обучения · от нуля до 4 разряда</span><b>Знакомство с шахматами</b><p>Доска, фигуры, правила, шах и мат, первые задачи и игра с героями книги.</p><span class="yrgo">Начать ▶</span></a><a class="yrd y2" href="#y2"><span class="yrk">Второй год обучения · 4–3 разряд</span><b>Тактика, дебюты, практика</b><p>Партии мастеров, задачи профессионального уровня, анализ движком, игры с сильными соперниками.</p><span class="yrgo">Перейти ▶</span></a>' +
+      '<a class="yrd y3" href="#y3"><span class="yrk">Третий год обучения · 3–2 разряд</span><b>Углублённая тактика и стратегия</b><p>Программа для шахматиста, который идёт от 3 к 2 разряду.</p><span class="yrgo">Перейти ▶</span></a><a class="yrd y4" href="#y4"><span class="yrk">Четвёртый год обучения · 2–1 разряд</span><b>Путь к первому разряду</b><p>Программа для шахматиста, который идёт от 2 к 1 разряду.</p><span class="yrgo">Перейти ▶</span></a></section>' +
+      '<a class="trnban libban" href="#library"><span class="tbico">📚</span><span class="tbtx"><span class="tbnew">СКОРО</span><b>Библиотека</b><small>Шахматные книги, которые можно читать и скачивать бесплатно</small></span><span class="tbgo">Открыть ▶</span></a>' +
       '<a class="trnban pathban" href="#path"><span class="tbico">🗺</span><span class="tbtx"><span class="tbnew">ПЕРВЫЙ ГОД · ЦЕЛЬ</span><b>Путь чемпиона: от новичка к 4 разряду</b><small>Смотри, как ты идёшь к цели, и проходи уроки дальше</small></span><span class="tbgo">Смотреть ▶</span></a>' +
       '<a class="trnban" href="#y2/tourney"><span class="tbico">🏆</span><span class="tbtx"><span class="tbnew">НОВОЕ · ТУРНИР НА 1 ЧАС</span><b>Сыграй в турнире! Попробуй свои силы, если готов</b><small>20 участников · таблица в реальном времени · кубки, салют и диплом победителям</small></span><span class="tbgo">Играть ▶</span></a>' +
       sayHero('king', 'За каждую победу тебя ждут звёзды и медали. Пройди все миры, и ты чемпион!', 'награды') +
@@ -8122,7 +8130,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
         '<a class="y2cell" href="#y2/practice"><i>02</i><b>Практика</b><p>Партии с виртуальными шахматистами и разыгрывание заданных позиций.</p><span>играть</span></a>' +
         '<a class="y2cell" href="#y2/progress"><i>03</i><b>Мой прогресс</b><p>Рейтинг, результаты уроков, победы, ничьи и поражения.</p><span>смотреть</span></a>' +
         '<a class="y2cell" href="#y2/speed"><i>04</i><b>Скорость</b><p>Задачи на время и гонка задач.</p><span>на время</span></a>' +
-        '<a class="y2cell" href="#y2/tourney"><i>05</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица, рейтинг.</p><span>играть</span></a>' + '</div><p class="y2note">Новые разделы и темы появляются по мере готовности.</p>';
+        '<a class="y2cell" href="#y2/tourney"><i>05</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица, рейтинг.</p><span>играть</span></a>' +
+        '<a class="y2cell" href="#y2/youtube"><i>06</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' + '</div><p class="y2note">Новые разделы и темы появляются по мере готовности.</p>';
     }
     var CURR = [
       ['Повторение первого года', ['@review2']],
@@ -9149,7 +9158,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
     window.__y2 = function (parts) {
       (function () { var pg0 = parts[1] || 'theory'; if (pg0 === 'storm' || pg0 === 'race') pg0 = 'speed'; if (pg0 === 'games' || pg0 === 'pos' || pg0 === 'play' || pg0 === 'engine' || pg0 === 'tourney' || pg0 === 'coords' || pg0 === 'review') pg0 = 'practice'; if (!/^(theory|practice|progress|speed|board)$/.test(pg0)) pg0 = 'theory'; document.querySelectorAll('.y2nav a[data-y2]').forEach(function (a) { a.classList.toggle('on', a.dataset.y2 === pg0); }); })();
-      var pg = { theory: theory, practice: practice, review: reviewPage, engine: enginePage, coords: function () { location.hash = '#games'; }, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: function () { positions(parts[2]); }, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race, tourney: tourneyPage };
+      var pg = { theory: theory, practice: practice, review: reviewPage, engine: enginePage, coords: function () { location.hash = '#games'; }, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: function () { positions(parts[2]); }, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race, tourney: tourneyPage, youtube: function () { window.__yt('y2'); } };
       if (pg[parts[1]]) { pg[parts[1]](); return; }
       var L = Y2.filter(function (x) { return x.id === parts[1]; })[0];
       if (!L) { landing(); return; }
@@ -16138,6 +16147,69 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
   };
 })();
 
+/* Третий и четвёртый год обучения: те же разделы, что во втором (теория, практика, мой прогресс, турнир) */
+(function () {
+  var Y = { y3: { n: 'Третий год обучения', r: '3–2 разряд', up: 'второй разряд', min: 30, split: 'Примерно по 5 задач на дебют, миттельшпиль и эндшпиль и остальные на разные темы.' }, y4: { n: 'Четвёртый год обучения', r: '2–1 разряд', up: 'первый разряд', min: 50, split: 'Желательно 10 задач на дебют, 10 на миттельшпиль, 10 на эндшпиль и 20 на разные темы.' } };
+  var RJ = '<div class="y2load"><h3>Режим занятий (рекомендация тренера)</h3><p>На этом этапе нужно заниматься <b>не меньше 2–2,5 часов каждый день</b>. Рекомендации основаны на опыте тренерской работы.</p><ul>' +
+    '<li>Самостоятельное чтение шахматных книг входит в занятия.</li>' +
+    '<li>Изучение теории по темам: эндшпиль, дебют, миттельшпиль.</li>' +
+    '<li>Решение задач каждый день (см. «Дополнительные задачи»).</li>' +
+    '<li>Игра: каждый день не меньше 2–3 партий, в том числе онлайн-турниры.</li>' +
+    '<li>Живые турниры тоже входят в тренировочную нагрузку.</li>' +
+    '<li>Обязателен разбор своих партий: ошибки и сильные моменты.</li></ul></div>';
+  var LI = 'https://lichess.org/training/';
+  var GR = [
+    ['Фазы партии', [['opening', 'Дебют'], ['middlegame', 'Миттельшпиль'], ['endgame', 'Эндшпиль'], ['pawnEndgame', 'Пешечный эндшпиль'], ['rookEndgame', 'Ладейный эндшпиль'], ['bishopEndgame', 'Слоновый эндшпиль'], ['knightEndgame', 'Коневой эндшпиль'], ['queenEndgame', 'Ферзевый эндшпиль']]],
+    ['Маты', [['mateIn1', 'Мат в 1 ход'], ['mateIn2', 'Мат в 2 хода'], ['mateIn3', 'Мат в 3 хода'], ['mateIn4', 'Мат в 4 хода'], ['backRankMate', 'Мат по последней горизонтали'], ['smotheredMate', 'Спёртый мат'], ['doubleBishopMate', 'Мат двумя слонами'], ['anastasiasMate', 'Мат Анастасии'], ['arabianMate', 'Арабский мат'], ['bodenMate', 'Мат Бодена']]],
+    ['Тактика', [['fork', 'Двойной удар (вилка)'], ['pin', 'Связка'], ['skewer', 'Сквозной удар'], ['discoveredAttack', 'Открытое нападение'], ['discoveredCheck', 'Открытый шах'], ['doubleCheck', 'Двойной шах'], ['deflection', 'Отвлечение'], ['attraction', 'Завлечение'], ['interference', 'Перекрытие линии'], ['clearance', 'Освобождение поля и линии'], ['capturingDefender', 'Уничтожение защитника'], ['intermezzo', 'Промежуточный ход'], ['hangingPiece', 'Незащищённая фигура'], ['trappedPiece', 'Пойманная фигура'], ['attackingF2F7', 'Атака на f2 и f7'], ['kingsideAttack', 'Атака на королевском фланге'], ['queensideAttack', 'Атака на ферзевом фланге'], ['exposedKing', 'Оголённый король'], ['sacrifice', 'Жертва'], ['quietMove', 'Тихий ход'], ['zugzwang', 'Цугцванг'], ['advancedPawn', 'Проходная пешка'], ['promotion', 'Превращение пешки']]]
+  ];
+  window.__y34 = function (id, parts) {
+    var Z = Y[id], v = document.getElementById('view');
+    if (parts[1] === 'youtube') { window.__yt(id); return; }
+    if (parts[1] === 'extra') {
+      var h = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>Дополнительные задачи</h2></div>' +
+        '<p class="y2lead">Это рекомендация тренера, она основана на опыте работы с шахматистами. Чтобы расти быстрее, решай задачи каждый день: на этом уровне не меньше <b>' + Z.min + '</b> задач в день. ' + Z.split + ' Темы лучше менять каждый день: сегодня связка, завтра двойной удар, потом отвлечение. Если нет сил, реши хотя бы 20 задач, но каждый день. Решай внимательно, а не быстро.</p>' +
+        RJ + '<p class="note">Задачи откроются на сайте Lichess в новой вкладке. Это бесплатный сайт. Заходи вместе с родителями или тренером. Результаты на нашем сайте не сохраняются.</p>';
+      GR.forEach(function (g) { h += '<h3 class="y2gh">' + g[0] + '</h3><div class="y2tags">'; g[1].forEach(function (t) { h += '<a class="btn alt y2tag" target="_blank" rel="noopener noreferrer" href="' + LI + t[0] + '">' + t[1] + '</a>'; }); h += '</div>'; });
+      v.innerHTML = h; return;
+    }
+    if (parts[1] === 'theory') {
+      v.innerHTML = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>Теория</h2></div><p class="y2lead">Темы ' + Z.n.toLowerCase().replace('год обучения', 'года обучения') + ' появятся по мере готовности. Пока можно играть, решать задачи и участвовать в турнирах.</p>';
+      return;
+    }
+    v.innerHTML = '<div class="y2head"><a class="btn alt" href="#home">← На главную</a></div><h2>' + Z.n + '</h2><p class="y2lead">Программа рассчитана на шахматиста уровня ' + Z.r + '. Цель: получить ' + Z.up + '. Если разряд у тебя уже есть, повторяй темы, чтобы не было пробелов.</p>' +
+      RJ + '<div class="y2cells">' +
+      '<a class="y2cell" href="#' + id + '/theory"><i>01</i><b>Теория</b><p>Уроки по темам: примеры, партии, задачи. Темы открываются по мере готовности.</p><span>скоро</span></a>' +
+      '<a class="y2cell" href="#y2/practice"><i>02</i><b>Практика</b><p>Партии с виртуальными шахматистами и разыгрывание заданных позиций.</p><span>играть</span></a>' +
+      '<a class="y2cell" href="#y2/progress"><i>03</i><b>Мой прогресс</b><p>Рейтинг, результаты, победы, ничьи и поражения.</p><span>смотреть</span></a>' +
+      '<a class="y2cell" href="#y2/tourney"><i>04</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица.</p><span>играть</span></a>' +
+      '<a class="y2cell" href="#' + id + '/extra"><i>05</i><b>Дополнительные задачи</b><p>Рекомендация: каждый день не меньше ' + Z.min + ' задач по темам на сайте Lichess.</p><span>открыть</span></a>' +
+      '<a class="y2cell" href="#' + id + '/youtube"><i>06</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' +
+      '</div>';
+  };
+})();
+
+(function () {
+  window.__lib = function () {
+    var v = document.getElementById('view');
+    v.innerHTML = '<div class="y2head"><a class="btn alt" href="#home">← На главную</a></div><h2>📚 Библиотека</h2>' +
+      '<div class="y2load"><h3>Скоро здесь появятся книги</h3><p>Здесь тренер расскажет, какие шахматные книги рекомендует читать на каждом году обучения. Книги можно купить в книжных магазинах и на сайтах, где продаются книги. Заглядывай сюда позже!</p></div>';
+  };
+  window.__yt = function (id) {
+    var v = document.getElementById('view'), CH = 'https://www.youtube.com/@upgradechess';
+    v.innerHTML = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>▶ Наш YouTube</h2></div>' +
+      '<p class="y2lead">Всё необходимое можно посмотреть и послушать на нашем YouTube-канале. Подписывайся и ставь лайк!</p>' +
+      '<div class="y2load"><h3>Что там есть</h3><ul>' +
+      '<li>Как проходят наши турниры.</li>' +
+      '<li>Как проходят наши уроки.</li>' +
+      '<li>Как зарегистрироваться на игровых сайтах.</li>' +
+      '<li>Как найти наш клуб.</li>' +
+      '<li>Разборы тем по дебюту, миттельшпилю и эндшпилю: если тема непонятна, послушай её ещё раз и закрепи.</li></ul><p>Все необходимое есть на нашем YouTube-канале. Ищи нужную тему сам.</p></div>' +
+      '<p><a class="btn" target="_blank" rel="noopener noreferrer" href="' + CH + '">▶ Открыть наш канал</a> ' + '</p>' +
+      '<p class="note">Канал откроется в новой вкладке. Заходи вместе с родителями или тренером.</p>';
+  };
+})();
+
 // Уроки по цветным блокам: знакомство, фигуры, ценность и защита, правила, мат, тактика, пешечные окончания, повторение
 (function () {
   var B = [
@@ -17235,8 +17307,8 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
   function route() {
     clearTimers(); view.onclick = null;
     var parts = (location.hash || '#home').slice(1).split('/'), r = parts[0];
-    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons', 'coords', 'games', 'diploma', 'exam', 'quiz', 'parents', 'gift', 'path'].indexOf(r) < 0) r = 'home';
-    document.body.classList.toggle('y2', r === 'y2'); document.body.classList.toggle('home', r === 'home');
+    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'y3', 'y4', 'board', 'awards', 'cartoons', 'coords', 'games', 'diploma', 'exam', 'quiz', 'parents', 'gift', 'path', 'library'].indexOf(r) < 0) r = 'home';
+    document.body.classList.toggle('y2', r === 'y2' || r === 'y3' || r === 'y4'); document.body.classList.toggle('home', r === 'home');
     var m = document.getElementById('modal'); if (m) m.remove();
     document.body.classList.toggle('onboard', r === 'board');
     setActive(r === 'lesson' || r === 'exam' || r === 'quiz' ? 'lessons' : r === 'coords' ? 'games' : r);
@@ -17246,6 +17318,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     else if (r === 'lessons') lessons();
     else if (r === 'lesson') lessonPage(parts[1], +parts[2] || 0);
     else if (r === 'y2') window.__y2(parts);
+    else if (r === 'y3' || r === 'y4') window.__y34(r, parts);
     else if (r === 'board') boardPage();
     else if (r === 'awards') { awards(); if (window.__dipCard) window.__dipCard(); }
     else if (r === 'diploma') window.__diploma();
@@ -17254,6 +17327,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     else if (r === 'gift') window.__gift(parts);
     else if (r === 'parents') window.__parents();
     else if (r === 'path') window.__path();
+    else if (r === 'library') window.__lib();
     else if (r === 'cartoons') cartoons();
     else if (r === 'coords') window.__coords(parts);
     else if (r === 'games') window.__games(parts);
