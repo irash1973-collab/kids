@@ -1329,6 +1329,12 @@ body.home .hero p.motto { max-width: 37%; }
 
 .y2fire{display:inline-block;animation:y2fl .7s ease-in-out infinite alternate;filter:drop-shadow(0 0 6px #ff9a00)}
 @keyframes y2fl{from{transform:scale(1) rotate(-6deg)}to{transform:scale(1.25) rotate(6deg)}}
+
+.y2tli{padding:8px 0;border-bottom:1px solid #e3e6ea;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.y2tli .btn{padding:6px 12px;font-size:14px}
+.tvm{color:inherit;text-decoration:none;padding:1px 4px;border-radius:5px}.tvm.on{background:#ffe27a;font-weight:700}
+
+.rcoach{margin:14px 0 4px;padding:14px 16px;border-radius:16px;background:#fff7d6;border:2px solid #f4c430;color:#2b2540;line-height:1.5}.rcoach h4{margin:0 0 6px;font-size:18px}.rcoach ul{margin:4px 0 10px;padding-left:20px}.rcoach p{margin:6px 0}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2522,7 +2528,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<a class="card" href="#board"><img class="ch" src="' + IMG.tima + '" alt=""><span class="big">Доска и компьютер</span><p>Играй с другом на одном экране, расставляй позиции и разбирай партии: какие ходы были хорошие, а какие нет.</p><span class="pill">Друг против друга</span></a>' +
       '<a class="card" href="#games"><img class="ch" src="' + IMG.arni + '" alt=""><span class="big">Игротека</span><p>Игры и тренажёры: пазлы, найди пару, найди ошибку, пешечные бои, найди поле.</p><span class="pill">Играть ▶</span></a>' +
       '<a class="card" href="#lessons" id="cardLogic"><img class="ch" src="' + IMG.fox + '" alt=""><span class="big">Логика</span><p>Закономерности, найди лишнее, счёт, что пропущено, загадки.</p><span class="pill">10 тем</span></a>' +
-      '<a class="card" href="#y2/tourney"><img class="ch" src="' + IMG.king + '" alt=""><span class="big">Турнир на 1 час</span><p>Сыграй 1 час против 15 соперников, смотри таблицу и получи диплом.</p><span class="pill">🏆 Играть</span></a>' +
+      '<a class="card" href="#y2/tourney"><img class="ch" src="' + IMG.king + '" alt=""><span class="big">Турнир на 1 час</span><p>Сыграй 1 час против 19 соперников, смотри таблицу и получи диплом.</p><span class="pill">🏆 Играть</span></a>' +
       '<a class="card" href="#cartoons"><img class="ch" src="' + IMG.simba + '" alt=""><span class="big">Мультики</span><p>Знакомство с фигурами: смотри, как они ходят и живут.</p></a>' +
       '<a class="card" href="#lessons"><img class="ch" src="' + IMG.prof + '" alt=""><span class="big">Уроки</span><p>История шахмат, доска, ходы фигур со звёздочками и лабиринтами, шах, мат и ловушки.</p><span class="pill">' + lessonSummary() + '</span></a>' +
       '</div>' +
@@ -8049,7 +8055,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       view.innerHTML = crumbs('Практика', '#y2') + '<div class="y2cells two">' +
         '<a class="y2cell" href="#y2/games"><i>А</i><b>Игры с соперниками</b><p>Виртуальные шахматисты разных стран и возрастов, от 4 разряда до гроссмейстера. Следующий уровень открывается после завершения предыдущего.</p><span>8 уровней по 100 игроков</span></a>' +
         '<a class="y2cell" href="#y2/review"><i>Б</i><b>Повторение первого года</b><p>Темы и задачи первого года обучения: фигуры, правила, мат, двойной удар, ничья. Освежите основы перед сложными темами.</p><span>' + (function () { var n = 0; GROUPS.forEach(function (g) { n += g.ids.length; }); return n; })() + ' тем</span></a>' +
-        '<a class="y2cell" href="#y2/tourney"><i>Т</i><b>Турнир на 1 час</b><p>15 соперников, часы 5+6, таблица результатов. Играйте партии, пока идёт час, и займите место на пьедестале.</p><span>турнир</span></a>' +
+        '<a class="y2cell" href="#y2/tourney"><i>Т</i><b>Турнир на 1 час</b><p>19 соперников, часы 5+6, таблица результатов. Играйте партии, пока идёт час, и займите место на пьедестале.</p><span>турнир</span></a>' +
         '<a class="y2cell" href="#y2/engine"><i>В</i><b>Игра с компьютером</b><p>Выберите силу, цвет и контроль времени: от пули до классики.</p><span>тренировка</span></a>' +
         '<a class="y2cell" href="#y2/speed"><i>Д</i><b>Скорость</b><p>Спринт на три минуты и футбол: кто первым решит задачи и добежит до ворот.</p><span>на время</span></a>' +
         '<a class="y2cell" href="#y2/board"><i>Е</i><b>Доска и анализ партий</b><p>Играйте по уровням и с часами, расставляйте позиции, загружайте любые партии и разбирайте их с движком Stockfish.</p><span>доска</span></a>' +
@@ -8150,7 +8156,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function play(t, i, tc, cu, colOv, trn) {
       var g0 = gst(); t = +t; i = +i; if (!cu && (!TIERS[t] || (!trn && !tierOpen(g0, t)) || i < 0 || i > 99)) { location.hash = trn ? '#y2/tourney' : '#y2/games'; return; }
       var o = cu || opp(t, i), meW = cu ? cu.meW : (colOv != null ? colOv : i % 2 === 0), lv = cu ? cu.lv : (trn && trn.nov ? lvOf(o.rt) : yLv(o));
-      var pos = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: !meW, coords: true, mark: {}, hl: null }, tg = [], keys = {}, hm = 0, mv = [], ph = [], over = false, busy = false, resigned = false, gen = Math.random();
+      var pos = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: !meW, coords: true, mark: {}, hl: null }, tg = [], keys = {}, hm = 0, mv = [], ph = [], mm = [], over = false, busy = false, resigned = false, gen = Math.random();
       keys[E.key(pos)] = 1;
       var timed = tc && tc[1] > 0, T = { me: timed ? tc[1] * 60000 : 0, op: timed ? tc[1] * 60000 : 0 }, inc = timed ? tc[2] * 1000 : 0, turnMe = meW, lastTs = Date.now(), clkIv = null;
       view.innerHTML = '<div class="y2head"><a class="btn alt" href="' + (cu ? '#y2/engine' : '#y2/games/' + t) + '">← Назад</a><h2>' + esc(o.full) + ' · ' + o.rt + '</h2></div><div class="y2task"><div class="y2cap"><b>' + ava2(o, true) + ' ' + esc(o.full) + '</b><span>' + (cu ? 'уровень силы ' + lv : o.age + ' лет · ' + esc(o.c)) + ' · вы играете ' + (meW ? 'белыми' : 'чёрными') + '</span><button class="y2gear" id="mnB" aria-label="Настройки" title="Настройки">⚙</button></div>' + boardHTML() + '<div class="y2clk"><span id="clO">' + esc(o.n) + '</span><span id="clM">Вы</span></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div class="y2score" id="pgn"></div><div class="row"><button class="btn alt" id="flB">⇅ Перевернуть доску</button><button class="btn alt" id="rsB">Сдаться</button><button class="btn alt" id="dwB">Предложить ничью</button></div><p class="y2fair">Честная игра: во время партии нельзя пользоваться подсказками, движком, другими программами и чужой помощью. Сайт отмечает, если вы уходите со страницы. Анализ откроется после партии.</p><div id="after"></div><div id="anP"></div></div>';
@@ -8161,7 +8167,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function pgn() { var h = '', n = 1; mv.forEach(function (x, k) { h += (k % 2 === 0 ? '<span class="y2pn">' + n + '.</span> ' : '') + '<span class="y2mv">' + esc(x) + '</span> '; if (k % 2 === 1) n++; }); document.getElementById('pgn').innerHTML = h || '<span class="y2note">Партия начинается.</span>'; }
       function apply(m) {
         var b0 = S.pos, np = E.make(b0, m), cap = b0.b[m.t] || m.fl === 1, pawn = Math.abs(b0.b[m.f]) === 1;
-        ph.push(b0); mv.push(notation(m, b0)); hm = (cap || pawn) ? 0 : hm + 1; S.anim = animOf(b0, m); S.last = { f: m.f, t: m.t }; S.pos = np; S.sel = null; tg = []; moveSound(b0, m, np);
+        ph.push(b0); mv.push(notation(m, b0)); mm.push(m.f + '.' + m.t + '.' + (m.p || 0)); hm = (cap || pawn) ? 0 : hm + 1; S.anim = animOf(b0, m); S.last = { f: m.f, t: m.t }; S.pos = np; S.sel = null; tg = []; moveSound(b0, m, np);
         var k = E.key(np); keys[k] = (keys[k] || 0) + 1; pgn(); draw(); return np;
       }
       function result() {
@@ -8183,7 +8189,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         var txt = (res === 'win' ? 'Победа!' : res === 'loss' ? 'Поражение.' : 'Ничья.') + (why ? ' ' + why : '');
         sm(txt + (away ? ' Уходов со страницы: ' + away + ' (' + awayT + ' с).' : ' Нарушений честной игры не замечено.'), res === 'win' ? 'good' : res === 'loss' ? 'bad' : ''); speak(txt);
         var nx = trn ? '#y2/tourney' : cu ? '#y2/engine' : i < 99 ? '#y2/play/' + t + '/' + (i + 1) : '#y2/games/' + t;
-        if (trn) { try { trn(res); } catch (e) { } }
+        if (trn) { try { trn(res, { mm: mm.slice(), san: mv.slice(), w: meW, on: o.n, fn: o.full, rt: o.rt }); } catch (e) { } }
         document.getElementById('after').innerHTML = '<div class="y2res ' + (res === 'win' ? 'ok' : res === 'loss' ? 'bad' : '') + '"><b>' + txt + '</b>' + (cu || trn ? '' : ' Рейтинг: ' + g.r + ' (' + (dr >= 0 ? '+' : '') + dr + ')') + '</div><div class="row"><a class="btn go" href="' + nx + '">' + (trn ? 'Вернуться в турнир' : cu ? 'Новая партия' : 'Следующий соперник') + '</a><button class="btn alt" id="anB2">Анализ на компьютере</button>' + (trn ? '<a class="btn alt" href="#y2/tourney" id="agB" hidden>.</a>' : '<a class="btn alt" href="#y2/play/' + t + '/' + i + '" id="agB">Сыграть ещё раз</a>') + '</div>';
         if (trn) { var bk = document.querySelector('#after a.btn.go'); if (bk) bk.onclick = function (e) { e.preventDefault(); trnPage(); }; }
         document.getElementById('anB2').onclick = function () { analysis(E.toFEN(S.pos), document.getElementById('anP'), S, draw, ph.slice(), []); };
@@ -8805,13 +8811,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
     /* ---------- маршрут ---------- */
 
-    /* ---------- турнир на 1 час: 15 соперников, часы 5+6, живая таблица ---------- */
+    /* ---------- турнир на 1 час: 19 соперников, часы 5+6, живая таблица ---------- */
     var TRN_MIN = 60, TRN_TC = ['5+6', 5, 6], TRN_CATS = ['N', 0, 1, 2, 3], TRN_KEY = 'ukc_trn';
     function catName(t) { return t === 'N' ? 'Новички' : TIERS[t][0]; }
     function catRange(t) { return t === 'N' ? '600–900' : TIERS[t][1]; }
     function trnGet() { var o = lsGet(TRN_KEY, null); return o && typeof o === 'object' && o.start ? o : null; }
     function trnSet(o) { lsSet(TRN_KEY, o); }
-    function trnBots(t) { var a = [], nov = t === 'N'; for (var k = 0; k < 15; k++) a.push(nov ? Math.round(k * 2.7) : Math.min(99, Math.round(3 + k * 6.6))); return a.map(function (i) { return opp(nov ? 0 : t, i); }); }
+    var TRN_NB = 19;
+    function trnBots(t) { var a = [], nov = t === 'N'; for (var k = 0; k < TRN_NB; k++) a.push(nov ? Math.round(k * 2.6) : Math.min(99, Math.round(3 + k * 5.1))); var used = {}, me0 = (kidName() || '').toLowerCase(); return a.map(function (i) { var o = opp(nov ? 0 : t, i), tr = 0; while ((used[o.n] || o.n.toLowerCase() === me0) && tr < 40) { i = Math.min(99, i + 1); tr++; o = opp(nov ? 0 : t, i); } used[o.n] = 1; return o; }); }
     /* результаты соперников считаются по времени: у каждого своя партия за 6–9 минут, исход зависит от силы и «случая» с зерном турнира */
     function botScore(st, bot, bi, el) {
       var r = r32(st.seed * 31 + bi * 977 + 5), per = 8 + r() * 4, n = Math.floor(el / per), sc = 0, field = 0;
@@ -8833,24 +8840,53 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     function trnNext(st) {
       var bots = trnBots(st.t), p = st.p == null ? 3 : st.p, last = st.games.length ? st.games[st.games.length - 1].bi : -1;
-      if (p < 0) p = 0; if (p > 14) p = 14; if (p === last) p = p < 14 ? p + 1 : p - 1;
+      if (p < 0) p = 0; if (p > TRN_NB - 1) p = TRN_NB - 1; if (p === last) p = p < TRN_NB - 1 ? p + 1 : p - 1;
       return p;
     }
-    function trnFinishGame(st, res) {
+    function trnFinishGame(st, res, info) {
       if (!st.cur) return;
-      st.games.push({ bi: st.cur.bi, res: res, ts: Date.now() });
+      st.games.push({ bi: st.cur.bi, res: res, ts: Date.now(), d: info || null });
       var p = st.cur.bi;
-      st.p = res === 'win' ? Math.min(14, p + 1 + (st.streak >= 1 ? 1 : 0)) : res === 'loss' ? Math.max(0, p - 1) : p;
+      st.p = res === 'win' ? Math.min(TRN_NB - 1, p + 1 + (st.streak >= 1 ? 1 : 0)) : res === 'loss' ? Math.max(0, p - 1) : p;
       st.streak = res === 'win' ? (st.streak || 0) + 1 : 0; st.cur = null; trnSet(st);
     }
     function trnStart(t) {
-      var st = { t: t, start: Date.now(), seed: (Math.random() * 1e9) | 0, games: [], p: 3, streak: 0, cur: null, done: false };
+      var st = { t: t, start: Date.now(), seed: (Math.random() * 1e9) | 0, games: [], p: 4, streak: 0, cur: null, done: false };
       trnSet(st); location.hash = '#y2/tourney'; trnPage();
+    }
+    function dstr(ts) { var d = new Date(ts || Date.now()), z = function (n) { return (n < 10 ? '0' : '') + n; }; return z(d.getDate()) + '.' + z(d.getMonth() + 1) + '.' + d.getFullYear(); }
+    function trnOld(id) {
+      var h = lsGet('ukc_trnh', []).filter(function (x) { return x.id === id; })[0]; if (!h) { trnLobby(); return; }
+      var rows = (h.rows || []).map(function (r) { return { n: r[0], g: r[1], sc: r[2], me: !!r[3] }; }), gd = (lsGet('trng', {}) || {})[id] || [];
+      var RT = { win: 'Победа', loss: 'Поражение', draw: 'Ничья' };
+      var gl = (h.gm || []).map(function (g, k) { var has = gd[k] && gd[k].mm; return '<div class="y2tli"><b>Партия ' + (k + 1) + '</b> против ' + esc(g.on || 'соперника') + ' — ' + (RT[g.res] || g.res) + (g.n ? ', ходов: ' + Math.ceil(g.n / 2) : '') + (has ? ' <button class="btn alt tgv" data-k="' + k + '">▶ Смотреть</button>' : '') + '</div>'; }).join('');
+      view.innerHTML = '<div class="y2head"><button class="btn alt" id="tdBack">← Мои турниры</button><h2>Турнир: ' + esc(h.cat) + '</h2></div>' +
+        '<div class="y2stats"><span>📅 <b>' + esc(dstr(h.ts)) + '</b></span><span>🏅 Место: <b>' + h.place + ' из 20</b></span><span>♟ Очки: <b>' + fmtSc(h.sc) + '</b></span><span>Партий: <b>' + h.g + '</b></span></div>' +
+        (gl ? '<h3 class="y2h3">Мои партии</h3>' + gl : '') + '<h3 class="y2h3">Итоговая таблица</h3><div id="trTab">' + trnTableHTML(rows, true) + '</div>';
+      document.getElementById('tdBack').onclick = trnLobby;
+      Array.prototype.forEach.call(view.querySelectorAll('.tgv'), function (b) { b.onclick = function () { trnView(id, +b.getAttribute('data-k')); }; });
+    }
+    function trnView(id, k) {
+      var gd = ((lsGet('trng', {}) || {})[id] || [])[k]; if (!gd) { trnOld(id); return; }
+      var pos = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), P = [pos], L = [null];
+      gd.mm.split(' ').forEach(function (u) { var q = u.split('.'), f = +q[0], t = +q[1], pr = +q[2], cur = P[P.length - 1], m = E.legal(cur).filter(function (x) { return x.f === f && x.t === t && (x.p || 0) === pr; })[0]; if (m) { P.push(E.make(cur, m)); L.push({ f: f, t: t }); } });
+      var san = gd.san.split(' '), ix = 0, S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: !gd.w, coords: true, mark: {}, hl: null };
+      var RT = { win: 'Победа', loss: 'Поражение', draw: 'Ничья' };
+      view.innerHTML = '<div class="y2head"><button class="btn alt" id="tvBack">← К турниру</button><h2>' + esc(gd.fn || gd.on) + ' · ' + (gd.rt || '') + '</h2></div><div class="y2task"><div class="y2cap"><b>Вы играли ' + (gd.w ? 'белыми' : 'чёрными') + ' — ' + (RT[gd.res] || '') + '</b></div>' + boardHTML() +
+        '<div class="row"><button class="btn alt" id="tvS">⏮</button><button class="btn alt" id="tvB">◀</button><button class="btn go" id="tvF">▶</button><button class="btn alt" id="tvE">⏭</button><button class="btn alt" id="tvFl">⇅ Перевернуть</button></div><div class="row"><button class="btn go" id="tvAn">🔍 Разобрать партию с движком</button></div><p class="st">Компьютер отметит твои лучшие ходы и покажет, где была ошибка и как сыграть лучше.</p><div class="y2score" id="tvM"></div></div>';
+      function show() { S.pos = P[ix]; S.last = L[ix]; drawBoard(S, function () { }); var h = ''; san.forEach(function (s0, j) { h += (j % 2 === 0 ? (j / 2 + 1) + '. ' : '') + '<a href="#" class="tvm' + (j + 1 === ix ? ' on' : '') + '" data-j="' + (j + 1) + '">' + esc(s0) + '</a> '; }); document.getElementById('tvM').innerHTML = h;
+        Array.prototype.forEach.call(document.querySelectorAll('.tvm'), function (a) { a.onclick = function (e) { e.preventDefault(); ix = +a.getAttribute('data-j'); show(); }; }); }
+      document.getElementById('tvBack').onclick = function () { trnOld(id); };
+      document.getElementById('tvS').onclick = function () { ix = 0; show(); }; document.getElementById('tvB').onclick = function () { if (ix > 0) ix--; show(); };
+      document.getElementById('tvF').onclick = function () { if (ix < P.length - 1) ix++; show(); }; document.getElementById('tvE').onclick = function () { ix = P.length - 1; show(); };
+      document.getElementById('tvFl').onclick = function () { S.flip = !S.flip; show(); }; document.getElementById('tvAn').onclick = function () { var tx = gd.san, n = 0; location.hash = '#board'; (function w() { if (window.__bload && document.getElementById('pgnErr')) { window.__bload(tx); } else if (n++ < 40) setTimeout(w, 100); })(); };
+      show();
     }
     function trnLobby() {
       var cat = TRN_CATS.map(function (t) { return '<button class="btn go" data-t="' + t + '">' + catName(t) + '<br><small>рейтинг ' + catRange(t) + '</small></button>'; }).join(' ');
-      var hist = lsGet('ukc_trnh', []), hh = hist.length ? '<h3 class="y2h3">Мои турниры</h3><div class="y2tl">' + hist.slice(-8).reverse().map(function (h) { return '<div>' + esc(h.cat) + ': ' + h.place + ' место из 16, ' + fmtSc(h.sc) + ' оч., партий: ' + h.g + (h.place === 1 ? ' 🏆' : h.place <= 3 ? ' 🥇' : '') + '</div>'; }).join('') + '</div>' : '';
-      view.innerHTML = crumbs('Турнир на 1 час', '#y2/practice') + '<p class="y2lead">Вы и 15 соперников одного уровня. Играйте партии подряд, на каждую 5 минут и по 6 секунд за ход. Побеждаете: соперники становятся сильнее. Проигрываете: слабее. Через час турнир заканчивается, и вы увидите таблицу и своё место.</p><h3 class="y2h3">Выберите турнир</h3><div class="row y2trc">' + cat + '</div>' + hh;
+      var hist = lsGet('ukc_trnh', []), hh = hist.length ? '<h3 class="y2h3">Мои турниры</h3><div class="y2tl">' + hist.slice(-8).reverse().map(function (h) { return '<div class="y2tli">' + esc(dstr(h.ts)) + ' · ' + esc(h.cat) + ': ' + h.place + ' место из 20, ' + fmtSc(h.sc) + ' оч., партий: ' + h.g + (h.place === 1 ? ' 🏆' : h.place <= 3 ? ' 🥇' : '') + (h.rows ? ' <button class="btn alt tlo" data-id="' + h.id + '">Открыть</button>' : '') + '</div>'; }).join('') + '</div>' : '';
+      view.innerHTML = crumbs('Турнир на 1 час', '#y2/practice') + '<p class="y2lead">Вы и 19 соперников одного уровня. Играйте партии подряд, на каждую 5 минут и по 6 секунд за ход. Побеждаете: соперники становятся сильнее. Проигрываете: слабее. Через час турнир заканчивается, и вы увидите таблицу и своё место.</p><h3 class="y2h3">Выберите турнир</h3><div class="row y2trc">' + cat + '</div>' + hh;
+      Array.prototype.forEach.call(view.querySelectorAll('.tlo'), function (b) { b.onclick = function () { trnOld(b.getAttribute('data-id')); }; });
       view.querySelector('.y2trc').onclick = function (e) { var b = e.target.closest('button[data-t]'); if (b) trnStart(b.dataset.t === 'N' ? 'N' : +b.dataset.t); };
     }
     var trnIv = null;
@@ -8869,14 +8905,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
         var tt = document.getElementById('trT'); if (!tt) { clearInterval(trnIv); trnIv = null; return; }
         tt.textContent = fmt(left);
         var rows = trnTable(s2, Math.min(e2, TRN_MIN)), pl = 0; rows.forEach(function (r, k) { if (r.me) pl = k + 1; });
-        document.getElementById('trP').textContent = (rows[0].sc > 0 ? pl + ' из 16' : '—'); document.getElementById('trTab').innerHTML = trnTableHTML(rows);
+        document.getElementById('trP').textContent = (rows[0].sc > 0 ? pl + ' из 20' : '—'); document.getElementById('trTab').innerHTML = trnTableHTML(rows);
         if (left <= 0) { clearInterval(trnIv); trnIv = null; trnPage(); }
       }
       tick(); trnIv = setInterval(tick, 1000);
       document.getElementById('trGo').onclick = function () {
         var s2 = trnGet(); if (!s2) return; var b2 = trnNext(s2); s2.cur = { bi: b2, ts: Date.now() }; trnSet(s2);
         if (trnIv) { clearInterval(trnIv); trnIv = null; }
-        var cb = function (res) { var s3 = trnGet(); if (s3) trnFinishGame(s3, res); }; cb.nov = s2.t === 'N';
+        var cb = function (res, info) { var s3 = trnGet(); if (s3) trnFinishGame(s3, res, info); }; cb.nov = s2.t === 'N';
         play(s2.t === 'N' ? 0 : s2.t, trnBots(s2.t)[b2].i, TRN_TC, null, Math.random() < 0.5, cb);
       };
       document.getElementById('trEnd').onclick = function () { if (window.confirm('Закончить турнир сейчас? Ваш результат запишется.')) { var s2 = trnGet(); s2.done = true; trnSet(s2); trnPage(); } };
@@ -8904,10 +8940,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     function trnFinal(st) {
       var rows = trnTable(st, TRN_MIN), pl = 0, me = null; rows.forEach(function (r, k) { if (r.me) { pl = k + 1; me = r; } });
-      var hist = lsGet('ukc_trnh', []); hist.push({ cat: catName(st.t), place: pl, sc: me.sc, g: me.g, ts: Date.now() }); lsSet('ukc_trnh', hist.slice(-30));
+      var hist = lsGet('ukc_trnh', []), hid = 't' + st.start; hist.push({ id: hid, cat: catName(st.t), place: pl, sc: me.sc, g: me.g, ts: st.start, rows: rows.map(function (r) { return [r.n, r.g, r.sc, r.me ? 1 : 0]; }), gm: st.games.map(function (g) { return { res: g.res, on: g.d ? g.d.on : '', n: g.d ? g.d.mm.length : 0 }; }) }); lsSet('ukc_trnh', hist.slice(-30));
+      try { var tg0 = lsGet('trng', {}); tg0[hid] = st.games.map(function (g) { return g.d ? { res: g.res, on: g.d.on, fn: g.d.fn, rt: g.d.rt, w: g.d.w, mm: g.d.mm.join(' '), san: g.d.san.join(' ') } : null; }); var ks = Object.keys(tg0); while (ks.length > 8) delete tg0[ks.shift()]; lsSet('trng', tg0); } catch (e) { }
       var pts = pl === 1 ? 60 : pl === 2 ? 40 : pl === 3 ? 30 : pl <= 8 ? 15 : 5; if (me.g === 0) pts = 0;
       lsSet(TRN_KEY, null); if (pts) try { addPts(pts, 'за турнир'); } catch (e) { }
-      var ttl = pl === 1 ? '🏆 Вы победили в турнире!' : pl <= 3 ? '🥇 Вы на пьедестале! ' + pl + ' место' : 'Ваше место: ' + pl + ' из 16';
+      var ttl = pl === 1 ? '🏆 Вы победили в турнире!' : pl <= 3 ? '🥇 Вы на пьедестале! ' + pl + ' место' : 'Ваше место: ' + pl + ' из 20';
       var cls = ['g1', 'g2', 'g3'], ord = [1, 0, 2];
       var PAL = [['#fff3b0', '#ffc928', '#b87a00', '#ff4d4d'], ['#ffffff', '#c9d2d9', '#7d8890', '#3f6fe0'], ['#ffe0c2', '#d98a4e', '#8a4a1f', '#3aa655']];
       function trophy(k) {
@@ -8921,15 +8958,16 @@ if (typeof module !== 'undefined') module.exports = Eng;
           (k === 0 ? '<path d="M50 6 L56 -4 L63 4 L70 -6 L77 4 L84 -4 L90 6Z" fill="url(#' + id + ')" stroke="' + c[2] + '" stroke-width="2" transform="translate(0 6)"/>' : '') + '</svg>';
       }
       var pod = '<div class="y2pod">' + ord.map(function (k) { var r = rows[k]; return '<div class="y2pc ' + cls[k] + (r.me ? ' me' : '') + '"><div class="y2pav">' + (r.o ? ava2(r.o) : '<span class="y2you">👤</span>') + '</div>' + trophy(k) + '<div class="y2plq"><b>' + esc(r.n) + (r.me ? ' (вы)' : '') + '</b><span>' + fmtSc(r.sc) + ' оч.</span></div><div class="y2blk"><i>🌿</i><em>' + (k + 1) + '</em><i>🌿</i></div></div>'; }).join('') + '</div>';
-      var ttl = pl === 1 ? 'Вы победили в турнире!' : pl <= 3 ? 'Вы на пьедестале! ' + pl + ' место' : 'Ваше место: ' + pl + ' из 16';
+      var ttl = pl === 1 ? 'Вы победили в турнире!' : pl <= 3 ? 'Вы на пьедестале! ' + pl + ' место' : 'Ваше место: ' + pl + ' из 20';
       function plq(k, r) { return '<div class="y2hp p' + (k + 1) + '"><b>' + esc(r.n) + (r.me ? ' (вы)' : '') + '</b><span>' + fmtSc(r.sc) + ' оч.</span></div>'; }
       var hero = '<div class="y2hero" style="background-image:url(' + (window.__trnImg || '') + ')"><div class="y2hpill">Турнир завершён: ' + catName(st.t) + '</div>' + plq(1, rows[1]) + plq(0, rows[0]) + plq(2, rows[2]) + '</div>';
       view.innerHTML = '<div class="y2fin">' + hero +
         '<div class="y2win">🎉 Победитель турнира: <b>' + esc(rows[0].n) + (rows[0].me ? ' (это вы!)' : '') + '</b> 🎉</div>' +
         '<div class="y2pill big">' + (pl <= 3 ? '🏆 ' : '') + '<b>' + ttl + '</b></div><div class="y2stats"><span>♟ Очки: <b>' + fmtSc(me.sc) + '</b></span><span>🏁 Партий: <b>' + me.g + '</b></span>' + (pts ? '<span>🎁 Награда: <b>' + pts + ' баллов</b></span>' : '') + '</span></div>' +
-        '<div class="row"><button class="btn go" id="trNew">Новый турнир</button><button class="btn alt" id="trFw2">🎆 Ещё салют</button>' + '<button class="btn go" id="trDip">🎓 ' + (pl <= 3 ? 'Диплом' : 'Сертификат') + '</button>' + '<a class="btn alt" href="#y2/practice">← Практика</a></div><div class="y2tabh">Итоговая таблица</div>' + trnTableHTML(rows, true) + '</div>';
-      var dpb = document.getElementById('trDip'); if (dpb) dpb.onclick = function () { window.__tourDip(pl, catName(st.t) + ' (1 час)', 16, st.start); };
+        '<div class="row"><button class="btn go" id="trNew">Новый турнир</button><button class="btn alt" id="trFw2">🎆 Ещё салют</button>' + '<button class="btn go" id="trDip">🎓 ' + (pl <= 3 ? 'Диплом' : 'Сертификат') + '</button>' + '<a class="btn alt" href="#y2/practice">← Практика</a></div>' + '<div class="rcoach"><h4>🔍 Теперь разберём партии!</h4><p>' + (pl <= 3 ? 'Отличный результат! Но самое ценное начинается сейчас: разбери свои партии вместе с тренером, чтобы стать ещё сильнее.' : 'Ничего страшного, сильнее становятся именно через разбор! Обязательно разбери свои партии, особенно проигранные, и покажи их тренеру.') + '</p><p>Разбирать свои партии вместе с тренером — это большая вещь и большой прогресс. Выигранные, проигранные и ничейные: каждая даёт тебе скачок. Тренер подскажет, над чем работать и где твои пробелы.</p><div class="row"><button class="btn go" id="trAn">🔍 Перейти к анализу партий</button></div></div><div class="y2tabh">Итоговая таблица</div>' + trnTableHTML(rows, true) + '</div>';
+      var dpb = document.getElementById('trDip'); if (dpb) dpb.onclick = function () { window.__tourDip(pl, catName(st.t) + ' (1 час)', 20, st.start); };
       document.getElementById('trNew').onclick = trnLobby;
+      document.getElementById('trAn').onclick = function () { trnOld(hid); };
       document.getElementById('trFw2').onclick = function () { trnFireworks(5); trnMusic(); };
       setTimeout(function () { trnFireworks(pl <= 3 ? 9 : 6); trnMusic(); if (pl <= 3) { try { sfx('medal'); } catch (e) { } } }, 300);
     }
@@ -16399,7 +16437,13 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     var d = pts.map(function (p, k) { return (k ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('');
     var area = d + 'L' + W + ' ' + H / 2 + 'L0 ' + H / 2 + 'Z';
     var graph = '<svg class="graph" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img" aria-label="График оценки партии: выше середины лучше у белых"><rect width="' + W + '" height="' + H + '" fill="#2b2927"/><path d="' + area + '" fill="#f4f4f2" opacity=".9"/><line x1="0" x2="' + W + '" y1="' + H / 2 + '" y2="' + H / 2 + '" stroke="#ffc21a" stroke-width="1"/><path d="' + d + '" fill="none" stroke="#d7261e" stroke-width="2"/></svg>';
-    return side(1, 'Белые') + side(-1, 'Чёрные') + '<div><small class="note">График: чем выше, тем лучше у белых.</small>' + graph + '</div>';
+    var tot = function (k) { return (cnt2[1][k] || 0) + (cnt2[-1][k] || 0); }, adv = [];
+    if (tot('blunder')) adv.push('<li><b>Зевки.</b> Перед каждым ходом спроси себя: «Что теперь может сделать соперник? Не осталась ли моя фигура без защиты?»</li>');
+    if (tot('mistake') || tot('inacc')) adv.push('<li><b>Внимательный выбор хода.</b> Найди два-три хода-кандидата и сравни их, не бери первый попавшийся.</li>');
+    if (!tot('blunder') && !tot('mistake')) adv.push('<li><b>Отлично!</b> Грубых ошибок нет. Теперь учись находить самые сильные ходы и играть точнее.</li>');
+    adv.push('<li><b>Дебют, середина и эндшпиль.</b> Посмотри, на каком этапе партии у тебя больше всего ошибок: именно его и стоит подтянуть.</li>');
+    var coach = '<div class="rcoach"><h4>🌟 Что делать дальше</h4><p><b>Что стоит подтянуть:</b></p><ul>' + adv.join('') + '</ul><p><b>Обязательно покажи эту партию тренеру!</b> Разбирать свои партии вместе с тренером — это очень большая вещь и большой прогресс. Если ты будешь играть и разбирать с тренером свои партии — проигранные, выигранные и ничейные, — это даст тебе большой скачок. Тренер посоветует, как тебе дальше работать, над чем именно, где твои пробелы, и поможет понять каждую ошибку.</p></div>';
+    return side(1, 'Белые') + side(-1, 'Чёрные') + '<div><small class="note">График: чем выше, тем лучше у белых.</small>' + graph + '</div>' + coach;
   }
 
   /* ---------- Доска: играть вдвоём и анализ ---------- */
