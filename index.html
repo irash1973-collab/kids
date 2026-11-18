@@ -8120,7 +8120,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         '<a class="y2cell" href="#y2/practice"><i>02</i><b>Практика</b><p>Партии с виртуальными шахматистами и разыгрывание заданных позиций.</p><span>играть</span></a>' +
         '<a class="y2cell" href="#y2/progress"><i>03</i><b>Мой прогресс</b><p>Рейтинг, результаты уроков, победы, ничьи и поражения.</p><span>смотреть</span></a>' +
         '<a class="y2cell" href="#y2/speed"><i>04</i><b>Скорость</b><p>Задачи на время и гонка задач.</p><span>на время</span></a>' +
-        '</div><p class="y2note">Новые разделы и темы появляются по мере готовности.</p>';
+        '<a class="y2cell" href="#y2/tourney"><i>05</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица, рейтинг.</p><span>играть</span></a>' + '</div><p class="y2note">Новые разделы и темы появляются по мере готовности.</p>';
     }
     var CURR = [
       ['Повторение первого года', ['@review2']],
@@ -9906,7 +9906,7 @@ lessons = function () {
   var tot = 0, dn = 0;
   GROUPS.forEach(function (g) { g.ids.forEach(function (id) { var L = LESS[id], n = L.levels || 0; for (var i = 1; i <= n; i++) { tot++; if (lvDone(id, i)) dn++; } }); });
   var pc = tot ? Math.round(dn * 100 / tot) : 0, st = lessonStats();
-  var h = '<h2>Содержание</h2><div class="toc-top"><b>Пройдено ' + pc + '%</b><div class="bar" aria-hidden="true"><i style="width:' + pc + '%"></i></div><small class="note">Упражнений: ' + dn + ' из ' + tot + ' · уроков полностью: ' + st.done + ' из ' + st.total + '</small></div>';
+  var h = '<h2>Содержание</h2><a class="trnban" href="#y2/tourney"><span class="tbico">🏆</span><span class="tbtx"><b>Сыграй в турнире!</b><small>20 участников, жеребьёвка, часы и таблица</small></span><span class="tbgo">Играть ▶</span></a><div class="toc-top"><b>Пройдено ' + pc + '%</b><div class="bar" aria-hidden="true"><i style="width:' + pc + '%"></i></div><small class="note">Упражнений: ' + dn + ' из ' + tot + ' · уроков полностью: ' + st.done + ' из ' + st.total + '</small></div>';
   h += '<div class="toc-tabs" role="tablist">' + [['t', '📖 Теория'], ['p', '✏️ Практика']].map(function (x) { return '<button type="button" role="tab" class="btn' + (tab === x[0] ? '' : ' alt') + '" data-tab="' + x[0] + '" aria-selected="' + (tab === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div>';
   {
     h += '<p class="note">' + (tab === 't' ? 'Здесь объяснения: картинки, примеры и ходы по шагам. Выбери тему.' : 'Здесь только упражнения. Выбери тему и решай по порядку.') + '</p>';
@@ -10310,7 +10310,7 @@ L.slides=slides;
     oldLessons();
     if (lsGet('ukc_toc', 't') !== 'p') return;
     var tabs = view.querySelector('.toc-tabs'); if (!tabs) return;
-    tabs.insertAdjacentHTML('afterend', '<p class="gamelink"><a class="btn alt" href="#games">🎮 Игротека</a> <span class="note">игры и тренажёры</span></p>');
+    tabs.insertAdjacentHTML('afterend', '<p class="gamelink"><a class="btn alt" href="#games">🎮 Игротека</a> <a class="btn" href="#y2/tourney">🏆 Сыграй в турнире</a> <span class="note">игры и тренажёры</span></p>');
   };
 })();
 
@@ -10465,6 +10465,7 @@ L.slides=slides;
   function hub() {
     var h = '<div class="ctr-top"><a class="btn alt" href="#home">← На главную</a></div><h2>Игротека</h2><p class="note">Игры и тренажёры на скорость. Выбирай и тренируйся! ★ ' + totalStars() + ' · <a href="#games/awards">🏆 Мои награды</a></p>';
     var di = GK.dailyInfo ? GK.dailyInfo() : { streak: 0, today: '' };
+    h += '<section class="course"><div class="lgrid"><a class="lcard" href="#y2/tourney"><span class="big">🏆 Сыграй в турнире</span><p>20 участников, настоящая жеребьёвка, часы и таблица. Попробуй свои силы!</p></a></div></section>';
     h += '<section class="course"><div class="lgrid"><a class="lcard" href="#games/daily"><span class="big">📅 Ежедневная задача</span><p>Одна новая задача в день. Решай каждый день — серия растёт!</p><small class="note">🔥 Серия: ' + di.streak + (di.today === 'ok' ? ' · сегодня решено ✅' : '') + '</small></a></div></section>';
     h += '<section class="course"><h3>Найди поле <small class="note">координаты доски</small></h3><div class="lgrid">' +
       '<a class="lcard" href="#coords/find"><span class="big">🎯 Найди поле</span><p>Назови поле, которое просят, пока идёт время.</p></a>' +
