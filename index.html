@@ -1420,6 +1420,10 @@ body.home .hero p.motto { max-width: 37%; }
 .bside #rvsay{margin:6px 0}.bside .rvsum .graph{width:100%;height:46px}
 .rcoach summary{cursor:pointer;font-weight:800;font-size:15px}.bside .rcoach{padding:10px 12px;font-size:13px}
 .bside #rvsay{display:none}
+
+.pathban{background:linear-gradient(135deg,#1fae4b,#0f7d34)!important;margin-bottom:10px}
+/* узкий экран ноутбука: ряд «Размер доски» не растягивает колонку доски */
+.cols .bsize{width:0;min-width:100%;flex-wrap:wrap}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2604,6 +2608,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<div class="stage"><img src="' + IMG.yasmin + '" alt=""><img src="' + IMG.tima + '" alt=""><img src="' + IMG.simba + '" alt=""></div>' +
       '<span class="spark" style="top:14px;right:22px">⭐</span><span class="spark" style="top:60px;right:150px;animation-delay:-.7s">✨</span><span class="spark" style="top:110px;right:14px;animation-delay:-1.3s">♟</span></div>' +
       '<section class="yrdoors"><a class="yrd y1" href="#lessons"><span class="yrk">Первый год обучения</span><b>Знакомство с шахматами</b><p>Доска, фигуры, правила, шах и мат, первые задачи и игра с героями книги.</p><span class="yrgo">Начать ▶</span></a><a class="yrd y2" href="#y2"><span class="yrk">Второй год обучения</span><b>Тактика, дебюты, практика</b><p>Партии мастеров, задачи профессионального уровня, анализ движком, игры с сильными соперниками.</p><span class="yrgo">Перейти ▶</span></a></section>' +
+      '<a class="trnban pathban" href="#path"><span class="tbico">🗺</span><span class="tbtx"><span class="tbnew">ПЕРВЫЙ ГОД · ЦЕЛЬ</span><b>Путь чемпиона: от новичка к 4 разряду</b><small>Смотри, как ты идёшь к цели, и проходи уроки дальше</small></span><span class="tbgo">Смотреть ▶</span></a>' +
       '<a class="trnban" href="#y2/tourney"><span class="tbico">🏆</span><span class="tbtx"><span class="tbnew">НОВОЕ · ТУРНИР НА 1 ЧАС</span><b>Сыграй в турнире! Попробуй свои силы, если готов</b><small>20 участников · таблица в реальном времени · кубки, салют и диплом победителям</small></span><span class="tbgo">Играть ▶</span></a>' +
       sayHero('king', 'За каждую победу тебя ждут звёзды и медали. Пройди все миры, и ты чемпион!', 'награды') +
       '<div class="cards">' +
@@ -8380,10 +8385,17 @@ if (typeof module !== 'undefined') module.exports = Eng;
       document.getElementById('goB').onclick = function () { lsSet('ukc_y2eng', st); var w = st.col === 'r' ? Math.random() < 0.5 : st.col === 'w', lv = DIFF[st.d]; play(-1, 0, st.timed ? ['', st.m, st.inc] : null, { n: 'Компьютер', full: 'Компьютер, сложность ' + (st.d + 1), age: '', c: '', rt: ratOf(lv), t: 0, i: 0, lv: lv, meW: w }); };
       ap();
     }
-    var POS = [['Король и пешка против короля', 'Оппозиция, правило квадрата, ключевые поля'], ['Ладейные окончания: позиции Филидора и Лусены', 'Теоретические позиции для разыгрывания'], ['Король, ферзь и пешка', 'Выигрыш и ничья'], ['Мат двумя ладьями, ферзём, ладьёй', 'Техника матования'], ['Слон и конь против короля', 'Матовая сеть'], ['Слон и пешка, конь и пешка', 'Окончания с лёгкими фигурами']];
-    function positions() {
-      var h = POS.map(function (x, i) { return '<div class="y2row soonrow"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + x[0] + '</b><small>' + x[1] + '</small></span><span class="y2st">скоро</span></div>'; }).join('');
-      view.innerHTML = crumbs('Практические позиции', '#y2/practice') + '<p class="y2lead">Выберите тему, получите позицию и доведите её до результата против компьютера. Можно начать заново и попробовать другой план.</p><div class="y2list">' + h + '</div><p class="y2note">Макет списка тем.</p>';
+    function positions(id) {
+      var PL = window.__ppos; if (!PL) { view.innerHTML = crumbs('Практические позиции', '#y2/practice'); return; }
+      var dn = lsGet('ukc_ppdone', {}) || {};
+      if (id) {
+        var it = PL.list.filter(function (x) { return x.id === id; })[0]; if (!it) { location.hash = '#y2/pos'; return; }
+        view.innerHTML = crumbs(it.t, '#y2/pos') + '<div id="ex"></div>';
+        PL.run(id, document.getElementById('ex'), function () { var o = lsGet('ukc_ppdone', {}) || {}; o[id] = 1; lsSet('ukc_ppdone', o); });
+        return;
+      }
+      var h = PL.list.map(function (x, i) { return '<a class="y2row" href="#y2/pos/' + x.id + '"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + esc(x.t) + '</b><small>' + esc(x.d) + '</small></span><span class="y2st">' + (dn[x.id] ? '✓ решено' : 'играть') + '</span></a>'; }).join('');
+      view.innerHTML = crumbs('Практические позиции', '#y2/practice') + '<p class="y2lead">Темы первого года обучения в настоящей игре. Сыграй позицию против компьютера и доведи дело до результата. В матах с ферзём и ладьями позиция каждый раз новая. Можно начать заново.</p><div class="y2list">' + h + '</div>';
     }
     function avgT(L) { var r = rec(L.id), n = 0, t = 0; for (var k in r) if (r[k].t != null) { n++; t += r[k].t; } return n ? Math.round(t / n) : 0; }
     function progressPage() {
@@ -8967,7 +8979,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     function trnAsk(t) {
       var opts = [['N', 'Новичок', 1000], [0, '4 разряд', 1200], [1, '3 разряд', 1400], [2, '2 разряд', 1600], [3, '1 разряд', 1800]];
-      view.innerHTML = crumbs('Турнир на 1 час', '#y2/tourney') + '<h3 class="y2h3">Какой у тебя разряд?</h3><p class="y2lead">Скажи честно, какой у тебя шахматный разряд. Компьютер даст тебе стартовый рейтинг по разряду, и дальше он будет расти от побед и падать от поражений. Если выбрать слишком высокий разряд, рейтинг быстро упадёт, и компьютер подскажет, где играть, чтобы его набрать.</p><div class="y2ask">' + opts.map(function (o) { return '<button class="btn go" data-r="' + o[2] + '">' + o[1] + '<br><small>стартовый рейтинг ' + o[2] + '</small></button>'; }).join('') + '</div>';
+      view.innerHTML = crumbs('Турнир на 1 час', '#y2/practice') + '<h3 class="y2h3">Какой у тебя разряд?</h3><p class="y2lead">Скажи честно, какой у тебя шахматный разряд. Компьютер даст тебе стартовый рейтинг по разряду, и дальше он будет расти от побед и падать от поражений. Если выбрать слишком высокий разряд, рейтинг быстро упадёт, и компьютер подскажет, где играть, чтобы его набрать.</p><div class="y2ask">' + opts.map(function (o) { return '<button class="btn go" data-r="' + o[2] + '">' + o[1] + '<br><small>стартовый рейтинг ' + o[2] + '</small></button>'; }).join('') + '</div>';
       view.querySelector('.y2ask').onclick = function (e) { var b = e.target.closest('button[data-r]'); if (!b) return; lsSet('ukc_trnr', +b.getAttribute('data-r')); lsSet('ukc_trnn', 0); if (t == null) trnLobby(); else trnStart(t); };
     }
     function trnWhite(st) { return ((st.games.length + (st.seed & 1)) % 2) === 0; }
@@ -8979,7 +8991,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       cards.push('<div class="y2wc me"><span class="y2you">👤</span><b>' + esc(me) + (me === 'Вы' ? '' : ' (вы)') + '</b><small>вы</small></div>');
       var rs = r32(seed + 5); for (var q = cards.length - 1; q > 0; q--) { var z = Math.floor(rs() * (q + 1)), tmp = cards[q]; cards[q] = cards[z]; cards[z] = tmp; }
       cards = cards.map(function (c, k) { return c.replace('class="y2wc', 'data-n="' + (k + 1) + '" class="y2wc'); });
-      view.innerHTML = crumbs('Турнир: ' + catName(t), '#y2/tourney') + '<p class="y2lead">Участники уже пришли и ждут начала. Всего 20 человек: вы и 19 соперников. Когда будете готовы, нажмите «Начать турнир»: пройдёт жеребьёвка, и пойдёт время (1 час).</p>' + fairHTML(true) + recHTML(t) + condHTML(t) + ratingInfo(true) + '<div class="y2wg">' + cards.join('') + '</div><div class="y2draw" id="wDraw" style="display:none"></div><div class="row"><button class="btn go" id="wGo">🎲 Начать турнир</button><button class="btn alt" id="wBack">← Другой турнир</button></div>';
+      view.innerHTML = crumbs('Турнир: ' + catName(t), '#y2/practice') + '<p class="y2lead">Участники уже пришли и ждут начала. Всего 20 человек: вы и 19 соперников. Когда будете готовы, нажмите «Начать турнир»: пройдёт жеребьёвка, и пойдёт время (1 час).</p>' + fairHTML(true) + recHTML(t) + condHTML(t) + ratingInfo(true) + '<div class="y2wg">' + cards.join('') + '</div><div class="y2draw" id="wDraw" style="display:none"></div><div class="row"><button class="btn go" id="wGo">🎲 Начать турнир</button><button class="btn alt" id="wBack">← Другой турнир</button></div>';
       document.getElementById('wBack').onclick = trnLobby;
       document.getElementById('wGo').onclick = function () {
         var b = this; b.disabled = true; var box = document.getElementById('wDraw'); box.style.display = ''; var n = 0, all = bots.map(function (o) { return o.full; }).concat([me]);
@@ -9113,7 +9125,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
     window.__y2 = function (parts) {
       (function () { var pg0 = parts[1] || 'theory'; if (pg0 === 'storm' || pg0 === 'race') pg0 = 'speed'; if (pg0 === 'games' || pg0 === 'pos' || pg0 === 'play' || pg0 === 'engine' || pg0 === 'tourney' || pg0 === 'coords' || pg0 === 'review') pg0 = 'practice'; if (!/^(theory|practice|progress|speed|board)$/.test(pg0)) pg0 = 'theory'; document.querySelectorAll('.y2nav a[data-y2]').forEach(function (a) { a.classList.toggle('on', a.dataset.y2 === pg0); }); })();
-      var pg = { theory: theory, practice: practice, review: reviewPage, engine: enginePage, coords: function () { location.hash = '#games'; }, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: positions, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race, tourney: tourneyPage };
+      var pg = { theory: theory, practice: practice, review: reviewPage, engine: enginePage, coords: function () { location.hash = '#games'; }, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: function () { positions(parts[2]); }, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race, tourney: tourneyPage };
       if (pg[parts[1]]) { pg[parts[1]](); return; }
       var L = Y2.filter(function (x) { return x.id === parts[1]; })[0];
       if (!L) { landing(); return; }
@@ -13606,6 +13618,57 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     P7.slides.push({ h: 'Упражнения и партии', p: ['Сначала <b>10 упражнений</b>: белые начинают, нужно ответить, выигрывают ли они, или найти выигрывающий ход. Потом <b>10 партий с компьютером</b>: ты ведёшь пешку в ферзи в настоящей игре, а чёрный король защищается всерьёз. Помни про оппозицию, ключевые поля и крайнюю пешку.'] });
     P7.d = 'Одинокая пешка и король: ключевые поля, крайняя пешка, ничья. 10 упражнений и 10 партий с компьютером.';
   })();
+
+  /* ---------- Второй год: «Практические позиции» — по одной позиции на тему первого года ---------- */
+  var VAL = [0, 1, 3, 3, 5, 9, 0];
+  function matDiff(pos) { var s = 0; for (var i = 0; i < 64; i++) { var v = pos.b[i]; if (v) s += (v > 0 ? 1 : -1) * VAL[Math.abs(v)]; } return s; }
+  var PP = [
+    { id: 'R', t: 'Мат одной ладьёй', d: 'Король и ладья против короля. Загони короля на край и поставь мат.', mg: 'R' },
+    { id: 'Q', t: 'Мат одним ферзём', d: 'Король и ферзь против короля. Следи, чтобы не было пата!', mg: 'Q' },
+    { id: 'RR', t: 'Мат двумя ладьями', d: 'Линейный мат: ладьи идут по очереди и прижимают короля к краю.', mg: 'RR' },
+    { id: 'QR', t: 'Мат ферзём и ладьёй', d: 'Ферзь и ладья отрезают короля и ставят мат.', mg: 'QR' },
+    { id: 'm2', t: 'Мат в два хода', d: 'Найди ход, после которого мат неизбежен, и доведи партию до мата.', fen: '8/R4K2/6pk/7p/7P/6n1/8/8 w - - 0 1', kind: 'mate', limit: 8,
+      say: 'Ты играешь белыми. Найди сильный ход, после которого мат неизбежен, и поставь мат.', tip: 'Подумай: куда может пойти чёрный король, и какой ходом ты закроешь ему все поля?' },
+    { id: 'thr', t: 'Угроза мата', d: 'Тихий ход создаёт угрозу мата, от которой нельзя защититься.', fen: '2k5/2P5/2K5/pP6/8/8/8/8 w - - 0 1', kind: 'mate', limit: 8,
+      say: 'Ты играешь белыми. Создай неотразимую угрозу мата и поставь мат.', tip: 'Иногда сильнее не шах, а тихий ход: пешка готовится дойти до последней горизонтали с матом.' },
+    { id: 'mh', t: 'Сложные маты', d: 'Позиция, где первый ход один-единственный. Думай внимательно!', fen: '8/k7/8/8/Kp6/1R6/R7/8 w - - 0 1', kind: 'mate', limit: 8,
+      say: 'Ты играешь белыми. Поставь мат. Первый ход здесь один-единственный.', tip: 'Две ладьи могут запереть короля на краю. Не торопись с шахами.' },
+    { id: 'defm', t: 'Защита от мата', d: 'Соперник грозит матом. Защитись и не потеряй материал.', fen: '8/8/p3pk1p/3p4/RP3KPP/2r5/8/8 w - - 0 1', kind: 'survive', n: 5,
+      say: 'Ты играешь белыми. Сопернику нужен один ход для мата. Защитись и продержись 5 ходов, не получив мат.', tip: 'Сначала спроси себя: какой ход сделал бы соперник, если бы я пропустил ход? Потом убери эту угрозу.' },
+    { id: 'defc', t: 'Защита от шаха', d: 'Тебе шах. Выбери правильную защиту: уйти, закрыться или взять.', fen: '6k1/5pp1/p3p3/8/1RP5/7P/5PP1/3r2K1 w - - 0 1', kind: 'survive', n: 5,
+      say: 'Ты играешь белыми, и тебе шах. Защитись и продержись 5 ходов без потерь.', tip: 'От шаха три способа защиты: уйти королём, закрыться фигурой или взять шахующую фигуру.' },
+    { id: 'defp', t: 'Защита фигуры', d: 'Твоя фигура под ударом. Защити её, уведи или прикрой.', fen: '5r2/6B1/8/8/1k5N/8/3K1b2/8 w - - 0 1', kind: 'survive', n: 4,
+      say: 'Ты играешь белыми. Одна из твоих фигур под ударом. Не теряй материал и продержись 4 хода.', tip: 'Фигуру можно защитить, увести, взять нападающую или закрыть линию.' },
+    { id: 'fork', t: 'Двойной удар', d: 'Одним ходом нападай на две фигуры сразу и выиграй материал.', fen: '7k/8/6Q1/8/8/1P6/4r3/2K5 w - - 0 1', kind: 'gain', limit: 8,
+      say: 'Ты играешь белыми. Найди двойной удар и выиграй фигуру.', tip: 'Ищи ход, после которого ферзь шахует королю и нападает ещё и на ладью.' },
+    { id: 'pin', t: 'Связка', d: 'Свяжи фигуру соперника и выиграй её.', fen: '4k3/8/8/1n6/8/4PK2/2B5/8 w - - 0 1', kind: 'gain', limit: 8,
+      say: 'Ты играешь белыми. Свяжи чёрного коня и выиграй его.', tip: 'Конь стоит на линии между твоим слоном и чёрным королём. Свяжи его и нападай.' },
+    { id: 'pawn', t: 'Пешечные окончания', d: 'Король и пешка против короля: проведи пешку в ферзи.', pw: 1 }
+  ];
+  function fixedCfg(p) {
+    var st = 0;
+    return { title: p.t, tip: p.tip, limit: p.limit || 14, say: p.say + ' Нельзя играть дольше положенного, ставить пат и повторять позицию.', sub: p.t,
+      pos: function () { var q = E.fromFEN(p.fen); st = matDiff(q); return q; },
+      judge: function (cur, moves) {
+        var s = E.status(cur);
+        if (s === 'mate') { return cur.turn === -1 ? { win: true, msg: 'Мат! Отлично!' } : { msg: 'Тебе поставили мат.' }; }
+        if (s === 'stalemate') return { msg: 'Пат: это ничья.' };
+        var d = matDiff(cur) - st;
+        if (p.kind === 'gain' && d >= 2) return { win: true, msg: 'Ты выиграл фигуру! Молодец!' };
+        if (p.kind === 'survive') {
+          if (d <= -2) return { msg: 'Ты потерял материал.' };
+          if (cur.turn === 1 && moves >= p.n) return { win: true, msg: 'Ты защитился и ничего не потерял! Молодец!' };
+        }
+        if (p.kind === 'gain' && d <= -3) return { msg: 'Ты потерял слишком много.' };
+        return null;
+      },
+      reply: function (cur, hh) { return E.bestMove(cur, 26, hh); } };
+  }
+  window.__ppos = {
+    list: PP.map(function (p) { return { id: p.id, t: p.t, d: p.d }; }),
+    cfg: function (id) { var p = PP.filter(function (x) { return x.id === id; })[0]; if (!p) return null; return p.mg ? mateCfg(p.mg) : p.pw ? pawnCfg() : fixedCfg(p); },
+    run: function (id, host, fin) { var c = window.__ppos.cfg(id); if (!c) return false; playRun(host, { id: 'pp_' + id }, 1 + Math.floor(Math.random() * 90), fin || function () {}, c); return true; }
+  };
   window.__kpk = { best: kpBest, build: buildKP, win: kpWinningMoves, pos: kpPos, mgPos: mgPos, from: kpFrom, idx: idx };
 })();
 
