@@ -1399,6 +1399,27 @@ body.home .hero p.motto { max-width: 37%; }
 .y2ask{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}.y2ask .btn{min-height:64px}
 
 .mvbox{margin:8px 0;padding:8px 10px;border-radius:14px;background:#fff;border:2px solid #ffd36b}.mvbox h3{margin:0 0 4px;font-size:15px}.mvbox .mvlist{max-height:170px;overflow:auto;margin:0}
+
+.pathbox{max-width:420px;margin:10px auto}.pathsvg{width:100%;height:auto;display:block;border-radius:22px;box-shadow:0 6px 18px rgba(43,37,64,.2)}
+.pathsvg .pn circle{fill:#e4ecf7;stroke:#7c8aa5;stroke-width:4}.pathsvg .pn circle.on{fill:#ffe08a;stroke:#e0a800}.pathsvg .ic{font-size:24px}.pathsvg .lb{font:800 13px var(--font-display,system-ui);fill:#1e3a5f;paint-order:stroke;stroke:#fff;stroke-width:4px}
+#pgMe .bob{animation:pgb 1.6s ease-in-out infinite}@keyframes pgb{50%{transform:translateY(-3px)}}
+.y2goal2{max-width:420px;margin:12px auto;padding:14px 16px;border-radius:16px;background:#fff;border:2px solid #cfe0f5;color:#1e3a5f}.y2goal2 h3{margin:0 0 6px}.pathlist{list-style:none;padding:0;margin:8px 0}.pathlist li{padding:4px 0}.pathlist li.ok{color:#0d6b3a}
+
+.y2plink{display:inline-block;margin-top:6px;font-weight:800;color:#1e5fb3}
+
+.pathbox{max-width:460px;margin:10px auto}.pathwrap{position:relative;line-height:0}.pathimg{width:100%;height:auto;border-radius:22px;box-shadow:0 6px 18px rgba(43,37,64,.25)}
+.pathme{position:absolute;width:15%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:#e53935;border:4px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;animation:pgb 1.6s ease-in-out infinite}.pathme i{font-style:normal;color:#fff;font-size:min(7vw,30px);line-height:1}
+@keyframes pgb{50%{margin-top:-6px}}
+.y2goal2{max-width:460px;margin:12px auto;padding:14px 16px;border-radius:16px;background:#fff;border:2px solid #cfe0f5;color:#1e3a5f}.y2goal2 h3{margin:0 0 6px}.y2glb{height:16px;border-radius:9px;background:#e4ecf7;overflow:hidden;margin:6px 0}.y2glb i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#1fae4b,#ffd43b)}
+
+/* разбор рядом с доской */
+.inrv .vsrow,.inrv .gact,.inrv .plr,.inrv #lockNote{display:none!important}
+.bside #rvbox{order:0}.bside .rvhead{padding:10px 12px}.bside .rvhead h3{margin:0 0 6px;font-size:18px}
+.rvnav{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}.rvnav .btn{padding:8px 12px;font-size:14px;min-height:0;flex:1 1 auto}
+.bside .rvsum{font-size:13px;max-height:46vh;overflow:auto}.bside .rvsum .chips{display:flex;flex-wrap:wrap;gap:4px}.bside .rvsum .chip{font-size:11px;padding:2px 6px}
+.bside #rvsay{margin:6px 0}.bside .rvsum .graph{width:100%;height:46px}
+.rcoach summary{cursor:pointer;font-weight:800;font-size:15px}.bside .rcoach{padding:10px 12px;font-size:13px}
+.bside #rvsay{display:none}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2593,6 +2614,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<a class="card" href="#games"><img class="ch" src="' + IMG.arni + '" alt=""><span class="big">Игротека</span><p>Игры и тренажёры: пазлы, найди пару, найди ошибку, пешечные бои, найди поле.</p><span class="pill">Играть ▶</span></a>' +
       '<a class="card" href="#lessons" id="cardLogic"><img class="ch" src="' + IMG.fox + '" alt=""><span class="big">Логика</span><p>Закономерности, найди лишнее, счёт, что пропущено, загадки.</p><span class="pill">10 тем</span></a>' +
       '<a class="card" href="#y2/tourney"><img class="ch" src="' + IMG.king + '" alt=""><span class="big">Турнир на 1 час</span><p>Сыграй 1 час против 19 соперников, смотри таблицу и получи диплом.</p><span class="pill">🏆 Играть</span></a>' +
+      '<a class="card" href="#path"><img class="ch" src="' + IMG.king + '" alt=""><span class="big">Путь чемпиона</span><p>Твой путь в первом году: от новичка к 4 разряду. Смотри, как ты идёшь к цели!</p><span class="pill">🗺 Смотреть</span></a>' +
       '<a class="card" href="#cartoons"><img class="ch" src="' + IMG.simba + '" alt=""><span class="big">Мультики</span><p>Знакомство с фигурами: смотри, как они ходят и живут.</p></a>' +
       '<a class="card" href="#lessons"><img class="ch" src="' + IMG.prof + '" alt=""><span class="big">Уроки</span><p>История шахмат, доска, ходы фигур со звёздочками и лабиринтами, шах, мат и ловушки.</p><span class="pill">' + lessonSummary() + '</span></a>' +
       '</div>' +
@@ -16014,6 +16036,20 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
   window.addEventListener('hashchange', mark); mark();
 })();
 
+/* Путь чемпиона (первый год: от новичка к 4 разряду), картинка Ираны */
+(function () {
+  var A = [27, 84.5], B = [30, 67]; /* позиции на картинке, %: старт пути (Новичок) и 4 разряд */
+  window.__path = function () {
+    var st = lessonStats(), p = st.total ? Math.min(1, st.done / st.total) : 0, pct = Math.round(p * 100);
+    var x = A[0] + (B[0] - A[0]) * p, y = A[1] + (B[1] - A[1]) * p;
+    view.innerHTML = '<div class="y2head"><a class="btn alt" href="#home">← На главную</a><h2>🗺 Путь чемпиона</h2></div>' +
+      '<p class="y2lead">Твоя цель в первом году обучения: пройти путь от новичка к 4 разряду. Проходи уроки, решай задачи, и фигурка пойдёт вперёд!</p>' +
+      '<div class="pathbox"><div class="pathwrap"><img src="path.jpg" alt="Карта: путь чемпиона" class="pathimg"><div class="pathme" style="left:' + x + '%;top:' + y + '%"><i>♞</i></div></div></div>' +
+      '<div class="y2goal2"><h3>Ты идёшь к 4 разряду</h3><div class="y2glb"><i style="width:' + Math.max(3, pct) + '%"></i></div><p>Пройдено уроков: <b>' + st.done + ' из ' + st.total + '</b> (' + pct + '%).</p>' +
+      '<p class="note">Когда пройдёшь уроки и будешь готов, можно играть в турнирах и набирать рейтинг, это уже во втором году обучения.</p></div>';
+  };
+})();
+
 // Уроки по цветным блокам: знакомство, фигуры, ценность и защита, правила, мат, тактика, пешечные окончания, повторение
 (function () {
   var B = [
@@ -16568,7 +16604,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     if (tot('mistake') || tot('inacc')) adv.push('<li><b>Внимательный выбор хода.</b> Найди два-три хода-кандидата и сравни их, не бери первый попавшийся.</li>');
     if (!tot('blunder') && !tot('mistake')) adv.push('<li><b>Отлично!</b> Грубых ошибок нет. Теперь учись находить самые сильные ходы и играть точнее.</li>');
     adv.push('<li><b>Дебют, середина и эндшпиль.</b> Посмотри, на каком этапе партии у тебя больше всего ошибок: именно его и стоит подтянуть.</li>');
-    var coach = '<div class="rcoach"><h4>🌟 Что делать дальше</h4><p><b>Что стоит подтянуть:</b></p><ul>' + adv.join('') + '</ul><p><b>Обязательно покажи эту партию тренеру!</b> Разбирать свои партии вместе с тренером — это очень большая вещь и большой прогресс. Если ты будешь играть и разбирать с тренером свои партии — проигранные, выигранные и ничейные, — это даст тебе большой скачок. Тренер посоветует, как тебе дальше работать, над чем именно, где твои пробелы, и поможет понять каждую ошибку.</p></div>';
+    var coach = '<details class="rcoach"><summary>🌟 Что делать дальше (нажми)</summary><p><b>Что стоит подтянуть:</b></p><ul>' + adv.join('') + '</ul><p><b>Обязательно покажи эту партию тренеру!</b> Разбирать свои партии вместе с тренером — это очень большая вещь и большой прогресс. Если ты будешь играть и разбирать с тренером свои партии — проигранные, выигранные и ничейные, — это даст тебе большой скачок. Тренер посоветует, как тебе дальше работать, над чем именно, где твои пробелы, и поможет понять каждую ошибку.</p></details>';
     return side(1, 'Белые') + side(-1, 'Чёрные') + '<div><small class="note">График: чем выше, тем лучше у белых.</small>' + graph + '</div>' + coach;
   }
 
@@ -16948,7 +16984,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     /* разбор */
     function closeReview() {
       token.cancel = true; token = { cancel: false }; rv = null; S.badge = null; S.best = null;
-      var bx = document.getElementById('rvbox'); bx.hidden = true; bx.innerHTML = '';
+      var bx = document.getElementById('rvbox'); bx.hidden = true; bx.innerHTML = ''; var bg = document.querySelector('.bgame'); if (bg) bg.classList.remove('inrv');
       document.getElementById('ctl').hidden = false; S.best = null;
     }
     function finalPos() { var r = recs[recs.length - 1]; return E.make(r.pos, r.m); }
@@ -16956,6 +16992,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
       if (!recs.length || mode === 'setup') return;
       engOn = true; engFen = '';
       var bx = document.getElementById('rvbox'); bx.hidden = false;
+      var mb = document.querySelector('.bside .mvbox'); if (mb && bx.parentNode !== mb.parentNode) mb.parentNode.insertBefore(bx, mb); document.querySelector('.bgame').classList.add('inrv');
       rv = { res: null, idx: -1 };
       var live = S.pos, liveLast = S.last;
       S.sel = null; S.targets = []; S.hint = null;
@@ -16969,8 +17006,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
       }, function (res) {
         if (tk.cancel) return;
         rv.res = res; rv.idx = res.length - 1; sfx('good');
-        bx.innerHTML = '<div class="rvhead"><h3>Разбор партии</h3><div class="rvsum">' + reviewHTML(res) + '</div><div id="rvsay"></div>' +
-          '<div class="row"><button class="btn alt" id="rvPrev">◀ Ход назад</button><button class="btn alt" id="rvNext">Ход вперёд ▶</button><button class="btn" id="rvClose">Закрыть разбор</button></div></div>';
+        bx.innerHTML = '<div class="rvhead"><h3>Разбор партии</h3><div class="row rvnav"><button class="btn alt" id="rvPrev">◀ Назад</button><button class="btn alt" id="rvNext">Вперёд ▶</button><button class="btn" id="rvClose">Закрыть</button></div><div id="rvsay"></div><div class="rvsum">' + reviewHTML(res) + '</div></div>';
         bx.querySelector('#rvPrev').onclick = function () { go(rv.idx - 1); };
         bx.querySelector('#rvNext').onclick = function () { go(rv.idx + 1); };
         bx.querySelector('#rvClose').onclick = function () { S.pos = live; S.last = liveLast; closeReview(); turnMsg(); draw(); };
@@ -17111,7 +17147,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
   function route() {
     clearTimers(); view.onclick = null;
     var parts = (location.hash || '#home').slice(1).split('/'), r = parts[0];
-    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons', 'coords', 'games', 'diploma', 'exam', 'quiz', 'parents', 'gift'].indexOf(r) < 0) r = 'home';
+    if (['home', 'puzzles', 'play', 'live', 'lessons', 'lesson', 'y2', 'board', 'awards', 'cartoons', 'coords', 'games', 'diploma', 'exam', 'quiz', 'parents', 'gift', 'path'].indexOf(r) < 0) r = 'home';
     document.body.classList.toggle('y2', r === 'y2'); document.body.classList.toggle('home', r === 'home');
     var m = document.getElementById('modal'); if (m) m.remove();
     document.body.classList.toggle('onboard', r === 'board');
@@ -17129,6 +17165,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     else if (r === 'quiz') window.__quiz(parts);
     else if (r === 'gift') window.__gift(parts);
     else if (r === 'parents') window.__parents();
+    else if (r === 'path') window.__path();
     else if (r === 'cartoons') cartoons();
     else if (r === 'coords') window.__coords(parts);
     else if (r === 'games') window.__games(parts);
