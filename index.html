@@ -1313,6 +1313,17 @@ body.home .hero p.motto { max-width: 37%; }
 .y2hp.p1 { left: 41%; top: 77%; width: 17.8%; height: 9%; background: linear-gradient(#fffdf5, #f4dc9c); color: #b01919; border-color: #c9951b; font-size: 2.1cqw; }
 .y2hp.p2 { left: 19.5%; top: 77.4%; width: 15.2%; height: 8.8%; background: linear-gradient(#fff, #d4dbe0); border-color: #8d98a0; color: #222; }
 .y2hp.p3 { left: 65.4%; top: 78.4%; width: 15.2%; height: 8.6%; background: linear-gradient(#fff2e4, #e8b88c); border-color: #9a5a26; color: #3a2210; }
+
+.trnban{display:flex;align-items:center;gap:16px;margin:16px 0;padding:16px 20px;border-radius:20px;text-decoration:none;color:#fff;background:linear-gradient(120deg,#b3121b 0%,#e10600 55%,#f5a800 130%);border:3px solid #f5c542;box-shadow:0 6px 20px rgba(179,18,27,.35);position:relative;overflow:hidden;animation:tbpulse 2.4s ease-in-out infinite}
+.trnban:hover{transform:translateY(-2px)}
+.trnban .tbico{font-size:46px;line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
+.trnban .tbtx{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+.trnban .tbnew{align-self:flex-start;background:#ffe27a;color:#7a0b12;font-weight:800;font-size:12px;letter-spacing:.5px;padding:3px 10px;border-radius:99px}
+.trnban b{font-size:22px;line-height:1.2}
+.trnban small{font-size:14px;opacity:.95}
+.trnban .tbgo{background:#fff;color:#b3121b;font-weight:800;font-size:18px;padding:12px 20px;border-radius:14px;white-space:nowrap}
+@keyframes tbpulse{0%,100%{box-shadow:0 6px 20px rgba(179,18,27,.35)}50%{box-shadow:0 6px 30px rgba(245,168,0,.8)}}
+@media(max-width:640px){.trnban{flex-wrap:wrap;padding:14px}.trnban b{font-size:18px}.trnban .tbgo{width:100%;text-align:center}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2496,6 +2507,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<div class="stage"><img src="' + IMG.yasmin + '" alt=""><img src="' + IMG.tima + '" alt=""><img src="' + IMG.simba + '" alt=""></div>' +
       '<span class="spark" style="top:14px;right:22px">⭐</span><span class="spark" style="top:60px;right:150px;animation-delay:-.7s">✨</span><span class="spark" style="top:110px;right:14px;animation-delay:-1.3s">♟</span></div>' +
       '<section class="yrdoors"><a class="yrd y1" href="#lessons"><span class="yrk">Первый год обучения</span><b>Знакомство с шахматами</b><p>Доска, фигуры, правила, шах и мат, первые задачи и игра с героями книги.</p><span class="yrgo">Начать ▶</span></a><a class="yrd y2" href="#y2"><span class="yrk">Второй год обучения</span><b>Тактика, дебюты, практика</b><p>Партии мастеров, задачи профессионального уровня, анализ движком, игры с сильными соперниками.</p><span class="yrgo">Перейти ▶</span></a></section>' +
+      '<a class="trnban" href="#y2/tourney"><span class="tbico">🏆</span><span class="tbtx"><span class="tbnew">НОВОЕ · ТУРНИР НА 1 ЧАС</span><b>Сыграй в турнире! Попробуй свои силы, если готов</b><small>16 участников · таблица в реальном времени · кубки, салют и диплом победителям</small></span><span class="tbgo">Играть ▶</span></a>' +
       sayHero('king', 'За каждую победу тебя ждут звёзды и медали. Пройди все миры, и ты чемпион!', 'награды') +
       '<div class="cards">' +
       '<a class="card" href="#play"><img class="ch" src="' + IMG.arni + '" alt=""><span class="big">Игра с роботами</span><p>10 миров, 200 уровней. Начни с пешек и дойди до гроссмейстеров.</p><span class="pill">Побед: ' + w + ' из ' + TOTAL + ' · ' + title + '</span></a>' +
@@ -8792,9 +8804,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function trnBots(t) { var a = [], nov = t === 'N'; for (var k = 0; k < 15; k++) a.push(nov ? Math.round(k * 2.7) : Math.min(99, Math.round(3 + k * 6.6))); return a.map(function (i) { return opp(nov ? 0 : t, i); }); }
     /* результаты соперников считаются по времени: у каждого своя партия за 6–9 минут, исход зависит от силы и «случая» с зерном турнира */
     function botScore(st, bot, bi, el) {
-      var r = r32(st.seed * 31 + bi * 977 + 5), per = 6.5 + r() * 3.2, n = Math.floor(el / per), sc = 0, field = 0;
+      var r = r32(st.seed * 31 + bi * 977 + 5), per = 8 + r() * 4, n = Math.floor(el / per), sc = 0, field = 0;
       var bots = trnBots(st.t); bots.forEach(function (b) { field += b.rt; }); field /= bots.length;
-      for (var k = 0; k < n; k++) { var opp0 = field + (r() - .5) * 500, pw = 1 / (1 + Math.pow(10, (opp0 - bot.rt) / 400)), x = r(); sc += x < pw * .86 ? 1 : x < pw * .86 + .14 ? .5 : 0; }
+      for (var k = 0; k < n; k++) { var opp0 = field + (r() - .5) * 500, pw = 1 / (1 + Math.pow(10, (opp0 - bot.rt) / 400)), x = (pw = .5 + (pw - .5) * .85, r()); sc += x < pw * .86 ? 1 : x < pw * .86 + .14 ? .5 : 0; }
       return { sc: sc, n: n };
     }
     function trnTable(st, el) {
