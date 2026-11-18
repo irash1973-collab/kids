@@ -8134,7 +8134,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
         '<a class="y2cell" href="#y2/progress"><i>03</i><b>Мой прогресс</b><p>Рейтинг, результаты уроков, победы, ничьи и поражения.</p><span>смотреть</span></a>' +
         '<a class="y2cell" href="#y2/speed"><i>04</i><b>Скорость</b><p>Задачи на время и гонка задач.</p><span>на время</span></a>' +
         '<a class="y2cell" href="#y2/tourney"><i>05</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица, рейтинг.</p><span>играть</span></a>' +
-        '<a class="y2cell" href="#y2/youtube"><i>06</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' + '</div><p class="y2note">Новые разделы и темы появляются по мере готовности.</p>';
+        '<a class="y2cell" href="#y2/extra"><i>06</i><b>Дополнительные задачи</b><p>Задачи по темам на сайте Lichess: начинай с самого лёгкого уровня.</p><span>открыть</span></a>' +
+        '<a class="y2cell" href="#y2/youtube"><i>07</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' + '</div><p class="y2note">Новые разделы и темы появляются по мере готовности.</p>';
     }
     var CURR = [
       ['Повторение первого года', ['@review2']],
@@ -9161,7 +9162,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
     window.__y2 = function (parts) {
       (function () { var pg0 = parts[1] || 'theory'; if (pg0 === 'storm' || pg0 === 'race') pg0 = 'speed'; if (pg0 === 'games' || pg0 === 'pos' || pg0 === 'play' || pg0 === 'engine' || pg0 === 'tourney' || pg0 === 'coords' || pg0 === 'review') pg0 = 'practice'; if (!/^(theory|practice|progress|speed|board)$/.test(pg0)) pg0 = 'theory'; document.querySelectorAll('.y2nav a[data-y2]').forEach(function (a) { a.classList.toggle('on', a.dataset.y2 === pg0); }); })();
-      var pg = { theory: theory, practice: practice, review: reviewPage, engine: enginePage, coords: function () { location.hash = '#games'; }, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: function () { positions(parts[2]); }, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race, tourney: tourneyPage, youtube: function () { window.__yt('y2'); } };
+      var pg = { theory: theory, practice: practice, review: reviewPage, engine: enginePage, coords: function () { location.hash = '#games'; }, games: function () { if (parts[2] != null && parts[2] !== '') tierPage(parts[2]); else games(); }, play: function () { chooser(parts[2], parts[3]); }, pos: function () { positions(parts[2]); }, progress: progressPage, speed: speed, board: boardPage, storm: storm, race: race, tourney: tourneyPage, youtube: function () { window.__yt('y2'); }, extra: function () { window.__extra('y2'); } };
       if (pg[parts[1]]) { pg[parts[1]](); return; }
       var L = Y2.filter(function (x) { return x.id === parts[1]; })[0];
       if (!L) { landing(); return; }
@@ -16152,7 +16153,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
 
 /* Третий и четвёртый год обучения: те же разделы, что во втором (теория, практика, мой прогресс, турнир) */
 (function () {
-  var Y = { y3: { n: 'Третий год обучения', r: '3–2 разряд', up: 'второй разряд', min: 30, split: 'Примерно по 5 задач на дебют, миттельшпиль и эндшпиль и остальные на разные темы.' }, y4: { n: 'Четвёртый год обучения', r: '2–1 разряд', up: 'первый разряд', min: 50, split: 'Желательно 10 задач на дебют, 10 на миттельшпиль, 10 на эндшпиль и 20 на разные темы.' } };
+  var Y = { y2: { n: 'Второй год обучения', min: 0, back: '#y2', lvl: 'Самый лёгкий (Easiest)', lvlnote: 'Начинай именно с него: так задачи будут посильными, и ты не потеряешь интерес.' }, y3: { n: 'Третий год обучения', r: '3–2 разряд', up: 'второй разряд', min: 30, lvl: 'Лёгкий (Easier) или средний (Normal)', lvlnote: 'Начни с лёгкого. Когда задачи будут получаться почти всегда, переходи на средний.', split: 'Примерно по 5 задач на дебют, миттельшпиль и эндшпиль и остальные на разные темы.' }, y4: { n: 'Четвёртый год обучения', r: '2–1 разряд', up: 'первый разряд', min: 50, lvl: 'Средний (Normal) или сложный (Harder)', lvlnote: 'Начни со среднего. Когда он будет получаться уверенно, переходи на сложный.', split: 'Желательно 10 задач на дебют, 10 на миттельшпиль, 10 на эндшпиль и 20 на разные темы.' } };
   var RJ = '<div class="y2load"><h3>Режим занятий (рекомендация тренера)</h3><p>На этом этапе нужно заниматься <b>не меньше 2–2,5 часов каждый день</b>. Рекомендации основаны на опыте тренерской работы.</p><ul>' +
     '<li>Самостоятельное чтение шахматных книг входит в занятия.</li>' +
     '<li>Изучение теории по темам: эндшпиль, дебют, миттельшпиль.</li>' +
@@ -16166,16 +16167,20 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     ['Маты', [['mateIn1', 'Мат в 1 ход'], ['mateIn2', 'Мат в 2 хода'], ['mateIn3', 'Мат в 3 хода'], ['mateIn4', 'Мат в 4 хода'], ['backRankMate', 'Мат по последней горизонтали'], ['smotheredMate', 'Спёртый мат'], ['doubleBishopMate', 'Мат двумя слонами'], ['anastasiasMate', 'Мат Анастасии'], ['arabianMate', 'Арабский мат'], ['bodenMate', 'Мат Бодена']]],
     ['Тактика', [['fork', 'Двойной удар (вилка)'], ['pin', 'Связка'], ['skewer', 'Сквозной удар'], ['discoveredAttack', 'Открытое нападение'], ['discoveredCheck', 'Открытый шах'], ['doubleCheck', 'Двойной шах'], ['deflection', 'Отвлечение'], ['attraction', 'Завлечение'], ['interference', 'Перекрытие линии'], ['clearance', 'Освобождение поля и линии'], ['capturingDefender', 'Уничтожение защитника'], ['intermezzo', 'Промежуточный ход'], ['hangingPiece', 'Незащищённая фигура'], ['trappedPiece', 'Пойманная фигура'], ['attackingF2F7', 'Атака на f2 и f7'], ['kingsideAttack', 'Атака на королевском фланге'], ['queensideAttack', 'Атака на ферзевом фланге'], ['exposedKing', 'Оголённый король'], ['sacrifice', 'Жертва'], ['quietMove', 'Тихий ход'], ['zugzwang', 'Цугцванг'], ['advancedPawn', 'Проходная пешка'], ['promotion', 'Превращение пешки']]]
   ];
+  window.__extra = function (id) {
+    var Z = Y[id], v = document.getElementById('view');
+    var amt = Z.min ? 'Чтобы расти быстрее, решай задачи каждый день: на этом уровне не меньше <b>' + Z.min + '</b> задач в день. ' + Z.split + ' ' : 'Решай задачи каждый день: так ты быстрее начнёшь замечать тактику в партиях. ';
+    var h = '<div class="y2head"><a class="btn alt" href="' + (Z.back || '#' + id) + '">← Назад</a><h2>Дополнительные задачи</h2></div>' +
+      '<p class="y2lead">Это рекомендация тренера, она основана на опыте работы с шахматистами. ' + amt + 'Темы лучше менять каждый день: сегодня связка, завтра двойной удар, потом отвлечение. Решай внимательно, а не быстро.</p>' +
+      '<div class="y2load"><h3>Как настроить уровень сложности на Lichess</h3><p>На странице задач нажми на значок настроек (шестерёнка) и выбери сложность «Difficulty». Для этого года обучения рекомендуем: <b>' + Z.lvl + '</b>. ' + Z.lvlnote + '</p><p>Самый лёгкий уровень (Easiest) даёт задачи примерно на 600 очков рейтинга проще твоего.</p></div>' +
+      (Z.min ? RJ : '') + '<p class="note">Задачи откроются на сайте Lichess в новой вкладке. Это бесплатный сайт. Заходи вместе с родителями или тренером. Результаты на нашем сайте не сохраняются.</p>';
+    GR.forEach(function (g) { h += '<h3 class="y2gh">' + g[0] + '</h3><div class="y2tags">'; g[1].forEach(function (t) { h += '<a class="btn alt y2tag" target="_blank" rel="noopener noreferrer" href="' + LI + t[0] + '">' + t[1] + '</a>'; }); h += '</div>'; });
+    v.innerHTML = h;
+  };
   window.__y34 = function (id, parts) {
     var Z = Y[id], v = document.getElementById('view');
     if (parts[1] === 'youtube') { window.__yt(id); return; }
-    if (parts[1] === 'extra') {
-      var h = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>Дополнительные задачи</h2></div>' +
-        '<p class="y2lead">Это рекомендация тренера, она основана на опыте работы с шахматистами. Чтобы расти быстрее, решай задачи каждый день: на этом уровне не меньше <b>' + Z.min + '</b> задач в день. ' + Z.split + ' Темы лучше менять каждый день: сегодня связка, завтра двойной удар, потом отвлечение. Если нет сил, реши хотя бы 20 задач, но каждый день. Решай внимательно, а не быстро.</p>' +
-        RJ + '<p class="note">Задачи откроются на сайте Lichess в новой вкладке. Это бесплатный сайт. Заходи вместе с родителями или тренером. Результаты на нашем сайте не сохраняются.</p>';
-      GR.forEach(function (g) { h += '<h3 class="y2gh">' + g[0] + '</h3><div class="y2tags">'; g[1].forEach(function (t) { h += '<a class="btn alt y2tag" target="_blank" rel="noopener noreferrer" href="' + LI + t[0] + '">' + t[1] + '</a>'; }); h += '</div>'; });
-      v.innerHTML = h; return;
-    }
+    if (parts[1] === 'extra') { window.__extra(id); return; }
     if (parts[1] === 'theory') {
       v.innerHTML = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>Теория</h2></div><p class="y2lead">Темы ' + Z.n.toLowerCase().replace('год обучения', 'года обучения') + ' появятся по мере готовности. Пока можно играть, решать задачи и участвовать в турнирах.</p>';
       return;
