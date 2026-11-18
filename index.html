@@ -1426,6 +1426,8 @@ body.home .hero p.motto { max-width: 37%; }
 .cols .bsize{width:0;min-width:100%;flex-wrap:wrap}
 
 .y2sh{margin:14px 0 6px;font-size:15px;color:#31507a;letter-spacing:.04em;text-transform:uppercase}
+
+.toclead{font-size:15px;line-height:1.5;margin:4px 0 12px;max-width:760px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -9906,7 +9908,7 @@ lessons = function () {
   var tot = 0, dn = 0;
   GROUPS.forEach(function (g) { g.ids.forEach(function (id) { var L = LESS[id], n = L.levels || 0; for (var i = 1; i <= n; i++) { tot++; if (lvDone(id, i)) dn++; } }); });
   var pc = tot ? Math.round(dn * 100 / tot) : 0, st = lessonStats();
-  var h = '<h2>Содержание</h2><a class="trnban" href="#y2/tourney"><span class="tbico">🏆</span><span class="tbtx"><b>Сыграй в турнире!</b><small>20 участников, жеребьёвка, часы и таблица</small></span><span class="tbgo">Играть ▶</span></a><div class="toc-top"><b>Пройдено ' + pc + '%</b><div class="bar" aria-hidden="true"><i style="width:' + pc + '%"></i></div><small class="note">Упражнений: ' + dn + ' из ' + tot + ' · уроков полностью: ' + st.done + ' из ' + st.total + '</small></div>';
+  var h = '<h2>Содержание</h2><p class="note toclead"><b>Первый год обучения</b> рассчитан на ребёнка, который совсем не знает шахмат, и ведёт его от нуля примерно до 4 разряда. Лучше всего проходить программу вместе с тренером: он объяснит трудные темы и поможет разобрать ошибки.</p><a class="trnban" href="#y2/tourney"><span class="tbico">🏆</span><span class="tbtx"><b>Сыграй в турнире!</b><small>20 участников, жеребьёвка, часы и таблица</small></span><span class="tbgo">Играть ▶</span></a><div class="toc-top"><b>Пройдено ' + pc + '%</b><div class="bar" aria-hidden="true"><i style="width:' + pc + '%"></i></div><small class="note">Упражнений: ' + dn + ' из ' + tot + ' · уроков полностью: ' + st.done + ' из ' + st.total + '</small></div>';
   h += '<div class="toc-tabs" role="tablist">' + [['t', '📖 Теория'], ['p', '✏️ Практика']].map(function (x) { return '<button type="button" role="tab" class="btn' + (tab === x[0] ? '' : ' alt') + '" data-tab="' + x[0] + '" aria-selected="' + (tab === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div>';
   {
     h += '<p class="note">' + (tab === 't' ? 'Здесь объяснения: картинки, примеры и ходы по шагам. Выбери тему.' : 'Здесь только упражнения. Выбери тему и решай по порядку.') + '</p>';
