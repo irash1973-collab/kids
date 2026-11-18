@@ -4002,9 +4002,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
   function runYN(host, L, lv, T, finish) {
     var S = { pos: T.pos, nochk: !!T.nochk, sel: null, targets: [], last: T.last || null, hint: null, flip: false, coords: true, mark: T.mark || {}, hl: T.hl || null }, mistakes = 0, done = false;
     var obt = T.opts ? T.opts.map(function (o, i) { return '<button data-o="' + i + '">' + o + '</button>'; }).join('') : '<button data-o="1">Да</button><button data-o="0">Нет</button>';
-    host.innerHTML = say(av('prof'), 'Вопрос ' + lv, T.q, T.opts ? 'выбери ответ' : 'ответь «Да» или «Нет»') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + obt + '</div>';
+    host.innerHTML = say(av('prof'), 'Вопрос ' + lv, T.q, T.opts ? 'выбери ответ' : 'ответь «Да» или «Нет»') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + obt + '</div><div class="row"><button class="btn alt" id="ansBtn" data-keep="1" type="button">Показать правильный ответ</button></div>';
     var msg = document.getElementById('msg');
     drawBoard(S, function () {});
+    document.getElementById('ansBtn').onclick = function () {
+      if (done) return; done = true; var ob = document.querySelectorAll('#opts button'), k;
+      for (k = 0; k < ob.length; k++) { var ok = T.opts ? (+ob[k].dataset.o === T.right) : ((ob[k].dataset.o === '1') === T.ans); if (ok) { ob[k].className = 'bad'; ob[k].style.outline = '3px solid #e10600'; msg.className = 'msg'; msg.textContent = 'Правильный ответ: ' + ob[k].textContent + '. ' + T.expl; } }
+      finish(0);
+    };
     document.getElementById('opts').onclick = function (e) {
       var b = e.target.closest('button'); if (!b || done) return;
       var right = T.opts ? (+b.dataset.o === T.right) : (b.dataset.o === '1') === T.ans;
@@ -4864,6 +4869,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
       host.innerHTML = say(av('prof'), 'Профессор', q.text, 'логика ' + lv) + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
         (q.want ? '<div class="row"><button class="btn" id="chk">Проверить</button><button class="btn alt" id="clr">Сбросить</button></div>' : '') + (q.opts ? '<div class="opts" id="opts">' + q.opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>' : '');
       var msg = document.getElementById('msg');
+      host.insertAdjacentHTML('beforeend', '<div class="row"><button class="btn alt" id="ansBtn" data-keep="1" type="button">Показать правильный ответ</button></div>');
+      document.getElementById('ansBtn').onclick = function () {
+        if (done) return; done = true; var k;
+        if (q.opts) { [].forEach.call(document.querySelectorAll('#opts button'), function (b) { if (b.dataset.o === q.ans) b.className = 'good'; }); }
+        else if (q.want) { S.hl = {}; for (k in q.want) S.hl[k] = true; drawBoard(S, function () {}); }
+        else { S.mark = S.mark || {}; for (k = 0; k < 64; k++) { try { if (q.ok(k)) S.mark[k] = 'star'; } catch (e) {} } drawBoard(S, function () {}); }
+        msg.className = 'msg bad'; msg.textContent = 'Правильный ответ показан. ' + (q.why || ''); sfx('bad'); finish(0);
+      };
       function setMsg(t, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = t; }
       function win() { done = true; sfx('good'); setMsg('Верно!', 'good'); finish(mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1); }
       function bad(t) { mistakes++; sfx('bad'); setMsg(t, 'bad'); }
@@ -5240,6 +5253,16 @@ if (typeof module !== 'undefined') module.exports = Eng;
         var bx = document.querySelector('.boardbox'), tr0 = document.getElementById('tray'); if (bx && tr0) bx.appendChild(tr0);
         drawBoard(S, clS); tray();
       }
+      host.insertAdjacentHTML('beforeend', '<div class="row"><button class="btn alt" id="ansBtn" data-keep="1" type="button">Показать правильный ответ</button></div>');
+      document.getElementById('ansBtn').onclick = function () {
+        if (done) return; done = true; var m = t.mode, k;
+        if (m === 'who' || m === 'opts') { var ob = document.querySelectorAll('#opts button'); for (k = 0; k < ob.length; k++) { if (ob[k].dataset.o === t.ans) ob[k].className = 'good'; ob[k].disabled = true; } }
+        else if (m === 'scene') { var its = document.querySelectorAll('.mit'); for (k = 0; k < its.length; k++) if (t.items[+its[k].dataset.i].tg) its[k].classList.add('found'); }
+        else if (m === 'board') { S.hl = {}; Object.keys(t.want).forEach(function (q) { S.hl[q] = 1; }); drawBoard(S, function () {}); }
+        else if (m === 'seq' || m === 'seqset') { S.pos.b = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1').b.slice(); S.hl = {}; drawBoard(S, function () {}); }
+        else if (m === 'setup') { Object.keys(t.need).forEach(function (q) { S.pos.b[q] = t.need[q]; }); drawBoard(S, function () {}); var tr1 = document.getElementById('tray'); if (tr1) tr1.style.display = 'none'; }
+        sm('Правильный ответ показан. ' + (t.expl || ''), 'bad'); sfx('bad'); finish(0);
+      };
     }
     LESS.meet = { id: 'meet', t: 'Фигуры и их расстановка', d: 'Как зовут фигуры, найди их на картинке и на доске, расстановка. 36 заданий.', levels: 36, run: run,
       slides: [
@@ -5480,6 +5503,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       drawBoard(S, function () {});
       var msg = document.getElementById('msg');
       var why = { 'Мат': 'Королю шах, и спастись нельзя: это мат.', 'Пат': 'Шаха нет, но у игрока, чей ход, нет ни одного хода: это пат, ничья.', 'Ничья: мало фигур': 'Фигур слишком мало, мат поставить нельзя: ничья.', 'Игра продолжается': E.inCheck(p) ? 'Шах есть, но король может спастись. Игра продолжается.' : 'У игрока есть ходы. Игра продолжается.' };
+      ynAnswer(host, ans, why[ans], finish);
       document.getElementById('opts').onclick = function (e) {
         var b = e.target.closest('button'); if (!b || done) return;
         if (b.dataset.o === ans) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + why[ans]; sfx('good'); finish(mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1); }
@@ -5533,6 +5557,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function bad() { mist++; sfx('bad'); sm('Подумай ещё. ' + (q.why || ''), 'bad'); }
       drawBoard(S, function (i) { if (done || q.opts) return; if (q.ok(i)) { S.mark = {}; S.mark[i] = 'star'; drawBoard(S, function () {}); win(); } else bad(); });
       var ob = document.getElementById('opts'); if (ob) ynAnswer(host, q.ans, q.expl, finish);
+      if (!ob && !host.querySelector('#hintB,#ansB,#hintBtn,#ansBtn')) {
+        host.insertAdjacentHTML('beforeend', '<div class="row"><button class="btn alt" id="ansBtn" data-keep="1" type="button">Показать правильный ответ</button></div>');
+        document.getElementById('ansBtn').onclick = function () { if (done) return; done = true; S.mark = {}; var k, n = 0; for (k = 0; k < 64; k++) { try { if (q.ok(k)) { S.mark[k] = 'star'; n++; } } catch (e) {} } drawBoard(S, function () {}); sm('Правильный ответ показан' + (n ? ': отмечено звёздочкой.' : '.') + ' ' + (q.expl || ''), 'bad'); sfx('bad'); finish(0); };
+      }
       if (ob) ob.onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; if (b.dataset.o === q.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; bad(); } };
     }
     function boardArr() { return new Array(64).fill(''); }
@@ -6176,7 +6204,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         all.sort(function () { return r() - .5; });
         S.last = null; S.mark = {}; S.mark[m0.f] = 'star'; S.hl = {}; S.hl[m0.f] = true; S.hl[m0.t] = true;
         host.innerHTML = say(av('prof'), 'Запись хода ' + lv, 'Фигура ходит с одной подсвеченной клетки на другую. Какая запись правильная?', 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + all.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>';
-        drawBoard(S, function () {});
+        drawBoard(S, function () {}); ynAnswer(host, txt, 'Правильная запись: ' + txt + '.', finish);
         document.getElementById('opts').onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; var msg = document.getElementById('msg'); if (b.dataset.o === txt) { b.className = 'good'; done = true; msg.className = 'msg good'; msg.textContent = 'Верно! ' + txt; sfx('good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); } else { b.className = 'bad'; mist++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Нет. Буква фигуры, откуда, куда: вспомни урок.'; } };
       } else {
         host.innerHTML = say(av('prof'), 'Сделай ход ' + lv, 'Сделай на доске ход: ' + txt, 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>';
@@ -6193,6 +6221,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
           drawBoard(S, click);
         };
         drawBoard(S, click);
+        host.insertAdjacentHTML('beforeend', '<div class="row"><button class="btn alt" id="ansBtn" data-keep="1" type="button">Показать правильный ход</button></div>');
+        document.getElementById('ansBtn').onclick = function () { if (done) return; done = true; S.sel = null; S.targets = []; S.hl = {}; S.hl[m0.f] = true; S.hl[m0.t] = true; S.mark = {}; S.mark[m0.f] = 'star'; drawBoard(S, function () {}); msg2.className = 'msg bad'; msg2.textContent = 'Правильный ход: ' + txt + '. Фигура идёт с клетки со звёздочкой на подсвеченную.'; finish(0); };
       }
     }
     var BLANK = '<div style="background:#fff;border:2px solid #444;border-radius:8px;padding:8px 10px;font-size:13px;max-width:460px"><div style="display:flex;flex-wrap:wrap;gap:4px 14px"><span><b>Турнир:</b> ____________</span><span><b>Дата:</b> ________</span><span><b>Тур:</b> ____</span><span><b>Доска:</b> ____</span></div><div style="display:flex;flex-wrap:wrap;gap:4px 14px;margin:4px 0"><span><b>Белые:</b> ______________</span><span><b>Чёрные:</b> ______________</span></div><table class="tbl" style="width:100%"><tr><th>№</th><th>Белые</th><th>Чёрные</th></tr><tr><td>1</td><td>e2–e4</td><td>e7–e5</td></tr><tr><td>2</td><td>Кg1–f3</td><td>Кb8–c6</td></tr><tr><td>3</td><td>Сf1–c4</td><td>Сf8–c5</td></tr><tr><td>4</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>5</td><td>&nbsp;</td><td>&nbsp;</td></tr></table><div style="margin-top:4px"><b>Результат:</b> ______ &nbsp; <b>Подписи:</b> __________ &nbsp; __________</div></div>';
@@ -6240,7 +6270,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
         host.innerHTML = say(av('prof'), 'Запись хода ' + lv, 'Записан ход ' + txt + '. Нажми на клетку, куда пошла фигура.', 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div>';
         var msg = document.getElementById('msg');
         var click = function (i) { if (done) return; if (i === m0.t) { done = true; S.mark[i] = 'star'; drawBoard(S, function () {}); msg.className = 'msg good'; msg.textContent = 'Верно! ' + txt; sfx('good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); } else { mist++; sfx('bad'); msg.className = 'msg bad'; msg.textContent = 'Это поле ' + SQN(i) + '. Смотри на вторую клетку в записи.'; } };
-        drawBoard(S, click); return;
+        drawBoard(S, click);
+        host.insertAdjacentHTML('beforeend', '<div class="row"><button class="btn alt" id="ansBtn" data-keep="1" type="button">Показать правильный ответ</button></div>');
+        document.getElementById('ansBtn').onclick = function () { if (done) return; done = true; S.mark[m0.t] = 'star'; S.hl[m0.t] = true; drawBoard(S, function () {}); msg.className = 'msg bad'; msg.textContent = 'Правильный ответ показан: ' + txt + '. Фигура пошла на отмеченную клетку.'; sfx('bad'); finish(0); };
+        return;
       }
       if (kind === 3) {  /* нужный знак */
         var B = signBank(), q = B[Math.floor((lv - 4) / 5) % B.length], p2 = E.fromFEN(q[0]), mv = E.legal(p2).filter(function (m) { return (SQN(m.f) + SQN(m.t)) === q[1].slice(0, 4) && (!m.p || m.p === 5); })[0];
@@ -6248,7 +6281,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         var S2 = { pos: p2, sel: null, targets: [], last: null, hint: null, flip: false, coords: true, mark: {}, hl: {} }; S2.hl[mv.f] = true; S2.hl[mv.t] = true;
         var opts = ['×', '+', '#', 'O-O', '=', 'нет знака'];
         host.innerHTML = say(av('prof'), 'Знак хода ' + lv, 'Этот ход выделен на доске. Какой знак нужен в его записи?', 'нотация') + boardHTML() + '<div class="msg" id="msg" role="status" aria-live="polite"></div><div class="opts" id="opts">' + opts.map(function (o) { return '<button data-o="' + o + '">' + o + '</button>'; }).join('') + '</div>';
-        drawBoard(S2, function () {});
+        drawBoard(S2, function () {}); ynAnswer(host, q[2], 'Нужный знак: ' + q[2] + '.', finish);
         document.getElementById('opts').onclick = function (e) { var b = e.target.closest('button'), msg3 = document.getElementById('msg'); if (!b || done) return; if (b.dataset.o === q[2]) { b.className = 'good'; done = true; msg3.className = 'msg good'; msg3.textContent = 'Верно! ' + q[3]; sfx('good'); finish(mist === 0 ? 3 : mist === 1 ? 2 : 1); } else { b.className = 'bad'; mist++; sfx('bad'); msg3.className = 'msg bad'; msg3.textContent = 'Нет. Вспомни: × взятие, + шах, # мат, O-O рокировка, = превращение.'; } };
         return;
       }
@@ -6271,6 +6304,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
         drawBoard(S3, click4);
       };
       drawBoard(S3, click4);
+      host.insertAdjacentHTML('beforeend', '<div class="row"><button class="btn alt" id="ansBtn" data-keep="1" type="button">Показать правильный ответ</button></div>');
+      document.getElementById('ansBtn').onclick = function () { if (done) return; done = true; var pp = S3.pos; S3.sel = null; S3.targets = []; S3.hl = {}; S3.hl[seq[idx].m.f] = true; S3.hl[seq[idx].m.t] = true; drawBoard(S3, function () {}); msg4.className = 'msg bad'; msg4.textContent = 'Правильный ответ показан. Ходы по порядку: ' + seq.map(function (s) { return s.t; }).join(', ') + '. Сейчас нужен ход ' + seq[idx].t + ': он подсвечен.'; sfx('bad'); finish(0); };
     }
 
     /* --- двойной удар (вилка) --- */
@@ -7773,6 +7808,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
     if (q.mode === 'seq') { if (q.targets.length > 1 || lv > 1) prog(); }
     else if (q.mode === 'all') prog();
     var ob = document.getElementById('opts'); if (ob) ynAnswer(host, q.ans, q.expl, finish);
+    if (!ob) {
+      host.insertAdjacentHTML('beforeend', '<div class="row"><button class="btn alt" id="ansBtn" data-keep="1" type="button">Показать правильный ответ</button></div>');
+      document.getElementById('ansBtn').onclick = function () { if (done) return; done = true; S.mark = {}; S.hl = {}; q.targets.forEach(function (i) { S.mark[i] = 'star'; S.hl[i] = true; }); drawBoard(S, function () {}); setMsg('Правильный ответ показан: ' + q.targets.map(sn).join(', ') + '.', 'bad'); sfx('bad'); finish(0); };
+    }
     if (ob) ob.onclick = function (e) { var b = e.target.closest('button'); if (!b || done) return; if (b.dataset.o === q.ans) { b.className = 'good'; win(); } else { b.className = 'bad'; bad('Нет. ' + (q.hint || 'Подумай ещё.')); } };
   }
   L.levels = 30; L.kind = 'board'; L.run = run;
@@ -14169,6 +14208,12 @@ window.__PZ = { M: [["5rk1/7p/2R3p1/3p4/1P3q2/P3b3/6PP/3Q1R1K b - - 0 1", ["f4f1
     host.innerHTML = say(av('prof'), 'Профессор', q.text, 'логика ' + lv) + (q.vis ? '<div class="lgvis">' + q.vis + '</div>' : '') + '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
       '<div class="opts lgopts" id="opts">' + (q.optsH ? q.optsH.map(function (h, i) { return '<button data-o="' + i + '" class="lgob">' + h + '</button>'; }).join('') : q.opts.map(function (o) { return '<button data-o="' + o.replace(/"/g, '&quot;') + '">' + o + '</button>'; }).join('')) + '</div>';
     var msg = document.getElementById('msg');
+    host.insertAdjacentHTML('beforeend', '<div class="row"><button class="btn alt" id="ansBtn" data-keep="1" type="button">Показать правильный ответ</button></div>');
+    document.getElementById('ansBtn').onclick = function () {
+      if (done) return; done = true;
+      [].forEach.call(document.querySelectorAll('#opts button'), function (b) { if (b.dataset.o === q.ans) b.className = 'good'; });
+      msg.className = 'msg bad'; msg.textContent = 'Правильный ответ показан. ' + (q.why || ''); sfx('bad'); finish(0);
+    };
     document.getElementById('opts').onclick = function (e) {
       var b = e.target.closest('button'); if (!b || done) return;
       if (b.dataset.o === q.ans) { done = true; b.className = 'good'; sfx('good'); msg.className = 'msg good'; msg.textContent = 'Верно! ' + (q.why || ''); finish(mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1); }
@@ -14591,13 +14636,13 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     return !!((m && /(^|\s)good(\s|$)/.test(m.className)) || (nb && !nb.hidden && nb.offsetParent !== null) || (window.__help && window.__help.done));
   }
   function gear() {
-    var h = document.getElementById('hintB') || document.getElementById('hintBtn') || document.getElementById('ansB'); if (!h || h.dataset.gear) return;
+    var h = document.getElementById('hintB') || document.getElementById('hintBtn') || document.getElementById('ansB') || document.getElementById('ansBtn'); if (!h || h.dataset.gear) return;
     if (document.getElementById('newBtn') || document.getElementById('mnB')) return;
     var a = document.getElementById('ansB') || document.getElementById('ansBtn'), row = h.parentNode;
     h.dataset.gear = '1';
     var g = document.createElement('button'); g.className = 'btn alt gearB'; g.id = 'gearB'; g.type = 'button'; g.textContent = '⚙'; g.setAttribute('aria-label', 'Меню задачи'); g.title = 'Меню задачи';
     var pop = document.createElement('div'); pop.className = 'gearPop'; pop.id = 'gearPop'; pop.hidden = true;
-    if (a) a.textContent = 'Показать правильный ход'; else if (!h.dataset.tip) h.textContent = 'Показать правильный ход';
+    if (a) { if (!a.dataset.keep) a.textContent = 'Показать правильный ход'; } else if (!h.dataset.tip) h.textContent = 'Показать правильный ход';
     pop.appendChild(h); if (a) pop.appendChild(a);
     var f = document.createElement('button'); f.className = 'btn alt'; f.type = 'button'; f.textContent = 'Перевернуть доску';
     f.onclick = function () { pop.hidden = true; if (window.__curFlip) window.__curFlip(); else { var b = document.getElementById('flipBtn') || document.getElementById('flB'); if (b) b.click(); } };
