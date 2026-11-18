@@ -1326,6 +1326,9 @@ body.home .hero p.motto { max-width: 37%; }
 @media(max-width:640px){.trnban{flex-wrap:wrap;padding:14px}.trnban b{font-size:18px}.trnban .tbgo{width:100%;text-align:center}}
 
 .nav a.navtrn{background:linear-gradient(120deg,#e10600,#f5a800);color:#fff!important;font-weight:800;border-radius:99px}
+
+.y2fire{display:inline-block;animation:y2fl .7s ease-in-out infinite alternate;filter:drop-shadow(0 0 6px #ff9a00)}
+@keyframes y2fl{from{transform:scale(1) rotate(-6deg)}to{transform:scale(1.25) rotate(6deg)}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -8824,9 +8827,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
       return rows;
     }
     function fmtSc(x) { return (x % 1 ? (Math.floor(x) || '') + '½' : String(x)); }
-    function trnTableHTML(rows) {
-      return '<table class="y2trn"><thead><tr><th>#</th><th>Участник</th><th>Партий</th><th>Очки</th></tr></thead><tbody>' + rows.map(function (r, k) {
-        return '<tr class="' + (r.me ? 'me' : '') + '"><td>' + (rows[0].sc <= 0 ? '·' : k < 3 ? '<span class="y2md m' + (k + 1) + '">' + (k + 1) + '</span>' : (k + 1)) + '</td><td>' + (r.o ? ava2(r.o) + ' ' : '👤 ') + esc(r.n) + (r.me ? ' (вы)' : '') + '</td><td>' + r.g + '</td><td><b>' + fmtSc(r.sc) + '</b></td></tr>'; }).join('') + '</tbody></table>';
+    function trnTableHTML(rows, fin) {
+      return '<table class="y2trn"><thead><tr><th>' + (fin ? '#' : '') + '</th><th>Участник</th><th>Партий</th><th>Очки</th></tr></thead><tbody>' + rows.map(function (r, k) {
+        return '<tr class="' + (r.me ? 'me' : '') + '"><td>' + (rows[0].sc <= 0 ? '·' : fin ? (k < 3 ? '<span class="y2md m' + (k + 1) + '">' + (k + 1) + '</span>' : (k + 1)) : '') + '</td><td>' + (r.o ? ava2(r.o) + ' ' : '👤 ') + esc(r.n) + (r.me ? ' (вы)' : '') + (!fin && r.sc > 0 && k < 3 ? ' <span class="y2fire" title="Лидер">🔥</span>' : '') + '</td><td>' + r.g + '</td><td><b>' + fmtSc(r.sc) + '</b></td></tr>'; }).join('') + '</tbody></table>';
     }
     function trnNext(st) {
       var bots = trnBots(st.t), p = st.p == null ? 3 : st.p, last = st.games.length ? st.games[st.games.length - 1].bi : -1;
@@ -8924,7 +8927,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       view.innerHTML = '<div class="y2fin">' + hero +
         '<div class="y2win">🎉 Победитель турнира: <b>' + esc(rows[0].n) + (rows[0].me ? ' (это вы!)' : '') + '</b> 🎉</div>' +
         '<div class="y2pill big">' + (pl <= 3 ? '🏆 ' : '') + '<b>' + ttl + '</b></div><div class="y2stats"><span>♟ Очки: <b>' + fmtSc(me.sc) + '</b></span><span>🏁 Партий: <b>' + me.g + '</b></span>' + (pts ? '<span>🎁 Награда: <b>' + pts + ' баллов</b></span>' : '') + '</span></div>' +
-        '<div class="row"><button class="btn go" id="trNew">Новый турнир</button><button class="btn alt" id="trFw2">🎆 Ещё салют</button>' + '<button class="btn go" id="trDip">🎓 ' + (pl <= 3 ? 'Диплом' : 'Сертификат') + '</button>' + '<a class="btn alt" href="#y2/practice">← Практика</a></div><div class="y2tabh">Итоговая таблица</div>' + trnTableHTML(rows) + '</div>';
+        '<div class="row"><button class="btn go" id="trNew">Новый турнир</button><button class="btn alt" id="trFw2">🎆 Ещё салют</button>' + '<button class="btn go" id="trDip">🎓 ' + (pl <= 3 ? 'Диплом' : 'Сертификат') + '</button>' + '<a class="btn alt" href="#y2/practice">← Практика</a></div><div class="y2tabh">Итоговая таблица</div>' + trnTableHTML(rows, true) + '</div>';
       var dpb = document.getElementById('trDip'); if (dpb) dpb.onclick = function () { window.__tourDip(pl, catName(st.t) + ' (1 час)', 16, st.start); };
       document.getElementById('trNew').onclick = trnLobby;
       document.getElementById('trFw2').onclick = function () { trnFireworks(5); trnMusic(); };
