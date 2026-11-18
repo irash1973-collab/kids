@@ -1335,6 +1335,18 @@ body.home .hero p.motto { max-width: 37%; }
 .tvm{color:inherit;text-decoration:none;padding:1px 4px;border-radius:5px}.tvm.on{background:#ffe27a;font-weight:700}
 
 .rcoach{margin:14px 0 4px;padding:14px 16px;border-radius:16px;background:#fff7d6;border:2px solid #f4c430;color:#2b2540;line-height:1.5}.rcoach h4{margin:0 0 6px;font-size:18px}.rcoach ul{margin:4px 0 10px;padding-left:20px}.rcoach p{margin:6px 0}
+
+.y2wg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:10px 0}.y2wc{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px;border-radius:14px;background:#fff;border:2px solid #e3dccb;text-align:center;font-size:13px}.y2wc.me{border-color:#f4c430;background:#fff7d6}.y2wc small{color:#6b6480}.y2draw{margin:10px 0;padding:14px;border-radius:14px;background:#2b2540;color:#fff;font-size:18px;text-align:center}
+
+.y2wc{position:relative;padding-left:30px}.y2wc::before{content:attr(data-n);position:absolute;left:6px;top:6px;min-width:20px;height:20px;border-radius:10px;background:#2b2540;color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}.y2wc.me::before{background:#e0a800;color:#2b2540}
+
+.y2trback{background:#e53935!important;color:#fff!important;border:2px solid #b71c1c!important;font-weight:800!important;box-shadow:0 4px 0 #b71c1c;animation:y2bk 2s ease-in-out infinite}.y2trback:hover{background:#c62828!important}@keyframes y2bk{0%,100%{transform:none}50%{transform:translateY(-2px)}}
+.y2clk{gap:12px!important}.y2clk span[id]{display:flex!important;flex-direction:column;align-items:center;gap:2px;padding:10px 14px!important;border-radius:16px!important;background:#2b2540!important;color:#b9b2d4!important;border:3px solid #4a4268;transition:all .2s}.y2clk span[id] small{font:700 14px/1.2 var(--font-display,system-ui);letter-spacing:.3px;color:#cfc8ea}.y2clk span[id] b{font:900 34px/1.1 'Courier New',ui-monospace,monospace;font-variant-numeric:tabular-nums;color:#fff;letter-spacing:2px;text-shadow:0 0 8px rgba(255,255,255,.25)}
+.y2clk span[id].on{background:linear-gradient(180deg,#1fae4b,#0f8a35)!important;border-color:#ffd43b;box-shadow:0 0 0 3px rgba(255,212,59,.45),0 6px 14px rgba(15,138,53,.45)}.y2clk span[id].on small{color:#e9ffe9}.y2clk span[id].on b{color:#fff;text-shadow:0 0 12px rgba(255,255,255,.6)}
+.y2clk span[id].low b{color:#ff6b6b;animation:y2lo 1s steps(2) infinite}.y2clk span[id].on.low{background:linear-gradient(180deg,#e53935,#b71c1c)!important}.y2clk span[id].on.low b{color:#fff}@keyframes y2lo{50%{opacity:.55}}
+
+.y2rules{margin:12px 0;padding:14px 16px;border-radius:16px;background:#fff1f0;border:3px solid #e53935;color:#3a1210;line-height:1.5}.y2rules h4{margin:0 0 6px;font-size:19px;color:#c62828}.y2rules p{margin:4px 0}.y2rules ul{margin:6px 0 2px;padding-left:20px}.y2rules.blink{animation:y2rb 1s ease-in-out infinite}.y2rules.blink h4{font-size:22px}@keyframes y2rb{0%,100%{background:#fff1f0;box-shadow:0 0 0 0 rgba(229,57,53,.0)}50%{background:#ffd9d6;box-shadow:0 0 0 6px rgba(229,57,53,.35)}}
+.y2fair b{color:#c62828}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -8159,9 +8171,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var pos = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: !meW, coords: true, mark: {}, hl: null }, tg = [], keys = {}, hm = 0, mv = [], ph = [], mm = [], over = false, busy = false, resigned = false, gen = Math.random();
       keys[E.key(pos)] = 1;
       var timed = tc && tc[1] > 0, T = { me: timed ? tc[1] * 60000 : 0, op: timed ? tc[1] * 60000 : 0 }, inc = timed ? tc[2] * 1000 : 0, turnMe = meW, lastTs = Date.now(), clkIv = null;
-      view.innerHTML = '<div class="y2head"><a class="btn alt" href="' + (cu ? '#y2/engine' : '#y2/games/' + t) + '">← Назад</a><h2>' + esc(o.full) + ' · ' + o.rt + '</h2></div><div class="y2task"><div class="y2cap"><b>' + ava2(o, true) + ' ' + esc(o.full) + '</b><span>' + (cu ? 'уровень силы ' + lv : o.age + ' лет · ' + esc(o.c)) + ' · вы играете ' + (meW ? 'белыми' : 'чёрными') + '</span><button class="y2gear" id="mnB" aria-label="Настройки" title="Настройки">⚙</button></div>' + boardHTML() + '<div class="y2clk"><span id="clO">' + esc(o.n) + '</span><span id="clM">Вы</span></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div class="y2score" id="pgn"></div><div class="row"><button class="btn alt" id="flB">⇅ Перевернуть доску</button><button class="btn alt" id="rsB">Сдаться</button><button class="btn alt" id="dwB">Предложить ничью</button></div><p class="y2fair">Честная игра: во время партии нельзя пользоваться подсказками, движком, другими программами и чужой помощью. Сайт отмечает, если вы уходите со страницы. Анализ откроется после партии.</p><div id="after"></div><div id="anP"></div></div>';
+      view.innerHTML = '<div class="y2head"><a class="btn alt" href="' + (cu ? '#y2/engine' : '#y2/games/' + t) + '">← Назад</a><h2>' + esc(o.full) + ' · ' + o.rt + '</h2></div><div class="y2task"><div class="y2cap"><b>' + ava2(o, true) + ' ' + esc(o.full) + '</b><span>' + (cu ? 'уровень силы ' + lv : o.age + ' лет · ' + esc(o.c)) + ' · вы играете ' + (meW ? 'белыми' : 'чёрными') + '</span><button class="y2gear" id="mnB" aria-label="Настройки" title="Настройки">⚙</button></div>' + boardHTML() + '<div class="y2clk"><span id="clO">' + esc(o.n) + '</span><span id="clM">Вы</span></div><div class="msg" id="msg" role="status" aria-live="polite"></div><div class="y2score" id="pgn"></div><div class="row"><button class="btn alt" id="flB">⇅ Перевернуть доску</button><button class="btn alt" id="rsB">Сдаться</button><button class="btn alt" id="dwB">Предложить ничью</button></div><p class="y2fair"><b>Честная игра!</b> На сайте работает защита от нечестной игры: мы следим за вашими действиями. Нельзя пользоваться подсказками, шахматным движком, другими программами и чужой помощью. Сайт всё отмечает: если вы уходите со страницы или переключаете вкладку, это записывается и будет показано в итоге партии. Анализ откроется только после партии.</p><div id="after"></div><div id="anP"></div></div>';
       var msg = document.getElementById('msg');
-      if (trn) { var hb = view.querySelector('.y2head a'); if (hb) { hb.setAttribute('href', '#y2/tourney'); hb.onclick = function (e) { e.preventDefault(); if (!over && !window.confirm('Выйти из партии? Будет засчитано поражение.')) return; over = true; busy = true; if (clkIv) clearInterval(clkIv); gen = Math.random(); try { document.removeEventListener('visibilitychange', onVis); } catch (e2) { } trnPage(); }; } }
+      if (trn) { var hb = view.querySelector('.y2head a'); if (hb) { hb.setAttribute('href', '#y2/tourney'); hb.className = 'btn y2trback'; hb.textContent = '← Вернуться на страницу турнира'; hb.onclick = function (e) { e.preventDefault(); if (!over && !window.confirm('Выйти из партии? Будет засчитано поражение.')) return; over = true; busy = true; if (clkIv) clearInterval(clkIv); gen = Math.random(); try { document.removeEventListener('visibilitychange', onVis); } catch (e2) { } trnPage(); }; } }
       function sm(x, k) { msg.className = 'msg' + (k ? ' ' + k : ''); msg.textContent = x; }
       function draw() { S.targets = opt.hl ? tg : []; if (!opt.hl) S.last = S.last; drawBoard(S, click); }
       function pgn() { var h = '', n = 1; mv.forEach(function (x, k) { h += (k % 2 === 0 ? '<span class="y2pn">' + n + '.</span> ' : '') + '<span class="y2mv">' + esc(x) + '</span> '; if (k % 2 === 1) n++; }); document.getElementById('pgn').innerHTML = h || '<span class="y2note">Партия начинается.</span>'; }
@@ -8260,9 +8272,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
       document.addEventListener('visibilitychange', onVis);
       var fairIv = setInterval(function () { if (!document.getElementById('flB')) { clearInterval(fairIv); document.removeEventListener('visibilitychange', onVis); } }, 1000);
       document.getElementById('mnB').onclick = settings; window.__y2redraw = draw;
-      function clkDraw() { var a = document.getElementById('clO'), b = document.getElementById('clM'); if (!a || !b) return false; a.textContent = esc(o.n) + (timed ? '  ' + fmt(T.op) : ''); b.textContent = 'Вы' + (timed ? '  ' + fmt(T.me) : ''); a.className = !turnMe && !over ? 'on' : ''; b.className = turnMe && !over ? 'on' : ''; return true; }
+      function clkH(nm, ms) { return '<small>' + nm + '</small>' + (timed ? '<b>' + fmt(ms) + '</b>' : ''); }
+      function clkDraw() { var a = document.getElementById('clO'), b = document.getElementById('clM'); if (!a || !b) return false; a.innerHTML = clkH(esc(o.n), T.op); b.innerHTML = clkH('Вы', T.me); a.className = (!turnMe && !over ? 'on' : '') + (timed && T.op < 30000 ? ' low' : ''); b.className = (turnMe && !over ? 'on' : '') + (timed && T.me < 30000 ? ' low' : ''); return true; }
       function clkSwitch(mover) { /* mover: 'me'|'op' только что сделал ход */ var now = Date.now(); if (timed) { T[mover] -= (now - lastTs); T[mover] += inc; } lastTs = now; turnMe = mover === 'op'; clkDraw(); }
-      if (timed) { clkIv = setInterval(function () { if (!clkDraw()) { clearInterval(clkIv); return; } if (over) { clearInterval(clkIv); return; } var now = Date.now(), who = turnMe ? 'me' : 'op', left = T[who] - (now - lastTs); var a = document.getElementById(turnMe ? 'clM' : 'clO'); if (a) a.textContent = (turnMe ? 'Вы' : esc(o.n)) + '  ' + fmt(left); if (left <= 0) { gen = Math.random(); T[who] = 0; var wc = turnMe ? (meW ? -1 : 1) : (meW ? 1 : -1), wn = 0; for (var zz = 0; zz < 64; zz++) { var pv = S.pos.b[zz]; if (pv && (pv > 0 ? 1 : -1) === wc && Math.abs(pv) !== 6) wn++; } if (E.insufficient(S.pos) || wn === 0) finish('draw', 'Время вышло, но у соперника нет сил поставить мат: ничья.'); else finish(turnMe ? 'loss' : 'win', 'Время вышло.'); clearInterval(clkIv); clkDraw(); } }, 250); }
+      if (timed) { clkIv = setInterval(function () { if (!clkDraw()) { clearInterval(clkIv); return; } if (over) { clearInterval(clkIv); return; } var now = Date.now(), who = turnMe ? 'me' : 'op', left = T[who] - (now - lastTs); var a = document.getElementById(turnMe ? 'clM' : 'clO'); if (a) { a.innerHTML = clkH(turnMe ? 'Вы' : esc(o.n), left); a.className = 'on' + (left < 30000 ? ' low' : ''); } if (left <= 0) { gen = Math.random(); T[who] = 0; var wc = turnMe ? (meW ? -1 : 1) : (meW ? 1 : -1), wn = 0; for (var zz = 0; zz < 64; zz++) { var pv = S.pos.b[zz]; if (pv && (pv > 0 ? 1 : -1) === wc && Math.abs(pv) !== 6) wn++; } if (E.insufficient(S.pos) || wn === 0) finish('draw', 'Время вышло, но у соперника нет сил поставить мат: ничья.'); else finish(turnMe ? 'loss' : 'win', 'Время вышло.'); clearInterval(clkIv); clkDraw(); } }, 250); }
       pgn(); draw(); clkDraw();
       if (!meW) { engine(); } else sm('Ваш ход. Вы играете белыми.');
     }
@@ -8818,16 +8831,16 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function trnGet() { var o = lsGet(TRN_KEY, null); return o && typeof o === 'object' && o.start ? o : null; }
     function trnSet(o) { lsSet(TRN_KEY, o); }
     var TRN_NB = 19;
-    function trnBots(t) { var a = [], nov = t === 'N'; for (var k = 0; k < TRN_NB; k++) a.push(nov ? Math.round(k * 2.6) : Math.min(99, Math.round(3 + k * 5.1))); var used = {}, me0 = (kidName() || '').toLowerCase(); return a.map(function (i) { var o = opp(nov ? 0 : t, i), tr = 0; while ((used[o.n] || o.n.toLowerCase() === me0) && tr < 40) { i = Math.min(99, i + 1); tr++; o = opp(nov ? 0 : t, i); } used[o.n] = 1; return o; }); }
+    function trnBots(t, seed) { var a = [], nov = t === 'N', rj = r32((seed | 0) + 77), jt = nov ? 1.3 : 2.6; for (var k = 0; k < TRN_NB; k++) { var bs = nov ? k * 2.6 : 3 + k * 5.1; a.push(Math.max(0, Math.min(99, Math.round(bs + (rj() - .5) * 2 * jt)))); } a.sort(function (x, y) { return x - y; }); var used = {}, me0 = (kidName() || '').toLowerCase(); return a.map(function (i) { var o = opp(nov ? 0 : t, i), tr = 0; while ((used[o.n] || used[o.full] || o.n.toLowerCase() === me0) && tr < 60) { i = Math.min(99, i + 1); tr++; o = opp(nov ? 0 : t, i); } used[o.n] = 1; used[o.full] = 1; return o; }); }
     /* результаты соперников считаются по времени: у каждого своя партия за 6–9 минут, исход зависит от силы и «случая» с зерном турнира */
     function botScore(st, bot, bi, el) {
       var r = r32(st.seed * 31 + bi * 977 + 5), per = 8 + r() * 4, n = Math.floor(el / per), sc = 0, field = 0;
-      var bots = trnBots(st.t); bots.forEach(function (b) { field += b.rt; }); field /= bots.length;
+      var bots = trnBots(st.t, st.seed); bots.forEach(function (b) { field += b.rt; }); field /= bots.length;
       for (var k = 0; k < n; k++) { var opp0 = field + (r() - .5) * 500, pw = 1 / (1 + Math.pow(10, (opp0 - bot.rt) / 400)), x = (pw = .5 + (pw - .5) * .85, r()); sc += x < pw * .86 ? 1 : x < pw * .86 + .14 ? .5 : 0; }
       return { sc: sc, n: n };
     }
     function trnTable(st, el) {
-      var bots = trnBots(st.t), rows = bots.map(function (b, bi) { var q = botScore(st, b, bi, el); return { n: b.n, rt: b.rt, sc: q.sc, g: q.n, me: false, o: b }; });
+      var bots = trnBots(st.t, st.seed), rows = bots.map(function (b, bi) { var q = botScore(st, b, bi, el); return { n: b.n, rt: b.rt, sc: q.sc, g: q.n, me: false, o: b }; });
       var my = 0; st.games.forEach(function (x) { my += x.res === 'win' ? 1 : x.res === 'draw' ? .5 : 0; });
       rows.push({ n: (kidName() || 'Вы'), rt: gst().r, sc: my, g: st.games.length, me: true });
       rows.sort(function (a, b) { return b.sc - a.sc || (a.g - b.g) || (b.rt - a.rt); });
@@ -8839,7 +8852,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         return '<tr class="' + (r.me ? 'me' : '') + '"><td>' + (rows[0].sc <= 0 ? '·' : fin ? (k < 3 ? '<span class="y2md m' + (k + 1) + '">' + (k + 1) + '</span>' : (k + 1)) : '') + '</td><td>' + (r.o ? ava2(r.o) + ' ' : '👤 ') + esc(r.n) + (r.me ? ' (вы)' : '') + (!fin && r.sc > 0 && k < 3 ? ' <span class="y2fire" title="Лидер">🔥</span>' : '') + '</td><td>' + r.g + '</td><td><b>' + fmtSc(r.sc) + '</b></td></tr>'; }).join('') + '</tbody></table>';
     }
     function trnNext(st) {
-      var bots = trnBots(st.t), p = st.p == null ? 3 : st.p, last = st.games.length ? st.games[st.games.length - 1].bi : -1;
+      var bots = trnBots(st.t, st.seed), p = st.p == null ? 3 : st.p, last = st.games.length ? st.games[st.games.length - 1].bi : -1;
       if (p < 0) p = 0; if (p > TRN_NB - 1) p = TRN_NB - 1; if (p === last) p = p < TRN_NB - 1 ? p + 1 : p - 1;
       return p;
     }
@@ -8850,8 +8863,22 @@ if (typeof module !== 'undefined') module.exports = Eng;
       st.p = res === 'win' ? Math.min(TRN_NB - 1, p + 1 + (st.streak >= 1 ? 1 : 0)) : res === 'loss' ? Math.max(0, p - 1) : p;
       st.streak = res === 'win' ? (st.streak || 0) + 1 : 0; st.cur = null; trnSet(st);
     }
+    function fairHTML(blink) { return '<div class="y2rules' + (blink ? ' blink' : '') + '"><h4>' + (blink ? '⚠ ПРОЧТИ ПЕРЕД НАЧАЛОМ! ⚠' : '⚠ Честная игра') + '</h4><p>В турнире играем <b>сами</b>. На сайте работает защита от нечестной игры: мы следим за вашими действиями.</p><ul><li>Нельзя пользоваться подсказками, шахматным движком, другими программами и чужой помощью.</li><li>Сайт всё отмечает: если вы уходите со страницы или переключаете вкладку, это записывается и показывается в итоге партии.</li><li>Анализ партий откроется только после турнира, вместе с тренером.</li></ul></div>'; }
     function trnStart(t) {
-      var st = { t: t, start: Date.now(), seed: (Math.random() * 1e9) | 0, games: [], p: 4, streak: 0, cur: null, done: false };
+      var seed = (Math.random() * 1e9) | 0, bots = trnBots(t, seed), me = (typeof kidName === 'function' && kidName()) || 'Вы';
+      var cards = bots.map(function (o) { return '<div class="y2wc">' + ava2(o) + '<b>' + esc(o.full) + '</b><small>' + o.rt + '</small></div>'; });
+      cards.push('<div class="y2wc me"><span class="y2you">👤</span><b>' + esc(me) + (me === 'Вы' ? '' : ' (вы)') + '</b><small>вы</small></div>');
+      var rs = r32(seed + 5); for (var q = cards.length - 1; q > 0; q--) { var z = Math.floor(rs() * (q + 1)), tmp = cards[q]; cards[q] = cards[z]; cards[z] = tmp; }
+      cards = cards.map(function (c, k) { return c.replace('class="y2wc', 'data-n="' + (k + 1) + '" class="y2wc'); });
+      view.innerHTML = crumbs('Турнир: ' + catName(t), '#y2/tourney') + '<p class="y2lead">Участники уже пришли и ждут начала. Всего 20 человек: вы и 19 соперников. Когда будете готовы, нажмите «Начать турнир»: пройдёт жеребьёвка, и пойдёт время (1 час).</p>' + fairHTML(true) + '<div class="y2wg">' + cards.join('') + '</div><div class="y2draw" id="wDraw" style="display:none"></div><div class="row"><button class="btn go" id="wGo">🎲 Начать турнир</button><button class="btn alt" id="wBack">← Другой турнир</button></div>';
+      document.getElementById('wBack').onclick = trnLobby;
+      document.getElementById('wGo').onclick = function () {
+        var b = this; b.disabled = true; var box = document.getElementById('wDraw'); box.style.display = ''; var n = 0, all = bots.map(function (o) { return o.full; }).concat([me]);
+        var iv = setInterval(function () { box.innerHTML = '🎲 Жеребьёвка… <b>' + esc(all[(Math.random() * all.length) | 0]) + '</b>'; if (++n >= 16) { clearInterval(iv); box.innerHTML = '✅ Жеребьёвка проведена! Начинаем…'; setTimeout(function () { trnBegin(t, seed); }, 700); } }, 140);
+      };
+    }
+    function trnBegin(t, seed) {
+      var st = { t: t, start: Date.now(), seed: seed, games: [], p: 4, streak: 0, cur: null, done: false };
       trnSet(st); location.hash = '#y2/tourney'; trnPage();
     }
     function dstr(ts) { var d = new Date(ts || Date.now()), z = function (n) { return (n < 10 ? '0' : '') + n; }; return z(d.getDate()) + '.' + z(d.getMonth() + 1) + '.' + d.getFullYear(); }
@@ -8896,9 +8923,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (st.cur) { st.games.push({ bi: st.cur.bi, res: 'loss', ts: Date.now() }); st.p = Math.max(0, (st.cur.bi || 0) - 1); st.streak = 0; st.cur = null; trnSet(st); }
       var el = (Date.now() - st.start) / 60000;
       if (el >= TRN_MIN || st.done) { trnFinal(st); return; }
-      var bi = trnNext(st), bots = trnBots(st.t), o = bots[bi];
+      var bi = trnNext(st), bots = trnBots(st.t, st.seed), o = bots[bi];
       view.innerHTML = crumbs('Турнир: ' + catName(st.t), '#y2/practice') + '<div class="y2trh"><span>Осталось<b id="trT">--:--</b></span><span>Ваши партии<b>' + st.games.length + '</b></span><span>Ваше место<b id="trP">-</b></span></div>' +
-        '<div class="y2pl chosen">' + ava2(o) + '<b>' + esc(o.full) + '</b><small>' + o.age + ' лет · ' + esc(o.c) + '</small><em>' + o.rt + '</em></div>' +
+        fairHTML(false) + '<div class="y2pl chosen">' + ava2(o) + '<b>' + esc(o.full) + '</b><small>' + o.age + ' лет · ' + esc(o.c) + '</small><em>' + o.rt + '</em></div>' +
         '<div class="row"><button class="btn go" id="trGo">Играть: следующая партия</button><button class="btn alt" id="trEnd">Закончить турнир</button></div><div id="trTab"></div>';
       function tick() {
         var s2 = trnGet(); if (!s2) return; var e2 = (Date.now() - s2.start) / 60000, left = Math.max(0, TRN_MIN * 60000 - (Date.now() - s2.start));
@@ -8913,7 +8940,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         var s2 = trnGet(); if (!s2) return; var b2 = trnNext(s2); s2.cur = { bi: b2, ts: Date.now() }; trnSet(s2);
         if (trnIv) { clearInterval(trnIv); trnIv = null; }
         var cb = function (res, info) { var s3 = trnGet(); if (s3) trnFinishGame(s3, res, info); }; cb.nov = s2.t === 'N';
-        play(s2.t === 'N' ? 0 : s2.t, trnBots(s2.t)[b2].i, TRN_TC, null, Math.random() < 0.5, cb);
+        play(s2.t === 'N' ? 0 : s2.t, trnBots(s2.t, s2.seed)[b2].i, TRN_TC, null, Math.random() < 0.5, cb);
       };
       document.getElementById('trEnd').onclick = function () { if (window.confirm('Закончить турнир сейчас? Ваш результат запишется.')) { var s2 = trnGet(); s2.done = true; trnSet(s2); trnPage(); } };
     }
