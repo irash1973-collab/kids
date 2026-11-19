@@ -1194,6 +1194,7 @@ body.home .card p { font-size: 14px; margin: 2px 0 6px; }
 .turnmk{position:absolute;left:calc(100% + 10px);display:flex;flex-direction:column;align-items:center;gap:5px;font:800 12px/1.15 var(--font,system-ui,sans-serif);color:#2b2350;text-align:center;z-index:5;pointer-events:none}
 .turnmk.mbot{bottom:var(--ax,20px)}.turnmk.mtop{top:0}
 .turnmk i{display:block;width:34px;height:34px;border-radius:7px;border:3px solid #2b2350;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+@media (min-width:821px){.boardbox.hasturn{margin-right:62px}}
 .turnmk.tw i{background:#fff}.turnmk.tb i{background:#1d1a2e}
 @media (max-width:820px){.boardbox.hasturn{margin-top:42px}.turnmk,.turnmk.mbot,.turnmk.mtop{left:auto;right:0;top:-42px;bottom:auto;flex-direction:row;gap:8px}.turnmk span{text-align:left}.turnmk i{width:26px;height:26px}}
 
@@ -1441,6 +1442,14 @@ body.home .hero p.motto { max-width: 37%; }
 .y2tags{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}.y2tag{text-decoration:none;font-size:14px;padding:8px 12px;min-height:0}
 
 .y2load{background:#fff;border:1px solid #d9e2ee;border-left:5px solid #c62828;border-radius:12px;padding:12px 16px;margin:12px 0}.y2load h3{margin:0 0 6px}.y2load ul{margin:6px 0 0;padding-left:20px}
+
+.boardbox{position:relative}
+.promopick{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:30;background:#fff;border:3px solid #2b2350;border-radius:14px;padding:10px 12px;box-shadow:0 8px 28px rgba(0,0,0,.35);text-align:center;max-width:92%}
+.promopick p{margin:0 0 8px;font:800 15px/1.2 var(--font,system-ui,sans-serif);color:#2b2350}
+.promopick div{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.promopick button{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:62px;padding:6px 8px;border:2px solid #2b2350;border-radius:10px;background:#f4f1ff;font:800 13px/1.1 var(--font,system-ui,sans-serif);color:#2b2350;cursor:pointer}
+.promopick button span{font-size:34px;line-height:1}
+.promopick button:hover,.promopick button:focus{background:#ffe27a;outline:none}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2591,7 +2600,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         bxx.insertAdjacentHTML('beforeend', '<div class="axis ax-r" aria-hidden="true">' + rs + '</div><div class="axis ax-f" aria-hidden="true">' + fs + '</div>');
       }
       /* значок «чей ход»: рядом с доской, у стороны того, кто ходит */
-      Array.prototype.forEach.call(bxx.querySelectorAll(':scope > .turnmk'), function (n) { bxx.removeChild(n); });
+      Array.prototype.forEach.call(bxx.querySelectorAll(':scope > .turnmk'), function (n) { bxx.removeChild(n); }); Array.prototype.forEach.call(bxx.querySelectorAll(':scope > .promopick'), function (n) { bxx.removeChild(n); });
       var pb = S.pos && S.pos.b, hasK = false, hask = false;
       if (pb) for (var z = 0; z < 64; z++) { if (pb[z] === 6) hasK = true; else if (pb[z] === -6) hask = true; }
       if (hasK && hask && !S.teach && !S.noturn && (S.pos.turn === 1 || S.pos.turn === -1)) {
@@ -2600,8 +2609,22 @@ if (typeof module !== 'undefined') module.exports = Eng;
         bxx.insertAdjacentHTML('beforeend', '<div class="turnmk ' + (wt ? 'tw' : 'tb') + (atBottom ? ' mbot' : ' mtop') + '" role="img" aria-label="Ход ' + (wt ? 'белых' : 'чёрных') + '"><i></i><span>Ход<br>' + (wt ? 'белых' : 'чёрных') + '</span></div>');
       } else bxx.classList.remove('hasturn');
     }
-    el.onclick = function (e) { var b = e.target.closest('.sq'); if (b) onClick(+b.dataset.i); };
+    el.onclick = function (e) {
+      var b = e.target.closest('.sq'); if (!b) return; var i = +b.dataset.i, host = el.parentNode;
+      Array.prototype.forEach.call(host.querySelectorAll(':scope > .promopick'), function (n) { host.removeChild(n); });
+      var P = S.pos, pm = (S.sel != null && P && P.b) ? E.legal(P).filter(function (m) { return m.f === S.sel && m.t === i && m.p; }) : [];
+      if (pm.length > 1) { /* превращение: ребёнок сам выбирает фигуру */
+        var white = P.turn === 1, G = { 5: white ? '♕' : '♛', 4: white ? '♖' : '♜', 3: white ? '♗' : '♝', 2: white ? '♘' : '♞' }, NM = { 5: 'Ферзь', 4: 'Ладья', 3: 'Слон', 2: 'Конь' }, f0 = S.sel;
+        var d = document.createElement('div'); d.className = 'promopick'; d.setAttribute('role', 'group'); d.setAttribute('aria-label', 'Во что превратить пешку?');
+        d.innerHTML = '<p>Во что превратить пешку?</p><div>' + [5, 4, 3, 2].map(function (c) { return '<button type="button" data-p="' + c + '"><span>' + G[c] + '</span>' + NM[c] + '</button>'; }).join('') + '</div>';
+        d.onclick = function (ev) { var bt = ev.target.closest('button'); if (!bt) return; ev.stopPropagation(); var pk = +bt.dataset.p; host.removeChild(d); PROMOPICK = { f: f0, t: i, p: pk }; try { onClick(i); } finally { setTimeout(function () { PROMOPICK = null; }, 60); } };
+        host.appendChild(d); var fb = d.querySelector('button'); if (fb) fb.focus(); return;
+      }
+      onClick(i);
+    };
   }
+  var PROMOPICK = null;
+  (function () { var L0 = E.legal; E.legal = function (pos) { var r = L0.apply(E, arguments); if (!PROMOPICK) return r; return r.filter(function (m) { return !(m.p && m.f === PROMOPICK.f && m.t === PROMOPICK.t && m.p !== PROMOPICK.p); }); }; })();
   function movesFrom(pos, i) { return E.legal(pos).filter(function (m) { return m.f === i; }); }
   var SQN = function (i) { return 'abcdefgh'[i % 8] + (8 - (i >> 3)); };
   var PLET = { 2: 'К', 3: 'С', 4: 'Л', 5: 'Ф' };
@@ -8292,7 +8315,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function fmt(ms) { ms = Math.max(0, ms); var sec = Math.ceil(ms / 1000), m = Math.floor(sec / 60), ss = sec % 60; return m + ':' + (ss < 10 ? '0' : '') + ss; }
     function play(t, i, tc, cu, colOv, trn) {
       var g0 = gst(); t = +t; i = +i; if (!cu && (!TIERS[t] || (!trn && !tierOpen(g0, t)) || i < 0 || i > 99)) { location.hash = trn ? '#y2/tourney' : '#y2/games'; return; }
-      var o = cu || opp(t, i), meW = cu ? cu.meW : (colOv != null ? colOv : i % 2 === 0), lv = cu ? cu.lv : (trn && trn.nov ? lvOf(o.rt) : yLv(o));
+      var o = cu || opp(t, i), meW = cu ? cu.meW : (colOv != null ? colOv : i % 2 === 0), lv = cu ? cu.lv : (trn && trn.nov ? Math.min(30, Math.max(12, lvOf(o.rt) + 4 + Math.round(o.i / 99 * 4)) + trnBonus()) : trn ? Math.min(30, yLv(o) + 1 + Math.round(o.i / 99 * 2) + trnBonus()) : yLv(o));
       var pos = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: !meW, coords: true, mark: {}, hl: null }, tg = [], keys = {}, hm = 0, mv = [], ph = [], mm = [], over = false, busy = false, resigned = false, gen = Math.random();
       keys[E.key(pos)] = 1;
       var timed = tc && tc[1] > 0, T = { me: timed ? tc[1] * 60000 : 0, op: timed ? tc[1] * 60000 : 0 }, inc = timed ? tc[2] * 1000 : 0, turnMe = meW, lastTs = Date.now(), clkIv = null;
@@ -8337,7 +8360,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         if (over) return; busy = true; sm(esc(o.n) + ' думает…'); var my = gen;
         later(function () {
           if (over || my !== gen) return;
-          var rtv = cu ? (lv < 5 ? 600 + (lv - 1) * 100 : lv < 14 ? 1000 + Math.round((lv - 5) * 45 / 5) * 5 : lv < 18 ? 1400 + (lv - 14) * 100 : lv < 23 ? 1800 + (lv - 18) * 100 : 2300 + (lv - 23) * 50) : o.rt;
+          var rtv = cu ? (lv < 5 ? 600 + (lv - 1) * 100 : lv < 14 ? 1000 + Math.round((lv - 5) * 45 / 5) * 5 : lv < 18 ? 1400 + (lv - 14) * 100 : lv < 23 ? 1800 + (lv - 18) * 100 : 2300 + (lv - 23) * 50) : o.rt + (trn ? trnBonus() * 60 : 0);
           function mv2(m) {
             if (over || my !== gen) return;
             if (!m) { var L = E.legal(S.pos); m = L[Math.floor(Math.random() * L.length)]; }
@@ -8347,7 +8370,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
           var bk = ((rtv >= 1000 && mv.length < 20 && Math.random() < 0.92) || (rtv >= 600 && mv.length < 8 && Math.random() < 0.85)) ? bookPick(S.pos) : null;
           if (bk && bk.m) { return mv2(bk.m); }
           if (rtv >= 1500 && !SF.failed()) {
-            var pos0 = S.pos, elo = rtv >= 2500 ? 0 : Math.max(1320, rtv), ms = rtv < 2000 ? 450 : rtv < 2300 ? 800 : 1300;
+            var pos0 = S.pos, elo = rtv >= 2500 ? 0 : Math.max(1320, rtv), ms = trn ? (rtv < 2000 ? 160 : rtv < 2300 ? 260 : 420) : (rtv < 2000 ? 450 : rtv < 2300 ? 800 : 1300);
             SF.load().then(function (ok) {
               if (over || my !== gen) return;
               if (!ok) { var m0 = null; try { m0 = E.bestMove(pos0, lv); } catch (e) {} return mv2(m0); }
@@ -8364,7 +8387,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
           function go2(m) {
           apply(m); clkSwitch('op'); busy = false; if (after()) return; sm(E.inCheck(S.pos) ? 'Вам шах. Ваш ход.' : 'Ваш ход.'); if (mv.length >= 40 && mv.length - lastOffer >= 20 && matMe() >= 0 && !E.inCheck(S.pos) && Math.random() < 0.2) offerFromOpp();
           }
-        }, 450);
+        }, trn ? 220 : 450);
       }
       function click(sq) {
         if (busy || over) return; var v = S.pos.b[sq];
@@ -8963,10 +8986,37 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function trnGet() { var o = lsGet(TRN_KEY, null); return o && typeof o === 'object' && o.start ? o : null; }
     function trnSet(o) { lsSet(TRN_KEY, o); }
     var TRN_NB = 19;
-    function trnBots(t, seed) { var a = [], nov = t === 'N', rj = r32((seed | 0) + 77), jt = nov ? 1.3 : 2.6; for (var k = 0; k < TRN_NB; k++) { var bs = nov ? k * 2.6 : t === 0 ? 50 + k * 2.6 : 3 + k * 5.1; a.push(Math.max(0, Math.min(99, Math.round(bs + (rj() - .5) * 2 * jt)))); } a.sort(function (x, y) { return x - y; }); var used = {}, me0 = (kidName() || '').toLowerCase(); return a.map(function (i) { var o = opp(nov ? 0 : t, i), tr = 0; while ((used[o.n] || used[o.full] || o.n.toLowerCase() === me0) && tr < 60) { i = Math.min(99, i + 1); tr++; o = opp(nov ? 0 : t, i); } used[o.n] = 1; used[o.full] = 1; var c2 = {}; for (var kk in o) c2[kk] = o[kk]; c2.rt0 = o.rt; c2.rt = trnDisp(nov ? 0 : t, o.rt, nov); return c2; }); }
+    function trnBots(t, seed) { var a = [], nov = t === 'N', rj = r32((seed | 0) + 77), jt = nov ? 1.3 : 2.6; for (var k = 0; k < TRN_NB; k++) { var bs = nov ? k * 2.6 : t === 0 ? 50 + k * 2.6 : 3 + k * 5.1; a.push(Math.max(0, Math.min(99, Math.round(bs + (rj() - .5) * 2 * jt)))); } a.sort(function (x, y) { return x - y; }); var used = {}, me0 = (kidName() || '').toLowerCase(); var res0 = a.map(function (i) { var o = opp(nov ? 0 : t, i), tr = 0; while ((used[o.n] || used[o.full] || o.n.toLowerCase() === me0) && tr < 60) { i = Math.min(99, i + 1); tr++; o = opp(nov ? 0 : t, i); } used[o.n] = 1; used[o.full] = 1; var c2 = {}; for (var kk in o) c2[kk] = o[kk]; c2.rt0 = o.rt; c2.rt = trnDisp(nov ? 0 : t, o.rt, nov); return c2; }); return trnMix(res0, seed); }
+    /* разнообразие: в каждом турнире есть Вера и не меньше 4 соперников из Азербайджана; имена разные */
+    function trnMix(a, seed) {
+      var r = r32((seed | 0) + 4242), az = NM[0], used = {}, nAz = 0, hasV = false;
+      /* в каждом турнире — другие люди: имена и страны выбираются заново по номеру турнира (сила и портрет остаются по месту) */
+      var taken = {};
+      a.forEach(function (o, k) {
+        var rr = r32((seed | 0) * 131 + k * 977 + 11), c = NM[Math.floor(rr() * NM.length)], fem = rr() < 0.4, fl = fem ? c[2] : c[1], fn = fl[Math.floor(rr() * fl.length)], sn = c[3][Math.floor(rr() * c[3].length)], tr = 0;
+        while (taken[fn] && tr < 20) { fn = fl[Math.floor(rr() * fl.length)]; tr++; }
+        if (fem && c[0] !== 'Япония' && c[0] !== 'Индия' && c[0] !== 'Грузия') { if (/ов$|ев$|ин$/.test(sn)) sn += 'а'; else if (/ий$/.test(sn)) sn = sn.replace(/ий$/, 'ая'); }
+        taken[fn] = 1; o.fem = fem; o.c = c[0]; o.full = fn + ' ' + sn; o.n = (o.t < 2 || o.age < 16) ? fn : fn + ' ' + sn;
+      });
+      a.forEach(function (o) { if (o.c === 'Азербайджан') nAz++; if (o.n === 'Вера') hasV = true; });
+      nAz = 0; hasV = false; a.forEach(function (o) { if (o.c === 'Азербайджан') nAz++; if (o.n === 'Вера') hasV = true; });
+      var slots = []; for (var k = 0; k < a.length; k++) slots.push(k);
+      for (var q = slots.length - 1; q > 0; q--) { var z = Math.floor(r() * (q + 1)), tm = slots[q]; slots[q] = slots[z]; slots[z] = tm; }
+      a.forEach(function (o) { used[o.n] = 1; used[o.full] = 1; });
+      if (!hasV) { var kv = slots.shift(), o1 = a[kv]; if (o1.c !== 'Азербайджан' || nAz > 4) { if (o1.c === 'Азербайджан') nAz--; o1.n = 'Вера'; o1.full = 'Вера Попова'; o1.c = 'Россия'; o1.fem = true; } else { slots.push(kv); kv = slots.shift(); o1 = a[kv]; o1.n = 'Вера'; o1.full = 'Вера Попова'; o1.c = 'Россия'; o1.fem = true; } }
+      for (var s2 = 0; s2 < slots.length && nAz < 4; s2++) {
+        var o = a[slots[s2]]; if (o.c === 'Азербайджан' || o.n === 'Вера') continue;
+        var fem = o.fem, fl = fem ? az[2] : az[1], fn = fl[Math.floor(r() * fl.length)], sn = az[3][Math.floor(r() * az[3].length)];
+        if (fem && /ов$|ев$|ин$/.test(sn)) sn += 'а';
+        var tr2 = 0; while ((used[fn] || used[fn + ' ' + sn]) && tr2 < 12) { fn = fl[Math.floor(r() * fl.length)]; tr2++; } if (used[fn]) continue;
+        used[fn] = 1; used[fn + ' ' + sn] = 1; o.n = (o.t < 2 || o.age < 16) ? fn : fn + ' ' + sn; o.full = fn + ' ' + sn; o.c = 'Азербайджан'; nAz++;
+      }
+      return a;
+    }
+
     /* результаты соперников считаются по времени: у каждого своя партия за 6–9 минут, исход зависит от силы и «случая» с зерном турнира */
     function botScore(st, bot, bi, el) {
-      var r = r32(st.seed * 31 + bi * 977 + 5), per = (8 + r() * 4) * 1.3, n = Math.floor(el / per), FB = st.t === 'N' ? .68 : st.t === 0 ? .75 : .8, sc = 0, field = 0;
+      var r = r32(st.seed * 31 + bi * 977 + 5), per = (3.4 + r() * 2.8), n = Math.floor(el / per), FB = st.t === 'N' ? .68 : st.t === 0 ? .75 : .8, sc = 0, field = 0;
       var bots = trnBots(st.t, st.seed); bots.forEach(function (b) { field += (b.rt0 || b.rt); }); field /= bots.length;
       for (var k = 0; k < n; k++) { var opp0 = field + (r() - .5) * 500, pw = 1 / (1 + Math.pow(10, (opp0 - (bot.rt0 || bot.rt)) / 400)), x = (pw = (.5 + (pw - .5) * .85) * FB, r()); sc += x < pw * .86 ? 1 : x < pw * .86 + .14 ? .5 : 0; }
       return { sc: sc, n: n };
@@ -8974,6 +9024,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function trnTable(st, el) {
       var bots = trnBots(st.t, st.seed), rows = bots.map(function (b, bi) { var q = botScore(st, b, bi, el); return { n: b.n, rt: b.rt, sc: q.sc, g: q.n, me: false, o: b }; });
       var my = 0; st.games.forEach(function (x) { my += x.res === 'win' ? 1 : x.res === 'draw' ? .5 : 0; });
+      /* конкуренция: ведущие соперники не отстают от ребёнка слишком сильно, пока он выигрывает; отставание у каждого своё и не меняется */
+      var ord = rows.map(function (q, k) { return k; }).sort(function (x, y) { return rows[y].sc - rows[x].sc; }), rj = r32(st.seed + 909), GAP = [0.5, 1, 1.5, 2, 2.5, 3];
+      ord.slice(0, GAP.length).forEach(function (k, z) {
+        var gp = GAP[z] + (rj() - .5) * 0.9, tg = Math.round((my - gp) * 2) / 2; tg = Math.min(tg, rows[k].g);
+        if (tg > rows[k].sc) rows[k].sc = tg;
+      });
       rows.push({ n: (kidName() || 'Вы'), rt: gst().r, sc: my, g: st.games.length, me: true });
       rows.sort(function (a, b) { return b.sc - a.sc || (a.g - b.g) || (b.rt - a.rt); });
       return rows;
@@ -8984,10 +9040,22 @@ if (typeof module !== 'undefined') module.exports = Eng;
         return '<tr class="' + (r.me ? 'me' : '') + '"><td>' + (rows[0].sc <= 0 ? '·' : fin ? (k < 3 ? '<span class="y2md m' + (k + 1) + '">' + (k + 1) + '</span>' : (k + 1)) : '') + '</td><td>' + (r.o ? ava2(r.o) + ' ' : '👤 ') + esc(r.n) + (r.me ? ' (вы)' : '') + (!fin && r.sc > 0 && k < 3 ? ' <span class="y2fire" title="Лидер">🔥</span>' : '') + '</td><td>' + r.g + '</td><td><b>' + fmtSc(r.sc) + '</b></td></tr>'; }).join('') + '</tbody></table>';
     }
     function trnNext(st) {
-      var bots = trnBots(st.t, st.seed), p = st.p == null ? 3 : st.p, last = st.games.length ? st.games[st.games.length - 1].bi : -1;
-      if (p < 0) p = 0; if (p > TRN_NB - 1) p = TRN_NB - 1; if (p === last) p = p < TRN_NB - 1 ? p + 1 : p - 1;
-      return p;
+      var p = st.p == null ? 3 : st.p, last = st.games.length ? st.games[st.games.length - 1].bi : -1, cnt = [], rec = {};
+      for (var q = 0; q < TRN_NB; q++) cnt.push(0);
+      st.games.forEach(function (g, k) { cnt[g.bi]++; if (k >= st.games.length - 6) rec[g.bi] = 1; });
+      if (st.cur && st.cur.bi != null) cnt[st.cur.bi]++;
+      if (p < 0) p = 0; if (p > TRN_NB - 1) p = TRN_NB - 1;
+      var rs = r32((st.seed | 0) + st.games.length * 131 + 7), best = -1, bs = 1e9;
+      for (var bi = 0; bi < TRN_NB; bi++) {
+        if (bi === last) continue;
+        var d = Math.abs(bi - p), sc = cnt[bi] * 7 + d * 3 + (rec[bi] ? 14 : 0) + rs() * 3;
+        if (sc < bs) { bs = sc; best = bi; }
+      }
+      return best < 0 ? Math.min(TRN_NB - 1, p + 1) : best;
     }
+    window.__trnT = { bots: function (t, sd) { return trnBots(t, sd); }, next: trnNext };
+    /* чем больше ребёнок выигрывает, тем сильнее следующие соперники */
+    function trnBonus() { var st = trnGet(); if (!st) return 0; var w = 0, l = 0; (st.games || []).forEach(function (g) { if (g.res === 'win') w++; else if (g.res === 'loss') l++; }); return Math.max(0, Math.min(8, Math.round((w - l) / 3 + (st.streak || 0) / 2))); }
     function trnFinishGame(st, res, info) {
       if (!st.cur) return;
       trnElo(st, st.cur.bi, res);
