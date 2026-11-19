@@ -16251,6 +16251,20 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     var Z = Y[id], v = document.getElementById('view');
     if (parts[1] === 'youtube') { window.__yt(id); return; }
     if (parts[1] === 'extra') { window.__extra(id); return; }
+    if (parts[1] === 'pos') {
+      var PL = window.__ppos, SK = ' RR QR ', key = 'ukc_ppdone_' + id, dn = lsGet(key, {}) || {};
+      if (!PL) { v.innerHTML = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>Практические позиции</h2></div>'; return; }
+      var LS = PL.list.filter(function (x) { return SK.indexOf(' ' + x.id + ' ') < 0; });
+      if (parts[2]) {
+        var it = LS.filter(function (x) { return x.id === parts[2]; })[0]; if (!it) { location.hash = '#' + id + '/pos'; return; }
+        v.innerHTML = '<div class="y2head"><a class="btn alt" href="#' + id + '/pos">← Назад</a><h2>' + it.t + '</h2></div><div id="ex"></div>';
+        PL.run(it.id, document.getElementById('ex'), function () { var o2 = lsGet(key, {}) || {}; o2[it.id] = 1; lsSet(key, o2); });
+        return;
+      }
+      v.innerHTML = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>Практические позиции</h2></div><p class="y2lead">Окончания в настоящей игре: мат ладьёй и ферзём, двумя слонами, слоном и конём, ферзь и ладья против коня, слона, ладьи и пешки, пешечные окончания за белых и за чёрных. Все позиции выигрышные, если играть точно. Компьютер защищается сильно. Каждый раз позиция новая.</p>' +
+        '<div class="y2list">' + LS.map(function (x, i) { return '<a class="y2row" href="#' + id + '/pos/' + x.id + '"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + x.t + '</b><small>' + x.d + '</small></span><span class="y2st">' + (dn[x.id] ? '✓ решено' : 'играть') + '</span></a>'; }).join('') + '</div>';
+      return;
+    }
     if (parts[1] === 'theory') {
       v.innerHTML = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>Теория</h2></div><p class="y2lead">Темы ' + Z.n.toLowerCase().replace('год обучения', 'года обучения') + ' появятся по мере готовности. Пока можно играть, решать задачи и участвовать в турнирах.</p>';
       return;
@@ -16263,6 +16277,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
             '<a class="y2cell" href="#y2/tourney"><i>04</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица.</p><span>играть</span></a>' +
       '<a class="y2cell" href="#' + id + '/extra"><i>05</i><b>Дополнительные задачи</b><p>Рекомендация: каждый день не меньше ' + Z.min + ' задач по темам на сайте Lichess.</p><span>открыть</span></a>' +
       '<a class="y2cell" href="#' + id + '/youtube"><i>06</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' +
+      '<a class="y2cell" href="#' + id + '/pos"><i>08</i><b>Практические позиции</b><p>Маты и окончания в настоящей игре против сильного компьютера.</p><span>играть</span></a>' +
       '<a class="y2cell" href="https://lichess.org/editor" target="_blank" rel="noopener noreferrer"><i>07</i><b>Редактор доски (Lichess)</b><p>Расставляй любые позиции и играй их против компьютера или друга. Откроется сайт Lichess.</p><span>открыть</span></a>' +
       '</div>';
   };
