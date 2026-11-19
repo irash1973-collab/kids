@@ -3908,7 +3908,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function updScore() { if (!L.levels) return; var d1 = 0, f1 = 0, h1 = 0; for (var q = 1; q <= L.levels; q++) { if (lvDone(id, q)) { d1++; if (lvHint(id, q)) h1++; } else if (lvFail(id, q)) f1++; } var t1 = 'Решено ' + d1 + ' из ' + L.levels + (lvPct(id, L.levels) !== null ? ' · Успех: ' + lvPct(id, L.levels) + '%' : ''); var e1 = view.querySelector('.lvsc'); if (e1) e1.textContent = t1; var e2 = view.querySelector('.lvfoot'); if (e2) e2.textContent = t1; }
     updScore();
     var tg = document.getElementById('lvTg');
-    if (tg) tg.onclick = function () { var row0 = view.querySelector('.lvrow'); if (row0) { var o0 = row0.classList.contains('lvhide'); row0.classList.toggle('lvhide', !o0); tg.setAttribute('aria-expanded', String(o0)); } return; };
+    if (tg) tg.onclick = function () { var row0 = view.querySelector('.lvrow'); if (row0) { var o0 = row0.classList.contains('lvhide'); row0.classList.toggle('lvhide', !o0); tg.setAttribute('aria-expanded', String(o0)); if (o0) { var lb = view.querySelector('.lvbar'); if (lb && lb.scrollIntoView) lb.scrollIntoView({ behavior: 'smooth', block: 'center' }); } } return; };
     if (false) tg.onclick = function () { var row = view.querySelector('.lvrow'), o = row.classList.contains('lvhide'); row.classList.toggle('lvhide', !o); lsSet('ukc_lvopen', o); tg.setAttribute('aria-expanded', String(o)); tg.textContent = tg.textContent.replace(/[▴▾]$/, o ? '▴' : '▾'); };
     var host = document.getElementById('ex');
     if (lv === 0 && L.slides) { showSlides(host, L, 0); return; }
