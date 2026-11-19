@@ -16562,11 +16562,15 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
   }
   function gen(r, k, lv) {
     var SETS1 = [[5], [4], [5], [4], [5], [4], [3], [2]], SETS2 = [[5, 1], [5, 3], [5, 2], [4, 4], [4, 3], [4, 2], [5, 4], [4, 1], [3, 3], [3, 2], [2, 2], [3, 1], [2, 1], [2, 1], [4, 1], [1, 1], [5, 1]];
-    for (var att = 0; att < 300; att++) {
+    /* сложность растёт: больше фигур защитника у его короля и меньше решений */
+    var hard = lv > 30 ? 2 : lv > 15 ? 1 : 0, capSol = [25, 8, 3][hard], best = null;
+    for (var att = 0; att < 700; att++) {
       var b = new Int8Array(64), bk = rn(r, 64), wk = rn(r, 64); if (cheb(bk, wk) < 2) continue; b[bk] = -6; b[wk] = 6;
-      var nb = rn(r, 3), nw = rn(r, 2), i, bad = false, t;
+      var nb = hard === 0 ? rn(r, 3) : hard === 1 ? 2 + rn(r, 3) : 3 + rn(r, 3), nw = rn(r, 2), i, bad = false;
       for (i = 0; i < nb + nw && !bad; i++) {
-        var s = rn(r, 64), v = i < nb ? -[1, 1, 1, 2, 3, 4][rn(r, 6)] : [1, 2, 3, 4][rn(r, 4)];
+        var s, tries = 0;
+        do { s = rn(r, 64); tries++; } while (i < nb && hard > 0 && cheb(s, bk) > 2 && tries < 12);
+        var v = i < nb ? -[1, 1, 1, 2, 3, 4, hard > 1 ? 4 : 1, hard > 1 ? 3 : 2][rn(r, 8)] : [1, 2, 3, 4][rn(r, 4)];
         if (b[s] || !okSq(v, s)) bad = true; else b[s] = v;
       }
       if (bad) continue;
@@ -16574,10 +16578,12 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
       var tray = (k === 1 ? SETS1[rn(r, SETS1.length)] : SETS2[rn(r, SETS2.length)]).slice().sort(function (x, y) { return y - x; });
       var sols = solve(b, tray, -1, 40);
       if (!sols.length) continue;
-      if (sols.length > 25 && att < 200) continue;
-      return { b: b, tray: tray, sol: sols[rn(r, sols.length)], n: sols.length };
+      var g = { b: b, tray: tray, sol: sols[rn(r, sols.length)], n: sols.length };
+      if (sols.length <= capSol) return g;
+      if (!best || g.n < best.n) best = g;
+      if (att > 450 && best) return best;
     }
-    return null;
+    return best;
   }
   function flip(g) {
     var b = new Int8Array(64), i; for (i = 0; i < 64; i++) b[(7 - (i >> 3)) * 8 + (i & 7)] = -g.b[i];
@@ -16639,7 +16645,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
       document.getElementById('pAns').onclick = function () {
         if (done) return; done = true; if (window.__help) window.__help.a = 1; placed = {}; g.sol.forEach(function (s, j) { placed[s] = tr[j]; }); S.hl = null; draw(); sm('Вот одно из решений. Нажми «Новая позиция» и попробуй сам.', 'bad'); finish(0);
       };
-      window.__pm = { sol: g.sol, tr: tr, T: T };
+      window.__pm = { sol: g.sol, tr: tr, T: T, n: g.n };
       sel = tr[0]; draw(); var bx = document.querySelector('.boardbox'), t0 = document.getElementById('ptray'); if (bx && t0) bx.appendChild(t0); sm('Выбери фигуру внизу и поставь её на доску.');
       try { window.__TT.start('pm' + L.id + lv + '_' + my); } catch (e) { }
     }
@@ -16647,8 +16653,8 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
   }
   var SL1 = [{ h: 'Как придумать мат', p: ['На доске уже стоят короли и другие фигуры. У тебя есть ещё фигура (или две). Поставь их на такие клетки, чтобы королю был <b>шах</b> и <b>деваться было некуда</b>: это мат.', 'Спроси себя: 1) Куда фигура даст шах? 2) Какие клетки возле короля она закроет? 3) Что ещё закрывает свои фигуры и твой король? 4) Можно ли побить шахующую фигуру?', 'Помни: твой король не может стоять под шахом, а пат (когда ходить некуда, но шаха нет) — это ничья.'] }];
   function mk(id, t, d, k, lv) { return { id: id, t: t, d: d, levels: lv, slides: SL1, run: function (host, L, n, fin) { run(host, L, n, fin, k); }, gen: null }; }
-  LESS.pm1 = mk('pm1', 'План мата: одна фигура', 'Поставь ферзя, ладью, слона или коня так, чтобы получился мат.', 1, 20);
-  LESS.pm2 = mk('pm2', 'План мата: две фигуры', 'Поставь две фигуры на доску так, чтобы был мат.', 2, 20);
+  LESS.pm1 = mk('pm1', 'План мата: одна фигура', 'Поставь ферзя, ладью, слона или коня так, чтобы получился мат.', 1, 40);
+  LESS.pm2 = mk('pm2', 'План мата: две фигуры', 'Поставь две фигуры на доску так, чтобы был мат.', 2, 40);
 })();
 
 // Уроки по цветным блокам: знакомство, фигуры, ценность и защита, правила, мат, тактика, пешечные окончания, повторение
