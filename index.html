@@ -10611,6 +10611,19 @@ L.slides=slides;
         return '<a class="lcard" href="#games/' + g.id + '"><span class="big">' + g.ic + ' ' + esc(g.t) + '</span><p>' + esc(g.d) + '</p><small class="note">' + starStr(gameStars(g.id)) + '</small></a>';
       }).join('') + '</div></section>';
     });
+    h += '<section class="course"><h3>Lichess <small class="note">Бесплатные тренажёры на сайте Lichess. Выбирай по уровню и тренируйся. Откроется новая вкладка, заходи вместе с родителями или тренером. Результаты на нашем сайте не сохраняются.</small></h3>' +
+      '<h4 class="y2gh">Для начала</h4><div class="lgrid">' +
+      '<a class="lcard" href="https://lichess.org/learn" target="_blank" rel="noopener noreferrer"><span class="big">⭐ Звёзды: как ходят фигуры</span><p>Собирай звёзды и учись ходам. Выбери этапы «Ладья», «Слон», «Ферзь», «Конь», «Король», «Пешка».</p><small class="note">откроется Lichess</small></a>' +
+      '<a class="lcard" href="https://lichess.org/racer" target="_blank" rel="noopener noreferrer"><span class="big">🚗 Гонка задач («машинки»)</span><p>Решай простые задачи, и твоя машинка едет вперёд. Можно играть одному или с друзьями по ссылке.</p><small class="note">откроется Lichess</small></a>' +
+      '<a class="lcard" href="https://lichess.org/training/coordinates" target="_blank" rel="noopener noreferrer"><span class="big">🎯 Найди поля</span><p>Тренажёр координат: быстро находи нужное поле на доске, за белых и за чёрных.</p><small class="note">откроется Lichess</small></a>' +
+      '</div><h4 class="y2gh">Чуть сложнее</h4><div class="lgrid">' +
+      '<a class="lcard" href="https://lichess.org/streak" target="_blank" rel="noopener noreferrer"><span class="big">🔥 Серия задач</span><p>Решай задачи подряд без ошибок: одна ошибка, и серия закончилась.</p><small class="note">откроется Lichess</small></a>' +
+      '<a class="lcard" href="https://lichess.org/storm" target="_blank" rel="noopener noreferrer"><span class="big">⚡ Штурм задач</span><p>Много задач на скорость: решай как можно больше, пока идёт время.</p><small class="note">откроется Lichess</small></a>' +
+      '<a class="lcard" href="https://lichess.org/practice" target="_blank" rel="noopener noreferrer"><span class="big">🎓 Практика</span><p>Простые уроки по матам, тактике и окончаниям с подсказками.</p><small class="note">откроется Lichess</small></a>' +
+      '</div><h4 class="y2gh">Для сильных</h4><div class="lgrid">' +
+      '<a class="lcard" href="https://lichess.org/training/themes" target="_blank" rel="noopener noreferrer"><span class="big">🧩 Задачи по темам</span><p>Выбирай тему (связка, вилка, мат) и уровень сложности.</p><small class="note">откроется Lichess</small></a>' +
+      '<a class="lcard" href="https://lichess.org/training" target="_blank" rel="noopener noreferrer"><span class="big">🧠 Задачи по рейтингу</span><p>Задачи подбираются под твой уровень и растут вместе с тобой.</p><small class="note">откроется Lichess</small></a>' +
+      '</div></section>';
     view.innerHTML = h;
     try { sessionStorage.setItem('ukc_from_games', '1'); } catch (e) {}
   }
