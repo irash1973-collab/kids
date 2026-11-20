@@ -8382,7 +8382,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
         b[1].forEach(function (t) {
           if (t.charAt(0) === '#') { h += '</div><h4 class="y2sh">' + esc(t.slice(1)) + '</h4><div class="y2list">'; return; }
           var i = k++, L = t.charAt(0) === '@' ? Y2.filter(function (x) { return x.id === t.slice(1); })[0] : null;
-          if (L) { var n = L.bank.length, d = doneCount(L); h += '<a class="y2row" href="#y2/' + L.id + '"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + esc(L.t) + '</b><small>' + esc(L.d) + '</small></span><span class="y2st">' + (d ? d + ' из ' + n + ' · ' + got(L) + ' баллов' : n + ' задач') + '</span></a>'; }
+          if (L && L.play) { var n2 = L.bank.length, d2 = doneCount(L); h += '<div class="y2row" style="flex-wrap:wrap"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + esc(L.t) + '</b><small>' + esc(L.d) + '</small></span><span class="y2st">' + (d2 ? d2 + ' из ' + n2 + ' · ' + got(L) + ' баллов' : n2 + ' задач') + '</span><span style="flex-basis:100%;grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><a class="btn alt" style="width:auto" href="#y2/' + L.id + '">Теория</a><a class="btn alt" style="width:auto" href="#y2/' + L.id + '/t">Задачи (' + n2 + ')</a><a class="btn go" style="width:auto" href="#y2/' + L.id + '/p/BBp">Практика</a></span></div>'; }
+          else if (L) { var n = L.bank.length, d = doneCount(L); h += '<a class="y2row" href="#y2/' + L.id + '"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + esc(L.t) + '</b><small>' + esc(L.d) + '</small></span><span class="y2st">' + (d ? d + ' из ' + n + ' · ' + got(L) + ' баллов' : n + ' задач') + '</span></a>'; }
           else if (t.charAt(0) !== '@') h += '<div class="y2row soonrow"><span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + esc(t) + '</b></span><span class="y2st">скоро</span></div>';
         });
         h += '</div>';
@@ -9167,9 +9168,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var g = '';
       for (var i = 1; i <= L.bank.length; i++) g += '<a class="y2n ' + cls(r[i]) + (i === cur ? ' cur' : '') + '" href="#y2/' + L.id + '/t/' + i + '">' + i + '</a>';
       var mx = maxPts(L);
-      ov.innerHTML = '<div class="y2pop" role="dialog" aria-label="Прогресс за урок"><h3>Прогресс: ' + esc(L.t) + '</h3><p>Баллы: <b>' + got(L) + '</b> из ' + mx + ' (' + Math.round(got(L) * 100 / mx) + '%) · решено верно: ' + solved(L) + ' · не решено: ' + (doneCount(L) - solved(L)) + '</p><div class="y2grid">' + g + '</div><p class="y2key"><i class="ok"></i> верно с первой попытки <i class="half"></i> с ошибками (меньше баллов) <i class="bad"></i> не решена <i></i> ещё не открыта</p><div class="row"><button class="btn" id="y2x">Закрыть</button></div></div>';
+      ov.innerHTML = '<div class="y2pop" role="dialog" aria-label="Прогресс за урок"><h3>Прогресс: ' + esc(L.t) + '</h3><p>Баллы: <b>' + got(L) + '</b> из ' + mx + ' (' + Math.round(got(L) * 100 / mx) + '%) · решено верно: ' + solved(L) + ' · не решено: ' + (doneCount(L) - solved(L)) + '</p><div class="y2grid">' + g + '</div><p class="y2key"><i class="ok"></i> верно с первой попытки <i class="half"></i> с ошибками (меньше баллов) <i class="bad"></i> не решена <i></i> ещё не открыта</p>' + (L.play ? '<h3 style="margin-top:12px">Практические задания</h3><p>Произвольные позиции, каждый раз новые. Мат нужно довести до конца в партии с компьютером.</p><div class="row"><a class="btn go" href="#y2/' + L.id + '/p/BBp" id="y2pr">Практические задания</a></div>' : '') + '<div class="row"><button class="btn" id="y2x">Закрыть</button></div></div>';
       document.body.appendChild(ov);
-      ov.onclick = function (e) { if (e.target === ov || e.target.id === 'y2x') ov.remove(); else if (e.target.closest('.y2n')) setTimeout(function () { ov.remove(); }, 0); };
+      ov.onclick = function (e) { if (e.target === ov || e.target.id === 'y2x') ov.remove(); else if (e.target.closest('.y2n, #y2pr')) setTimeout(function () { ov.remove(); }, 0); };
     }
 
     /* ---------- итог ---------- */
