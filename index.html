@@ -1506,6 +1506,8 @@ body.home .hero p.motto { max-width: 37%; }
 .avtabs{display:flex;gap:6px;margin:4px 0 8px;flex-wrap:wrap}.avt{font:inherit;font-weight:700;padding:6px 12px;border-radius:999px;border:2px solid #c9d6e6;background:#fff;cursor:pointer}.avt.on{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
 .avgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;max-height:210px;overflow:auto;padding:4px;border:1px solid #d9e2ee;border-radius:10px;background:#f6f9fd}
 .avp{padding:0;border:3px solid transparent;border-radius:50%;background:none;cursor:pointer;width:54px;height:54px;display:block}.avp.on{border-color:#e53935}.avp .y2ava{width:100%;height:100%;display:block}
+
+#prof .y2ava{width:26px;height:26px;display:inline-block;vertical-align:middle;margin:-3px 4px -3px 0;border-width:1px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2736,7 +2738,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var knb = document.getElementById('knb'); if (knb) knb.onclick = openProfile;
   }
   /* ---------- Профиль: имя и сохранение прогресса ---------- */
-  function profLabel() { var b = document.getElementById('prof'); if (b) b.textContent = '👤 ' + (kidName() || 'Профиль'); }
+  function profLabel() { var b = document.getElementById('prof'); if (!b) return; var av = ''; try { av = window.__myAvHTML ? window.__myAvHTML(false) : ''; } catch (e) { } if (av) b.innerHTML = av + ' ' + esc(kidName() || 'Профиль'); else b.textContent = '👤 ' + (kidName() || 'Профиль'); }
+  window.__profLabel = profLabel;
   function openProfile() {
     var ov = document.createElement('div'); ov.className = 'profov';
     ov.innerHTML = '<div class="profbox" role="dialog" aria-label="Мой профиль"><button class="profx" aria-label="Закрыть">✕</button><h2>Мой профиль</h2><a class="parNote" href="#parents" style="display:block;margin:6px 0 10px;padding:8px 12px;border:3px solid #e10600;background:#fff6c2;border-radius:12px;color:#111;text-decoration:none"><b style="color:#e10600">📌 Родителям:</b> прочитайте памятку, пожалуйста</a>' +
@@ -8280,8 +8283,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
       var cur = lsGet('ukc_myav', null);
       host.innerHTML = '<div class="avtabs"><button type="button" class="avt' + (tab === 'kb' ? ' on' : '') + '" data-t="kb">Мальчики</button><button type="button" class="avt' + (tab === 'kg' ? ' on' : '') + '" data-t="kg">Девочки</button>' +
         (cur != null ? '<button type="button" class="avt avno" data-t="no">Убрать</button>' : '') + '</div><div class="avgrid">' + M[tab].map(function (ti) { return '<button type="button" class="avp' + (ti === cur ? ' on' : '') + '" data-ti="' + ti + '" aria-label="Выбрать портрет">' + tileHTML(ti, false) + '</button>'; }).join('') + '</div>';
-      Array.prototype.forEach.call(host.querySelectorAll('.avt'), function (b) { b.onclick = function () { var t = b.getAttribute('data-t'); if (t === 'no') { lsSet('ukc_myav', null); draw(); return; } tab = t; draw(); }; });
-      Array.prototype.forEach.call(host.querySelectorAll('.avp'), function (b) { b.onclick = function () { lsSet('ukc_myav', +b.getAttribute('data-ti')); try { sfx && sfx('ok'); } catch (e) { } draw(); }; });
+      Array.prototype.forEach.call(host.querySelectorAll('.avt'), function (b) { b.onclick = function () { var t = b.getAttribute('data-t'); if (t === 'no') { lsSet('ukc_myav', null); draw(); if (window.__profLabel) window.__profLabel(); return; } tab = t; draw(); }; });
+      Array.prototype.forEach.call(host.querySelectorAll('.avp'), function (b) { b.onclick = function () { lsSet('ukc_myav', +b.getAttribute('data-ti')); try { sfx && sfx('ok'); } catch (e) { } draw(); if (window.__profLabel) window.__profLabel(); }; });
     }
     draw();
   };
@@ -8305,6 +8308,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       });
     }, 1200);
   }
+  try { if (window.__profLabel) window.__profLabel(); } catch (e) { }
 })();
 
   /* ===== Второй год обучения: строгий раздел. Уроки: примеры → задачи с баллами, 2 ошибки, скрытый прогресс ===== */
