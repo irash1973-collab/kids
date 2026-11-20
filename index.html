@@ -1498,6 +1498,14 @@ body.home .hero p.motto { max-width: 37%; }
 @keyframes y2wink{0%{transform:none}25%{transform:scale(1.04,.9) rotate(7deg)}45%{transform:scale(1.04,.92) rotate(7deg)}70%{transform:scale(1.08) rotate(-3deg)}100%{transform:none}}
 @keyframes y2silly{0%{transform:none}15%{transform:scale(1.1,.88) rotate(-9deg)}35%{transform:scale(.92,1.1) rotate(9deg)}55%{transform:scale(1.12,.9) rotate(-7deg)}75%{transform:scale(.96,1.06) rotate(5deg)}100%{transform:none}}
 @media (prefers-reduced-motion:reduce){.y2av2.live .y2ava{animation:none!important}}
+
+.y2pl.chosen{grid-template-columns:auto 1fr auto;column-gap:12px}.y2pl.chosen .y2av2,.y2pl.chosen>.y2ava{grid-row:1/3;grid-column:1}
+.y2own{background:#fff8e1;border:2px solid #f4c430;border-radius:12px;padding:10px 14px;margin:10px 0}.y2own b{display:block;font-size:1.05em}.y2own span{display:block;font-size:.9em;margin:2px 0 8px;color:#5b4a00}.y2own .btn.on{background:#1e3a5f;color:#fff}
+.y2rec{font-style:normal;font-size:.75em;background:#ffe9a8;color:#6b4b00;border-radius:999px;padding:1px 8px;margin-left:6px;white-space:nowrap}
+.y2warn{background:#fff3cd;border:2px solid #f0c040;border-radius:10px;padding:8px 12px;margin:8px 0;font-size:.95em}.y2warn.bad{background:#fde8e8;border-color:#d96b6b}
+.avtabs{display:flex;gap:6px;margin:4px 0 8px;flex-wrap:wrap}.avt{font:inherit;font-weight:700;padding:6px 12px;border-radius:999px;border:2px solid #c9d6e6;background:#fff;cursor:pointer}.avt.on{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
+.avgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;max-height:210px;overflow:auto;padding:4px;border:1px solid #d9e2ee;border-radius:10px;background:#f6f9fd}
+.avp{padding:0;border:3px solid transparent;border-radius:50%;background:none;cursor:pointer;width:54px;height:54px;display:block}.avp.on{border-color:#e53935}.avp .y2ava{width:100%;height:100%;display:block}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -2735,8 +2743,9 @@ if (typeof module !== 'undefined') module.exports = Eng;
       '<label class="proflb" for="pn">Как тебя зовут?</label><input id="pn" maxlength="20" value="' + esc(kidName()) + '" placeholder="Твоё имя" autocomplete="off">' +
       '<label class="proflb" for="pa">Сколько тебе лет?</label><select id="pa"><option value="">выбери</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15 и старше</option></select>' +
       '<label class="proflb" for="pc">Из какой ты страны?</label><input id="pc" maxlength="30" list="pcl" value="' + esc(String(lsGet('ukc_country', '') || '')) + '" placeholder="Например, Азербайджан" autocomplete="off"><datalist id="pcl"><option value="Азербайджан"><option value="Россия"><option value="Турция"><option value="Грузия"><option value="Казахстан"><option value="Украина"><option value="Беларусь"><option value="Германия"><option value="США"></datalist>' +
-      '<div class="row"><button class="btn go" id="pnS">Сохранить</button></div><p class="proflb" style="font-size:.85em;opacity:.8">Эти данные хранятся только на этом устройстве и никуда не отправляются.</p>' + saveBox() + '</div>';
+      '<label class="proflb">Мой портрет: выбери себя</label><div id="avpk"></div>' + '<div class="row"><button class="btn go" id="pnS">Сохранить</button></div><p class="proflb" style="font-size:.85em;opacity:.8">Эти данные хранятся только на этом устройстве и никуда не отправляются.</p>' + saveBox() + '</div>';
     document.body.appendChild(ov);
+    try { if (window.__avPicker) window.__avPicker(ov.querySelector('#avpk')); } catch (e) { }
     function close() { ov.remove(); }
     ov.querySelector('.profx').onclick = close; var pn1 = ov.querySelector('.parNote'); if (pn1) pn1.onclick = close;
     ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
@@ -3150,16 +3159,27 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
   /* ---------- Игра с роботами: 10 миров по 20 уровней ---------- */
   var pending = null; /* партия, переданная на разбор */
-  function unlocked(n) { return openAll || n === 1 || !!wins[n - 1] || !!wins[n]; }
+  function unlocked(n) { return true; }
+  /* результаты партий с роботами: сколько сыграно и сколько очков (победа 1, ничья 0,5) по каждому уровню */
+  function rbRes() { var r = lsGet('ukc_rbres', {}); return r && typeof r === 'object' ? r : {}; }
+  function rbRec(n, sc) { var r = rbRes(), x = r[n] || { g: 0, w: 0 }; x.g++; x.w += sc; r[n] = x; lsSet('ukc_rbres', r); }
+  function rbWorld(wi) { var r = rbRes(), g = 0, w = 0; for (var j = 1; j <= SUB; j++) { var x = r[wi * SUB + j]; if (x) { g += x.g; w += x.w; } } return { g: g, w: w, p: g ? Math.round(w / g * 100) : 0 }; }
+  function rbWarn(wi) {
+    var s = rbWorld(wi), p = wi > 0 ? rbWorld(wi - 1) : null, t = '';
+    if (p && (p.g < 5 || p.p < 80)) t += '<div class="y2warn">Желательно сначала пройти мир «' + esc(WORLDS[wi - 1].n) + '»: там нужно выигрывать около 80% партий. ' + (p.g ? 'Сейчас там ' + p.p + '% из ' + p.g + ' партий.' : 'Ты там ещё не играл.') + ' Но можно и сразу попробовать силы здесь.</div>';
+    if (s.g >= 3 && s.p < 35) t += '<div class="y2warn bad">Здесь пока тяжело: результат ' + s.p + '%. Этот мир пока не для тебя' + (wi > 0 ? '. Вернись в мир «' + esc(WORLDS[wi - 1].n) + '» и набери побольше побед.' : '. Потренируйся, порешай задачи и возвращайся.') + '</div>';
+    return t;
+  }
   function starsRow(n, s) { var h = ''; for (var i = 1; i <= 3; i++) h += starSvg(i <= n); return '<span class="srow" aria-label="' + n + ' из 3 звёзд">' + h + '</span>'; }
 
+  function world0(i) { return WORLDS[i].n; }
   function playWorlds() {
-    var h = '<h2>Игра с роботами</h2><p class="note">10 миров, в каждом 20 уровней. Обыграй робота, и откроется следующий уровень. Играем по настоящим правилам.</p><div class="wgrid">';
+    var h = '<h2>Игра с роботами</h2><p class="note">10 миров, в каждом 20 уровней. Все миры открыты, можно играть с любым роботом. Но лучше идти по порядку: сначала выигрывай в мире примерно 80% партий, потом переходи в следующий. Если станет тяжело и ты проигрываешь, подсказка посоветует вернуться в мир полегче. Играем по настоящим правилам.</p><div class="wgrid">';
     WORLDS.forEach(function (w, wi) {
       var ok = unlocked(wi * SUB + 1), c = worldWins(wi);
       h += '<a class="wcard' + (ok ? '' : ' locked') + (c === SUB ? ' full' : '') + '" href="' + (ok ? '#play/' + (wi + 1) : '#play') + '"' + (ok ? '' : ' aria-disabled="true"') + '>' +
         '<span class="wpc">' + pcHTML(w.pc) + '</span><span class="wn">' + (wi + 1) + '. ' + esc(w.n) + '</span>' +
-        '<span class="bar" aria-hidden="true"><i style="width:' + (c * 100 / SUB) + '%"></i></span><span class="wc">' + (ok ? c + ' из ' + SUB : 'закрыт') + '</span></a>';
+        '<span class="bar" aria-hidden="true"><i style="width:' + (c * 100 / SUB) + '%"></i></span><span class="wc">' + c + ' из ' + SUB + (rbWorld(wi).g ? ' · результат ' + rbWorld(wi).p + '%' : '') + '</span></a>';
     });
     h += '</div>';
     view.innerHTML = h;
@@ -3172,7 +3192,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var w = WORLDS[wi];
     var h = '<div class="row"><a class="btn alt" href="#play">Все миры</a></div>' +
       '<section class="world"><div class="wh">' + av(w.g) + '<div><h2>' + (wi + 1) + '. ' + esc(w.n) + '</h2><p>' + esc(w.t) + '</p></div></div>' +
-      '<p class="note">Побед в мире: ' + worldWins(wi) + ' из ' + SUB + '</p><div class="lvgrid">';
+      '<p class="note">Побед в мире: ' + worldWins(wi) + ' из ' + SUB + (rbWorld(wi).g ? ' · результат ' + rbWorld(wi).p + '% из ' + rbWorld(wi).g + ' партий' : '') + '</p>' + rbWarn(wi) + '<div class="lvgrid">';
     for (var j = 1; j <= SUB; j++) {
       var n = wi * SUB + j, ok = unlocked(n), s = wins[n] || 0;
       h += '<button class="lvbtn' + (s ? ' won' : '') + '" data-l="' + n + '"' + (ok ? '' : ' disabled') + ' aria-label="Уровень ' + j + ', ' + robotName(n) + (ok ? '' : ', закрыт') + (s ? ', пройден на ' + s + ' из 3 звёзд' : '') + '">' +
@@ -3251,6 +3271,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function openAnalysis() { pending = { start: G.start, recs: G.rec.slice(), flip: you === -1 }; location.hash = '#board'; }
     function finish(text, kind, won) {
       G.over = true; setMsg(text, kind);
+      rbRec(n, won ? 1 : kind === 'bad' ? 0 : 0.5);
+      if (!won && kind === 'bad') { var ww = rbWorld(wi); if (ww.g >= 3 && ww.p < 35) setMsg(text + ' Этот мир пока не для тебя (результат ' + ww.p + '%). Вернись' + (wi > 0 ? ' в мир «' + world0(wi - 1) + '»' : ' и потренируйся') + ', там будет полегче.', 'bad'); }
       if (won) win(); else { sfx(kind === 'bad' ? 'bad' : 'move'); afterGame(); }
     }
     function checkEnd() {
@@ -8244,6 +8266,25 @@ if (typeof module !== 'undefined') module.exports = Eng;
     if (live) { h = '<span class="y2av2 live">' + h + '<b class="emo" aria-hidden="true"></b></span>'; setTimeout(startLive, 60); }
     return h;
   };
+
+  function tileHTML(ti, big) {
+    var c = ti % COLS, r = Math.floor(ti / COLS);
+    var st = 'width:' + (COLS * Z * 100) + '%;height:' + (ROWS * Z * 100) + '%;left:' + (-(c * Z + (Z - 1) / 2) * 100) + '%;top:' + (-(r * Z + (Z - 1) / 2) * 100) + '%;background-image:url(' + SRC + ')';
+    return '<span class="y2ava' + (big ? ' big' : '') + ' pho"><i style="' + st + '"></i></span>';
+  }
+  /* мой портрет: ребёнок выбирает себя в профиле */
+  window.__myAvHTML = function (big) { var ti = lsGet('ukc_myav', null); return typeof ti === 'number' && ti >= 0 && ti < COLS * ROWS ? tileHTML(ti, big) : ''; };
+  window.__avPicker = function (host) {
+    var tab = M.kg.indexOf(lsGet('ukc_myav', -1)) >= 0 ? 'kg' : 'kb';
+    function draw() {
+      var cur = lsGet('ukc_myav', null);
+      host.innerHTML = '<div class="avtabs"><button type="button" class="avt' + (tab === 'kb' ? ' on' : '') + '" data-t="kb">Мальчики</button><button type="button" class="avt' + (tab === 'kg' ? ' on' : '') + '" data-t="kg">Девочки</button>' +
+        (cur != null ? '<button type="button" class="avt avno" data-t="no">Убрать</button>' : '') + '</div><div class="avgrid">' + M[tab].map(function (ti) { return '<button type="button" class="avp' + (ti === cur ? ' on' : '') + '" data-ti="' + ti + '" aria-label="Выбрать портрет">' + tileHTML(ti, false) + '</button>'; }).join('') + '</div>';
+      Array.prototype.forEach.call(host.querySelectorAll('.avt'), function (b) { b.onclick = function () { var t = b.getAttribute('data-t'); if (t === 'no') { lsSet('ukc_myav', null); draw(); return; } tab = t; draw(); }; });
+      Array.prototype.forEach.call(host.querySelectorAll('.avp'), function (b) { b.onclick = function () { lsSet('ukc_myav', +b.getAttribute('data-ti')); try { sfx && sfx('ok'); } catch (e) { } draw(); }; });
+    }
+    draw();
+  };
   /* живой соперник в турнире: покачивается, подмигивает, кривляется, иногда что-то говорит */
   var EM = ['😉', '😜', '🤪', '😎', '🙃', '😄', '🤓', '😏'], SAY = ['Удачи!', 'Ну, давай!', 'Я готов!', 'Играем!', 'Хороший ход?'], liveIv = null, first = true;
   function startLive() {
@@ -8406,10 +8447,15 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     function gst() { var g = lsGet('ukc_y2g', null); if (!g || typeof g !== 'object') g = { r: 1000, w: 0, d: 0, l: 0, done: {} }; if (!g.done) g.done = {}; return g; }
     function tierWins(g, t) { var n = 0; for (var i = 0; i < 100; i++) if (g.done[t + ':' + i] === 1) n++; return n; }
-    function tierOpen(g, t) { return openAll || t === 0 || tierWins(g, t - 1) >= 10; }
+    function tierOpen(g, t) { return true; }
+    function tierStat(g, t) { var n = 0, w = 0, d = 0, l = 0; for (var i = 0; i < 100; i++) { var x = g.done[t + ':' + i]; if (x === 1) { n++; w++; } else if (x === 0.5) { n++; d++; } else if (x === 0) { n++; l++; } } return { n: n, w: w, d: d, l: l, p: n ? Math.round((w + d / 2) / n * 100) : 0 }; }
+    function ratingTier(r) { var t = 0; for (var i = 0; i < TIERS.length; i++) if (r >= parseInt(TIERS[i][1], 10)) t = i; return t; }
+    var OWN = [['Новичок', 1000], ['4 разряд', 1200], ['3 разряд', 1400], ['2 разряд', 1600], ['1 разряд', 1800]];
+    function lowNote(t) { var g = gst(), s = tierStat(g, t); if (s.n < 3 || s.p >= 35) return ''; return t > 0 ? ' Этот уровень пока не для тебя (результат ' + s.p + '%). Вернись на «' + TIERS[t - 1][0] + '» и набери побольше побед.' : ' Результат пока ' + s.p + '%. Потренируйся, порешай задачи и возвращайся.'; }
     /* нарисованные портреты соперников: у каждого своё лицо (кожа, волосы, глаза, очки, шапка, бантик) */
     var SKIN = { 'Азербайджан': ['#f1c8a0', '#e8b98a'], 'Россия': ['#fbdcc3', '#f4cfae'], 'Турция': ['#efc29b', '#e3b088'], 'Казахстан': ['#f0cba3', '#e6bb90'], 'Германия': ['#fde3cf', '#f7d3b8'], 'Япония': ['#f9dcbf', '#f2cfae'], 'Индия': ['#c68a5c', '#b07446'], 'Испания': ['#f3c9a2', '#e9b98c'], 'Грузия': ['#efc59f', '#e5b690'] };
     var HAIR = ['#2b1d14', '#3d2616', '#6a3f1d', '#a8742e', '#d9a441', '#1b1b1f', '#8a3b1e'], BG = ['#cfe8ff', '#ffe1c9', '#d9f2d0', '#f6d5ef', '#fff0b8', '#d9d4ff', '#c9f0ec', '#ffd6d6'];
+    function meAv(big) { try { return window.__myAvHTML ? window.__myAvHTML(big) : ''; } catch (e) { return ''; } }
     function ava2(o, big, live) { return window.__avHTML(o, big, live); }
     function ava2old(o, big) {
       var r = r32(o.t * 977 + o.i * 131 + 5), pk = function (a) { return a[Math.floor(r() * a.length)]; };
@@ -8429,22 +8475,26 @@ if (typeof module !== 'undefined') module.exports = Eng;
       return '<span class="y2ava' + (big ? ' big' : '') + '">' + svg + '</span>';
     }
     function games() {
-      var g = gst();
+      var g = gst(), fresh = g.w + g.d + g.l === 0, rec = ratingTier(g.r);
+      var own = fresh ? '<div class="y2own"><b>Какой у тебя разряд?</b><span>Выбери честно: компьютер подскажет, с какого уровня начать.</span><div class="row">' + OWN.map(function (o, k) { return '<button class="btn alt' + (g.own === o[0] ? ' on' : '') + '" data-own="' + k + '">' + o[0] + '</button>'; }).join('') + '</div></div>' : '';
       var rows = TIERS.map(function (t, i) {
-        var open = tierOpen(g, i), w = tierWins(g, i);
-        var inner = '<span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + t[0] + '</b><small>Рейтинг ' + t[1] + ' · 100 соперников</small></span><span class="y2st">' + (open ? 'побед: ' + w + ' · открыт' : 'закрыт: 10 побед на предыдущем уровне') + '</span>';
-        return open ? '<a class="y2tier open" href="#y2/games/' + i + '">' + inner + '</a>' : '<div class="y2tier">' + inner + '</div>';
+        var s = tierStat(g, i), ready = s.n >= 5 && s.p >= 80;
+        var inner = '<span class="y2no">' + (i + 1) + '</span><span class="y2tt"><b>' + t[0] + (i === rec ? ' <i class="y2rec">⭐ для тебя</i>' : '') + '</b><small>Рейтинг ' + t[1] + ' · 100 соперников</small></span><span class="y2st">' + (s.n ? 'сыграно ' + s.n + ' · результат ' + s.p + '%' + (ready ? ' ✔ можно дальше' : '') : 'ещё не играл') + '</span>';
+        return '<a class="y2tier open" href="#y2/games/' + i + '">' + inner + '</a>';
       }).join('');
-      view.innerHTML = crumbs('Игры с соперниками', '#y2/practice') + '<div class="y2me"><span>Ваш рейтинг<b>' + g.r + '</b></span><span>Победы<b>' + g.w + '</b></span><span>Ничьи<b>' + g.d + '</b></span><span>Поражения<b>' + g.l + '</b></span></div><h3 class="y2h3">Уровни</h3><div class="y2list">' + rows + '</div><p class="y2note">Соперники придуманные: имя, возраст и страна нужны для интереса. Играете против компьютера нужной силы. Чтобы открыть следующий уровень, нужно победить 10 соперников на текущем.</p>';
+      view.innerHTML = crumbs('Игры с соперниками', '#y2/practice') + '<div class="y2me"><span>Ваш рейтинг<b>' + g.r + '</b></span><span>Победы<b>' + g.w + '</b></span><span>Ничьи<b>' + g.d + '</b></span><span>Поражения<b>' + g.l + '</b></span></div>' + own + '<h3 class="y2h3">Уровни</h3><div class="y2list">' + rows + '</div><p class="y2note">Все уровни открыты, играй с кем хочешь. Но лучше идти по порядку: сначала выигрывай на своём уровне примерно 80% партий и только потом переходи на следующий. Если на новом уровне станет тяжело и ты начнёшь проигрывать, компьютер подскажет вернуться на уровень полегче. Соперники придуманные: имя, возраст и страна нужны для интереса.</p>';
+      Array.prototype.forEach.call(view.querySelectorAll('[data-own]'), function (b) { b.onclick = function () { var o = OWN[+b.getAttribute('data-own')], g2 = gst(); g2.own = o[0]; g2.r = o[1]; lsSet('ukc_y2g', g2); games(); }; });
     }
     function tierPage(t) {
-      var g = gst(); t = +t; if (!TIERS[t] || !tierOpen(g, t)) { location.hash = '#y2/games'; return; }
-      var h = '';
+      var g = gst(); t = +t; if (!TIERS[t]) { location.hash = '#y2/games'; return; }
+      var h = '', nt = '', cs = tierStat(g, t), ps = t > 0 ? tierStat(g, t - 1) : null;
+      if (ps && (ps.n < 5 || ps.p < 80)) nt += '<div class="y2warn">Желательно сначала пройти «' + TIERS[t - 1][0] + '»: там нужно выигрывать около 80% партий. ' + (ps.n ? 'Сейчас там ' + ps.p + '% из ' + ps.n + ' партий.' : 'Ты там ещё не играл.') + ' Но можно и сразу попробовать здесь.</div>';
+      if (cs.n >= 3 && cs.p < 35) nt += '<div class="y2warn bad">Здесь пока тяжело: результат ' + cs.p + '%.' + lowNote(t) + '</div>';
       for (var i = 0; i < 100; i++) {
         var o = opp(t, i), d = g.done[t + ':' + i], mk = d === 1 ? '✓' : d === 0.5 ? '½' : d === 0 ? '✕' : '';
         h += '<a class="y2pl ' + (d === 1 ? 'won' : d === 0 ? 'lost' : d === 0.5 ? 'dr' : '') + '" href="#y2/play/' + t + '/' + i + '">' + ava2(o) + '<b>' + esc(o.n) + '</b><small>' + o.age + ' ' + (o.age % 10 === 1 && o.age !== 11 ? 'год' : (o.age % 10 >= 2 && o.age % 10 <= 4 && (o.age < 12 || o.age > 14)) ? 'года' : 'лет') + ' · ' + o.c + '</small><em>' + o.rt + '</em><u>' + mk + '</u></a>';
       }
-      view.innerHTML = crumbs(TIERS[t][0] + ': соперники', '#y2/games') + '<p class="y2lead">Выберите соперника. Номер справа — его рейтинг. Слабые вверху, сильные внизу.</p><div class="y2pls">' + h + '</div>';
+      view.innerHTML = crumbs(TIERS[t][0] + ': соперники', '#y2/games') + nt + '<p class="y2lead">Выберите соперника. Номер справа — его рейтинг. Слабые вверху, сильные внизу.</p><div class="y2pls">' + h + '</div>';
     }
     var TCS = [['Без времени', 0, 0], ['1+0', 1, 0], ['1+1', 1, 1], ['2+1', 2, 1], ['3+0', 3, 0], ['3+2', 3, 2], ['5+0', 5, 0], ['5+3', 5, 3], ['10+0', 10, 0], ['10+5', 10, 5], ['15+10', 15, 10], ['30+0', 30, 0], ['30+20', 30, 20], ['45+15', 45, 15]];
     function chooser(t, i) {
@@ -9208,7 +9258,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function fmtSc(x) { return (x % 1 ? (Math.floor(x) || '') + '½' : String(x)); }
     function trnTableHTML(rows, fin) {
       return '<table class="y2trn"><thead><tr><th>' + (fin ? '#' : '') + '</th><th>Участник</th><th>Партий</th><th>Очки</th></tr></thead><tbody>' + rows.map(function (r, k) {
-        return '<tr class="' + (r.me ? 'me' : '') + '"><td>' + (rows[0].sc <= 0 ? '·' : fin ? (k < 3 ? '<span class="y2md m' + (k + 1) + '">' + (k + 1) + '</span>' : (k + 1)) : '') + '</td><td>' + (r.o ? ava2(r.o) + ' ' : '👤 ') + esc(r.n) + (r.me ? ' (вы)' : '') + (!fin && r.sc > 0 && k < 3 ? ' <span class="y2fire" title="Лидер">🔥</span>' : '') + '</td><td>' + r.g + '</td><td><b>' + fmtSc(r.sc) + '</b></td></tr>'; }).join('') + '</tbody></table>';
+        return '<tr class="' + (r.me ? 'me' : '') + '"><td>' + (rows[0].sc <= 0 ? '·' : fin ? (k < 3 ? '<span class="y2md m' + (k + 1) + '">' + (k + 1) + '</span>' : (k + 1)) : '') + '</td><td>' + (r.o ? ava2(r.o) + ' ' : (meAv() ? meAv() + ' ' : '👤 ')) + esc(r.n) + (r.me ? ' (вы)' : '') + (!fin && r.sc > 0 && k < 3 ? ' <span class="y2fire" title="Лидер">🔥</span>' : '') + '</td><td>' + r.g + '</td><td><b>' + fmtSc(r.sc) + '</b></td></tr>'; }).join('') + '</tbody></table>';
     }
     function trnNext(st) {
       var p = st.p == null ? 3 : st.p, last = st.games.length ? st.games[st.games.length - 1].bi : -1, cnt = [], rec = {};
@@ -9273,7 +9323,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
       if (trnRate() == null) { trnAsk(t); return; }
       var seed = (Math.random() * 1e9) | 0, bots = trnBots(t, seed), me = (typeof kidName === 'function' && kidName()) || 'Вы';
       var cards = bots.map(function (o) { return '<div class="y2wc">' + ava2(o) + '<b>' + esc(o.full) + '</b><small>' + o.rt + '</small></div>'; });
-      cards.push('<div class="y2wc me"><span class="y2you">👤</span><b>' + esc(me) + (me === 'Вы' ? '' : ' (вы)') + '</b><small>вы</small></div>');
+      cards.push('<div class="y2wc me">' + (meAv() || '<span class="y2you">👤</span>') + '<b>' + esc(me) + (me === 'Вы' ? '' : ' (вы)') + '</b><small>вы</small></div>');
       var rs = r32(seed + 5); for (var q = cards.length - 1; q > 0; q--) { var z = Math.floor(rs() * (q + 1)), tmp = cards[q]; cards[q] = cards[z]; cards[z] = tmp; }
       cards = cards.map(function (c, k) { return c.replace('class="y2wc', 'data-n="' + (k + 1) + '" class="y2wc'); });
       view.innerHTML = crumbs('Турнир: ' + catName(t), '#y2/practice') + '<p class="y2lead">Участники уже пришли и ждут начала. Всего 20 человек: вы и 19 соперников. Когда будете готовы, нажмите «Начать турнир»: пройдёт жеребьёвка, и пойдёт время (1 час).</p>' + fairHTML(true) + recHTML(t) + condHTML(t) + ratingInfo(true) + '<div class="y2wg">' + cards.join('') + '</div><div class="y2draw" id="wDraw" style="display:none"></div><div class="row"><button class="btn go" id="wGo">🎲 Начать турнир</button><button class="btn alt" id="wBack">← Другой турнир</button></div>';
@@ -9392,7 +9442,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
           '<text x="70" y="64" text-anchor="middle" font-size="22" font-weight="900" font-family="Arial,sans-serif" fill="' + (k === 0 ? '#b03030' : k === 1 ? '#2a4db0' : '#7a3d12') + '">' + (k + 1) + '</text>' +
           (k === 0 ? '<path d="M50 6 L56 -4 L63 4 L70 -6 L77 4 L84 -4 L90 6Z" fill="url(#' + id + ')" stroke="' + c[2] + '" stroke-width="2" transform="translate(0 6)"/>' : '') + '</svg>';
       }
-      var pod = '<div class="y2pod">' + ord.map(function (k) { var r = rows[k]; return '<div class="y2pc ' + cls[k] + (r.me ? ' me' : '') + '"><div class="y2pav">' + (r.o ? ava2(r.o) : '<span class="y2you">👤</span>') + '</div>' + trophy(k) + '<div class="y2plq"><b>' + esc(r.n) + (r.me ? ' (вы)' : '') + '</b><span>' + fmtSc(r.sc) + ' оч.</span></div><div class="y2blk"><i>🌿</i><em>' + (k + 1) + '</em><i>🌿</i></div></div>'; }).join('') + '</div>';
+      var pod = '<div class="y2pod">' + ord.map(function (k) { var r = rows[k]; return '<div class="y2pc ' + cls[k] + (r.me ? ' me' : '') + '"><div class="y2pav">' + (r.o ? ava2(r.o) : (meAv(true) || '<span class="y2you">👤</span>')) + '</div>' + trophy(k) + '<div class="y2plq"><b>' + esc(r.n) + (r.me ? ' (вы)' : '') + '</b><span>' + fmtSc(r.sc) + ' оч.</span></div><div class="y2blk"><i>🌿</i><em>' + (k + 1) + '</em><i>🌿</i></div></div>'; }).join('') + '</div>';
       var ttl = pl === 1 ? 'Вы победили в турнире!' : pl <= 3 ? 'Вы на пьедестале! ' + pl + ' место' : 'Ваше место: ' + pl + ' из 20';
       function plq(k, r) { return '<div class="y2hp p' + (k + 1) + '"><b>' + esc(r.n) + (r.me ? ' (вы)' : '') + '</b><span>' + fmtSc(r.sc) + ' оч.</span></div>'; }
       var hero = '<div class="y2hero" style="background-image:url(' + (window.__trnImg || '') + ')"><div class="y2hpill">Турнир завершён: ' + catName(st.t) + '</div>' + plq(1, rows[1]) + plq(0, rows[0]) + plq(2, rows[2]) + '</div>';
