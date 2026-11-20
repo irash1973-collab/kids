@@ -8887,7 +8887,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         '<div class="y2task"><div class="y2cap"><b>' + kind(it, L) + '</b><span>' + B + ' баллов · ' + (black ? 'ход чёрных' : 'ход белых') + '</span><button class="y2gear y2gd" id="gdB" aria-label="Список задач" title="Список задач">▦</button><button class="y2gear" id="mnB" aria-label="Меню задачи" title="Меню задачи">⚙</button></div>' +
         '<div class="y2ins" id="ins"><span id="insT"></span><button class="btn alt" id="rpB">🔊 Повторить</button></div>' + boardHTML() +
         '<div class="msg" id="msg" role="status" aria-live="polite"></div>' +
-        '<div class="row y2nv"><button class="btn alt" id="pvB"' + (n <= 1 ? ' disabled' : '') + '>← Предыдущая</button><button class="btn alt" id="nxN"' + (n >= N ? ' disabled' : '') + '>Следующая →</button><button class="btn alt" id="undB">↶ Вернуть ход</button><button class="btn alt" id="resB">Сначала</button><button class="btn alt" id="flB">⇅ Перевернуть</button><button class="btn alt" id="hlB" aria-pressed="false">Подсветка ходов: выкл</button><button class="btn alt" id="vcB" aria-pressed="true">Голос: вкл</button></div><div class="y2time">⏱ Осталось: <b id="tmV">3:00</b></div><div id="after"></div></div>' + foot(L);
+        '<div class="row y2nv"><button class="btn alt" id="pvB"' + (n <= 1 ? ' disabled' : '') + '>← Предыдущая</button><button class="btn alt" id="nxN"' + (n >= N ? ' disabled' : '') + '>Следующая →</button><button class="btn alt" id="undB">↶ Вернуть ход</button><button class="btn alt" id="resB">Сначала</button><button class="btn alt" id="flB">⇅ Перевернуть</button><button class="btn alt" id="hlB" aria-pressed="false">Подсветка ходов: выкл</button><button class="btn alt" id="vcB" aria-pressed="true">Голос: вкл</button></div><div class="y2time">⏱ Осталось: <b id="tmV">3:00</b></div><div id="after"></div></div>' + (n >= N ? (L.play ? '<div class="y2sum" style="margin-top:10px"><h3>Практические задания</h3><p>Позиции каждый раз новые, по образцам урока. Мат нужно поставить самому, компьютер защищается наилучшим образом.</p><div class="row"><a class="btn go" href="#y2/' + L.id + '/p/' + (L.play.some(function (x) { return x[0] === 'BBp'; }) ? 'BBp' : L.play[0][0]) + '">Начать практику</a></div></div>' : '') : '') + foot(L);
       document.getElementById('insT').textContent = insTxt;
       if (window.__y2tm) clearInterval(window.__y2tm);
       var tStart = Date.now(), tvEl = document.getElementById('tmV');
@@ -9176,7 +9176,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function summary(L) {
       var r = rec(L.id), mx = maxPts(L), g = got(L), rows = '';
       for (var i = 1; i <= L.bank.length; i++) rows += '<a class="y2n ' + cls(r[i]) + '" href="#y2/' + L.id + '/t/' + i + '">' + i + '</a>';
-      view.innerHTML = head(L, 'tk') + '<div class="y2sum"><h3>Итог урока</h3><p class="y2big">' + Math.round(g * 100 / mx) + '%</p><p>Набрано <b>' + g + '</b> баллов из ' + mx + '. Чисто: ' + counts(L).ok + ', с ошибками: ' + counts(L).half + ', не решено: ' + counts(L).bad + '.</p><div class="y2grid">' + rows + '</div><p class="y2key"><i class="ok"></i> верно с первой попытки <i class="half"></i> с ошибками <i class="bad"></i> не решена</p><div class="row"><a class="btn" href="#y2">К списку тем</a></div></div>';
+      view.innerHTML = head(L, 'tk') + '<div class="y2sum"><h3>Итог урока</h3><p class="y2big">' + Math.round(g * 100 / mx) + '%</p><p>Набрано <b>' + g + '</b> баллов из ' + mx + '. Чисто: ' + counts(L).ok + ', с ошибками: ' + counts(L).half + ', не решено: ' + counts(L).bad + '.</p><div class="y2grid">' + rows + '</div><p class="y2key"><i class="ok"></i> верно с первой попытки <i class="half"></i> с ошибками <i class="bad"></i> не решена</p><div class="row"><a class="btn" href="#y2">К списку тем</a></div></div>' + (L.play ? '<div class="y2sum" style="margin-top:10px"><h3>Практические задания</h3><p>Позиции каждый раз новые, по образцам урока. Мат нужно поставить самому, компьютер защищается наилучшим образом.</p><div class="row"><a class="btn go" href="#y2/' + L.id + '/p/' + (L.play.some(function (x) { return x[0] === 'BBp'; }) ? 'BBp' : L.play[0][0]) + '">Начать практику</a></div></div>' : '');
     }
 
     /* ---------- маршрут ---------- */
@@ -9591,7 +9591,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var BK = [["8/8/B7/8/5B2/6K1/8/6k1 w - - 0 1", "f4e3 g1h1 a6b7", 1040], ["4B3/8/8/8/8/K7/3B4/1k6 w - - 0 1", "e8g6 b1a1 d2c3", 1050], ["8/8/3B4/8/8/7B/k1K5/8 w - - 0 1", "h3e6 a2a1 d6e5", 1060], ["8/6B1/8/8/8/6K1/4B3/6k1 w - - 0 1", "g7d4 g1h1 e2f3", 1070], ["8/8/B7/8/8/B6K/8/6k1 w - - 0 1", "a3c5 g1h1 a6b7", 1080], ["7B/8/B7/8/8/8/5K1k/8 w - - 0 1", "a6f1 h2h1 f1g2 h1h2 h8e5", 1210], ["8/8/8/B7/8/8/4B3/k1K5 w - - 0 1", "a5b4 a1a2 e2c4 a2a1 b4c3", 1220], ["8/8/7B/8/6B1/8/k1K5/8 w - - 0 1", "h6c1 a2a1 c1b2 a1a2 g4e6", 1230], ["8/8/B7/B7/8/8/2K5/k7 w - - 0 1", "a5b4 a1a2 a6c4 a2a1 b4c3", 1240], ["B4B1k/8/5K2/8/8/8/8/8 w - - 0 1", "f6f7 h8h7 a8e4 h7h8 f8g7", 1250], ["8/8/7B/8/8/8/8/3B1K1k w - - 0 1", "d1g4 h1h2 h6f4 h2h1 g4f3", 1260], ["8/3B4/8/8/8/7K/8/2B4k w - - 0 1", "d7b5 h1g1 c1e3 g1h1 b5c6", 1270], ["8/8/7B/8/2B2K2/8/8/7k w - - 0 1", "f4g3 h1g1 h6e3 g1h1 c4d5", 1280], ["8/2B5/8/8/8/1B4K1/8/7k w - - 0 1", "b3c4 h1g1 c7b6 g1h1 c4d5", 1290], ["k1B5/8/2K5/B7/8/8/8/8 w - - 0 1", "c6c7 a8a7 a5b6 a7a8 c8b7", 1300], ["B7/8/7B/8/8/8/k1K5/8 w - - 0 1", "h6c1 a2a1 c1b2 a1a2 a8d5", 1310], ["5B2/8/8/8/K7/8/k7/5B2 w - - 0 1", "f8a3 a2b1 a4b3 b1a1 a3b2 a1b1 f1d3", 1440], ["8/8/1B6/8/4B3/2K5/k7/8 w - - 0 1", "b6c5 a2a1 c3c2 a1a2 e4d5 a2a1 c5d4", 1450], ["1k6/4B3/K7/8/8/8/8/5B2 w - - 0 1", "a6b6 b8c8 f1h3 c8b8 e7d6 b8a8 h3g2", 1460], ["2B5/8/8/8/7K/8/7k/2B5 w - - 0 1", "c8h3 h2g1 h4g3 g1h1 h3g2 h1g1 c1e3", 1470], ["8/8/6B1/8/3B4/5K2/7k/8 w - - 0 1", "g6f5 h2h1 f3f2 h1h2 d4e5 h2h1 f5e4", 1480], ["6k1/3B4/7K/8/8/8/8/2B5 w - - 0 1", "h6g6 g8f8 c1a3 f8g8 d7e6 g8h8 a3b2", 1490]];
     var STL = [["8/3B4/8/8/8/7K/8/2B4k w - - 0 1", ["c1e3"]], ["k7/8/K6B/7B/8/8/8/8 w - - 0 1", ["h6f4"]], ["8/2B5/B7/8/8/K7/8/k7 w - - 0 1", ["a6d3"]], ["B5k1/4K3/8/4B3/8/8/8/8 w - - 0 1", ["a8e4"]], ["8/1B4B1/8/8/1K6/8/k7/8 w - - 0 1", ["b7e4"]]];
     var LB = {
-      id: 'bb2', play: [['BBo', 'Оппозиция, белыми'], ['BBoB', 'Оппозиция, чёрными'], ['BB', 'Произвольные, белыми'], ['BBB', 'Произвольные, чёрными']], t: 'Мат двумя слонами', d: 'Как выгнать короля в угол и поставить мат двумя слонами. Пат, правило 50 ходов, схема матования и задачи на мат в 2–4 хода.', bank: BK, mate: true, ask: 'Поставьте мат. Следите за патом!', slides: [
+      id: 'bb2', play: [['BBo', 'Оппозиция, белыми'], ['BBoB', 'Оппозиция, чёрными'], ['BBp', 'Практика, белыми'], ['BBpB', 'Практика, чёрными'], ['BB', 'Разбросанные, белыми'], ['BBB', 'Разбросанные, чёрными']], t: 'Мат двумя слонами', d: 'Как выгнать короля в угол и поставить мат двумя слонами. Пат, правило 50 ходов, схема матования и задачи на мат в 2–4 хода.', bank: BK, mate: true, ask: 'Поставьте мат. Следите за патом!', slides: [
         { h: '1. Материал и условия мата', p: ['Для мата необходимы король и два слона разного цвета: один действует по светлым, другой по тёмным полям. Только так слоны совместно контролируют поля обоих цветов.', 'Один слон, а также два слона без участия короля, мата не дают. Мат здесь — результат согласованной работы трёх фигур.'], fen: '7k/8/8/8/8/8/8/2B1KB2 w - - 0 1' },
         { h: '2. Где возможен мат', p: ['Мат двумя слонами ставится только в углу доски или на полях, смежных с угловым. Таких полей двенадцать: a1, a2, b1, g1, h1, h2, a7, a8, b8, g8, h7, h8.', 'Поэтому стратегическая задача сильнейшей стороны — последовательно оттеснить короля соперника к краю, а затем загнать в угол. В центре мат невозможен.'], fen: '7k/8/6K1/3BB3/8/8/8/8 b - - 0 1' },
         { h: '3. Взаимодействие слонов', p: ['Наиболее эффективна расстановка слонов на смежных диагоналях. Они образуют барьер, который король не может преодолеть, и одновременно ограничивают его подвижность.', 'На диаграмме — матовая позиция: слоны на d5 и e5 расположены рядом, король b6 контролирует поля a7 и b7, у короля a8 нет ходов.'], fen: 'k7/8/1K6/3BB3/8/8/8/8 b - - 0 1' },
@@ -13894,6 +13894,7 @@ window.__ED={"qn":[[15,2,55,47],[1,15,57,50],[13,3,53,60],[51,57,35,36],[30,62,4
     R: { t: 'Мат ладьёй и королём', pcs: [4], tip: 'Сначала оттесни короля к краю: ладья отрезает его линией. Потом подведи своего короля (оппозиция) и ставь мат ладьёй. Следи за патом!' },
     RR: { t: 'Мат двумя ладьями', pcs: [4, 4], tip: 'Ладьи ходят по очереди: одна даёт шах, другая отрезает следующую линию. Так король дойдёт до края, и будет мат. Береги ладьи от короля!' },
     BB: { t: 'Мат двумя слонами', pcs: [3, 3], scatter: true, tip: 'Слоны на смежных диагоналях отрезают королю путь. Оттесните короля к краю, затем в угол, подведите своего короля и удерживайте оппозицию. Следите за патом.' },
+    BBp: { t: 'Мат двумя слонами: произвольная практика', vary: true, pcs: [3, 3], tip: 'Позиция каждый раз новая, но построена по знакомым образцам: короли рядом, слоны сбоку. Выведите слонов на смежные диагонали, оттесните короля к краю, затем в угол. Сколько ходов потребуется, неважно, главное — не поставить пат и успеть до 50-го хода.' },
     BBo: { t: 'Мат двумя слонами: короли в оппозиции', fixed: ["3k4/6BB/3K4/8/8/8/8/8 w - - 0 1", "2k5/6B1/2K3B1/8/8/8/8/8 w - - 0 1", "8/8/8/3k2B1/6B1/3K4/8/8 w - - 0 1", "8/8/3k4/8/8/8/8/2B2BK1 w - - 0 1"], pcs: [3, 3], tip: 'Короли стоят в оппозиции, слоны сбоку. Расположите слоны на смежных диагоналях, оттесните короля к краю и далее в угол, удерживайте оппозицию и следите за патом. Для мата достаточно 18–20 ходов.' },
     BN: { t: 'Мат слоном и конём', pcs: [3, 2], tip: 'Это самый трудный мат! Король чёрных должен оказаться в углу того цвета, по которому ходит твой слон. Загоняй его туда королём, слоном и конём вместе. Следи за патом!' },
     QR: { t: 'Мат ферзём и ладьёй', pcs: [5, 4], tip: 'Действуй как двумя ладьями: ферзь и ладья по очереди отрезают линии и подгоняют короля к краю. Следи за патом!' } };
@@ -13934,6 +13935,31 @@ window.__ED={"qn":[[15,2,55,47],[1,15,57,50],[13,3,53,60],[51,57,35,36],[30,62,4
       return pos;
     }
     return E.fromFEN('8/8/8/4k3/8/8/2B5/B3K3 w - - 0 1');
+  }
+
+  /* произвольная практика: образцы из учебных позиций, каждый раз сдвиг, поворот и небольшое изменение */
+  var BBT = ["3k4/6BB/3K4/8/8/8/8/8", "2k5/6B1/2K3B1/8/8/8/8/8", "8/8/8/3k2B1/6B1/3K4/8/8", "8/8/3k4/8/8/8/8/2B2BK1", "8/1B2k3/1B6/4K3/8/8/8/8", "8/8/8/8/3k4/8/2K1B3/4B3", "8/8/2k5/8/2K5/8/4BB2/8"];
+  function varyBB(r) {
+    for (var tr = 0; tr < 4000; tr++) {
+      var f = BBT[Math.floor(r() * BBT.length)], pc = [], row = 0, col = 0;
+      for (var i = 0; i < f.length; i++) { var ch = f[i]; if (ch === '/') { row++; col = 0; } else if (/\d/.test(ch)) col += +ch; else { pc.push([col, row, ch]); col++; } }
+      var minx = 9, maxx = -1, miny = 9, maxy = -1; pc.forEach(function (q) { minx = Math.min(minx, q[0]); maxx = Math.max(maxx, q[0]); miny = Math.min(miny, q[1]); maxy = Math.max(maxy, q[1]); });
+      var dx = Math.floor(r() * (8 - (maxx - minx)) ) - minx, dy = Math.floor(r() * (8 - (maxy - miny))) - miny, t = Math.floor(r() * 8);
+      var pcs = pc.map(function (q) { var x = q[0] + dx, y = q[1] + dy; if (t & 1) x = 7 - x; if (t & 2) y = 7 - y; if (t & 4) { var z = x; x = y; y = z; } return { x: x, y: y, c: q[2] }; });
+      if (r() < .6) { var m = pcs[Math.floor(r() * 4)]; m.x += Math.floor(r() * 3) - 1; m.y += Math.floor(r() * 3) - 1; }
+      if (r() < .3) { var m2 = pcs[Math.floor(r() * 4)]; m2.x += Math.floor(r() * 3) - 1; m2.y += Math.floor(r() * 3) - 1; }
+      var ok = pcs.every(function (q) { return q.x >= 0 && q.x < 8 && q.y >= 0 && q.y < 8; }); if (!ok) continue;
+      var b = new Int8Array(64), seen = {}, wk = -1, bk = -1, bs = [];
+      for (var k = 0; k < 4; k++) { var sq = pcs[k].y * 8 + pcs[k].x; if (seen[sq]) { ok = false; break; } seen[sq] = 1; var c = pcs[k].c; if (c === 'K') { b[sq] = 6; wk = sq; } else if (c === 'k') { b[sq] = -6; bk = sq; } else { b[sq] = 3; bs.push(sq); } }
+      if (!ok || cheb(wk, bk) < 2 || bs.length !== 2) continue;
+      if (((bs[0] >> 3) + (bs[0] & 7) + (bs[1] >> 3) + (bs[1] & 7)) % 2 === 0) continue;
+      var pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }, bp = { b: b, turn: -1, castle: 0, ep: -1, half: 0 };
+      if (E.inCheck(bp) || E.status(pos) !== 'ok' || E.status(bp) !== 'ok') continue;
+      if (bs.some(function (x) { return cheb(x, bk) === 1; })) continue;
+      if (mateIn1(pos) || mateIn2(pos)) continue;
+      return pos;
+    }
+    return E.fromFEN('3k4/6BB/3K4/8/8/8/8/8 w - - 0 1');
   }
 
   /* ---------- общая партия против компьютера: правила 50 ходов, троекратное повторение, пат ---------- */
@@ -13986,9 +14012,9 @@ window.__ED={"qn":[[15,2,55,47],[1,15,57,50],[13,3,53,60],[51,57,35,36],[30,62,4
   }
   function mateCfg(key, black) {
     var c = MG[key];
-    function base(lv, r) { return c.fixed ? E.fromFEN(c.fixed[((lv || 1) - 1) % c.fixed.length]) : c.scatter ? scatterBB(r) : mgPos(c.pcs, r, c.ex); }
+    function base(lv, r) { return c.fixed ? E.fromFEN(c.fixed[((lv || 1) - 1) % c.fixed.length]) : c.vary ? varyBB(r) : c.scatter ? scatterBB(r) : mgPos(c.pcs, r, c.ex); }
     function judge(cur) { var st = E.status(cur); if (st === 'mate') return black && cur.turn === -1 ? { msg: 'Тебе поставили мат.' } : { win: true, msg: 'Мат! Ты поставил мат за ' + '' + 'несколько ходов. Молодец!' }; if (st === 'stalemate') return { msg: 'Пат! Это ничья, мат не поставлен.' }; if (E.insufficient(cur)) return { msg: 'Фигур не осталось: мат уже не поставить.' }; return null; }
-    return { side: black ? -1 : 1, title: c.t + (black ? ' (за чёрных)' : ''), tip: c.tip, limit: 50, say: (black ? 'Ты играешь чёрными. Поставь мат белому королю.' : 'Ты играешь белыми. Поставь мат чёрному королю.') + ' Нельзя ставить пат, повторять позицию три раза и играть дольше 50 ходов. Компьютер защищается всерьёз!', sub: black ? 'мат, чёрные' : 'мат',
+    return { side: black ? -1 : 1, title: c.t + (black ? ' (за чёрных)' : ''), tip: c.tip, limit: c.vary ? 0 : 50, say: (black ? 'Ты играешь чёрными. Поставь мат белому королю.' : 'Ты играешь белыми. Поставь мат чёрному королю.') + (c.vary ? ' Постарайся поставить мат до 50-го хода, иначе будет ничья по правилу 50 ходов. Следи за патом. Компьютер защищается всерьёз!' : ' Нельзя ставить пат, повторять позицию три раза и играть дольше 50 ходов. Компьютер защищается всерьёз!'), sub: black ? 'мат, чёрные' : 'мат',
       pos: function (lv, r) { var p = base(lv, r); return black ? mirPos(p) : p; },
       judge: judge,
       reply: function (cur, hh) { return strongReply(cur, hh); } };
@@ -14103,7 +14129,9 @@ window.__ED={"qn":[[15,2,55,47],[1,15,57,50],[13,3,53,60],[51,57,35,36],[30,62,4
     { id: 'QR', t: 'Мат ферзём и ладьёй', d: 'Ферзь и ладья отрезают короля и ставят мат.', mg: 'QR' },
     { id: 'BBo', t: 'Мат двумя слонами: короли в оппозиции', d: 'Король напротив короля, слоны сбоку. Играешь белыми. Компьютер защищается наилучшим образом.', mg: 'BBo' },
     { id: 'BBoB', t: 'Мат двумя слонами: короли в оппозиции, за чёрных', d: 'Те же позиции, но ты играешь чёрными и матуешь белого короля.', mg: 'BBo', black: 1 },
-    { id: 'BB', t: 'Мат двумя слонами: произвольные позиции', d: 'Фигуры разбросаны по всей доске, каждый раз новая позиция. Играешь белыми.', mg: 'BB' },
+    { id: 'BBp', t: 'Мат двумя слонами: произвольная практика', d: 'Позиции по образцам урока, каждый раз новые. Играешь белыми.', mg: 'BBp' },
+    { id: 'BBpB', t: 'Мат двумя слонами: произвольная практика, за чёрных', d: 'Позиции по образцам урока, каждый раз новые. Ты играешь чёрными.', mg: 'BBp', black: 1 },
+    { id: 'BB', t: 'Мат двумя слонами: разбросанные фигуры', d: 'Фигуры разбросаны по всей доске, каждый раз новая позиция. Играешь белыми.', mg: 'BB' },
     { id: 'BBB', t: 'Мат двумя слонами: произвольные позиции, за чёрных', d: 'Фигуры разбросаны по всей доске. Ты играешь чёрными.', mg: 'BB', black: 1 },
     { id: 'BN', t: 'Мат слоном и конём', d: 'Самый трудный мат: король чёрных должен попасть в угол своего цвета.', mg: 'BN' },
     { id: 'qn', t: 'Ферзь против коня', d: 'У чёрных король и конь. Выиграй коня или поставь мат: позиции выигрышные.', en: 'qn' },
