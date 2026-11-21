@@ -137,6 +137,13 @@ a.card:hover { border-color: var(--red); }
 }
 .sq { position: relative; min-width: 0; min-height: 0; overflow: hidden; border: 0; padding: 0; display: grid; place-items: center; font-size: 9.6cqw; line-height: 1; background: var(--sq-dark); color: inherit; }
 .sq.l { background: var(--sq-light); }
+/* запасной вариант для старых планшетов без CSS-сетки (iPad mini 1 и подобные) */
+@supports not (display: grid) {
+  .board { display: flex; flex-wrap: wrap; align-content: flex-start; }
+  .board > .sq { display: block; flex: none; width: 12.5%; height: 0; padding: 0 0 12.5% 0; position: relative; }
+  .board > .sq > .pcs { position: absolute; left: 6%; top: 6%; width: 88%; height: 88%; }
+  .board > .sq > .mk.em { font-size: 24px; }
+}
 .sq.sel { box-shadow: inset 0 0 0 4px var(--yellow); }
 .sq.hint { animation: pulse 1s ease-in-out infinite; }
 .sq.last::after { content: ''; position: absolute; inset: 0; background: rgba(255, 194, 26, .38); }
