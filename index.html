@@ -561,11 +561,13 @@ body { padding-bottom: 96px; }
 @media (min-width: 900px) and (min-aspect-ratio: 1/1) {
   .cols { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 22px; align-items: start; }
   .colB { position: sticky; top: 6px; }
-  .cols .boardbox { width: var(--bwu, clamp(300px, calc(100vh - 300px), 760px)); }
+  .cols .boardbox { width: var(--bwu, clamp(320px, calc(100vh - 90px), 760px)); }
+  .colT .bsize { justify-content: flex-start; margin: 14px 0 0; }
   .wrap:has(.cols) { max-width: min(1360px, 98vw); }
   .colT .snav { position: static; background: none; justify-content: flex-start; padding: 10px 0; }
 }
 .msg:empty { display: none; }
+}
 
 /* ===== Второй год: строгий вид ===== */
 body.y2 { --bg: #edf1f5; --card: #ffffff; --line: #cfd8e3; --red: #b3342c; --yellow: #d9d9dc; }
@@ -10115,7 +10117,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
         busy = true;
         var bs = P.querySelector(':scope > .bsize'), wrap = document.createElement('div'), T = document.createElement('div'), B = document.createElement('div');
         wrap.className = 'cols'; T.className = 'colT'; B.className = 'colB';
-        Array.prototype.slice.call(P.children).forEach(function (k) { (k === bs || k === bb ? B : T).appendChild(k); });
+        Array.prototype.slice.call(P.children).forEach(function (k) { if (k === bs) return; (k === bb ? B : T).appendChild(k); }); if (bs) T.appendChild(bs);
         var pv = [], q = P.previousElementSibling; while (q && (q.tagName === 'H2' || q.classList.contains('lvrow') || q.classList.contains('seg'))) { pv.unshift(q); q = q.previousElementSibling; }
         pv.slice().reverse().forEach(function (k) { T.insertBefore(k, T.firstChild); });
         wrap.appendChild(T); wrap.appendChild(B); P.appendChild(wrap);
