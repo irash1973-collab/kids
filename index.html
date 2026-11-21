@@ -8524,7 +8524,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function fmt(ms) { ms = Math.max(0, ms); var sec = Math.ceil(ms / 1000), m = Math.floor(sec / 60), ss = sec % 60; return m + ':' + (ss < 10 ? '0' : '') + ss; }
     function play(t, i, tc, cu, colOv, trn) {
       var g0 = gst(); t = +t; i = +i; if (!cu && (!TIERS[t] || (!trn && !tierOpen(g0, t)) || i < 0 || i > 99)) { location.hash = trn ? '#y2/tourney' : '#y2/games'; return; }
-      var o = cu || opp(t, i), meW = cu ? cu.meW : (colOv != null ? colOv : i % 2 === 0), lv = cu ? cu.lv : (trn && trn.nov ? Math.min(30, Math.max(12, lvOf(o.rt) + 4 + Math.round(o.i / 99 * 4)) + trnBonus()) : trn ? Math.min(30, yLv(o) + 1 + Math.round(o.i / 99 * 2) + trnBonus()) : yLv(o));
+      var o = cu || opp(t, i), meW = cu ? cu.meW : (colOv != null ? colOv : i % 2 === 0), lv = cu ? cu.lv : (trn && trn.nov ? Math.max(1, Math.min(12, lvOf(o.rt) - 2 + Math.round(o.i / 99 * 3) + trnAdj())) : trn ? Math.max(1, Math.min(30, yLv(o) + 1 + Math.round(o.i / 99 * 2) + trnAdj())) : yLv(o));
       if (trn && trn.o && !cu) { var o0 = o, oc = {}; for (var ok in trn.o) oc[ok] = trn.o[ok]; oc.rt = o0.rt; o = oc; }
       var pos = E.fromFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'), S = { pos: pos, sel: null, targets: [], last: null, hint: null, flip: !meW, coords: true, mark: {}, hl: null }, tg = [], keys = {}, hm = 0, mv = [], ph = [], mm = [], over = false, busy = false, resigned = false, gen = Math.random();
       keys[E.key(pos)] = 1;
@@ -8568,14 +8568,18 @@ if (typeof module !== 'undefined') module.exports = Eng;
       function after() { var r = result(); if (r) { finish(r === 'win' ? 'win' : r === 'loss' ? 'loss' : 'draw', r.indexOf('draw-') === 0 ? r.slice(5) : ''); return true; } return false; }
       function engine() {
         if (over) return; busy = true; sm(esc(o.n) + ' думает…'); var my = gen;
+        /* бот тратит время на часах, как живой игрок: заметное время на ход, меньше в дебюте и в цейтноте */
+        var tT0 = Date.now(), tTgt = 0;
+        if (timed && !cu) { var avg = tc[1] * 60000 / 90 + inc * 0.3, f = 0.35 + Math.random() * 1.25; if (mv.length < 10) f *= 0.45; if (T.op < tc[1] * 60000 * 0.2) f *= 0.35; tTgt = Math.min(avg * f, Math.max(0, T.op * 0.06), 9000); }
         later(function () {
           if (over || my !== gen) return;
-          var rtv = cu ? (lv < 5 ? 600 + (lv - 1) * 100 : lv < 14 ? 1000 + Math.round((lv - 5) * 45 / 5) * 5 : lv < 18 ? 1400 + (lv - 14) * 100 : lv < 23 ? 1800 + (lv - 18) * 100 : 2300 + (lv - 23) * 50) : o.rt + (trn ? trnBonus() * 60 : 0);
+          var rtv = cu ? (lv < 5 ? 600 + (lv - 1) * 100 : lv < 14 ? 1000 + Math.round((lv - 5) * 45 / 5) * 5 : lv < 18 ? 1400 + (lv - 14) * 100 : lv < 23 ? 1800 + (lv - 18) * 100 : 2300 + (lv - 23) * 50) : o.rt + (trn ? (trn.nov ? Math.min(0, trnAdj() * 60) : trnAdj() * 60) : 0);
           function mv2(m) {
             if (over || my !== gen) return;
             if (!m) { var L = E.legal(S.pos); m = L[Math.floor(Math.random() * L.length)]; }
             if (!m) { after(); return; }
-            go2(m);
+            var tw = tTgt - (Date.now() - tT0);
+            if (tw > 80) { later(function () { if (over || my !== gen) return; go2(m); }, tw); } else go2(m);
           }
           var bk = ((rtv >= 1000 && mv.length < 20 && Math.random() < 0.92) || (rtv >= 600 && mv.length < 8 && Math.random() < 0.85)) ? bookPick(S.pos) : null;
           if (bk && bk.m) { return mv2(bk.m); }
@@ -9288,6 +9292,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     window.__trnT = { bots: function (t, sd) { return trnBots(t, sd); }, next: trnNext };
     /* чем больше ребёнок выигрывает, тем сильнее следующие соперники */
+    /* подстройка силы бота под ребёнка: каждая победа чуть-чуть усиляет соперников, поражения заметно ослабляют (если проиграл почти всё — боты намного слабее) */
+    function trnAdj() { var st = trnGet(); if (!st) return 0; var w = 0, l = 0; (st.games || []).forEach(function (g) { if (g.res === 'win') w++; else if (g.res === 'loss') l++; }); var net = w - l; if (net >= 0) return Math.min(5, Math.round(net * 0.5 + (st.streak || 0) * 0.3)); return Math.max(-9, Math.round(net * 1.6)); }
     function trnBonus() { var st = trnGet(); if (!st) return 0; var w = 0, l = 0; (st.games || []).forEach(function (g) { if (g.res === 'win') w++; else if (g.res === 'loss') l++; }); return Math.max(0, Math.min(8, Math.round((w - l) / 3 + (st.streak || 0) / 2))); }
     function trnFinishGame(st, res, info) {
       if (!st.cur) return;
