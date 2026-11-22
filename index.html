@@ -18308,22 +18308,34 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
 
 </script>
 <script>
-/* Старые браузеры без CSS Grid: размеры клеток считаем сами (процентные отступы там считаются от высоты и тянут клетки) */
+/* Старые браузеры (iPad с Safari до 15): нет aspect-ratio, clamp() и иногда CSS Grid. Размеры доски считаем сами. */
 (function () {
   try {
-    var noGrid = !(window.CSS && CSS.supports && CSS.supports('display', 'grid'));
-    if (!noGrid && location.search.indexOf('forceflex') < 0) return;
+    var sup = function (p, v) { try { return !!(window.CSS && CSS.supports && CSS.supports(p, v)); } catch (e) { return false; } };
+    var force = location.search.indexOf('forceflex') >= 0;
+    var noGrid = !sup('display', 'grid'), noAR = !sup('aspect-ratio', '1 / 1'), noClamp = !sup('width', 'clamp(1px, 2px, 3px)');
+    if (!(noGrid || noAR || noClamp || force)) return;
+    var root = document.documentElement, mine = '';
     function fix() {
+      if (noClamp || force) {
+        var cur = root.style.getPropertyValue('--bwu');
+        if (!cur || cur === mine) {
+          var w = Math.max(320, Math.min(760, (window.innerHeight || 700) - 90)) + 'px';
+          if (w !== cur) { root.style.setProperty('--bwu', w); mine = w; }
+        }
+      }
       var bs = document.querySelectorAll('.board');
       for (var i = 0; i < bs.length; i++) {
-        var b = bs[i], w = b.clientWidth;
-        if (!w) continue;
-        var s = Math.floor(w / 8), sq = b.children;
-        for (var j = 0; j < sq.length; j++) {
-          var e = sq[j];
-          if (!e.classList || !e.classList.contains('sq')) continue;
-          if (e.__s !== s) {
-            e.style.width = s + 'px'; e.style.height = s + 'px'; e.style.padding = '0'; e.style.flex = 'none'; e.__s = s;
+        var b = bs[i], bw = b.clientWidth;
+        if (!bw) continue;
+        var s = Math.floor(bw / 8);
+        if (noAR || force) { var h = bw + 'px'; if (b.style.height !== h) b.style.height = h; }
+        if (noGrid || force) {
+          var sq = b.children;
+          for (var j = 0; j < sq.length; j++) {
+            var e = sq[j];
+            if (!e.classList || !e.classList.contains('sq')) continue;
+            if (e.__s !== s) { e.style.width = s + 'px'; e.style.height = s + 'px'; e.style.padding = '0'; e.style.flex = 'none'; e.__s = s; }
           }
         }
       }
