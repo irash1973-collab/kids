@@ -2426,6 +2426,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
     if (AC && AC.state === 'suspended') { try { AC.resume(); } catch (e) {} }
     return AC;
   }
+  (function () { /* Safari/Mac: разблокировка звука первым же касанием и повторно, если контекст уснул */
+    function un() { try { if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if (AC.state !== 'running') AC.resume(); var b = AC.createBuffer(1, 1, 22050), src = AC.createBufferSource(); src.buffer = b; src.connect(AC.destination); src.start(0); } catch (e) {} }
+    ['pointerdown', 'touchstart', 'mousedown', 'keydown', 'click'].forEach(function (ev) { document.addEventListener(ev, un, true); });
+    document.addEventListener('visibilitychange', function () { try { if (AC && AC.state !== 'running') AC.resume(); } catch (e) {} });
+  })();
   function tone(f, at, dur, type, vol) {
     var c = ac(); if (!c) return;
     var o = c.createOscillator(), g = c.createGain(), t0 = c.currentTime + at;
