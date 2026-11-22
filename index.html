@@ -14209,11 +14209,14 @@ window.__ED={"qn":[[15,2,55,47],[1,15,57,50],[13,3,53,60],[51,57,35,36],[30,62,4
   }
 
   /* ---------- сильная защита: Stockfish (если не загрузился — встроенный движок) ---------- */
-  function strongReply(cur, hh) { /* только Stockfish: слабой замены нет, при сбое игра останавливается с понятным сообщением */
-    if (typeof SF === 'undefined') return Promise.reject(new Error('nosf'));
-    return SF.load().then(function (ok) {
-      if (!ok) throw new Error('nosf');
-      return SF.move(E.toFEN(cur), 350, 0, 20).then(function (r) { var m = r && r.best ? uciMove(cur, r.best) : null; if (!m) throw new Error('nosf'); return m; });
+  function strongReply(cur, hh) { /* Stockfish; если не загрузился (старые iPad) — встроенный движок */
+    function own() { var r = E.think(cur, { depth: 7, ms: 500, hist: hh }), m = r && r.move; if (!m) { var lg = E.legal(cur); m = lg[0]; } if (!m) throw new Error('nomove'); return m; }
+    if (typeof SF === 'undefined' || SF.failed()) return new Promise(function (res) { setTimeout(function () { res(own()); }, 400); });
+    var ld = SF.load().then(function (ok) { return !!ok; });
+    var tm = SF.ok() ? ld : Promise.race([ld, new Promise(function (r) { setTimeout(function () { r(false); }, 7000); })]);
+    return tm.then(function (ok) {
+      if (!ok) return own();
+      return SF.move(E.toFEN(cur), 350, 0, 20).then(function (r) { var m = r && r.best ? uciMove(cur, r.best) : null; return m || own(); }, function () { return own(); });
     });
   }
   /* ---------- проверенные выигрышные позиции: ферзь/ладья против коня, слона, ладьи, пешки ---------- */
