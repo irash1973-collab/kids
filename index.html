@@ -18307,3 +18307,29 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
 })();
 
 </script>
+<script>
+/* Старые браузеры без CSS Grid: размеры клеток считаем сами (процентные отступы там считаются от высоты и тянут клетки) */
+(function () {
+  try {
+    var noGrid = !(window.CSS && CSS.supports && CSS.supports('display', 'grid'));
+    if (!noGrid && location.search.indexOf('forceflex') < 0) return;
+    function fix() {
+      var bs = document.querySelectorAll('.board');
+      for (var i = 0; i < bs.length; i++) {
+        var b = bs[i], w = b.clientWidth;
+        if (!w) continue;
+        var s = Math.floor(w / 8), sq = b.children;
+        for (var j = 0; j < sq.length; j++) {
+          var e = sq[j];
+          if (!e.classList || !e.classList.contains('sq')) continue;
+          if (e.__s !== s) {
+            e.style.width = s + 'px'; e.style.height = s + 'px'; e.style.padding = '0'; e.style.flex = 'none'; e.__s = s;
+          }
+        }
+      }
+    }
+    setInterval(fix, 250);
+    window.addEventListener('resize', fix);
+  } catch (e) {}
+})();
+</script>
