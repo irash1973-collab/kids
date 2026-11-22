@@ -18320,7 +18320,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
       if (noClamp || force) {
         var cur = root.style.getPropertyValue('--bwu');
         if (!cur || cur === mine) {
-          var w = Math.max(320, Math.min(760, (window.innerHeight || 700) - 90)) + 'px';
+          var w = Math.max(280, Math.min(720, (window.innerHeight || 700) - 180)) + 'px';
           if (w !== cur) { root.style.setProperty('--bwu', w); mine = w; }
         }
       }
