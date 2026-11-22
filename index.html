@@ -16960,6 +16960,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
   window.__y34 = function (id, parts) {
     var Z = Y[id], v = document.getElementById('view');
     if (parts[1] === 'youtube') { window.__yt(id); return; }
+    if (parts[1] === 'news') { window.__fidenews(id); return; }
     if (parts[1] === 'extra') { window.__extra(id); return; }
     if (parts[1] === 'pos') {
       var PL = window.__ppos, SK = ' RR QR ', key = 'ukc_ppdone_' + id, dn = lsGet(key, {}) || {};
@@ -17004,6 +17005,9 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
       '<a class="y2cell" href="#y2/progress"><i>03</i><b>Мой прогресс</b><p>Рейтинг, результаты, победы, ничьи и поражения.</p><span>смотреть</span></a>' +
             '<a class="y2cell" href="#y2/tourney"><i>04</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица.</p><span>играть</span></a>' +
       '<a class="y2cell" href="#' + id + '/extra"><i>05</i><b>Дополнительные задачи</b><p>Рекомендация: каждый день не меньше ' + Z.min + ' задач по темам на сайте Lichess.</p><span>открыть</span></a>' +
+      '<a class="y2cell" href="https://www.youtube.com/@FIDE_chess" target="_blank" rel="noopener noreferrer"><i>10</i><b>Смотреть онлайн · FIDE</b><p>Канал FIDE на YouTube: чемпионат мира и главные турниры, прямые эфиры с комментариями.</p><span>смотреть</span></a>' +
+      '<a class="y2cell" href="https://www.fide.com" target="_blank" rel="noopener noreferrer"><i>11</i><b>Новости FIDE</b><p>Сайт Международной шахматной федерации: последние новости, календарь турниров, рейтинги.</p><span>читать</span></a>' +
+      '<a class="y2cell" href="https://chesspro.ru" target="_blank" rel="noopener noreferrer"><i>12</i><b>Новости на русском · ChessPro</b><p>Шахматные новости на русском языке: турниры, прямые трансляции, интервью, архив партий, рейтинги и форум.</p><span>читать</span></a>' +
       '<a class="y2cell" href="https://lichess.org/analysis#explorer" target="_blank" rel="noopener noreferrer"><i>09</i><b>Шахматные дебюты · База дебютов</b><p>Изучай дебюты на Lichess. Играй ходы на доске и смотри в таблице «Masters database», какие ходы выбирают мастера и чем кончаются партии. Если таблицы нет, нажми значок книжки под доской.</p><span>изучать</span></a>' +
       '<a class="y2cell" href="#' + id + '/youtube"><i>06</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' +
       '<a class="y2cell" href="#' + id + '/pos"><i>08</i><b>Практические позиции</b><p>Маты и окончания в настоящей игре против сильного компьютера.</p><span>играть</span></a>' +
@@ -17029,6 +17033,15 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
   var AGES = ['Любой возраст', 'С 4 лет', '7–9 лет', '10+ лет', 'Родителям и тренерам'];
   var LEVELS = ['Любой уровень', 'Начальный', 'Средний', 'Продвинутый'];
   var BOOKS = [{
+    id: 'fidearb26', sec: 8, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSI5MCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiNmNWM1NDIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkZJREU8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIxMTgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE1IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QkNGA0LHQuNGC0YDQsNC20L3QsNGPINC60L7QvNC40YHRgdC40Y88L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMDAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0KDRg9C60L7QstC+0LTRgdGC0LLQvjwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjIzOCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMzAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QsNGA0LHQuNGC0YDQsDwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjMyMCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4yMDI2PC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMzcyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2NmZDhlMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QXJiaXRlcnPigJkgTWFudWFsPC90ZXh0Pjwvc3ZnPg==',
+    title: 'Руководство арбитра FIDE 2026', sub: 'Arbiters’ Manual 2026: как применять правила и регламенты FIDE на практике',
+    author: 'Арбитражная комиссия FIDE', year: 2026, pub: 'FIDE', lang: 'Английский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Официальное издание FIDE, PDF, 374 страницы',
+    sum: 'Свежее издание руководства для арбитров, тренеров, организаторов и игроков. Оно не пересказывает то, что и так ясно из Справочника FIDE, а разбирает случаи, где правила толкуют по-разному: турнирная практика, спорные ситуации, честная игра, гибридные и онлайн-турниры, дополнительные показатели и перестрелки. Правила, регламенты и рейтинги FIDE меняются, поэтому важно пользоваться последним изданием.',
+    access: 'Это официальное издание, его бесплатно выпускает FIDE. Мы даём ссылку на оригинал на сайте Арбитражной комиссии FIDE: книга откроется в новой вкладке.',
+    url: 'https://arbiters.fide.com/wp-content/uploads/Publications/Manual/Arbiter-Manual-2026.pdf', urlText: 'Открыть руководство (PDF, официальный сайт FIDE)',
+    kw: 'fide руководство арбитра правила шахмат арбитр тренер регламент 2026 arbiters manual'
+  }, {
     id: 'strana1', sec: 9, cover: COVER,
     title: 'Шахматная страна. Том 1', sub: 'Путешествие в мир шахмат с логическими задачами',
     author: 'Ирана Топчиева', year: 2026, pub: 'UpGrade Chess Club', lang: 'Русский',
@@ -17066,7 +17079,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
       '<div class="bkd"><img class="bkdc" src="' + b.cover + '" alt="Обложка: ' + esc(b.title) + '"><div><h2>' + esc(b.title) + '</h2><p class="bkdsub">' + esc(b.sub) + '</p>' +
       '<table class="bkdt"><tr><th>Автор</th><td>' + esc(b.author) + '</td></tr><tr><th>Год издания</th><td>' + b.year + '</td></tr><tr><th>Издательство</th><td>' + esc(b.pub) + '</td></tr><tr><th>Язык</th><td>' + esc(b.lang) + '</td></tr>' +
       '<tr><th>Возраст</th><td>' + esc(b.age) + '</td></tr><tr><th>Уровень</th><td>' + esc(b.level) + '</td></tr><tr><th>Формат</th><td>' + esc(b.fmt) + '</td></tr><tr><th>Раздел</th><td>' + SECT[b.sec][0] + '. ' + esc(SECT[b.sec][2]) + '</td></tr></table></div></div>' +
-      '<div class="y2load"><h3>Краткое содержание</h3><p>' + esc(b.sum) + '</p></div><div class="y2load"><h3>Читать и скачать</h3><p>' + esc(b.access) + '</p></div>';
+      '<div class="y2load"><h3>Краткое содержание</h3><p>' + esc(b.sum) + '</p></div><div class="y2load"><h3>Читать и скачать</h3><p>' + esc(b.access) + '</p>' + (b.url ? '<p><a class="btn" target="_blank" rel="noopener noreferrer" href="' + b.url + '">📖 ' + esc(b.urlText || 'Открыть') + '</a></p>' : '') + '</div>';
     document.getElementById('bkback').onclick = function () { window.__lib(); };
     window.scrollTo(0, 0);
   }
@@ -17090,6 +17103,15 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     Array.prototype.forEach.call(v.querySelectorAll('.lsc'), function (b) { b.onclick = function () { var s = +b.getAttribute('data-s'); st.sec = st.sec === s ? -1 : s; window.__lib(); }; });
     var la = document.getElementById('lall'); if (la) la.onclick = function () { st.sec = -1; window.__lib(); };
     Array.prototype.forEach.call(v.querySelectorAll('.bk'), function (b) { b.onclick = function () { detail(BOOKS[+b.getAttribute('data-i')]); }; });
+  };
+  window.__fidenews = function (id) {
+    var v = document.getElementById('view');
+    v.innerHTML = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>📰 Новости шахмат · FIDE</h2></div>' +
+      '<p class="y2lead">FIDE — Международная шахматная федерация. Это организация, которая проводит чемпионаты мира и следит за правилами шахмат во всём мире. Здесь самые свежие новости.</p>' +
+      '<div class="y2cells two">' +
+      '<a class="y2cell" href="https://www.youtube.com/@FIDE_chess" target="_blank" rel="noopener noreferrer"><i>▶</i><b>FIDE на YouTube</b><p>Новости, чемпионат мира и главные турниры. Многие партии можно смотреть онлайн в прямом эфире, с комментариями.</p><span>смотреть</span></a>' +
+      '<a class="y2cell" href="https://www.fide.com" target="_blank" rel="noopener noreferrer"><i>🌐</i><b>Сайт FIDE</b><p>Читай последние новости, календарь турниров, рейтинги и правила. Официальный сайт Международной шахматной федерации.</p><span>читать</span></a>' +
+      '</div><p class="note">Страницы откроются в новой вкладке. Заходи вместе с родителями или тренером: сайт и канал на английском языке.</p>';
   };
   window.__yt = function (id) {
     var v = document.getElementById('view'), CH = 'https://www.youtube.com/@upgradechess';
@@ -18337,6 +18359,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     else if (r === 'live') liveList();
     else if (r === 'lessons') lessons();
     else if (r === 'lesson') lessonPage(parts[1], +parts[2] || 0);
+    else if (r === 'y2' && parts[1] === 'news') window.__fidenews('y2');
     else if (r === 'y2') window.__y2(parts);
     else if (r === 'y3' || r === 'y4') window.__y34(r, parts);
     else if (r === 'board') boardPage();
