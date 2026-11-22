@@ -18358,8 +18358,15 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
   .colB > #ttbar.over .ttn, .colB > #ttbar.fin .ttn { display: inline; flex: none; font-size: .85rem; }
   .colB > .lvfoot { margin: 8px 0 0; padding: 6px 12px; border-radius: 12px; background: #fff; border: 1px solid #d9d9dc; font-size: 1.05rem; text-align: center; font-weight: 600; }
   .colT > .lvbar .lvsc { display: none; }
+  .cols:has(> .colB .cfgB) { gap: 58px; }
+  .colB > .cfgB { position: absolute; left: -48px; top: 60px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #c9b46a; background: #fff; font-size: 20px; line-height: 1; cursor: pointer; padding: 0; z-index: 41; box-shadow: 0 2px 6px rgba(0,0,0,.18); }
+  .colB > .cfgPop { display: none; position: absolute; right: 100%; margin-right: 56px; top: 60px; width: 430px; max-width: 46vw; padding: 14px; background: #fff; border: 2px solid #c9b46a; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.25); z-index: 42; zoom: 1.1; }
+  .colB > .cfgPop.on { display: block; }
+  .cfgPop > * { margin: 0 0 10px !important; }
+  .cfgPop > *:last-child { margin-bottom: 0 !important; }
+  .colT > .lvfoot { margin: 0 0 10px; padding: 6px 12px; text-align: left; background: #fff; border: 1px solid #d9d9dc; border-radius: 10px; font-size: 16px; font-weight: 700; display: inline-block; }
   .colT > .row { margin: 0 0 6px; }
-  .colT { zoom: var(--fz, 1.15); }
+  .colT { zoom: var(--fz, 1.35); }
   .colT > h2 { margin: 2px 0 4px; font-size: 24px; }
   .colT .slide { padding: 10px 14px; }
   .colT .slide, .colT .slide p, .colT .slide li { font-size: 18px !important; line-height: 1.4; }
@@ -18387,12 +18394,27 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
           for (k = 0; k < ch.length; k++) { var e = ch[k]; if (e.classList.contains('row') || e.tagName === 'H2' || e.classList.contains('lvbar')) hd.push(e); }
           for (k = hd.length - 1; k >= 0; k--) T.insertBefore(hd[k], T.firstChild);
         }
-        var f = v.querySelector(':scope > .lvfoot'); if (B && f && f.parentNode !== B) B.appendChild(f);
-        var bz = T && T.querySelector('.bsize');
+        var lb = T && T.querySelector(':scope > .lvbar'), f = v.querySelector(':scope > .lvfoot') || (B && B.querySelector(':scope > .lvfoot'));
+        if (T && f && lb && f.previousElementSibling !== lb) T.insertBefore(f, lb.nextSibling);
+        var yf = v.querySelector('.y2foot') || document.querySelector('.y2foot'); if (T && yf && yf.parentNode !== T) T.appendChild(yf);
+        if (B && T && !B.querySelector('.cfgB')) {
+          var gb = document.createElement('button'); gb.type = 'button'; gb.className = 'cfgB'; gb.title = 'Настройки доски и шрифта'; gb.setAttribute('aria-label', 'Настройки'); gb.textContent = '⚙️';
+          var pp = document.createElement('div'); pp.className = 'cfgPop';
+          gb.onclick = function (e) { e.stopPropagation(); pp.classList.toggle('on'); };
+          B.appendChild(gb); B.appendChild(pp);
+          document.addEventListener('click', function (e) { if (pp.classList.contains('on') && !pp.contains(e.target) && e.target !== gb) pp.classList.remove('on'); });
+        }
+        var pop = B && B.querySelector('.cfgPop');
+        if (pop && T) {
+          var bz0 = T.querySelector(':scope > .bsize'); if (bz0) pop.appendChild(bz0);
+          var hb = Array.prototype.slice.call(T.querySelectorAll('button')).filter(function (x) { return /Подсветка/.test(x.textContent); })[0];
+          if (hb) { var hr = hb.parentNode === T ? hb : (hb.parentNode.parentNode === T ? hb.parentNode : hb); pop.appendChild(hr); }
+        }
+        var bz = (B && B.querySelector('.cfgPop .bsize')) || (T && T.querySelector('.bsize'));
         if (bz && !bz.querySelector('.fzb')) {
           var w = document.createElement('span'); w.className = 'fzb'; w.style.cssText = 'display:inline-flex;gap:6px;align-items:center;margin-left:10px';
           w.innerHTML = '<b>Шрифт:</b><button type="button" class="btn alt" data-fz="-1">А−</button><button type="button" class="btn alt" data-fz="1">А+</button>';
-          w.onclick = function (e) { var x = e.target.closest('button'); if (!x) return; var c = parseFloat(document.documentElement.style.getPropertyValue('--fz')) || 1.15; c = Math.max(1, Math.min(2, Math.round((c + (+x.getAttribute('data-fz')) * 0.15) * 100) / 100)); document.documentElement.style.setProperty('--fz', c); try { localStorage.setItem('ukc_fz', c); } catch (er) {} };
+          w.onclick = function (e) { var x = e.target.closest('button'); if (!x) return; var c = parseFloat(document.documentElement.style.getPropertyValue('--fz')) || 1.35; c = Math.max(1, Math.min(2, Math.round((c + (+x.getAttribute('data-fz')) * 0.15) * 100) / 100)); document.documentElement.style.setProperty('--fz', c); try { localStorage.setItem('ukc_fz', c); } catch (er) {} };
           bz.appendChild(w);
         }
         if (cols.__sc !== 1 && window.innerWidth >= 900) { cols.__sc = 1; var r = cols.getBoundingClientRect(); if (r.top > 12) window.scrollTo(0, Math.max(0, r.top + window.pageYOffset - 8)); }
@@ -18403,3 +18425,16 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
   } catch (e) {}
 })();
 </script>
+<style>
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+ .colT > .y2foot{display:block;margin-top:12px;padding:12px 16px;border:2px solid #f3c64a;border-radius:18px;background:#fffbea;max-width:520px;font-size:22px;line-height:1.3;box-shadow:0 3px 0 #e8b830}
+ .colT > .y2foot::before{content:"🏆 Мой успех";display:block;font-weight:800;font-size:20px;margin-bottom:6px}
+ .colT > .y2foot .y2fb{display:block;width:100%;height:14px;margin:0 0 8px}
+ .colT > .y2foot span{display:block;font-size:20px}
+ .colT > .y2foot b{font-size:26px;color:#d9822b}
+ .colT > .y2foot .y2cnt{margin-top:6px;font-size:22px}
+ .colB > #ttbar{width:max-content;max-width:100%;padding:6px 12px;gap:14px}
+ .colT > .lvfoot{border:2px solid #f3c64a;background:#fffbea;border-radius:16px;font-size:22px;font-weight:800;padding:8px 16px;box-shadow:0 3px 0 #e8b830}
+ .colT > .lvfoot::before{content:"🏆 "}
+}
+</style>
