@@ -569,6 +569,7 @@ body { padding-bottom: 96px; }
 .msg:empty { display: none; }
 }
 
+
 /* ===== Второй год: строгий вид ===== */
 body.y2 { --bg: #edf1f5; --card: #ffffff; --line: #cfd8e3; --red: #b3342c; --yellow: #d9d9dc; }
 body.y2 #sky, body.y2 #comp, body.y2 .sky, body.y2 .say .av { display: none !important; }
@@ -18342,6 +18343,63 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     }
     setInterval(fix, 250);
     window.addEventListener('resize', fix);
+  } catch (e) {}
+})();
+</script>
+<style>
+/* ===== Широкий экран: компактная шапка, таймер над доской, результат под доской, крупнее шрифт слева ===== */
+@media (min-width: 900px) and (min-aspect-ratio: 1/1) {
+  .cols .boardbox { width: var(--bwu, clamp(280px, calc(100vh - 150px), 780px)); }
+  .colB > #ttbar { position: static; margin: 0 0 8px; padding: 6px 10px; gap: 8px; flex-wrap: nowrap; border-radius: 12px; justify-content: flex-end; }
+  .colB > #ttbar .ttc { font-size: 1.4rem; min-width: 0; margin-right: auto; }
+  .colB > #ttbar .ttn { display: none; }
+  .colB > #ttbar .ttm { padding: 6px 12px; font-size: 1rem; }
+  .colB > #ttbar .ttx { font-size: .9rem; padding: 6px 10px; }
+  .colB > #ttbar.over .ttn, .colB > #ttbar.fin .ttn { display: inline; flex: none; font-size: .85rem; }
+  .colB > .lvfoot { margin: 8px 0 0; padding: 6px 12px; border-radius: 12px; background: #fff; border: 1px solid #d9d9dc; font-size: 1.05rem; text-align: center; font-weight: 600; }
+  .colT > .lvbar .lvsc { display: none; }
+  .colT > .row { margin: 0 0 6px; }
+  .colT { zoom: var(--fz, 1.15); }
+  .colT > h2 { margin: 2px 0 4px; font-size: 24px; }
+  .colT .slide { padding: 10px 14px; }
+  .colT .slide, .colT .slide p, .colT .slide li { font-size: 18px !important; line-height: 1.4; }
+  .colT .slide h3 { font-size: 21px; }
+  .colT .row { gap: 8px; }
+  .colT > .lvbar { margin: 0 0 10px; }
+}
+</style>
+<script>
+/* Компоновка задания: шапка в левой колонке, таймер над доской, результат под доской */
+(function () {
+  try {
+    var v = document.getElementById('view'); if (!v) return;
+    try { var sz = parseFloat(localStorage.getItem('ukc_fz')); if (sz >= 1 && sz <= 2) document.documentElement.style.setProperty('--fz', sz); } catch (er) {}
+    var busy = false;
+    function go() {
+      if (busy) return; busy = true;
+      try {
+        var cols = v.querySelector('.cols'); if (!cols || cols.querySelector('.y2clk')) return;
+        var T = cols.querySelector(':scope > .colT'), B = cols.querySelector(':scope > .colB');
+        var tt = document.getElementById('ttbar');
+        if (B && tt && tt.parentNode !== B) B.insertBefore(tt, B.firstChild);
+        if (T && T.parentNode === cols && cols.parentNode.id === 'ex') {
+          var hd = [], k, ch = v.children;
+          for (k = 0; k < ch.length; k++) { var e = ch[k]; if (e.classList.contains('row') || e.tagName === 'H2' || e.classList.contains('lvbar')) hd.push(e); }
+          for (k = hd.length - 1; k >= 0; k--) T.insertBefore(hd[k], T.firstChild);
+        }
+        var f = v.querySelector(':scope > .lvfoot'); if (B && f && f.parentNode !== B) B.appendChild(f);
+        var bz = T && T.querySelector('.bsize');
+        if (bz && !bz.querySelector('.fzb')) {
+          var w = document.createElement('span'); w.className = 'fzb'; w.style.cssText = 'display:inline-flex;gap:6px;align-items:center;margin-left:10px';
+          w.innerHTML = '<b>Шрифт:</b><button type="button" class="btn alt" data-fz="-1">А−</button><button type="button" class="btn alt" data-fz="1">А+</button>';
+          w.onclick = function (e) { var x = e.target.closest('button'); if (!x) return; var c = parseFloat(document.documentElement.style.getPropertyValue('--fz')) || 1.15; c = Math.max(1, Math.min(2, Math.round((c + (+x.getAttribute('data-fz')) * 0.15) * 100) / 100)); document.documentElement.style.setProperty('--fz', c); try { localStorage.setItem('ukc_fz', c); } catch (er) {} };
+          bz.appendChild(w);
+        }
+        if (cols.__sc !== 1 && window.innerWidth >= 900) { cols.__sc = 1; var r = cols.getBoundingClientRect(); if (r.top > 12) window.scrollTo(0, Math.max(0, r.top + window.pageYOffset - 8)); }
+      } finally { busy = false; }
+    }
+    new MutationObserver(go).observe(v, { childList: true, subtree: true });
+    go();
   } catch (e) {}
 })();
 </script>
