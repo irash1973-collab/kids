@@ -16961,6 +16961,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     var Z = Y[id], v = document.getElementById('view');
     if (parts[1] === 'youtube') { window.__yt(id); return; }
     if (parts[1] === 'news') { window.__fidenews(id); return; }
+    if (parts[1] === 'pro') { window.__pro(id); return; }
     if (parts[1] === 'extra') { window.__extra(id); return; }
     if (parts[1] === 'pos') {
       var PL = window.__ppos, SK = ' RR QR ', key = 'ukc_ppdone_' + id, dn = lsGet(key, {}) || {};
@@ -17005,9 +17006,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
       '<a class="y2cell" href="#y2/progress"><i>03</i><b>Мой прогресс</b><p>Рейтинг, результаты, победы, ничьи и поражения.</p><span>смотреть</span></a>' +
             '<a class="y2cell" href="#y2/tourney"><i>04</i><b>Турнир</b><p>Турнир на 1 час: 20 участников, жеребьёвка, часы и таблица.</p><span>играть</span></a>' +
       '<a class="y2cell" href="#' + id + '/extra"><i>05</i><b>Дополнительные задачи</b><p>Рекомендация: каждый день не меньше ' + Z.min + ' задач по темам на сайте Lichess.</p><span>открыть</span></a>' +
-      '<a class="y2cell" href="https://www.youtube.com/@FIDE_chess" target="_blank" rel="noopener noreferrer"><i>10</i><b>Смотреть онлайн · FIDE</b><p>Канал FIDE на YouTube: чемпионат мира и главные турниры, прямые эфиры с комментариями.</p><span>смотреть</span></a>' +
-      '<a class="y2cell" href="https://www.fide.com" target="_blank" rel="noopener noreferrer"><i>11</i><b>Новости FIDE</b><p>Сайт Международной шахматной федерации: последние новости, календарь турниров, рейтинги.</p><span>читать</span></a>' +
-      '<a class="y2cell" href="https://chesspro.ru" target="_blank" rel="noopener noreferrer"><i>12</i><b>Новости на русском · ChessPro</b><p>Шахматные новости на русском языке: турниры, прямые трансляции, интервью, архив партий, рейтинги и форум.</p><span>читать</span></a>' +
+      '<a class="y2cell" href="#library"><i>10</i><b>Новости и шахматные сайты</b><p>В библиотеке: новости FIDE и ChessPro, прямые трансляции, рейтинги, база партий ChessBase.</p><span>в библиотеку</span></a>' +
       '<a class="y2cell" href="https://lichess.org/analysis#explorer" target="_blank" rel="noopener noreferrer"><i>09</i><b>Шахматные дебюты · База дебютов</b><p>Изучай дебюты на Lichess. Играй ходы на доске и смотри в таблице «Masters database», какие ходы выбирают мастера и чем кончаются партии. Если таблицы нет, нажми значок книжки под доской.</p><span>изучать</span></a>' +
       '<a class="y2cell" href="#' + id + '/youtube"><i>06</i><b>YouTube</b><p>Турниры, уроки, регистрация на игровых сайтах, как найти наш клуб.</p><span>смотреть</span></a>' +
       '<a class="y2cell" href="#' + id + '/pos"><i>08</i><b>Практические позиции</b><p>Маты и окончания в настоящей игре против сильного компьютера.</p><span>играть</span></a>' +
@@ -17028,11 +17027,84 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     ['VII', '🧩', 'Практическая литература', 'Сборники задач, тесты, домашние задания'],
     ['VIII', '🧸', 'Детская шахматная литература', 'Книги для дошкольников и школьников, шахматные истории'],
     ['IX', '🎓', 'Для тренеров', 'Методики, программы обучения, планы занятий'],
-    ['X', '⭐', 'Авторские издания UpGrade Chess Club', 'Наши пособия, рабочие тетради, сборники задач']
+    ['X', '⭐', 'Авторские издания UpGrade Chess Club', 'Наши пособия, рабочие тетради, сборники задач'],
+    ['XI', '📰', 'Новости и шахматные сайты', 'Новости FIDE, трансляции, рейтинги, базы партий']
   ];
   var AGES = ['Любой возраст', 'С 4 лет', '7–9 лет', '10+ лет', 'Родителям и тренерам'];
   var LEVELS = ['Любой уровень', 'Начальный', 'Средний', 'Продвинутый'];
   var BOOKS = [{
+    id: 'fideyt', sec: 10, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7ilrY8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMzgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RklERSBZb3VUdWJlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0L/RgNGP0LzRi9C1INGN0YTQuNGA0Ys8L3RleHQ+PC9zdmc+',
+    title: 'FIDE на YouTube', sub: 'Официальный канал FIDE: чемпионат мира, главные турниры и прямые эфиры',
+    author: 'Команда FIDE', year: 2026, pub: 'FIDE', lang: 'Английский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Официальный канал Международной шахматной федерации. Здесь показывают чемпионат мира и главные турниры, многие партии идут онлайн в прямом эфире, с комментариями. Хороший способ смотреть, как играют сильнейшие шахматисты мира.',
+    access: 'Канал откроется в новой вкладке. Заходить лучше вместе с родителями или тренером.',
+    url: 'https://www.youtube.com/@FIDE_chess', urlText: 'Открыть канал FIDE',
+    kw: 'fide youtube новости чемпионат мира прямой эфир трансляция'
+  }, {
+    id: 'fidesite', sec: 10, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn4yQPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjM4IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIzMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCh0LDQudGCIEZJREU8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyODIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE2IiBmaWxsPSIjZTZlZGY1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QvdC+0LLQvtGB0YLQuCDCtyDQv9GA0LDQstC40LvQsDwvdGV4dD48L3N2Zz4=',
+    title: 'Сайт FIDE (fide.com)', sub: 'Официальный сайт Международной шахматной федерации: новости, календарь, рейтинги, правила',
+    author: 'Команда FIDE', year: 2026, pub: 'FIDE', lang: 'Английский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Главный сайт Международной шахматной федерации. Здесь выходят официальные новости, календарь турниров, рейтинги, правила шахмат и документы FIDE. Нужен тренерам, арбитрам и сильным игрокам.',
+    access: 'Сайт откроется в новой вкладке.',
+    url: 'https://www.fide.com', urlText: 'Открыть fide.com',
+    kw: 'fide сайт новости календарь рейтинги правила'
+  }, {
+    id: 'chesspro', sec: 10, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzdhMWYxZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5OwPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjM4IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIzMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNoZXNzUHJvPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0L3QvtCy0L7RgdGC0Lgg0L3QsCDRgNGD0YHRgdC60L7QvDwvdGV4dD48L3N2Zz4=',
+    title: 'ChessPro', sub: 'Новости шахмат на русском языке: турниры, трансляции, интервью',
+    author: 'Редакция ChessPro', year: 2026, pub: 'ChessPro', lang: 'Русский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Русскоязычный шахматный сайт. Здесь есть лента новостей, прямые трансляции крупных турниров, интервью, энциклопедия, архив партий, рейтинги ФИДЕ и форум. Удобно читать, если английский ещё труден.',
+    access: 'Сайт откроется в новой вкладке.',
+    url: 'https://chesspro.ru', urlText: 'Открыть ChessPro',
+    kw: 'chesspro чесспро новости русском турниры трансляции'
+  }, {
+    id: 's2700', sec: 10, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzJlNWQzNCIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5OIPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjM4IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIzMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjI3MDBjaGVzczwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI4MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlNmVkZjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtGA0LXQudGC0LjQvdCz0Lg8L3RleHQ+PC9zdmc+',
+    title: '2700chess', sub: 'Рейтинги сильнейших шахматистов мира в реальном времени и данные о турнирах',
+    author: '2700chess', year: 2026, pub: '2700chess', lang: 'Английский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Сайт с рейтингами сильнейших шахматистов мира, которые обновляются по ходу турниров. Можно следить, как меняются места в списке сильнейших, и смотреть данные о турнирах.',
+    access: 'Сайт откроется в новой вкладке.',
+    url: 'https://2700chess.com', urlText: 'Открыть 2700chess',
+    kw: '2700chess рейтинг живой сильнейшие шахматисты'
+  }, {
+    id: 'cbdb', sec: 10, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzNiMmE1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7imZ88L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMzgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Q2hlc3NCYXNlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0LHQsNC30LAg0L/QsNGA0YLQuNC5PC90ZXh0Pjwvc3ZnPg==',
+    title: 'База партий ChessBase', sub: 'Онлайн-база с миллионами партий: поиск по дебюту, игроку и турниру',
+    author: 'ChessBase', year: 2026, pub: 'ChessBase', lang: 'Английский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Онлайн-база шахматных партий. Можно искать партии по дебюту, игроку или турниру и смотреть, как играют мастера. Помогает изучать дебюты и готовиться к соперникам.',
+    access: 'Сайт откроется в новой вкладке.',
+    url: 'https://database.chessbase.com', urlText: 'Открыть базу партий',
+    kw: 'chessbase база партий дебюты игроки турниры'
+  }, {
+    id: 'chessresults', sec: 8, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzdhMWYxZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNTAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn4+GPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjI4IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNoZXNzLVJlc3VsdHM8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNzIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE3IiBmaWxsPSIjZjNkZWRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7RgNC10LfRg9C70YzRgtCw0YLRiyDRgtGD0YDQvdC40YDQvtCyPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMzcyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2YzZGVkZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0YLQsNCx0LvQuNGG0Ysgwrcg0LbQtdGA0LXQsdGM0ZHQstC60Lggwrcg0YDQtdC50YLQuNC90LPQuDwvdGV4dD48L3N2Zz4=',
+    title: 'Chess-Results', sub: 'Сайт результатов шахматных турниров: таблицы, жеребьёвки, рейтинги',
+    author: 'Chess-Results.com', year: 2026, pub: 'Chess-Results', lang: 'Английский и другие языки',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Средний', fmt: 'Сайт: результаты турниров',
+    sum: 'Сайт, на котором организаторы публикуют результаты турниров: списки участников, жеребьёвку по турам, итоговые таблицы и рейтинговые изменения. Здесь можно найти свой турнир и свои партии, посмотреть результаты соперников и подготовиться к следующему турниру. Тренерам и арбитрам сайт нужен для проверки результатов и публикации турниров.',
+    access: 'Сайт откроется в новой вкладке. Название турнира или фамилию игрока можно найти через поиск на сайте.',
+    url: 'https://chess-results.com', urlText: 'Открыть Chess-Results',
+    kw: 'chess-results чесс результс результаты турниров жеребьёвка таблицы рейтинг арбитр тренер'
+  }, {
+    id: 'chesskid', sec: 7, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzJlN2QzMiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZjE3NiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjkwIiBmaWxsPSIjZmZmMTc2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7imZ88L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNDUiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjM4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Q2hlc3NLaWQ8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyOTAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE3IiBmaWxsPSIjZThmNWU5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7RiNCw0YXQvNCw0YLRiyDQtNC70Y8g0LTQtdGC0LXQuSDQvtC90LvQsNC50L08L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIzNzIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjZThmNWU5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QuNCz0YDRiyDCtyDQt9Cw0LTQsNGH0Lggwrcg0LLQuNC00LXQvtGD0YDQvtC60Lg8L3RleHQ+PC9zdmc+',
+    title: 'ChessKid', sub: 'Детская шахматная платформа: игры, задачи и видеоуроки онлайн',
+    author: 'Команда ChessKid', year: 2026, pub: 'ChessKid', lang: 'Английский и другие языки',
+    age: 'Любой возраст', ageN: 0, level: 'Начальный', fmt: 'Сайт: игры, задачи, видеоуроки',
+    sum: 'Онлайн-платформа для детей: можно играть с другими детьми и с компьютерными соперниками, смотреть видеоуроки и решать шахматные задачи. Основные возможности бесплатные, расширенный доступ (неограниченные задачи, уроки и видео) даёт платная подписка. Сайт переведён на многие языки.',
+    access: 'Сайт откроется в новой вкладке. Регистрироваться лучше вместе с родителями.',
+    url: 'https://www.chesskid.com', urlText: 'Открыть ChessKid',
+    kw: 'chesskid чесскид дети онлайн игры задачи видеоуроки платформа'
+  }, {
+    id: 'stockfish', sec: 8, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzBmMmE0NCIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNTAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjkwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7imZ48L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNDAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjM4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U3RvY2tmaXNoPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjg1IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNyIgZmlsbD0iI2NmZDhlMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0YjQsNGF0LzQsNGC0L3Ri9C5INC00LLQuNC20L7QujwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjM3MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNjZmQ4ZTMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCx0LXRgdC/0LvQsNGC0L3QviDCtyDQvtGC0LrRgNGL0YLRi9C5INC60L7QtDwvdGV4dD48L3N2Zz4=',
+    title: 'Stockfish', sub: 'Шахматная программа: один из сильнейших движков в мире',
+    author: 'Команда разработчиков Stockfish', year: 2026, pub: 'Stockfish (открытый код)', lang: 'Английский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Программа (шахматный движок), бесплатная',
+    sum: 'Шахматный движок, который оценивает позиции и подсказывает лучшие ходы. Его используют тренеры и игроки для анализа партий, а многие сайты, в том числе Lichess, работают на нём. Программа бесплатная, с открытым исходным кодом. Для тренера это инструмент проверки позиций, этюдов и партий учеников.',
+    access: 'На официальном сайте программы можно прочитать описание и скачать нужную версию. Скачивать и устанавливать программы лучше вместе с родителями или тренером.',
+    url: 'https://stockfishchess.org', urlText: 'Открыть сайт Stockfish',
+    kw: 'stockfish движок программа анализ компьютер тренер'
+  }, {
     id: 'fidearb26', sec: 8, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSI5MCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiNmNWM1NDIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkZJREU8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIxMTgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE1IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QkNGA0LHQuNGC0YDQsNC20L3QsNGPINC60L7QvNC40YHRgdC40Y88L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMDAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0KDRg9C60L7QstC+0LTRgdGC0LLQvjwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjIzOCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMzAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QsNGA0LHQuNGC0YDQsDwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjMyMCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4yMDI2PC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMzcyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2NmZDhlMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QXJiaXRlcnPigJkgTWFudWFsPC90ZXh0Pjwvc3ZnPg==',
     title: 'Руководство арбитра FIDE 2026', sub: 'Arbiters’ Manual 2026: как применять правила и регламенты FIDE на практике',
     author: 'Арбитражная комиссия FIDE', year: 2026, pub: 'FIDE', lang: 'Английский',
@@ -17112,6 +17184,21 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
       '<a class="y2cell" href="https://www.youtube.com/@FIDE_chess" target="_blank" rel="noopener noreferrer"><i>▶</i><b>FIDE на YouTube</b><p>Новости, чемпионат мира и главные турниры. Многие партии можно смотреть онлайн в прямом эфире, с комментариями.</p><span>смотреть</span></a>' +
       '<a class="y2cell" href="https://www.fide.com" target="_blank" rel="noopener noreferrer"><i>🌐</i><b>Сайт FIDE</b><p>Читай последние новости, календарь турниров, рейтинги и правила. Официальный сайт Международной шахматной федерации.</p><span>читать</span></a>' +
       '</div><p class="note">Страницы откроются в новой вкладке. Заходи вместе с родителями или тренером: сайт и канал на английском языке.</p>';
+  };
+  window.__pro = function (id) {
+    var v = document.getElementById('view');
+    function card(i, u, t, d, b) { return '<a class="y2cell" href="' + u + '" target="_blank" rel="noopener noreferrer"><i>' + i + '</i><b>' + t + '</b><p>' + d + '</p><span>' + b + '</span></a>'; }
+    v.innerHTML = '<div class="y2head"><a class="btn alt" href="#' + id + '">← Назад</a><h2>Новости и базы партий</h2></div>' +
+      '<p class="y2lead">Ресурсы для сильных шахматистов. Все страницы открываются в новой вкладке. Заходи вместе с родителями или тренером.</p>' +
+      '<h3 class="y2gh">Шахматные новости</h3><div class="y2cells two">' +
+      card('▶', 'https://www.youtube.com/@FIDE_chess', 'FIDE на YouTube', 'Чемпионат мира и главные турниры, прямые эфиры с комментариями (на английском).', 'смотреть') +
+      card('🌐', 'https://www.fide.com', 'Сайт FIDE', 'Официальные новости Международной шахматной федерации, календарь турниров, рейтинги, правила (на английском).', 'читать') +
+      card('📰', 'https://chesspro.ru', 'ChessPro', 'Новости на русском языке: турниры, прямые трансляции, интервью, архив партий, рейтинги.', 'читать') +
+      '</div><h3 class="y2gh">Рейтинги сильнейших</h3><div class="y2cells two">' +
+      card('📈', 'https://2700chess.com', '2700chess', 'Рейтинги сильнейших шахматистов мира в реальном времени и данные о турнирах.', 'смотреть') +
+      '</div><h3 class="y2gh">Базы партий</h3><div class="y2cells two">' +
+      card('♟', 'https://database.chessbase.com', 'База партий ChessBase', 'Онлайн-база с миллионами партий: ищи по дебюту, игроку или турниру и смотри, как играют мастера.', 'искать') +
+      '</div>';
   };
   window.__yt = function (id) {
     var v = document.getElementById('view'), CH = 'https://www.youtube.com/@upgradechess';
