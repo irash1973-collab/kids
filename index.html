@@ -17038,7 +17038,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     ['X', '📔', 'Книги по дебютам', 'ЛитРес: начала партии, ловушки, репертуар'],
     ['XI', '📜', 'Книги по истории шахмат', 'ЛитРес: биографии чемпионов, история матчей и турниров'],
     ['XII', '⭐', 'Детская литература и издания UpGrade', 'Наша книга «Шахматная страна» и другие пособия клуба'],
-    ['XIII', '🏆', 'История и великие шахматисты', 'Чемпионы мира, музей, знаменитые партии и матчи'],
+    ['XIII', '🏆', 'История и великие шахматисты', 'Чемпионы мира, матчи за первенство мира, коллекции партий, музей'],
     ['XIV', '🎮', 'Игровые платформы', 'Где играть и тренироваться онлайн'],
     ['XV', '📰', 'Шахматные новости', 'Новости федераций и турниров, трансляции'],
     ['XVI', '▶️', 'Видео и YouTube', 'Каналы, трансляции и видеоуроки'],
@@ -17663,7 +17663,9 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     if (st.sec >= 0) {
       var S = SECT[st.sec];
       h = '<div class="y2head"><a class="btn alt" href="#library" id="lback">← Все разделы</a></div><h2>' + S[1] + ' ' + S[0] + '. ' + S[2] + '</h2><p class="lsub">' + S[3] + '</p>' +
-        '<div class="bks">' + list.map(function (b) { return card(b, BOOKS.indexOf(b)); }).join('') + '</div>';
+        (st.sec === 12 ? [['Чемпионы мира', ['champsru', 'champwomen']], ['Матчи за первенство мира и история шахмат', ['liworld', 'ythistory']], ['Коллекции партий', ['historicgames', 'elotracker']], ['Музей', ['fidemuseum']]].map(function (g) {
+          return '<h3 class="lsh">' + g[0] + '</h3><div class="bks">' + g[1].map(function (id) { return BOOKS.filter(function (b) { return b.id === id; })[0]; }).filter(Boolean).filter(match).map(function (b) { return card(b, BOOKS.indexOf(b)); }).join('') + '</div>';
+        }).join('') : '<div class="bks">' + list.map(function (b) { return card(b, BOOKS.indexOf(b)); }).join('') + '</div>');
       v.innerHTML = h;
       var lb = document.getElementById('lback'); if (lb) lb.onclick = function (e) { e.preventDefault(); st.sec = -1; window.__lib(); window.scrollTo(0, 0); };
       Array.prototype.forEach.call(v.querySelectorAll('.bk'), function (x) { x.onclick = function () { detail(BOOKS[+x.getAttribute('data-i')]); }; });
@@ -17682,9 +17684,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
       h += '<h3 class="lsh">Найдено</h3>';
       h += list.length ? '<div class="bks">' + list.map(function (b) { return card(b, BOOKS.indexOf(b)); }).join('') + '</div>' : '<div class="y2load"><h3>Пока ничего не найдено</h3><p>Попробуй другой запрос или сними фильтры.</p></div>';
     } else {
-      var hist = BOOKS.filter(function (b) { return b.sec === 12; });
-      h += '<h3 class="lsh">⭐ Чемпионы мира и история шахмат</h3><div class="bks">' + hist.map(function (b) { return card(b, BOOKS.indexOf(b)); }).join('') + '</div>';
-      h += '<p class="note">Нажми на раздел выше: он откроется отдельной страницей. Для поиска по всей библиотеке введи слово в строку поиска.</p>';
+      h += '<p class="note">Нажми на раздел: он откроется отдельной страницей. Для поиска по всей библиотеке введи слово в строку поиска.</p>';
     }
     v.innerHTML = h;
     var fq = document.getElementById('lq');
@@ -19131,6 +19131,16 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
 
 body.yc3 { --yc: #1f5d4a; } body.yc4 { --yc: #6a2338; }
 body.yc3 .y2nav a.on { background: #1f5d4a; border-color: #1f5d4a; } body.yc4 .y2nav a.on { background: #6a2338; border-color: #6a2338; }
+
+.nav a[data-r="lessons"] { background: #fde7f0 !important; color: #b0346a !important; border: 1px solid #b0346a !important; border-radius: 8px; }
+.nav a[data-r="y2"] { background: #e6ecf4 !important; color: #1e3a5f !important; border: 1px solid #1e3a5f !important; }
+.nav a[data-r="y3"] { background: #e1f0ea !important; color: #1f5d4a !important; border: 1px solid #1f5d4a !important; border-radius: 8px; }
+.nav a[data-r="y4"] { background: #f6e3e8 !important; color: #6a2338 !important; border: 1px solid #6a2338 !important; border-radius: 8px; }
+.nav a[data-r="lessons"][aria-current="page"] { background: #b0346a !important; color: #fff !important; }
+.nav a[data-r="y2"][aria-current="page"] { background: #1e3a5f !important; color: #fff !important; }
+.nav a[data-r="y3"][aria-current="page"] { background: #1f5d4a !important; color: #fff !important; }
+.nav a[data-r="y4"][aria-current="page"] { background: #6a2338 !important; color: #fff !important; }
+body.y2 .y2nav a.on, body.y2 .y2nav a.on:nth-child(n), body.y2 .nav a[aria-current="page"] { color: #fff !important; }
 .yrd.y3 { background: #1f5d4a !important; border-color: #1f5d4a !important; box-shadow: 0 5px 0 #123a2e !important; }
 .yrd.y4 { background: #6a2338 !important; border-color: #6a2338 !important; box-shadow: 0 5px 0 #44131f !important; }
 .yrd.y3 .yrk, .yrd.y4 .yrk { color: #f1cf72 !important; } .yrd.y3 p, .yrd.y4 p { color: #e8efe9 !important; } .yrd.y4 p { color: #f3e4e8 !important; }
