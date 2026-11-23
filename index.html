@@ -1565,6 +1565,9 @@ body.home .hero p.motto { max-width: 37%; }
       <a href="#y2/progress" data-y2="progress">Мой прогресс</a>
       <a href="#y2/speed" data-y2="speed">Скорость</a>
       <a href="#y2/board" data-y2="board">Доска</a>
+      <a href="#games" data-r="games">Игротека</a>
+      <a href="#y2/tourney" class="navtrn">🏆 Турнир</a>
+      <a href="#library" data-r="library">📚 Библиотека и новости</a>
       <button type="button" class="y2setbtn" id="y2set" aria-label="Настройки" title="Настройки">⚙ Настройки</button>
     </nav>
     <button class="sndbtn" id="prof" type="button" aria-label="Мой профиль">👤 Профиль</button>
@@ -17131,13 +17134,40 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     kw: 'lichess learn уроки новичок правила фигуры начинающие'
   }, {
     id: 'lt1', sec: 5, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzNhN2Q0NCIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5OaPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCb0LjRgtCg0LXRgTwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtC00LvRjyDQvdCw0YfQuNC90LDRjtGJ0LjRhTwvdGV4dD48L3N2Zz4=',
-    title: 'Книги для начинающих (ЛитРес)', sub: 'Шахматные книги для новичков в магазине электронных книг',
+    title: 'Ещё книги для начинающих (ЛитРес)', sub: 'Подборка книг ЛитРес про шахматы для детей и новичков',
     author: 'ЛитРес', year: 2026, pub: 'ЛитРес', lang: 'Русский',
     age: 'Родителям и тренерам', ageN: 4, level: 'Начальный', fmt: 'Сайт: задачи',
     sum: 'Поиск шахматных книг для начинающих в магазине ЛитРес. Нажми на кнопку, выбери книгу по возрасту и уровню. Покупки делают взрослые, у многих книг есть бесплатный фрагмент.',
     access: 'Откроется результат поиска в магазине ЛитРес. Покупать книги лучше вместе с родителями.',
-    url: 'https://www.litres.ru/search/?q=%D1%88%D0%B0%D1%85%D0%BC%D0%B0%D1%82%D1%8B%20%D0%B4%D0%BB%D1%8F%20%D0%BD%D0%B0%D1%87%D0%B8%D0%BD%D0%B0%D1%8E%D1%89%D0%B8%D1%85', urlText: 'Найти книги',
+    url: 'https://www.litres.ru/tags/shahmaty-dlya-detey/', urlText: 'Найти книги',
     kw: 'литрес книги начинающих новичков шахматы купить'
+  }, {
+    id: 'lb_bog', sec: 5, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzJlNmI0YSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtc2l6ZT0iODQiIGZpbGw9IiNmNWM1NDIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfk5k8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNTAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjI2IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0JHQvtCz0L7Qu9GO0LHQvtCyPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjkyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2VlZjJmNyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0YjQutC+0LvQsDwvdGV4dD48L3N2Zz4=',
+    title: 'Шахматная школа для начинающих (Е. Боголюбов)', sub: 'Первые шаги в игре',
+    author: 'Ефим Боголюбов', year: 2026, pub: 'ЛитРес', lang: 'Русский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Начальный', fmt: 'Книга (фрагмент бесплатно)',
+    sum: 'Первые шаги в шахматах от гроссмейстера Ефима Боголюбова.',
+    access: 'Откроется страница книги в магазине ЛитРес: можно прочитать бесплатный фрагмент. Покупку делают взрослые.',
+    url: 'https://www.litres.ru/book/efim-bogolubov/shahmatnaya-shkola-dlya-nachinauschih-34754680/', urlText: 'Открыть книгу на ЛитРес',
+    kw: 'литрес боголюбов школа начинающих книга'
+  }, {
+    id: 'lb_nez', sec: 5, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzJlNmI0YSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtc2l6ZT0iODQiIGZpbGw9IiNmNWM1NDIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfk5c8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNTAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjI2IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0J3QtdC20LzQtdGC0LTQuNC90L7QsjwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtGD0YDQvtC60Lg8L3RleHQ+PC9zdmc+',
+    title: 'Шахматные уроки для начинающих (Р. Нежметдинов)', sub: 'Простые уроки от известного мастера',
+    author: 'Рашид Нежметдинов', year: 2026, pub: 'ЛитРес', lang: 'Русский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Начальный', fmt: 'Книга (фрагмент бесплатно)',
+    sum: 'Простые уроки для начинающих от мастера Рашида Нежметдинова.',
+    access: 'Откроется страница книги в магазине ЛитРес: можно прочитать бесплатный фрагмент. Покупку делают взрослые.',
+    url: 'https://www.litres.ru/book/rashid-nezhmetdinov/shahmatnye-uroki-dlya-nachinauschih-6254779/', urlText: 'Открыть книгу на ЛитРес',
+    kw: 'литрес нежметдинов уроки начинающих книга'
+  }, {
+    id: 'lb_lev', sec: 5, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzJlNmI0YSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtc2l6ZT0iODQiIGZpbGw9IiNmNWM1NDIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfk5g8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNTAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjI2IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0JvQtdCy0LXQvdGE0LjRiDwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtC90LDRh9C40L3QsNGO0YnQtdC80YM8L3RleHQ+PC9zdmc+',
+    title: 'Книга начинающего шахматиста (Г. Левенфиш)', sub: 'Классический учебник для первых шагов',
+    author: 'Григорий Левенфиш', year: 2026, pub: 'ЛитРес', lang: 'Русский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Начальный', fmt: 'Книга (фрагмент бесплатно)',
+    sum: 'Классический учебник для тех, кто только начинает играть. Автор: гроссмейстер Григорий Левенфиш.',
+    access: 'Откроется страница книги в магазине ЛитРес: можно прочитать бесплатный фрагмент. Покупку делают взрослые.',
+    url: 'https://www.litres.ru/book/grigoriy-levenfish/kniga-nachinauschego-shahmatista-177467/', urlText: 'Открыть книгу на ЛитРес',
+    kw: 'литрес левенфиш начинающий книга'
   }, {
     id: 'lttac', sec: 1, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzdhMWYxZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7impTvuI88L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNTAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+TGljaGVzczwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtGC0LDQutGC0LjQutCwINGBINC/0YDQvtGB0YLQvtCz0L48L3RleHQ+PC9zdmc+',
     title: 'Lichess: тактические задачи', sub: 'Задачи на тактику с простого уровня, сложность подбирается сама',
@@ -17211,6 +17241,15 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     url: 'https://www.litres.ru/search/?q=%D1%88%D0%B0%D1%85%D0%BC%D0%B0%D1%82%D0%BD%D0%B0%D1%8F%20%D1%82%D0%B0%D0%BA%D1%82%D0%B8%D0%BA%D0%B0', urlText: 'Найти книги',
     kw: 'литрес тактика книги'
   }, {
+    id: 'lb_top', sec: 6, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzdhMWYyYiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtc2l6ZT0iODQiIGZpbGw9IiNmNWM1NDIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKtkDwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI1MCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMjYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QotC+0L8g0LrQvdC40LM8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyOTIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE2IiBmaWxsPSIjZWVmMmY3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7Qv9C+INGI0LDRhdC80LDRgtCw0Lw8L3RleHQ+PC9zdmc+',
+    title: 'Топ книг по шахматам (подборка ЛитРес)', sub: 'Лучшие шахматные книги магазина',
+    author: 'ЛитРес', year: 2026, pub: 'ЛитРес', lang: 'Русский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Средний', fmt: 'Сайт: подборка',
+    sum: 'Подборка ЛитРес «Топ книг по шахматам»: тактика, стратегия, учебники.',
+    access: 'Откроется страница книги в магазине ЛитРес: можно прочитать бесплатный фрагмент. Покупку делают взрослые.',
+    url: 'https://www.litres.ru/collections/top-knig-po-shahmatam/', urlText: 'Открыть подборку',
+    kw: 'литрес топ книг по шахматам тактика'
+  }, {
     id: 'ltb_mid', sec: 7, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzJlNWQzYSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5OaPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCb0LjRgtCg0LXRgTwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtC80LjRgtGC0LXQu9GM0YjQv9C40LvRjDwvdGV4dD48L3N2Zz4=',
     title: 'Книги по миттельшпилю (ЛитРес)', sub: 'Учебники по игре в середине партии',
     author: 'ЛитРес', year: 2026, pub: 'ЛитРес', lang: 'Русский',
@@ -17221,22 +17260,31 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     kw: 'литрес книги миттельшпиль'
   }, {
     id: 'ltb_open', sec: 9, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFmM2Y3YSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5OaPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCb0LjRgtCg0LXRgTwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtC00LXQsdGO0YLRizwvdGV4dD48L3N2Zz4=',
-    title: 'Книги по дебютам (ЛитРес)', sub: 'Начала партий, ловушки и дебютный репертуар',
+    title: 'Серия «Шахматный университет» (дебюты и не только)', sub: 'Серия «Шахматный университет» Н. Калиниченко',
     author: 'ЛитРес', year: 2026, pub: 'ЛитРес', lang: 'Русский',
     age: 'Родителям и тренерам', ageN: 4, level: 'Средний', fmt: 'Сайт: задачи',
     sum: 'Поиск книг в магазине ЛитРес: начала партий, ловушки и дебютный репертуар. Покупки делают взрослые, у многих книг есть бесплатный фрагмент.',
     access: 'Откроется результат поиска в магазине ЛитРес.',
-    url: 'https://www.litres.ru/search/?q=%D1%88%D0%B0%D1%85%D0%BC%D0%B0%D1%82%D0%BD%D1%8B%D0%B5%20%D0%B4%D0%B5%D0%B1%D1%8E%D1%82%D1%8B', urlText: 'Найти книги',
+    url: 'https://www.litres.ru/series/shahmatnyy-universitet-133499/', urlText: 'Найти книги',
     kw: 'литрес книги дебюты'
   }, {
     id: 'ltb_open2', sec: 9, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFmM2Y3YSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5OaPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCb0LjRgtCg0LXRgTwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtC00LXQsdGO0YI8L3RleHQ+PC9zdmc+',
-    title: 'Дебютные ловушки и основы дебюта (ЛитРес)', sub: 'Первые ходы для школьников и юных игроков',
-    author: 'ЛитРес', year: 2026, pub: 'ЛитРес', lang: 'Русский',
+    title: 'Комбинации и ловушки в дебюте (Н. Калиниченко)', sub: 'Полный курс: дебютные ловушки',
+    author: 'Николай Калиниченко', year: 2026, pub: 'ЛитРес', lang: 'Русский',
     age: 'Родителям и тренерам', ageN: 4, level: 'Средний', fmt: 'Сайт: задачи',
     sum: 'Поиск книг в магазине ЛитРес: первые ходы для школьников и юных игроков. Покупки делают взрослые, у многих книг есть бесплатный фрагмент.',
     access: 'Откроется результат поиска в магазине ЛитРес.',
-    url: 'https://www.litres.ru/search/?q=%D0%B4%D0%B5%D0%B1%D1%8E%D1%82%D0%BD%D1%8B%D0%B5%20%D0%BB%D0%BE%D0%B2%D1%83%D1%88%D0%BA%D0%B8', urlText: 'Найти книги',
+    url: 'https://www.litres.ru/book/nikolay-mihaylovich-kalinichenk/kombinacii-i-lovushki-v-debute-polnyy-kurs-42266463/', urlText: 'Открыть книгу на ЛитРес',
     kw: 'литрес книги дебют'
+  }, {
+    id: 'lb_deb', sec: 9, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFmM2Y3YSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtc2l6ZT0iODQiIGZpbGw9IiNmNWM1NDIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKZnjwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI1MCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMjYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QmtCw0LvQuNC90LjRh9C10L3QutC+PC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjkyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2VlZjJmNyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0YjQutC+0LvQsCDQtNC10LHRjtGC0LA8L3RleHQ+PC9zdmc+',
+    title: 'Школа шахматного дебюта (Н. Калиниченко)', sub: 'Основы дебюта по шагам',
+    author: 'Николай Калиниченко', year: 2026, pub: 'ЛитРес', lang: 'Русский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Средний', fmt: 'Книга (фрагмент бесплатно)',
+    sum: 'Учебник по основам шахматного дебюта.',
+    access: 'Откроется страница книги в магазине ЛитРес: можно прочитать бесплатный фрагмент. Покупку делают взрослые.',
+    url: 'https://www.litres.ru/book/nikolay-mihaylovich-kalinichenko/shkola-shahmatnogo-debuta-42267765/', urlText: 'Открыть книгу на ЛитРес',
+    kw: 'литрес калиниченко школа дебюта книга'
   }, {
     id: 'ltb_hist', sec: 10, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzVhM2ExYSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5OaPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCb0LjRgtCg0LXRgTwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtC40YHRgtC+0YDQuNGPPC90ZXh0Pjwvc3ZnPg==',
     title: 'Книги по истории шахмат (ЛитРес)', sub: 'История игры, турниров и шахматных школ',
@@ -17284,12 +17332,12 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     kw: 'lichess дебют начало партии задачи ловушки'
   }, {
     id: 'ltb3', sec: 7, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFmNGU3OSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5OaPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCb0LjRgtCg0LXRgTwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtGB0YLRgNCw0YLQtdCz0LjRjzwvdGV4dD48L3N2Zz4=',
-    title: 'Книги по стратегии (ЛитРес)', sub: 'Учебники по стратегии и миттельшпилю в магазине ЛитРес',
+    title: 'Книги по стратегии (ЛитРес)', sub: 'Подборка ЛитРес: шахматные книги по стратегии',
     author: 'ЛитРес', year: 2026, pub: 'ЛитРес', lang: 'Русский',
     age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт: задачи',
     sum: 'Поиск книг по шахматной стратегии и миттельшпилю в магазине ЛитРес. Покупки делают взрослые.',
     access: 'Откроется результат поиска в магазине ЛитРес.',
-    url: 'https://www.litres.ru/search/?q=%D1%88%D0%B0%D1%85%D0%BC%D0%B0%D1%82%D0%BD%D0%B0%D1%8F%20%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%B5%D0%B3%D0%B8%D1%8F%20%D0%BC%D0%B8%D1%82%D1%82%D0%B5%D0%BB%D1%8C%D1%88%D0%BF%D0%B8%D0%BB%D1%8C', urlText: 'Найти книги',
+    url: 'https://www.litres.ru/collections/shahmatnye-knigi-po-strategii/', urlText: 'Найти книги',
     kw: 'литрес стратегия миттельшпиль книги'
   }, {
     id: 'lm_mateIn1', sec: 3, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzVhMmE4MiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4x77iP4oOjPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCc0LDRgjwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCc0LDRgiDQsiAxINGF0L7QtDwvdGV4dD48L3N2Zz4=',
@@ -17427,6 +17475,15 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     url: 'https://www.litres.ru/search/?q=%D1%88%D0%B0%D1%85%D0%BC%D0%B0%D1%82%D0%BD%D1%8B%D0%B9%20%D1%8D%D0%BD%D0%B4%D1%88%D0%BF%D0%B8%D0%BB%D1%8C', urlText: 'Найти книги',
     kw: 'литрес эндшпиль окончания книги'
   }, {
+    id: 'lb_et', sec: 8, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzdhNGExZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtc2l6ZT0iODQiIGZpbGw9IiNmNWM1NDIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfj4E8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNTAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjI2IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0KHQtdC70LXQt9C90LXQsjwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtGN0YLRjtC00Ys8L3RleHQ+PC9zdmc+',
+    title: '100 шахматных этюдов. Практикум по эндшпилю (А. Селезнев)', sub: 'Этюды и окончания с практикой',
+    author: 'Алексей Селезнев', year: 2026, pub: 'ЛитРес', lang: 'Русский',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Книга (фрагмент бесплатно)',
+    sum: 'Сто этюдов для тренировки эндшпиля.',
+    access: 'Откроется страница книги в магазине ЛитРес: можно прочитать бесплатный фрагмент. Покупку делают взрослые.',
+    url: 'https://www.litres.ru/book/aleksey-seleznev-18662288/100-shahmatnyh-etudov-praktikum-po-endshpilu-42826098/', urlText: 'Открыть книгу на ЛитРес',
+    kw: 'литрес селезнев этюды эндшпиль книга'
+  }, {
     id: 'lichess', sec: 13, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzJhMmEyYSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNzAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7imZ48L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNTAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+TGljaGVzczwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjI5MiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNlZWYyZjciIHRleHQtYW5jaG9yPSJtaWRkbGUiPtC40LPRgNCw0YLRjCDQsdC10YHQv9C70LDRgtC90L48L3RleHQ+PC9zdmc+',
     title: 'Lichess', sub: 'Бесплатный шахматный сайт: партии, задачи, уроки',
     author: 'Lichess', year: 2026, pub: 'Lichess', lang: 'Русский',
@@ -17507,6 +17564,69 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
     access: 'Канал откроется в новой вкладке. Заходить лучше вместе с родителями или тренером.',
     url: 'https://www.youtube.com/@FIDE_chess', urlText: 'Открыть канал FIDE',
     kw: 'fide youtube новости чемпионат мира прямой эфир трансляция'
+  }, {
+    id: 'soloyt', sec: 15, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7ilrY8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMzgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RklERSBZb3VUdWJlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0L/RgNGP0LzRi9C1INGN0YTQuNGA0Ys8L3RleHQ+PC9zdmc+',
+    title: 'Канал Solochess на YouTube', sub: 'Шахматный видеоканал',
+    author: 'Solochess', year: 2026, pub: 'YouTube', lang: 'Уточняется',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Шахматный канал на YouTube, добавленный тренером в библиотеку. Смотреть лучше вместе с родителями или тренером.',
+    access: 'Канал откроется в новой вкладке. Заходить лучше вместе с родителями или тренером.',
+    url: 'https://www.youtube.com/@Solochess', urlText: 'Открыть канал Solochess',
+    kw: 'solochess youtube видео канал'
+  }, {
+    id: 'crestyt', sec: 15, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7ilrY8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMzgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RklERSBZb3VUdWJlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0L/RgNGP0LzRi9C1INGN0YTQuNGA0Ys8L3RleHQ+PC9zdmc+',
+    title: 'Канал Crestbook на YouTube', sub: 'Шахматный видеоканал',
+    author: 'Crestbook', year: 2026, pub: 'YouTube', lang: 'Уточняется',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Шахматный канал на YouTube, добавленный тренером в библиотеку. Смотреть лучше вместе с родителями или тренером.',
+    access: 'Канал откроется в новой вкладке. Заходить лучше вместе с родителями или тренером.',
+    url: 'https://www.youtube.com/@Crestbook', urlText: 'Открыть канал Crestbook',
+    kw: 'crestbook youtube видео канал'
+  }, {
+    id: 'kvyt', sec: 15, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7ilrY8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMzgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RklERSBZb3VUdWJlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0L/RgNGP0LzRi9C1INGN0YTQuNGA0Ys8L3RleHQ+PC9zdmc+',
+    title: 'Канал KVchess на YouTube', sub: 'Шахматный видеоканал',
+    author: 'KVchess', year: 2026, pub: 'YouTube', lang: 'Уточняется',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Шахматный канал на YouTube, добавленный тренером в библиотеку. Смотреть лучше вместе с родителями или тренером.',
+    access: 'Канал откроется в новой вкладке. Заходить лучше вместе с родителями или тренером.',
+    url: 'https://www.youtube.com/@KVchess', urlText: 'Открыть канал KVchess',
+    kw: 'kvchess youtube видео канал'
+  }, {
+    id: 'nemtsevyt', sec: 15, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7ilrY8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMzgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RklERSBZb3VUdWJlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0L/RgNGP0LzRi9C1INGN0YTQuNGA0Ys8L3RleHQ+PC9zdmc+',
+    title: 'Канал «Гуру Немцев» на YouTube (плейлисты)', sub: 'Шахматный видеоканал',
+    author: 'Гуру Немцев', year: 2026, pub: 'YouTube', lang: 'Уточняется',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Шахматный канал на YouTube, добавленный тренером в библиотеку. Смотреть лучше вместе с родителями или тренером.',
+    access: 'Канал откроется в новой вкладке. Заходить лучше вместе с родителями или тренером.',
+    url: 'https://www.youtube.com/@guru-nemtsev/playlists', urlText: 'Открыть плейлисты',
+    kw: 'немцев guru youtube плейлисты видео канал'
+  }, {
+    id: 'smartyt', sec: 15, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7ilrY8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMzgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RklERSBZb3VUdWJlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0L/RgNGP0LzRi9C1INGN0YTQuNGA0Ys8L3RleHQ+PC9zdmc+',
+    title: 'Канал Smart Chess на YouTube', sub: 'Шахматный видеоканал',
+    author: 'Smart Chess', year: 2026, pub: 'YouTube', lang: 'Уточняется',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Шахматный канал на YouTube, добавленный тренером в библиотеку. Смотреть лучше вместе с родителями или тренером.',
+    access: 'Канал откроется в новой вкладке. Заходить лучше вместе с родителями или тренером.',
+    url: 'https://www.youtube.com/@smart-chess8106', urlText: 'Открыть канал Smart Chess',
+    kw: 'smart chess youtube видео канал'
+  }, {
+    id: 'worldyt', sec: 15, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7ilrY8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMzgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RklERSBZb3VUdWJlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0L/RgNGP0LzRi9C1INGN0YTQuNGA0Ys8L3RleHQ+PC9zdmc+',
+    title: 'Канал World Of Chess на YouTube (плейлисты)', sub: 'Шахматный видеоканал',
+    author: 'World Of Chess', year: 2026, pub: 'YouTube', lang: 'Уточняется',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Шахматный канал на YouTube, добавленный тренером в библиотеку. Смотреть лучше вместе с родителями или тренером.',
+    access: 'Канал откроется в новой вкладке. Заходить лучше вместе с родителями или тренером.',
+    url: 'https://www.youtube.com/@World_Of_Chess_/playlist', urlText: 'Открыть плейлисты',
+    kw: 'world of chess youtube плейлисты видео канал'
+  }, {
+    id: 'mcyt', sec: 15, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7ilrY8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyMzgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RklERSBZb3VUdWJlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjgyIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2U2ZWRmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0L/RgNGP0LzRi9C1INGN0YTQuNGA0Ys8L3RleHQ+PC9zdmc+',
+    title: 'Канал Chess Master Club на YouTube', sub: 'Шахматный видеоканал',
+    author: 'Chess Master Club', year: 2026, pub: 'YouTube', lang: 'Уточняется',
+    age: 'Родителям и тренерам', ageN: 4, level: 'Продвинутый', fmt: 'Сайт',
+    sum: 'Шахматный канал на YouTube, добавленный тренером в библиотеку. Смотреть лучше вместе с родителями или тренером.',
+    access: 'Канал откроется в новой вкладке. Заходить лучше вместе с родителями или тренером.',
+    url: 'https://www.youtube.com/@chessmasterclub', urlText: 'Открыть канал Chess Master Club',
+    kw: 'chess master club youtube видео канал'
   }, {
     id: 'fidesite', sec: 14, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzFlM2E1ZiIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1YzU0MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjgwIiBmaWxsPSIjZjVjNTQyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn4yQPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjM4IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIzMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtCh0LDQudGCIEZJREU8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyODIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE2IiBmaWxsPSIjZTZlZGY1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QvdC+0LLQvtGB0YLQuCDCtyDQv9GA0LDQstC40LvQsDwvdGV4dD48L3N2Zz4=',
     title: 'Сайт FIDE (fide.com)', sub: 'Официальный сайт Международной шахматной федерации: новости, календарь, рейтинги, правила',
@@ -19141,6 +19261,8 @@ body.yc3 .y2nav a.on { background: #1f5d4a; border-color: #1f5d4a; } body.yc4 .y
 .nav a[data-r="y3"][aria-current="page"] { background: #1f5d4a !important; color: #fff !important; }
 .nav a[data-r="y4"][aria-current="page"] { background: #6a2338 !important; color: #fff !important; }
 body.y2 .y2nav a.on, body.y2 .y2nav a.on:nth-child(n), body.y2 .nav a[aria-current="page"] { color: #fff !important; }
+body.y2 .y2nav a.on, body.y2 .y2nav a.on:nth-child(n), body.y2 .y2nav a[aria-current="page"], body.y2 .y2nav a[aria-current="page"]:nth-child(n) { background: var(--yc, #1e3a5f) !important; color: #fff !important; border-color: var(--yc, #1e3a5f) !important; }
+body.y2 .y2nav a.navtrn, body.y2 .y2nav a.navtrn:nth-child(n) { background: linear-gradient(120deg,#e10600,#f5a800) !important; color: #fff !important; border: 0 !important; font-weight: 800; border-radius: 99px; }
 .yrd.y3 { background: #1f5d4a !important; border-color: #1f5d4a !important; box-shadow: 0 5px 0 #123a2e !important; }
 .yrd.y4 { background: #6a2338 !important; border-color: #6a2338 !important; box-shadow: 0 5px 0 #44131f !important; }
 .yrd.y3 .yrk, .yrd.y4 .yrk { color: #f1cf72 !important; } .yrd.y3 p, .yrd.y4 p { color: #e8efe9 !important; } .yrd.y4 p { color: #f3e4e8 !important; }
