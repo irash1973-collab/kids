@@ -3205,13 +3205,14 @@ if (typeof module !== 'undefined') module.exports = Eng;
 
   function world0(i) { return WORLDS[i].n; }
   function playWorlds() {
-    var h = '<h2>Игра с роботами</h2><p class="note">10 миров, в каждом 20 уровней. Все миры открыты, можно играть с любым роботом. Но лучше идти по порядку: сначала выигрывай в мире примерно 80% партий, потом переходи в следующий. Если станет тяжело и ты проигрываешь, подсказка посоветует вернуться в мир полегче. Играем по настоящим правилам.</p><div class="wgrid">';
+    var h = '<h2>Игра с роботами</h2><p class="note">10 миров, в каждом 20 уровней, и ещё 200 супер-роботов с обычными партиями: 100 для новичков и 100 для 4 разряда (внизу). Все миры открыты, можно играть с любым роботом. Но лучше идти по порядку: сначала выигрывай в мире примерно 80% партий, потом переходи в следующий. Если станет тяжело и ты проигрываешь, подсказка посоветует вернуться в мир полегче. Играем по настоящим правилам.</p><div class="wgrid">';
     WORLDS.forEach(function (w, wi) {
       var ok = unlocked(wi * SUB + 1), c = worldWins(wi);
       h += '<a class="wcard' + (ok ? '' : ' locked') + (c === SUB ? ' full' : '') + '" href="' + (ok ? '#play/' + (wi + 1) : '#play') + '"' + (ok ? '' : ' aria-disabled="true"') + '>' +
         '<span class="wpc">' + pcHTML(w.pc) + '</span><span class="wn">' + (wi + 1) + '. ' + esc(w.n) + '</span>' +
         '<span class="bar" aria-hidden="true"><i style="width:' + (c * 100 / SUB) + '%"></i></span><span class="wc">' + c + ' из ' + SUB + (rbWorld(wi).g ? ' · результат ' + rbWorld(wi).p + '%' : '') + '</span></a>';
     });
+    ['nov', 'r4'].forEach(function (tk) { var S = SUPER[tk]; h += '<a class="wcard" href="#play/' + tk + '"><span class="wpc">' + robotSvg(S.sv(99), 40) + '</span><span class="wn">⭐ ' + esc(S.title) + '</span><span class="bar" aria-hidden="true"><i style="width:' + superWins(tk) + '%"></i></span><span class="wc">' + superWins(tk) + ' из 100 · обычные партии</span></a>'; });
     h += '</div>';
     view.innerHTML = h;
     view.onclick = function (e) {
@@ -3237,11 +3238,43 @@ if (typeof module !== 'undefined') module.exports = Eng;
     };
   }
 
-  function playGame(n) {
+  /* ---------- Супер-роботы: 100 для новичков и 100 для 4 разряда, обычные партии со всеми фигурами ---------- */
+  var SRB = lsGet('ukc_rb2', {}); if (!SRB || typeof SRB !== 'object') SRB = {};
+  var SUPER_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  var SUPER_A1 = ['Железный', 'Стальной', 'Огненный', 'Ледяной', 'Грозовой', 'Лунный', 'Солнечный', 'Звёздный', 'Космический', 'Золотой'];
+  var SUPER_B1 = ['Великан', 'Титан', 'Дракон', 'Тигр', 'Орёл', 'Медведь', 'Волк', 'Гепард', 'Единорог', 'Феникс'];
+  var SUPER_A2 = ['Мега', 'Супер', 'Ультра', 'Турбо', 'Гипер', 'Альфа', 'Омега', 'Кванто', 'Нео', 'Кибер'];
+  var SUPER_B2 = ['Рыцарь', 'Ферзь', 'Богатырь', 'Стратег', 'Капитан', 'Чемпион', 'Страж', 'Магистр', 'Комбинатор', 'Гроссробот'];
+  var SUPER = {
+    nov: { title: 'Супер-роботы для новичков', short: 'Для новичков', note: 'Обычные партии со всеми фигурами. Эти роботы подходят тем, кто только учится играть: они играют по правилам, но ошибаются, как новички. Начни с первого и иди дальше, они становятся чуть сильнее.', key: 'n',
+      nm: function (i) { return SUPER_A1[i % 10] + ' ' + SUPER_B1[Math.floor(i / 10)]; }, lv: function (i) { return 2 + Math.round(i * 7 / 99); }, sv: function (i) { return 11 + i; } },
+    r4: { title: 'Супер-роботы 4 разряда', short: 'Для 4 разряда', note: 'Обычные партии со всеми фигурами. Эти роботы подходят игрокам 4 разряда: они играют серьёзнее, но не подставляют фигуры. Начни с первого, дальше роботы сильнее.', key: 'q',
+      nm: function (i) { return SUPER_A2[i % 10] + '-' + SUPER_B2[Math.floor(i / 10)]; }, lv: function (i) { return 9 + Math.round(i * 7 / 99); }, sv: function (i) { return 111 + i; } }
+  };
+  function superWins(tk) { var c = 0; for (var i = 0; i < 100; i++) if (SRB[SUPER[tk].key + i]) c++; return c; }
+  function superX(tk, i) {
+    var S = SUPER[tk];
+    return { key: S.key + i, i: i, tk: tk, world: { n: S.title, fen: SUPER_FEN }, L: S.lv(i), name: S.nm(i), av: robotSvg(S.sv(i), 40), sub: S.short + ', робот ' + (i + 1) + ' из 100', back: '#play/' + tk, hasNext: i < 99, next: function () { return superX(tk, i + 1); } };
+  }
+  function superList(tk) {
+    var S = SUPER[tk];
+    var h = '<div class="row"><a class="btn alt" href="#play">Все миры</a></div><section class="world"><div class="wh">' + robotSvg(S.sv(99), 56) + '<div><h2>' + esc(S.title) + '</h2><p>' + esc(S.note) + '</p></div></div>' +
+      '<p class="note">Побед: ' + superWins(tk) + ' из 100</p><div class="lvgrid">';
+    for (var i = 0; i < 100; i++) {
+      var s = SRB[S.key + i] || 0;
+      h += '<button class="lvbtn' + (s ? ' won' : '') + '" data-i="' + i + '" aria-label="Робот ' + (i + 1) + ', ' + esc(S.nm(i)) + (s ? ', побеждён' : '') + '">' + robotSvg(S.sv(i), 44) + '<span class="ln">' + (i + 1) + '</span><span class="rn">' + esc(S.nm(i)) + '</span>' + (s ? starsRow(s) : '') + '</button>';
+    }
+    h += '</div></section>';
+    view.innerHTML = h;
+    view.onclick = function (e) { var b = e.target.closest('.lvbtn'); if (b) playGame(0, superX(tk, +b.dataset.i)); };
+  }
+
+  function playGame(n, X) {
     view.onclick = null;
     var G, you = 1, hints = 3;
-    var wi = Math.floor((n - 1) / SUB), sub = n - wi * SUB, world = WORLDS[wi];
-    var L = robotLevel(n), name = robotName(n);
+    var wi = X ? 0 : Math.floor((n - 1) / SUB), sub = X ? X.i + 1 : n - wi * SUB, world = X ? X.world : WORLDS[wi];
+    var L = X ? X.L : robotLevel(n), name = X ? X.name : robotName(n);
+    var hasNext = X ? X.hasNext : n < TOTAL, goNext = function () { if (X) playGame(0, X.next()); else playGame(n + 1); };
     view.innerHTML =
       '<div class="row plhead"><button class="btn alt" id="back">К уровням</button><h2>' + esc(world.n) + ' · уровень ' + sub + '</h2></div><div id="who"></div>' +
       '<div class="seg" id="side" role="group" aria-label="Цвет фигур"><button data-c="1" aria-pressed="true">Играю белыми</button><button data-c="-1" aria-pressed="false">Играю чёрными</button></div>' +
@@ -3252,7 +3285,7 @@ if (typeof module !== 'undefined') module.exports = Eng;
     var msg = document.getElementById('msg');
     function setMsg(t, kind) { msg.className = 'msg' + (kind ? ' ' + kind : ''); msg.textContent = t; }
     var intro = L <= 6 ? 'Привет! Я ' + name + ', я только учусь. Сыграем?' : L <= 18 ? 'Привет! Я ' + name + '. Сыграем партию?' : L <= 24 ? 'Я ' + name + '. Играю серьёзно, не зевай!' : 'Я ' + name + '. Это сильный соперник. Удачи!';
-    document.getElementById('who').innerHTML = say(robotSvg(n, 40), name, intro, 'уровень ' + n + ' из ' + TOTAL);
+    document.getElementById('who').innerHTML = say(X ? X.av : robotSvg(n, 40), name, intro, X ? X.sub : 'уровень ' + n + ' из ' + TOTAL);
 
     function newGame() {
       if (L >= 22) SF.load();
@@ -3275,12 +3308,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
     }
     function win() {
       var was = earnedIds(), diff = matDiff(G.pos, you), stars = 3;
-      var firstTime = !wins[n];
-      wins[n] = Math.max(wins[n] || 0, stars); lsSet('ukc_w2', wins);
-      var nm = newMedals(was), worldDone = (worldWins(wi) === SUB) && firstTime;
+      var firstTime = X ? !SRB[X.key] : !wins[n];
+      if (X) { SRB[X.key] = stars; lsSet('ukc_rb2', SRB); } else { wins[n] = Math.max(wins[n] || 0, stars); lsSet('ukc_w2', wins); }
+      var nm = newMedals(was), worldDone = !X && (worldWins(wi) === SUB) && firstTime;
       addPts(firstTime ? 20 + stars * 10 + (worldDone ? 200 : 0) : stars * 3, firstTime ? 'за победу' : 'за повтор');
       afterGame();
-      if (n < TOTAL) document.getElementById('nextLv').hidden = false;
+      if (hasNext) document.getElementById('nextLv').hidden = false;
       setMsg(n === TOTAL ? 'Ты обыграл всех роботов! Ты чемпион шахматной страны!' : 'Мат! Ты победил ' + name + '!', 'good');
       sfx(worldDone || n === TOTAL ? 'world' : 'win'); confetti(worldDone || n === TOTAL ? 320 : 130);
       later(function () {
@@ -3289,12 +3322,12 @@ if (typeof module !== 'undefined') module.exports = Eng;
           '<p class="praise">' + esc(praise()) + '</p><p>' + (worldDone ? 'Ты прошёл все 20 уровней: «' + esc(world.n) + '». Получай кубок!' : 'Ты обыграл робота ' + esc(name) + '.') + '</p>' +
           (stars < 3 ? '<p class="note">Три звезды даёт победа с запасом фигур. Попробуй сыграть ещё!</p>' : '') +
           medalsHTML(nm) +
-          '<div class="row">' + (n < TOTAL ? '<button class="btn" data-act="next">Следующий уровень</button>' : '') + '<button class="btn alt" data-act="an">Разобрать партию</button><button class="btn alt" data-act="back">К уровням</button></div>';
+          '<div class="row">' + (hasNext ? '<button class="btn" data-act="next">' + (X ? 'Следующий робот' : 'Следующий уровень') + '</button>' : '') + '<button class="btn alt" data-act="an">Разобрать партию</button><button class="btn alt" data-act="back">К уровням</button></div>';
         if (nm.length) sfx('medal');
         modal.acts = {
-          next: function () { playGame(n + 1); },
+          next: goNext,
           an: function () { openAnalysis(); },
-          back: function () { location.hash = '#play/' + (wi + 1); }
+          back: function () { location.hash = X ? X.back : '#play/' + (wi + 1); }
         };
         modal(h);
       }, 900);
@@ -3302,8 +3335,8 @@ if (typeof module !== 'undefined') module.exports = Eng;
     function openAnalysis() { pending = { start: G.start, recs: G.rec.slice(), flip: you === -1 }; location.hash = '#board'; }
     function finish(text, kind, won) {
       G.over = true; setMsg(text, kind);
-      rbRec(n, won ? 1 : kind === 'bad' ? 0 : 0.5);
-      if (!won && kind === 'bad') { var ww = rbWorld(wi); if (ww.g >= 3 && ww.p < 35) setMsg(text + ' Этот мир пока не для тебя (результат ' + ww.p + '%). Вернись' + (wi > 0 ? ' в мир «' + world0(wi - 1) + '»' : ' и потренируйся') + ', там будет полегче.', 'bad'); }
+      if (!X) rbRec(n, won ? 1 : kind === 'bad' ? 0 : 0.5);
+      if (!X && !won && kind === 'bad') { var ww = rbWorld(wi); if (ww.g >= 3 && ww.p < 35) setMsg(text + ' Этот мир пока не для тебя (результат ' + ww.p + '%). Вернись' + (wi > 0 ? ' в мир «' + world0(wi - 1) + '»' : ' и потренируйся') + ', там будет полегче.', 'bad'); }
       if (won) win(); else { sfx(kind === 'bad' ? 'bad' : 'move'); afterGame(); }
     }
     function checkEnd() {
@@ -3392,11 +3425,11 @@ if (typeof module !== 'undefined') module.exports = Eng;
         draw();
       }, 60);
     };
-    document.getElementById('back').onclick = function () { clearTimers(); var tg = '#play/' + (wi + 1); if (location.hash === tg) window.dispatchEvent(new Event('hashchange')); else location.hash = tg; };
+    document.getElementById('back').onclick = function () { clearTimers(); var tg = X ? X.back : '#play/' + (wi + 1); if (location.hash === tg) window.dispatchEvent(new Event('hashchange')); else location.hash = tg; };
     document.getElementById('newBtn').onclick = newGame;
     document.getElementById('resBtn').onclick = function () { if (G.over || !G.rec.length) return; if (!confirm('Сдаться? Партия будет проиграна.')) return; G.busy = false; finish('Ты сдался. Разбери партию и сыграй ещё раз!', 'bad', false); draw(); };
     document.getElementById('anBtn').onclick = openAnalysis;
-    document.getElementById('nextLv').onclick = function () { playGame(n + 1); };
+    document.getElementById('nextLv').onclick = goNext;
     document.getElementById('side').onclick = function (e) {
       var b = e.target.closest('button'); if (!b) return;
       you = +b.dataset.c; newGame();
@@ -17875,7 +17908,7 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
   }
   /* ---------- Киноколлекция UpGrade: один фильм в месяц ---------- */
   window.__film = function () {
-    var D = {"f": [{"id": 1, "t": "Анатолий Карпов — «Ход конём»", "y": "", "g": "chess", "th": "детство и становление великого шахматиста", "ls": "дисциплина, постоянная работа, терпение", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Анатолий+Карпов+Ход+конем+документальный+фильм"}, {"id": 2, "t": "Анатолий Карпов — «Карпов играет Карпова»", "y": "1980", "g": "chess", "th": "жизнь, шахматная карьера и подготовка чемпиона", "ls": "ответственность, профессионализм, самоорганизация", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Карпов+играет+Карпова+1980"}, {"id": 3, "t": "Closing Gambit", "y": "2018", "g": "chess", "th": "противостояние Карпова и Корчного", "ls": "психологическая устойчивость и выдержка", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Closing+Gambit+2018+documentary"}, {"id": 4, "t": "Magnus", "y": "2016", "g": "chess", "th": "путь Магнуса Карлсена от детства до звания чемпиона мира", "ls": "концентрация, трудолюбие, целеустремлённость", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Magnus+2016+documentary"}, {"id": 5, "t": "Bobby Fischer Against the World", "y": "2011", "g": "chess", "th": "жизнь и шахматный путь Бобби Фишера", "ls": "интеллектуальная подготовка, настойчивость", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Bobby+Fischer+Against+the+World"}, {"id": 6, "t": "Queen of Chess", "y": "2026", "g": "chess", "th": "история Юдит Полгар", "ls": "смелость, независимость, вера в свои способности", "age": "14–18 лет", "u": "https://www.netflix.com/search?q=Queen%20of%20Chess"}, {"id": 7, "t": "«В поисках Бобби Фишера»", "y": "1993", "g": "chess", "th": "юный шахматный талант Джош Вайцкин", "ls": "честная игра, уважение к сопернику, умение принимать поражения", "age": "8–10 лет", "u": "https://www.youtube.com/results?search_query=Searching+for+Bobby+Fischer+1993"}, {"id": 8, "t": "«Королева Катве»", "y": "2016", "g": "chess", "th": "девочка из Уганды, которая благодаря шахматам изменила свою жизнь", "ls": "вера в себя, настойчивость, благодарность наставнику", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Queen+of+Katwe+2016"}, {"id": 9, "t": "«Бруклинский замок»", "y": "2012", "g": "chess", "th": "школьная шахматная команда", "ls": "дружба, командный дух, взаимопомощь", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Brooklyn+Castle+2012+documentary"}, {"id": 10, "t": "«Фахим»", "y": "2019", "g": "chess", "th": "юный шахматист, преодолевающий жизненные трудности", "ls": "мужество, благодарность, терпение", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Fahim+2019+film"}, {"id": 11, "t": "«Рыцари Южного Бронкса»", "y": "2005", "g": "chess", "th": "учитель, который помогает детям открыть для себя шахматы", "ls": "дисциплина, уважение к учителю, уверенность в себе", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Knights+of+the+South+Bronx+2005"}, {"id": 12, "t": "«Мальчик, который обуздал ветер»", "y": "2019", "g": "char", "th": "", "ls": "интеллект, изобретательность, настойчивость", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=The+Boy+Who+Harnessed+the+Wind"}, {"id": 13, "t": "«Каратэ-пацан»", "y": "2010", "g": "char", "th": "", "ls": "дисциплина, уважение к наставнику, самоконтроль", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Karate+Kid+2010"}, {"id": 14, "t": "«Макфарланд»", "y": "2015", "g": "char", "th": "", "ls": "командная работа, трудолюбие, ответственность", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=McFarland+USA+2015"}, {"id": 15, "t": "«Крутые виражи»", "y": "1993", "g": "char", "th": "", "ls": "дружба, командный дух, умение не сдаваться", "age": "8–10 лет", "u": "https://www.youtube.com/results?search_query=Cool+Runnings+1993"}, {"id": 16, "t": "Full Out", "y": "2015", "g": "char", "th": "", "ls": "сила духа, возвращение после неудач", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Full+Out+2015"}, {"id": 17, "t": "«Новичок»", "y": "2002", "g": "char", "th": "", "ls": "вера в мечту, целеустремлённость", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=The+Rookie+2002"}, {"id": 18, "t": "«Чудо»", "y": "2004", "g": "char", "th": "", "ls": "единство, дисциплина, ответственность", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Miracle+2004"}, {"id": 19, "t": "«Вспоминая титанов»", "y": "2000", "g": "char", "th": "", "ls": "лидерство, взаимоуважение, командная работа", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Remember+the+Titans"}, {"id": 20, "t": "«Пчёлка» (Akeelah and the Bee)", "y": "2006", "g": "char", "th": "", "ls": "сила знаний, память, подготовка, уверенность", "age": "8–10 лет", "u": "https://www.youtube.com/results?search_query=Akeelah+and+the+Bee+2006"}], "order": [7, 20, 15, 8, 10, 4, 1, 9, 11, 12, 14, 19, 13, 16, 17, 18, 2, 3, 5, 6], "extra": [{"t": "История всех чемпионов мира", "u": "https://www.youtube.com/results?search_query=World+Chess+Champions+History"}, {"t": "История чемпионок мира", "u": "https://www.youtube.com/results?search_query=Women+World+Chess+Champions"}, {"t": "Детские чемпионаты мира U8, U10, U12", "u": "https://www.youtube.com/results?search_query=World+Cadet+Chess+Championship"}, {"t": "Юниорские чемпионаты мира U16, U18, U20", "u": "https://www.youtube.com/results?search_query=World+Junior+Chess+Championship"}, {"t": "Великие шахматные партии", "u": "https://www.youtube.com/results?search_query=Greatest+Chess+Games+History"}, {"t": "Истории юных шахматных талантов", "u": "https://www.youtube.com/results?search_query=Young+Chess+Prodigies"}, {"t": "Чемпионаты Европы среди детей", "u": "https://www.youtube.com/results?search_query=European+Youth+Chess+Championship"}]}, v = document.getElementById('view');
+    var D = {"f": [{"id": 1, "t": "Анатолий Карпов — «Ход конём»", "y": "", "g": "chess", "th": "детство и становление великого шахматиста", "ls": "дисциплина, постоянная работа, терпение", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Анатолий+Карпов+Ход+конем+документальный+фильм"}, {"id": 2, "t": "Анатолий Карпов — «Карпов играет Карпова»", "y": "1980", "g": "chess", "th": "жизнь, шахматная карьера и подготовка чемпиона", "ls": "ответственность, профессионализм, самоорганизация", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Карпов+играет+Карпова+1980"}, {"id": 3, "t": "Closing Gambit", "y": "2018", "g": "chess", "th": "противостояние Карпова и Корчного", "ls": "психологическая устойчивость и выдержка", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Closing+Gambit+2018+documentary"}, {"id": 4, "t": "Magnus", "y": "2016", "g": "chess", "th": "путь Магнуса Карлсена от детства до звания чемпиона мира", "ls": "концентрация, трудолюбие, целеустремлённость", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Magnus+2016+documentary"}, {"id": 5, "t": "Bobby Fischer Against the World", "y": "2011", "g": "chess", "th": "жизнь и шахматный путь Бобби Фишера", "ls": "интеллектуальная подготовка, настойчивость", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Bobby+Fischer+Against+the+World"}, {"id": 6, "t": "Queen of Chess", "y": "2026", "g": "chess", "th": "история Юдит Полгар", "ls": "смелость, независимость, вера в свои способности", "age": "14–18 лет", "u": "https://www.netflix.com/search?q=Queen%20of%20Chess"}, {"id": 7, "t": "«В поисках Бобби Фишера»", "y": "1993", "g": "chess", "th": "юный шахматный талант Джош Вайцкин", "ls": "честная игра, уважение к сопернику, умение принимать поражения", "age": "8–10 лет", "u": "https://www.youtube.com/results?search_query=Searching+for+Bobby+Fischer+1993"}, {"id": 8, "t": "«Королева Катве»", "y": "2016", "g": "chess", "th": "девочка из Уганды, которая благодаря шахматам изменила свою жизнь", "ls": "вера в себя, настойчивость, благодарность наставнику", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Queen+of+Katwe+2016"}, {"id": 9, "t": "«Бруклинский замок»", "y": "2012", "g": "chess", "th": "школьная шахматная команда", "ls": "дружба, командный дух, взаимопомощь", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Brooklyn+Castle+2012+documentary"}, {"id": 10, "t": "«Фахим»", "y": "2019", "g": "chess", "th": "юный шахматист, преодолевающий жизненные трудности", "ls": "мужество, благодарность, терпение", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Fahim+2019+film"}, {"id": 11, "t": "«Рыцари Южного Бронкса»", "y": "2005", "g": "chess", "th": "учитель, который помогает детям открыть для себя шахматы", "ls": "дисциплина, уважение к учителю, уверенность в себе", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Knights+of+the+South+Bronx+2005"}, {"id": 12, "t": "«Мальчик, который обуздал ветер»", "y": "2019", "g": "char", "th": "", "ls": "интеллект, изобретательность, настойчивость", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=The+Boy+Who+Harnessed+the+Wind"}, {"id": 13, "t": "«Каратэ-пацан»", "y": "2010", "g": "char", "th": "", "ls": "дисциплина, уважение к наставнику, самоконтроль", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Karate+Kid+2010"}, {"id": 14, "t": "«Макфарланд»", "y": "2015", "g": "char", "th": "", "ls": "командная работа, трудолюбие, ответственность", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=McFarland+USA+2015"}, {"id": 15, "t": "«Крутые виражи»", "y": "1993", "g": "char", "th": "", "ls": "дружба, командный дух, умение не сдаваться", "age": "8–10 лет", "u": "https://www.youtube.com/results?search_query=Cool+Runnings+1993"}, {"id": 16, "t": "Full Out", "y": "2015", "g": "char", "th": "", "ls": "сила духа, возвращение после неудач", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Full+Out+2015"}, {"id": 17, "t": "«Новичок»", "y": "2002", "g": "char", "th": "", "ls": "вера в мечту, целеустремлённость", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=The+Rookie+2002"}, {"id": 18, "t": "«Чудо»", "y": "2004", "g": "char", "th": "", "ls": "единство, дисциплина, ответственность", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Miracle+2004"}, {"id": 19, "t": "«Вспоминая титанов»", "y": "2000", "g": "char", "th": "", "ls": "лидерство, взаимоуважение, командная работа", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Remember+the+Titans"}, {"id": 20, "t": "«Пчёлка» (Akeelah and the Bee)", "y": "2006", "g": "char", "th": "", "ls": "сила знаний, память, подготовка, уверенность", "age": "8–10 лет", "u": "https://www.youtube.com/results?search_query=Akeelah+and+the+Bee+2006"}, {"id": 21, "t": "«Жертвуя пешкой» (Pawn Sacrifice)", "y": "2014", "g": "chess", "th": "матч Бобби Фишера и Бориса Спасского в 1972 году", "ls": "огромный труд, цена одержимости, умение сохранять равновесие в жизни", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Pawn+Sacrifice+2014"}, {"id": 22, "t": "«Жизнь короля» (Life of a King)", "y": "2013", "g": "chess", "th": "шахматный клуб для подростков и второй шанс в жизни", "ls": "вера в человека, ответственность, умение начать заново", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Life+of+a+King+2013"}, {"id": 23, "t": "«Королевский гамбит» (Critical Thinking)", "y": "2020", "g": "chess", "th": "школьная шахматная команда, которая борется за звание чемпионов", "ls": "командный дух, дисциплина, вера в себя", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Critical+Thinking+2020+film+chess"}, {"id": 24, "t": "«Тёмная лошадка» (The Dark Horse)", "y": "2014", "g": "chess", "th": "шахматный клуб для детей и сильный характер тренера", "ls": "стойкость, забота о других, вера в детей", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=The+Dark+Horse+2014+chess"}, {"id": 25, "t": "«Защита Лужина»", "y": "2000", "g": "chess", "th": "экранизация романа Набокова о шахматном гении", "ls": "цена одержимости, баланс между шахматами и жизнью", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Защита+Лужина+2000+фильм"}, {"id": 26, "t": "«Ход королевы» (The Queen’s Gambit, сериал)", "y": "2020", "g": "chess", "th": "девочка из приюта становится сильнейшей шахматисткой", "ls": "талант требует дисциплины, значение поддержки и друзей; смотреть вместе с родителями", "age": "14–18 лет", "u": "https://www.netflix.com/search?q=The%20Queen%27s%20Gambit"}, {"id": 27, "t": "«Шахматная горячка» (Chess Fever)", "y": "1925", "g": "chess", "th": "немое советское кино: комедия о том, как шахматы захватили целый город", "ls": "увлечённость и чувство меры, юмор", "age": "8–10 лет", "u": "https://www.youtube.com/results?search_query=Шахматная+горячка+1925+Пудовкин"}, {"id": 28, "t": "«Каспаров против машины» (Game Over: Kasparov and the Machine)", "y": "2003", "g": "chess", "th": "матчи Гарри Каспарова с компьютером Deep Blue", "ls": "учиться и после поражения, человек и компьютер", "age": "14–18 лет", "u": "https://www.youtube.com/results?search_query=Game+Over+Kasparov+and+the+Machine+2003"}, {"id": 29, "t": "«Эдди „Орёл“» (Eddie the Eagle)", "y": "2016", "g": "char", "th": "", "ls": "упорство, мечта вопреки насмешкам, радость от самой борьбы", "age": "11–13 лет", "u": "https://www.youtube.com/results?search_query=Eddie+the+Eagle+2016"}], "order": [7, 20, 15, 8, 10, 4, 1, 9, 11, 12, 14, 19, 13, 16, 17, 18, 2, 3, 5, 6, 21, 22, 23, 24, 25, 26, 27, 28, 29], "extra": [{"t": "История всех чемпионов мира", "u": "https://www.youtube.com/results?search_query=World+Chess+Champions+History"}, {"t": "История чемпионок мира", "u": "https://www.youtube.com/results?search_query=Women+World+Chess+Champions"}, {"t": "Детские чемпионаты мира U8, U10, U12", "u": "https://www.youtube.com/results?search_query=World+Cadet+Chess+Championship"}, {"t": "Юниорские чемпионаты мира U16, U18, U20", "u": "https://www.youtube.com/results?search_query=World+Junior+Chess+Championship"}, {"t": "Великие шахматные партии", "u": "https://www.youtube.com/results?search_query=Greatest+Chess+Games+History"}, {"t": "Истории юных шахматных талантов", "u": "https://www.youtube.com/results?search_query=Young+Chess+Prodigies"}, {"t": "Чемпионаты Европы среди детей", "u": "https://www.youtube.com/results?search_query=European+Youth+Chess+Championship"}]}, v = document.getElementById('view');
     var MON = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
     var now = new Date(), m0 = (2026 * 12 + 10), idx = Math.max(0, (now.getFullYear() * 12 + now.getMonth()) - m0) % D.order.length;
     function film(id) { return D.f.filter(function (x) { return x.id === id; })[0]; }
@@ -19219,6 +19252,7 @@ var ABOUT_HTML = "<h2>ШАХМАТЫ — ПУТЬ К РАЗВИТИЮ, МЫШЛ�
     document.body.classList.toggle('onboard', r === 'board');
     setActive(r === 'lesson' || r === 'exam' || r === 'quiz' ? 'lessons' : r === 'coords' ? 'games' : r);
     if (r === 'puzzles') puzzles();
+    else if (r === 'play' && SUPER[parts[1]]) superList(parts[1]);
     else if (r === 'play') { var w = +parts[1]; if (w >= 1 && w <= WORLDS.length && unlocked((w - 1) * SUB + 1)) playWorld(w - 1); else playWorlds(); }
     else if (r === 'live') liveList();
     else if (r === 'lessons') lessons();
