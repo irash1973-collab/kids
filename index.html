@@ -2513,6 +2513,26 @@ if (typeof module !== 'undefined') module.exports = Eng;
         L.push({ id: 'p' + k + t[0], grp: 'Задачи', name: t[2] + ': мат ' + PGEN[k], desc: t[0] + ' задач решено (мат ' + PGEN[k] + ')', ok: pz[k] >= t[0], c: TIERS[t[1]].c, pc: PICON[k], tier: t[1] });
       });
     });
+    /* --- новые награды: уроки, Игротека, серии дней, футбол и лабиринт --- */
+    var lf = 0; try { Object.keys(LESS).forEach(function (k) { if (lessonFull(LESS[k])) lf++; }); } catch (e) {}
+    [[3, 0, 'Бронза'], [10, 1, 'Серебро'], [25, 2, 'Золото'], [50, 3, 'Кубок знатока']].forEach(function (t) {
+      L.push({ id: 'l' + t[0], grp: 'Уроки', name: t[2], desc: 'Пройди уроков до конца: ' + t[0], ok: lf >= t[0], c: TIERS[t[1]].c, pc: 5, tier: t[1] });
+    });
+    var stT = 0; try { stT = starsTotal(); } catch (e) {}
+    [[5, 0, 'Бронза'], [20, 1, 'Серебро'], [50, 2, 'Золото'], [100, 3, 'Кубок игрока']].forEach(function (t) {
+      L.push({ id: 's' + t[0], grp: 'Игротека', name: t[2], desc: 'Набери звёзд в Игротеке: ' + t[0], ok: stT >= t[0], c: TIERS[t[1]].c, pc: 4, tier: t[1] });
+    });
+    var di = { best: 0 }; try { di = window.__gk.dailyInfo(); } catch (e) {}
+    [[3, 0, 'Бронза'], [7, 1, 'Серебро'], [14, 2, 'Золото'], [30, 3, 'Кубок упорства']].forEach(function (t) {
+      L.push({ id: 'd' + t[0], grp: 'Ежедневная задача', name: t[2], desc: 'Решай задачу дней подряд: ' + t[0], ok: di.best >= t[0], c: TIERS[t[1]].c, pc: 3, tier: t[1] });
+    });
+    var gk = lsGet('ukc_gk', {}), gb = gk.best || {};
+    [['foot', 'Футбол', 5], ['maze', 'Король', 6]].forEach(function (g) {
+      var bst = 0; [1, 3, 5].forEach(function (m) { bst = Math.max(bst, gb[g[0] + m] || 0); });
+      [[50, 0, 'Бронза'], [100, 1, 'Серебро'], [180, 2, 'Золото'], [300, 3, 'Кубок']].forEach(function (t) {
+        L.push({ id: 'n' + g[0] + t[0], grp: g[0] === 'foot' ? 'Шахматный футбол' : 'Лабиринт короля', name: t[2], desc: 'Набери очков за одну игру: ' + t[0], ok: bst >= t[0], c: TIERS[t[1]].c, pc: g[2], tier: t[1] });
+      });
+    });
     return L;
   }
   function earnedIds() { var o = {}; medalList().forEach(function (m) { if (m.ok) o[m.id] = m; }); return o; }
@@ -12462,6 +12482,115 @@ GROUPS.forEach(function (g) { g.ids = g.ids.filter(function (id) { return id !==
     }
   });
 })();
+
+// Новые игры Игротеки: «Шахматный футбол» и «Лабиринт короля»
+(function () {
+  var GK = window.__gk, rnd = GK.rnd;
+  function pk(a) { return a[rnd(a.length)]; }
+  function setB(S, b) { S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; S.sel = null; S.targets = []; S.mark = {}; S.last = null; S.hl = null; }
+  var KN = [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]];
+  var DG = [[1, 1], [1, -1], [-1, 1], [-1, -1]], ST = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  function moves(b, type, f) {
+    var o = [], fx = f & 7, fy = f >> 3, k, x, y, d, dirs;
+    if (type === 2) { for (k = 0; k < 8; k++) { x = fx + KN[k][0]; y = fy + KN[k][1]; if (x >= 0 && x < 8 && y >= 0 && y < 8 && !b[y * 8 + x]) o.push(y * 8 + x); } return o; }
+    if (type === 6) { for (x = -1; x <= 1; x++) for (y = -1; y <= 1; y++) { if (!x && !y) continue; var xx = fx + x, yy = fy + y; if (xx >= 0 && xx < 8 && yy >= 0 && yy < 8 && !b[yy * 8 + xx]) o.push(yy * 8 + xx); } return o; }
+    dirs = type === 3 ? DG : type === 4 ? ST : DG.concat(ST);
+    dirs.forEach(function (dd) { x = fx + dd[0]; y = fy + dd[1]; while (x >= 0 && x < 8 && y >= 0 && y < 8 && !b[y * 8 + x]) { o.push(y * 8 + x); x += dd[0]; y += dd[1]; } });
+    return o;
+  }
+  // клетки под боем чёрных; для каждой клетки — кто бьёт
+  function attMap(b) {
+    var m = {}, i, t;
+    for (i = 0; i < 64; i++) if (b[i] < 0) for (t = 0; t < 64; t++) if (t !== i && GK.attacks(b, i, t)) (m[t] = m[t] || []).push(i);
+    return m;
+  }
+  function bfs(b, type, start, goal, att) {
+    var dist = {}, q = [start], h = 0; dist[start] = 0;
+    while (h < q.length) {
+      var f = q[h++]; if (f === goal) return dist[f];
+      moves(b, type, f).forEach(function (t) { if (att[t] || dist[t] != null) return; dist[t] = dist[f] + 1; q.push(t); });
+    }
+    return -1;
+  }
+  function flash(ctx, att, sq) { var S = ctx.S, hl = {}; (att[sq] || []).forEach(function (s) { hl[s] = 1; }); hl[sq] = 1; S.hl = hl; ctx.draw(); ctx.later(function () { S.hl = null; ctx.draw(); }, 1100); }
+
+  /* ---------- Шахматный футбол ---------- */
+  GK.add({
+    id: 'foot', group: 'piece', ic: '⚽', t: 'Шахматный футбол',
+    d: 'Ты ведёшь мяч шахматной фигурой к воротам. Чёрные защитники отбирают мяч, если ты встанешь под их удар. Забей гол!',
+    rules: ['Твоя фигура ведёт мяч ⚽. Ходи ею по шахматным правилам.', 'Ворота 🥅 стоят на верхней горизонтали. Добежать надо за как можно меньше ходов.', 'Чёрные пешки бьют по диагонали вперёд (вниз), кони бьют по-своему. Встанешь под удар — мяч отберут.', 'Гол — это +10 очков. Короткий маршрут даёт бонус.'],
+    start: function (ctx) {
+      var cur;
+      function gen() {
+        var lv = ctx.level();
+        for (var tr = 0; tr < 300; tr++) {
+          var type = pk(lv === 1 ? [4, 3] : lv === 2 ? [4, 3, 5] : [4, 3, 5, 2]), b = new Int8Array(64), np = 3 + lv + rnd(2), i, s;
+          for (i = 0; i < np; i++) { s = (1 + rnd(6)) * 8 + rnd(8); if (!b[s]) b[s] = -1; }
+          for (i = 0; i < lv - 1; i++) { s = (1 + rnd(5)) * 8 + rnd(8); if (!b[s]) b[s] = -2; }
+          var st = 56 + rnd(8), gl = rnd(8), att = attMap(b);
+          if (b[st] || b[gl] || att[st] || att[gl]) continue;
+          var L = bfs(b, type, st, gl, att);
+          if (L < 2 || L > 3 + lv) continue;
+          return { type: type, b: b, start: st, goal: gl, par: L, att: att, pos: st, moves: 0 };
+        }
+        return null;
+      }
+      function show() {
+        var S = ctx.S, b = new Int8Array(cur.b); b[cur.pos] = cur.type; setB(S, b); S.sel = cur.pos; S.mark[cur.goal] = 'e:🥅'; S.mark[cur.pos] = 'e:⚽'; ctx.draw();
+        ctx.prompt('Заведи мяч в ворота! Ходит <b>' + PNAME[cur.type] + '</b>. Идеальный маршрут: <b>' + cur.par + '</b> ' + (cur.par < 5 ? 'хода' : 'ходов'));
+      }
+      function next() { cur = gen(); if (!cur) { ctx.msg('Заминка…'); return; } show(); ctx.msg('Не вставай под удар защитников!'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy) return;
+        if (moves(cur.b, cur.type, cur.pos).indexOf(i) < 0) { if (!cur.b[i]) ctx.msg('Так ' + PNAME[cur.type] + ' не ходит.'); return; }
+        if (cur.att[i]) { cur.busy = true; flash(ctx, cur.att, i); ctx.bad('Мяч отобрали! Это поле под ударом.'); ctx.later(function () { cur.pos = cur.start; cur.moves = 0; cur.busy = false; show(); }, 1200); return; }
+        cur.pos = i; cur.moves++; show();
+        if (i === cur.goal) {
+          cur.busy = true; ctx.ok('ГОЛ! ⚽'); if (cur.moves <= cur.par) ctx.bonus(5, 'Лучший маршрут!');
+          ctx.later(next, 1000);
+        }
+      };
+      next();
+    }
+  });
+
+  /* ---------- Лабиринт короля ---------- */
+  GK.add({
+    id: 'maze', group: 'think', ic: '🏰', t: 'Лабиринт короля',
+    d: 'Проведи короля к флажку. Но чёрные фигуры бьют поля: на такие поля королю идти нельзя!',
+    rules: ['Король ходит на одну клетку в любую сторону.', 'Нельзя вставать на поле, которое бьёт чёрная фигура. Это был бы шах!', 'Чёрные фигуры брать нельзя, их надо обходить.', 'Добрался до флажка 🚩 — получай очки и новый лабиринт.'],
+    start: function (ctx) {
+      var cur;
+      function gen() {
+        var lv = ctx.level();
+        for (var tr = 0; tr < 400; tr++) {
+          var b = new Int8Array(64), n = 3 + lv + rnd(2), i, s, types = lv === 1 ? [4, 3, 2] : [4, 3, 2, 5];
+          for (i = 0; i < n; i++) { s = (1 + rnd(6)) * 8 + rnd(8); if (!b[s]) b[s] = -pk(types); }
+          var st = 56 + rnd(8), gl = rnd(8), att = attMap(b);
+          if (b[st] || b[gl] || att[st] || att[gl]) continue;
+          var L = bfs(b, 6, st, gl, att);
+          if (L < 7 || L > 12) continue;
+          return { b: b, start: st, goal: gl, par: L, att: att, pos: st };
+        }
+        return null;
+      }
+      function show() {
+        var S = ctx.S, b = new Int8Array(cur.b); b[cur.pos] = 6; setB(S, b); S.sel = cur.pos; S.mark[cur.goal] = 'e:🚩'; ctx.draw();
+        ctx.prompt('Проведи <b>короля</b> к флажку 🚩. Не вставай под удар!');
+      }
+      function next() { cur = gen(); if (!cur) { ctx.msg('Заминка…'); return; } show(); ctx.msg('Смотри, кто кого бьёт.'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy) return;
+        if (moves(cur.b, 6, cur.pos).indexOf(i) < 0) { if (cur.b[i] < 0) ctx.msg('Чёрные фигуры брать нельзя.'); return; }
+        if (cur.att[i]) { flash(ctx, cur.att, i); ctx.bad('Шах! Это поле бьют.'); return; }
+        cur.pos = i; show();
+        if (i === cur.goal) { cur.busy = true; ctx.ok('Король у флажка! 🚩'); ctx.later(next, 1000); }
+      };
+      next();
+    }
+  });
+})();
+
 
 // «Ежедневная задача»: одна новая задача в день, серия дней подряд, значки
 (function () {
