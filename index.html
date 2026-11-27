@@ -2527,10 +2527,10 @@ if (typeof module !== 'undefined') module.exports = Eng;
       L.push({ id: 'd' + t[0], grp: 'Ежедневная задача', name: t[2], desc: 'Решай задачу дней подряд: ' + t[0], ok: di.best >= t[0], c: TIERS[t[1]].c, pc: 3, tier: t[1] });
     });
     var gk = lsGet('ukc_gk', {}), gb = gk.best || {};
-    [['foot', 'Футбол', 5], ['maze', 'Король', 6]].forEach(function (g) {
+    [['foot', 'Футбол', 5, 'Шахматный футбол'], ['maze', 'Король', 6, 'Лабиринт короля'], ['fork', 'Вилка', 2, 'Вилка-мания'], ['ray', 'Луч', 5, 'Луч ферзя'], ['queens', 'Ферзи', 5, '8 ферзей'], ['tour', 'Конь', 2, 'Обход конём'], ['bamboo', 'Панда', 2, 'Бамбуковый маршрут'], ['factory', 'Фабрика', 5, 'Фабрика ферзей'], ['sudoku', 'Судоку', 6, 'Король судоку'], ['escape', 'Побег', 6, 'Побег короля'], ['soko', 'Сокобан', 6, 'Король Сокобана']].forEach(function (g) {
       var bst = 0; [1, 3, 5].forEach(function (m) { bst = Math.max(bst, gb[g[0] + m] || 0); });
       [[50, 0, 'Бронза'], [100, 1, 'Серебро'], [180, 2, 'Золото'], [300, 3, 'Кубок']].forEach(function (t) {
-        L.push({ id: 'n' + g[0] + t[0], grp: g[0] === 'foot' ? 'Шахматный футбол' : 'Лабиринт короля', name: t[2], desc: 'Набери очков за одну игру: ' + t[0], ok: bst >= t[0], c: TIERS[t[1]].c, pc: g[2], tier: t[1] });
+        L.push({ id: 'n' + g[0] + t[0], grp: g[3], name: t[2], desc: 'Набери очков за одну игру: ' + t[0], ok: bst >= t[0], c: TIERS[t[1]].c, pc: g[2], tier: t[1] });
       });
     });
     return L;
@@ -12592,6 +12592,375 @@ GROUPS.forEach(function (g) { g.ids = g.ids.filter(function (id) { return id !==
 })();
 
 
+// Новые игры Игротеки: «Вилка-мания» и «Луч ферзя»
+(function () {
+  var GK = window.__gk, rnd = GK.rnd;
+  function pk(a) { return a[rnd(a.length)]; }
+  function setB(S, b) { S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; S.sel = null; S.targets = []; S.mark = {}; S.last = null; S.hl = null; }
+  var NM = { 2: 'коня', 3: 'слона', 4: 'ладью', 5: 'ферзя' };
+  function hits(b, type, sq) { var t = new Int8Array(b), r = [], i; t[sq] = type; for (i = 0; i < 64; i++) if (b[i] < 0 && GK.attacks(t, sq, i)) r.push(i); return r; }
+
+  GK.add({
+    id: 'fork', group: 'att', ic: '🍴', t: 'Вилка-мания',
+    d: 'Поставь свою фигуру так, чтобы она била как можно больше чёрных фигур сразу. Это и есть вилка!',
+    rules: ['Тебе дают фигуру и чёрные фигуры на доске.', 'Нажми на пустое поле, куда её поставить.', 'Чем больше чёрных фигур она бьёт — тем лучше. Найди поле с самым большим числом ударов!', 'Подсказка вверху говорит, сколько фигур можно атаковать.'],
+    start: function (ctx) {
+      var cur;
+      function gen() {
+        var lv = ctx.level();
+        for (var tr = 0; tr < 400; tr++) {
+          var type = pk(lv === 1 ? [2, 5] : [2, 3, 4, 5]), b = new Int8Array(64), n = 4 + lv + rnd(3), i, s;
+          for (i = 0; i < n; i++) { s = rnd(64); if (!b[s]) b[s] = -pk([1, 1, 2, 3, 4]); }
+          var best = 0, bs = [];
+          for (s = 0; s < 64; s++) if (!b[s]) { var h = hits(b, type, s).length; if (h > best) { best = h; bs = [s]; } else if (h === best) bs.push(s); }
+          if (best < 2 + (lv > 1 ? 1 : 0) || bs.length > 4) continue;
+          return { type: type, b: b, best: best, bs: bs };
+        }
+        return null;
+      }
+      function show() {
+        var S = ctx.S, b = new Int8Array(cur.b); setB(S, b); ctx.draw();
+        ctx.prompt('Поставь <b>' + NM[cur.type] + '</b> так, чтобы бить больше всего фигур. Можно атаковать: <b>' + cur.best + '</b>');
+      }
+      function next() { cur = gen(); if (!cur) { ctx.msg('Заминка…'); return; } show(); ctx.msg('Ищи вилку!'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy || cur.b[i]) return;
+        var S = ctx.S, h = hits(cur.b, cur.type, i), b = new Int8Array(cur.b), hl = {};
+        b[i] = cur.type; setB(S, b); h.forEach(function (s) { hl[s] = 1; }); hl[i] = 1; S.hl = hl; ctx.draw();
+        cur.busy = true;
+        if (h.length >= cur.best) { ctx.ok('Вилка! Бьёшь ' + h.length + ' ' + (h.length < 5 ? 'фигуры' : 'фигур') + '!'); ctx.later(next, 1100); }
+        else { ctx.bad('Бьёшь только ' + h.length + '. Можно больше!'); ctx.later(function () { cur.busy = false; show(); }, 1100); }
+      };
+      next();
+    }
+  });
+
+  GK.add({
+    id: 'ray', group: 'att', ic: '💎', t: 'Луч ферзя',
+    d: 'Поставь ферзя так, чтобы он одним ударом достал все кристаллы. Пешки мешают лучу!',
+    rules: ['На доске лежат кристаллы 💎 и стоят чёрные пешки.', 'Нажми на пустое поле, куда поставить ферзя.', 'Ферзь бьёт по линиям и диагоналям, пешки его останавливают.', 'Достань сразу все кристаллы — получишь очки.'],
+    start: function (ctx) {
+      var cur;
+      function qmoves(b, q) { var o = [], fx = q & 7, fy = q >> 3, d, x, y, D = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]; D.forEach(function (dd) { x = fx + dd[0]; y = fy + dd[1]; while (x >= 0 && x < 8 && y >= 0 && y < 8 && !b[y * 8 + x]) { o.push(y * 8 + x); x += dd[0]; y += dd[1]; } }); return o; }
+      function gen() {
+        var lv = ctx.level();
+        for (var tr = 0; tr < 400; tr++) {
+          var b = new Int8Array(64), np = 3 + lv * 2 + rnd(3), i, s;
+          for (i = 0; i < np; i++) { s = rnd(64); if (!b[s]) b[s] = -1; }
+          var q = rnd(64); if (b[q]) continue;
+          var reach = qmoves(b, q).filter(function (x) { return !b[x]; });
+          var nc = 2 + lv; if (reach.length < nc + 2) continue;
+          var cr = []; while (cr.length < nc) { var c = pk(reach); if (cr.indexOf(c) < 0) cr.push(c); }
+          // число решений: не слишком много
+          var sol = 0; for (s = 0; s < 64; s++) if (!b[s] && cr.indexOf(s) < 0) { var r = qmoves(b, s); if (cr.every(function (c) { return r.indexOf(c) >= 0; })) sol++; }
+          if (sol < 1 || sol > 3) continue;
+          return { b: b, cr: cr };
+        }
+        return null;
+      }
+      function show(hl) {
+        var S = ctx.S; setB(S, new Int8Array(cur.b)); cur.cr.forEach(function (c) { S.mark[c] = 'e:💎'; }); if (hl) S.hl = hl; ctx.draw();
+        ctx.prompt('Поставь <b>ферзя</b> так, чтобы достать все кристаллы 💎: <b>' + cur.cr.length + '</b>');
+      }
+      function next() { cur = gen(); if (!cur) { ctx.msg('Заминка…'); return; } show(); ctx.msg('Луч не проходит сквозь пешки.'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy || cur.b[i] || cur.cr.indexOf(i) >= 0) return;
+        var r = qmoves(cur.b, i), got = cur.cr.filter(function (c) { return r.indexOf(c) >= 0; }).length, S = ctx.S, b = new Int8Array(cur.b), hl = {};
+        b[i] = 5; setB(S, b); cur.cr.forEach(function (c) { S.mark[c] = got ? 'e:💎' : 'e:💎'; if (r.indexOf(c) >= 0) hl[c] = 1; }); hl[i] = 1; S.hl = hl; ctx.draw(); cur.busy = true;
+        if (got === cur.cr.length) { ctx.ok('Все кристаллы 💎 твои!'); ctx.later(next, 1100); }
+        else { ctx.bad('Достал ' + got + ' из ' + cur.cr.length + '. Попробуй другое поле.'); ctx.later(function () { cur.busy = false; show(); }, 1200); }
+      };
+      next();
+    }
+  });
+  /* ---------- 8 ферзей ---------- */
+  function queenSol() { var c = [], res = null; (function go(r) { if (res) return; if (r === 8) { res = c.slice(); return; } var o = []; for (var x = 0; x < 8; x++) o.push(x); o.sort(function () { return Math.random() - 0.5; }); o.forEach(function (x) { if (res) return; for (var k = 0; k < r; k++) if (c[k] === x || Math.abs(c[k] - x) === r - k) return; c[r] = x; go(r + 1); }); })(0); return res; }
+  GK.add({
+    id: 'queens', group: 'think', ic: '👑', t: '8 ферзей',
+    d: 'Классическая головоломка: расставь 8 ферзей так, чтобы никто никого не бил. Нужно ставить ферзей на все 8 горизонталей!',
+    rules: ['Нужно поставить 8 ферзей, чтобы ни один не бил другого.', 'Ферзь бьёт по горизонтали, вертикали и диагоналям.', 'Нажми на поле, чтобы поставить ферзя. Нажмёшь на своего ферзя — он уберётся.', 'Подсвеченные поля уже под ударом, туда ферзя не поставить.'],
+    start: function (ctx) {
+      var cur;
+      function bq() { var b = new Int8Array(64); cur.q.forEach(function (s) { b[s] = 5; }); return b; }
+      function att() { var b = bq(), a = {}; cur.q.forEach(function (q) { for (var t = 0; t < 64; t++) if (t !== q && GK.attacks(b, q, t)) a[t] = 1; }); return a; }
+      function show() {
+        var S = ctx.S, b = bq(); setB(S, b); var a = att(); S.hl = a; ctx.draw();
+        ctx.prompt('Поставь 8 ферзей так, чтобы они не били друг друга. Стоит: <b>' + cur.q.length + '</b> из 8');
+      }
+      function next() { var sol = queenSol(), lv = ctx.level(), keep = lv === 1 ? 4 : lv === 2 ? 2 : 0, q = [], fx = [], i; var idx = [0, 1, 2, 3, 4, 5, 6, 7].sort(function () { return Math.random() - 0.5; }).slice(0, keep); idx.forEach(function (r) { q.push(r * 8 + sol[r]); fx.push(r * 8 + sol[r]); }); cur = { q: q, fx: fx }; show(); ctx.msg('Каждому ферзю нужна своя горизонталь и вертикаль.'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy) return;
+        var k = cur.q.indexOf(i);
+        if (k >= 0) { if (cur.fx.indexOf(i) >= 0) { ctx.msg('Этот ферзь стоит по условию.'); return; } cur.q.splice(k, 1); show(); return; }
+        if (att()[i]) { ctx.msg('Это поле бьёт другой ферзь.'); return; }
+        cur.q.push(i); show();
+        if (cur.q.length === 8) { cur.busy = true; ctx.ok('Все 8 ферзей стоят мирно! 👑'); ctx.later(next, 1300); return; }
+        var a = att(), free = 0, s; for (s = 0; s < 64; s++) if (!a[s] && cur.q.indexOf(s) < 0) free++;
+        if (!free) ctx.msg('Тупик! Свободных полей нет. Убери ферзя (нажми на него) и поставь иначе.', 'bad');
+      };
+      next();
+    }
+  });
+
+  /* ---------- Обход конём ---------- */
+  GK.add({
+    id: 'tour', group: 'think', ic: '🐴', t: 'Обход конём',
+    d: 'Конь должен побывать на всех 64 полях доски, и на каждом только один раз. Заплутал — начинай заново!',
+    rules: ['Конь ходит буквой Г. На каждое поле можно встать только один раз.', 'Нужно пройти все 64 поля.', 'Если ходов не осталось — конь заблудился, и игра начнётся заново.', 'Совет: в первую очередь иди на поля, откуда ведёт меньше всего дорог дальше. Углы лучше не оставлять на потом!'],
+    start: function (ctx) {
+      var cur, KN = [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]];
+      function mv(p) { var o = [], x = p & 7, y = p >> 3; KN.forEach(function (d) { var xx = x + d[0], yy = y + d[1]; if (xx >= 0 && xx < 8 && yy >= 0 && yy < 8 && !cur.vis[yy * 8 + xx]) o.push(yy * 8 + xx); }); return o; }
+      function show() {
+        var S = ctx.S, b = new Int8Array(64); b[cur.pos] = 2; setB(S, b); S.sel = cur.pos;
+        for (var i = 0; i < 64; i++) if (cur.vis[i] && i !== cur.pos) S.mark[i] = 'e:' + cur.vis[i];
+        var h = {}; mv(cur.pos).forEach(function (t) { h[t] = 1; }); S.hl = h; ctx.draw();
+        ctx.prompt('Обойди конём все поля! Пройдено: <b>' + cur.n + '</b> из 64');
+      }
+      function next() { cur = { pos: rnd(64), vis: {}, n: 1 }; cur.vis[cur.pos] = 1; show(); ctx.msg('Каждое поле — только один раз.'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy || mv(cur.pos).indexOf(i) < 0) return;
+        cur.pos = i; cur.n++; cur.vis[i] = cur.n; show();
+        if (cur.n % 16 === 0 && cur.n < 64) ctx.bonus(cur.n / 16 * 2, 'Пройдено ' + cur.n + ' полей!');
+        if (cur.n === 64) { cur.busy = true; ctx.ok('Все 64 поля! Ты гроссмейстер коня! 🐴'); ctx.bonus(20, 'Великий обход!'); ctx.later(next, 2000); return; }
+        if (!mv(i).length) { cur.busy = true; ctx.bad('Конь заблудился на ' + cur.n + '-м поле. Начнём заново!'); ctx.later(next, 1800); }
+      };
+      next();
+    }
+  });
+})();
+
+// Новые игры Игротеки: Бамбуковый маршрут, Фабрика ферзей, Король судоку, Побег короля, Король Сокобана
+(function () {
+  var GK = window.__gk, rnd = GK.rnd;
+  function pk(a) { return a[rnd(a.length)]; }
+  function shuf(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function setB(S, b) { S.pos = { b: b, turn: 1, castle: 0, ep: -1, half: 0 }; S.sel = null; S.targets = []; S.mark = {}; S.last = null; S.hl = null; }
+  var KN = [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]];
+  var DG = [[1, 1], [1, -1], [-1, 1], [-1, -1]], ST = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  function moves(b, type, f) {
+    var o = [], fx = f & 7, fy = f >> 3, k, x, y, dirs;
+    if (type === 2) { for (k = 0; k < 8; k++) { x = fx + KN[k][0]; y = fy + KN[k][1]; if (x >= 0 && x < 8 && y >= 0 && y < 8 && !b[y * 8 + x]) o.push(y * 8 + x); } return o; }
+    if (type === 6) { for (x = -1; x <= 1; x++) for (y = -1; y <= 1; y++) { if (!x && !y) continue; var xx = fx + x, yy = fy + y; if (xx >= 0 && xx < 8 && yy >= 0 && yy < 8 && !b[yy * 8 + xx]) o.push(yy * 8 + xx); } return o; }
+    dirs = type === 3 ? DG : type === 4 ? ST : DG.concat(ST);
+    dirs.forEach(function (dd) { x = fx + dd[0]; y = fy + dd[1]; while (x >= 0 && x < 8 && y >= 0 && y < 8 && !b[y * 8 + x]) { o.push(y * 8 + x); x += dd[0]; y += dd[1]; } });
+    return o;
+  }
+  function bfsDist(b, type, start) { var d = {}, q = [start], h = 0; d[start] = 0; while (h < q.length) { var f = q[h++]; moves(b, type, f).forEach(function (t) { if (d[t] == null) { d[t] = d[f] + 1; q.push(t); } }); } return d; }
+
+  /* ---------- Бамбуковый маршрут ---------- */
+  function bambooGen(lv) {
+    for (var tr = 0; tr < 500; tr++) {
+      var b = new Int8Array(64), i, s, nb = 2 + lv, np = lv * 2;
+      for (i = 0; i < np; i++) { s = rnd(64); b[s] = -1; }
+      var free = []; for (s = 0; s < 64; s++) if (!b[s]) free.push(s);
+      var pts = shuf(free).slice(0, nb + 2), st = pts[0], pa = pts[1], bam = pts.slice(2);
+      var all = [st].concat(bam), D = {}, ok = true;
+      all.forEach(function (a) { D[a] = bfsDist(b, 2, a); });
+      bam.forEach(function (c) { if (D[st][c] == null) ok = false; }); if (!ok) continue;
+      var Dp = bfsDist(b, 2, pa); bam.forEach(function (c) { if (Dp[c] == null) ok = false; }); if (!ok || Dp[st] == null) continue;
+      var best = 1e9;
+      (function perm(rest, cur, sum) { if (!rest.length) { best = Math.min(best, sum + Dp[cur]); return; } rest.forEach(function (c, k) { perm(rest.slice(0, k).concat(rest.slice(k + 1)), c, sum + D[cur] ? 0 : 0); }); })(bam, st, 0);
+      // (пересчитываем честно ниже)
+      best = 1e9; var Dall = {}; all.forEach(function (a) { Dall[a] = D[a]; });
+      (function perm(rest, cur, sum) { if (!rest.length) { best = Math.min(best, sum + Dp[cur]); return; } for (var k = 0; k < rest.length; k++) { var c = rest[k]; perm(rest.slice(0, k).concat(rest.slice(k + 1)), c, sum + Dall[cur][c]); } })(bam, st, 0);
+      if (best < nb + 2 || best > nb * 3 + 2) continue;
+      return { b: b, start: st, panda: pa, bam: bam, par: best, limit: best + (lv === 1 ? 3 : lv === 2 ? 2 : 1) };
+    }
+    return null;
+  }
+  GK.add({
+    id: 'bamboo', group: 'think', ic: '🐼', t: 'Бамбуковый маршрут',
+    d: 'Коню надо собрать весь бамбук 🎋 и привезти его голодной панде 🐼. Ходов совсем мало, строй маршрут умно!',
+    rules: ['Конь ходит буквой Г. Попал на бамбук 🎋 — собрал его.', 'Чёрные пешки заняты, на них вставать нельзя.', 'Собери весь бамбук и закончи путь у панды 🐼.', 'Количество ходов ограничено, поэтому ищи самый короткий путь.'],
+    start: function (ctx) {
+      var cur;
+      function show() {
+        var S = ctx.S, b = new Int8Array(cur.b); b[cur.pos] = 2; setB(S, b); S.sel = cur.pos;
+        cur.bam.forEach(function (c) { if (!cur.got[c]) S.mark[c] = 'e:🎋'; }); S.mark[cur.panda] = 'e:🐼'; ctx.draw();
+        var left = cur.bam.filter(function (c) { return !cur.got[c]; }).length;
+        ctx.prompt('Собери бамбук 🎋 (осталось <b>' + left + '</b>) и приведи коня к панде 🐼. Ходов: <b>' + cur.n + '</b> из <b>' + cur.limit + '</b>');
+      }
+      function reset() { cur.pos = cur.start; cur.n = 0; cur.got = {}; cur.busy = false; show(); }
+      function next() { var g = bambooGen(ctx.level()); if (!g) { ctx.msg('Заминка…'); return; } cur = g; reset(); ctx.msg('Подумай, в каком порядке собирать.'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy || moves(cur.b, 2, cur.pos).indexOf(i) < 0) return;
+        cur.pos = i; cur.n++; if (cur.bam.indexOf(i) >= 0) cur.got[i] = 1; show();
+        var all = cur.bam.every(function (c) { return cur.got[c]; });
+        if (all && i === cur.panda) { cur.busy = true; ctx.ok('Панда сыта! 🐼'); if (cur.n <= cur.par) ctx.bonus(5, 'Самый короткий путь!'); ctx.later(next, 1200); }
+        else if (cur.n >= cur.limit) { cur.busy = true; ctx.bad('Ходы закончились! Попробуй ещё раз.'); ctx.later(reset, 1300); }
+      };
+      next();
+    }
+  });
+
+  /* ---------- Фабрика ферзей ---------- */
+  GK.add({
+    id: 'factory', group: 'think', ic: '🏭', t: 'Фабрика ферзей',
+    d: 'Ферзь стоит 9 очков. Выбери фигуры, которые вместе стоят ровно 9, и фабрика сделает из них ферзя!',
+    rules: ['Пешка — 1 очко, конь и слон — 3, ладья — 5, ферзь — 9.', 'Нажимай на фигуры, чтобы выбрать их. Нажмёшь ещё раз — выбор снимется.', 'Когда соберёшь ровно 9 очков, появится ферзь.', 'Если набрал больше 9, выбор сбросится.'],
+    start: function (ctx) {
+      var cur, VAL = { 1: 1, 2: 3, 3: 3, 4: 5 };
+      function val(t) { return VAL[t]; }
+      function gen() {
+        var lv = ctx.level(), combos = [[5, 3, 1], [5, 1, 1, 1, 1], [3, 3, 3], [3, 3, 1, 1, 1], [5, 3, 1]], c = pk(combos).slice(), nd = lv + 1, i;
+        for (i = 0; i < nd; i++) c.push(pk([1, 1, 3, 5]));
+        var b = new Int8Array(64), sq = shuf((function () { var a = []; for (var s = 8; s < 56; s++) a.push(s); return a; })());
+        c = shuf(c); c.forEach(function (v, k) { b[sq[k]] = v === 1 ? 1 : v === 3 ? pk([2, 3]) : 4; });
+        return { b: b, sel: {}, sum: 0 };
+      }
+      function show() {
+        var S = ctx.S; setB(S, new Int8Array(cur.b)); var h = {}; Object.keys(cur.sel).forEach(function (k) { h[k] = 1; }); S.hl = h; ctx.draw();
+        ctx.prompt('Собери ферзя: ровно <b>9</b> очков. Выбрано: <b>' + cur.sum + '</b>');
+      }
+      function next() { cur = gen(); show(); ctx.msg('Пешка 1 · конь и слон 3 · ладья 5'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy || !cur.b[i]) return;
+        if (cur.sel[i]) { delete cur.sel[i]; cur.sum -= val(cur.b[i]); show(); return; }
+        cur.sel[i] = 1; cur.sum += val(cur.b[i]); show();
+        if (cur.sum === 9) { cur.busy = true; var keys = Object.keys(cur.sel); keys.forEach(function (k) { cur.b[k] = 0; }); cur.b[+keys[keys.length - 1]] = 5; cur.sel = {}; var S = ctx.S; setB(S, new Int8Array(cur.b)); ctx.draw(); ctx.ok('Готов ферзь! ♕'); ctx.later(next, 1100); }
+        else if (cur.sum > 9) { cur.busy = true; ctx.bad('Больше 9! Выбор сброшен.'); ctx.later(function () { cur.sel = {}; cur.sum = 0; cur.busy = false; show(); }, 900); }
+      };
+      next();
+    }
+  });
+
+  /* ---------- Король судоку ---------- */
+  GK.add({
+    id: 'sudoku', group: 'think', ic: '🧩', t: 'Король судоку',
+    d: 'Мини-судоку с фигурами: в каждой строке и в каждом столбце квадрата 4×4 должны быть конь, слон, ладья и ферзь, по одному разу.',
+    rules: ['Играем в квадрате 4×4 в центре доски.', 'Нажимай на пустую клетку — на ней по очереди появляются конь, слон, ладья и ферзь.', 'В каждой строке и каждом столбце фигуры не должны повторяться.', 'Серые подсказки с самого начала менять нельзя.'],
+    start: function (ctx) {
+      var cur, TY = [2, 3, 4, 5];
+      function latin() { var sol = null; (function go(c) { if (sol) return; if (c === 16) { sol = c; return; } })(0); var g = [], r, k; function ok(i, v) { var y = i >> 2, x = i & 3, k; for (k = 0; k < 4; k++) { if (k !== x && g[y * 4 + k] === v) return false; if (k !== y && g[k * 4 + x] === v) return false; } return true; } var res = null; (function go(i) { if (res) return; if (i === 16) { res = g.slice(); return; } shuf(TY).forEach(function (v) { if (res) return; if (ok(i, v)) { g[i] = v; go(i + 1); g[i] = 0; } }); })(0); return res; }
+      function sq(i) { return (2 + (i >> 2)) * 8 + 2 + (i & 3); }
+      function conflicts() { var h = {}, i, j; for (i = 0; i < 16; i++) { if (!cur.g[i]) continue; for (j = i + 1; j < 16; j++) { if (cur.g[j] === cur.g[i] && ((i >> 2) === (j >> 2) || (i & 3) === (j & 3))) { h[sq(i)] = 1; h[sq(j)] = 1; } } } return h; }
+      function show() {
+        var S = ctx.S, b = new Int8Array(64), i; for (i = 0; i < 16; i++) if (cur.g[i]) b[sq(i)] = cur.g[i]; setB(S, b);
+        for (i = 0; i < 16; i++) if (cur.fx[i]) S.mark[sq(i)] = 'e:📌'; S.hl = conflicts(); ctx.draw();
+        ctx.prompt('Расставь фигуры: в каждой строке и столбце — конь, слон, ладья и ферзь по одному разу.');
+      }
+      function next() { var sol = latin(), lv = ctx.level(), keep = lv === 1 ? 9 : lv === 2 ? 7 : 5; var idx = shuf([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]).slice(0, keep); cur = { g: [], fx: {}, sol: sol }; for (var i = 0; i < 16; i++) cur.g[i] = 0; idx.forEach(function (i) { cur.g[i] = sol[i]; cur.fx[i] = 1; }); show(); ctx.msg('Нажимай на пустые клетки.'); }
+      ctx.click = function (s) {
+        if (!cur || cur.busy) return; var y = (s >> 3) - 2, x = (s & 7) - 2; if (y < 0 || y > 3 || x < 0 || x > 3) return;
+        var i = y * 4 + x; if (cur.fx[i]) { ctx.msg('Эта фигура стоит по условию.'); return; }
+        var k = TY.indexOf(cur.g[i]); cur.g[i] = k === 3 ? 0 : TY[k + 1]; show();
+        if (cur.g.every(function (v) { return v; }) && !Object.keys(conflicts()).length) { cur.busy = true; ctx.ok('Судоку решено! 🧩'); ctx.later(next, 1300); }
+      };
+      next();
+    }
+  });
+
+  /* ---------- Побег короля ---------- */
+  function kingSafe(b, kp) { // безопасные ходы короля (включая взятие незащищённых)
+    var o = [], fx = kp & 7, fy = kp >> 3, x, y;
+    for (x = -1; x <= 1; x++) for (y = -1; y <= 1; y++) {
+      if (!x && !y) continue; var xx = fx + x, yy = fy + y; if (xx < 0 || xx > 7 || yy < 0 || yy > 7) continue; var s = yy * 8 + xx;
+      var t = new Int8Array(b); t[kp] = 0; t[s] = 6; var bad = false;
+      for (var f = 0; f < 64; f++) if (t[f] < 0 && GK.attacks(t, f, s)) { bad = true; break; }
+      if (!bad) o.push(s);
+    }
+    return o;
+  }
+  function inCheck(b, kp) { for (var f = 0; f < 64; f++) if (b[f] < 0 && GK.attacks(b, f, kp)) return true; return false; }
+  function chaseMove(b, kp, noise) { // ход чёрных: прижать короля
+    var cand = [], f;
+    for (f = 0; f < 64; f++) if (b[f] < 0) moves(b, -b[f], f).forEach(function (t) { if (t === kp) return; var c = new Int8Array(b); c[f] = 0; c[t] = b[f]; var n = kingSafe(c, kp).length, ck = inCheck(c, kp); if (n === 0 && !ck) return; cand.push({ f: f, t: t, sc: n * 2 + (ck ? -1 : 0) + Math.random() * 0.9, mate: n === 0 && ck }); });
+    if (!cand.length) return null;
+    var m = cand.filter(function (c) { return c.mate; }); if (m.length && Math.random() > noise) return pk(m);
+    if (Math.random() < noise) return pk(cand);
+    cand.sort(function (a, b) { return a.sc - b.sc; }); return cand[0];
+  }
+  function escapeGen(lv) {
+    for (var tr = 0; tr < 300; tr++) {
+      var b = new Int8Array(64), kp = (2 + rnd(4)) * 8 + 2 + rnd(4); b[kp] = 6;
+      var types = lv === 1 ? [4, 3] : lv === 2 ? [4, 3, 2] : [5, 4, 3], ok = true;
+      types.forEach(function (t) { var s; for (var k = 0; k < 30; k++) { s = rnd(64); if (!b[s] && Math.max(Math.abs((s & 7) - (kp & 7)), Math.abs((s >> 3) - (kp >> 3))) >= 3) { b[s] = -t; return; } } ok = false; });
+      if (!ok || inCheck(b, kp)) continue; if (kingSafe(b, kp).length < 3) continue;
+      var any = false; for (var f = 0; f < 64; f++) if (b[f] < 0 && inCheck(b, kp)) any = true;
+      return { b: b, kp: kp, turns: 0, goal: 6 + lv * 2 };
+    }
+    return null;
+  }
+  GK.add({
+    id: 'escape', group: 'att', ic: '🏃', t: 'Побег короля',
+    d: 'Чёрные фигуры охотятся на твоего короля. Пережди нужное число ходов и не дай загнать себя в мат!',
+    rules: ['Король ходит на одну клетку, но не на поля под ударом.', 'После твоего хода чёрные делают свой ход и пытаются прижать короля.', 'Можно брать фигуры, если их никто не защищает.', 'Продержись нужное число ходов — и побег удался!'],
+    start: function (ctx) {
+      var cur;
+      function show() {
+        var S = ctx.S; setB(S, new Int8Array(cur.b)); S.sel = cur.kp; var h = {}; kingSafe(cur.b, cur.kp).forEach(function (s) { h[s] = 1; }); S.hl = h; ctx.draw();
+        ctx.prompt('Продержись <b>' + cur.goal + '</b> ходов. Сделано: <b>' + cur.turns + '</b>');
+      }
+      function next() { var g = escapeGen(ctx.level()); if (!g) { ctx.msg('Заминка…'); return; } cur = g; show(); ctx.msg('Подсвеченные клетки — безопасные ходы.'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy || kingSafe(cur.b, cur.kp).indexOf(i) < 0) return;
+        cur.b[cur.kp] = 0; cur.b[i] = 6; cur.kp = i; cur.turns++;
+        var hasB = false; for (var f = 0; f < 64; f++) if (cur.b[f] < 0) hasB = true;
+        if (!hasB) { cur.busy = true; show(); ctx.ok('Все охотники съедены! 👑'); ctx.later(next, 1300); return; }
+        if (cur.turns >= cur.goal) { cur.busy = true; show(); ctx.ok('Побег удался! 🏃'); ctx.later(next, 1300); return; }
+        cur.busy = true; show();
+        ctx.later(function () {
+          var m = chaseMove(cur.b, cur.kp, ctx.level() === 1 ? 0.35 : ctx.level() === 2 ? 0.2 : 0.1);
+          if (!m) { cur.busy = false; show(); return; }
+          cur.b[m.t] = cur.b[m.f]; cur.b[m.f] = 0; cur.busy = false; show();
+          if (m.mate) { cur.busy = true; ctx.bad('Мат! Короля поймали. Начнём заново.'); ctx.later(next, 1600); }
+        }, 450);
+      };
+      next();
+    }
+  });
+
+  /* ---------- Король Сокобана ---------- */
+  function sokoGen(lv) {
+    for (var tr = 0; tr < 300; tr++) {
+      var wall = {}, i, s, nb = lv, free;
+      for (i = 0; i < 5 + lv * 2; i++) wall[rnd(64)] = 1;
+      free = []; for (s = 0; s < 64; s++) if (!wall[s]) free.push(s);
+      var tg = shuf(free).slice(0, nb), box = tg.slice(), pl = pk(free.filter(function (x) { return tg.indexOf(x) < 0; }));
+      var steps = 80 + lv * 40;
+      for (i = 0; i < steps; i++) {
+        var d = pk(ST), px = pl & 7, py = pl >> 3, nx = px + d[0], ny = py + d[1];
+        if (nx < 0 || nx > 7 || ny < 0 || ny > 7) continue; var ns = ny * 8 + nx; if (wall[ns] || box.indexOf(ns) >= 0) continue;
+        var bx = px - d[0], by = py - d[1], bs = by * 8 + bx, k = (bx >= 0 && bx < 8 && by >= 0 && by < 8) ? box.indexOf(bs) : -1;
+        if (k >= 0 && Math.random() < 0.8) box[k] = pl; // тянем ящик
+        pl = ns;
+      }
+      if (box.some(function (x) { return tg.indexOf(x) >= 0; })) continue;
+      if (box.some(function (x, a) { return box.indexOf(x) !== a; }) || box.indexOf(pl) >= 0) continue;
+      var far = 0; box.forEach(function (x, a) { far += Math.abs((x & 7) - (tg[a] & 7)) + Math.abs((x >> 3) - (tg[a] >> 3)); }); if (far < 2 + lv * 2) continue;
+      return { wall: wall, tg: tg, box: box, pl: pl, start: { box: box.slice(), pl: pl }, n: 0 };
+    }
+    return null;
+  }
+  GK.add({
+    id: 'soko', group: 'think', ic: '📦', t: 'Король Сокобана',
+    d: 'Король толкает ящики 📦 на звёздочки ⭐. Тянуть нельзя, только толкать. Думай наперёд!',
+    rules: ['Король шагает на одну клетку вверх, вниз, влево или вправо.', 'Если шагнуть на ящик, король толкнёт его вперёд. Толкать можно только один ящик.', 'Нужно поставить все ящики на звёздочки ⭐. Через стены 🧱 ходить нельзя.', 'Застрял? Нажми на короля — уровень начнётся заново.'],
+    start: function (ctx) {
+      var cur;
+      function show() {
+        var S = ctx.S, b = new Int8Array(64); b[cur.pl] = 6; setB(S, b); S.sel = cur.pl;
+        Object.keys(cur.wall).forEach(function (w) { S.mark[w] = 'e:🧱'; });
+        cur.tg.forEach(function (t) { S.mark[t] = 'e:⭐'; });
+        cur.box.forEach(function (x) { S.mark[x] = cur.tg.indexOf(x) >= 0 ? 'e:✅' : 'e:📦'; }); ctx.draw();
+        ctx.prompt('Толкай ящики 📦 на звёздочки ⭐. Ходов: <b>' + cur.n + '</b>. Король застрял? Нажми на него.');
+      }
+      function next() { var g = sokoGen(ctx.level()); if (!g) { ctx.msg('Заминка…'); return; } cur = g; show(); ctx.msg('Ящики можно только толкать!'); }
+      ctx.click = function (i) {
+        if (!cur || cur.busy) return;
+        if (i === cur.pl) { cur.box = cur.start.box.slice(); cur.pl = cur.start.pl; cur.n = 0; show(); ctx.msg('Начали заново.'); return; }
+        var px = cur.pl & 7, py = cur.pl >> 3, x = i & 7, y = i >> 3, dx = x - px, dy = y - py;
+        if (Math.abs(dx) + Math.abs(dy) !== 1 || cur.wall[i]) return;
+        var k = cur.box.indexOf(i);
+        if (k >= 0) { var nx = x + dx, ny = y + dy, ns = ny * 8 + nx; if (nx < 0 || nx > 7 || ny < 0 || ny > 7 || cur.wall[ns] || cur.box.indexOf(ns) >= 0) { ctx.msg('Ящик не сдвинуть.'); return; } cur.box[k] = ns; }
+        cur.pl = i; cur.n++; show();
+        if (cur.box.every(function (x) { return cur.tg.indexOf(x) >= 0; })) { cur.busy = true; ctx.ok('Все ящики на местах! 📦'); if (cur.n <= 25 + ctx.level() * 10) ctx.bonus(3, 'Быстро!'); ctx.later(next, 1300); }
+      };
+      next();
+    }
+  });
+})();
+
 // «Ежедневная задача»: одна новая задача в день, серия дней подряд, значки
 (function () {
   var GK = window.__gk, E = GK.E, rnd = GK.rnd;
@@ -18028,9 +18397,9 @@ window.__trnImg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQ
   }, {
     id: 'chesskingarcade', sec: 1, cover: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDIwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iIzZhMWI5YSIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjI3MiIgaGVpZ2h0PSIzOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZDU0ZiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTUwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjkwIiBmaWxsPSIjZmZkNTRmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4mIzk4MTI7PC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMjM1IiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIzMCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNoZXNzIEtpbmc8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIyNzIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QXJjYWRlPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMzIwIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxNyIgZmlsbD0iI2YzZTVmNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0LHRi9GB0YLRgNGL0LUg0LjQs9GA0Ysg0Lgg0LfQsNC00LDRh9C4PC90ZXh0Pjwvc3ZnPg==',
     title: 'Chess King Arcade', sub: 'Быстрые игры и шахматные задачи для детей',
-    author: 'Chess King', year: 2026, pub: 'Chess King', lang: 'Английский',
+    author: 'Chess King', year: 2026, pub: 'Chess King', lang: 'Русский, английский',
     age: 'Любой возраст', ageN: 0, level: 'Начальный', fmt: 'Сайт: игры, задачи, таблицы лидеров',
-    sum: 'Онлайн-площадка с короткими шахматными играми и тренировкой: в разделе «Fun Games» можно играть в весёлые мини-игры и тренировать шахматные навыки, а в «Leaderboards» видно таблицу лидеров. Идея та же, что у нас в Игротеке: играть быстро и с интересом. Сайт на английском, но управление понятно и без слов.',
+    sum: 'Онлайн-площадка с короткими шахматными играми и тренировкой: в разделе «Fun Games» можно играть в весёлые мини-игры и тренировать шахматные навыки, а в «Leaderboards» видно таблицу лидеров. Идея та же, что у нас в Игротеке: играть быстро и с интересом. Сайт есть на русском и на английском, а управление понятно и без слов.',
     access: 'Сайт откроется в новой вкладке. Лучше заходить вместе с родителями.',
     url: 'https://chesskingarcade.com/fun/', urlText: 'Открыть Chess King Arcade',
     kw: 'chess king arcade чесс кинг аркада игры дети задачи тренажёр таблица лидеров'
